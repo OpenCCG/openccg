@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression>  
+  <comment> skipping to nina107_033 </comment>
+  <item numOfParses="1" string="flying from Amsterdam_Schiphol_L+H* LH% .">
+    <lf>
+      <node id="f1:motion" pred="fly" info="th" mood="dcl">
+        <rel name="Traveler">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Source">
+          <node id="a1:airport" pred="Amsterdam_Schiphol" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="flying to Amsterdam_Schiphol_L+H* LH% .">
+    <lf>
+      <node id="f1:motion" pred="fly" info="th" mood="dcl">
+        <rel name="Traveler">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Goal">
+          <node id="a1:airport" pred="Amsterdam_Schiphol" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="flying on *.01.01_L+H* LL% .">
+    <lf>
+      <node id="f1:motion" pred="fly" info="th" mood="dcl" owner="s">
+        <rel name="Traveler">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Date">
+          <node id="n1:date" pred="*.01.01" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="returning on *.01.01_L+H* LH% at 13:31_L+H* LL% .">
+    <lf>
+      <node id="r1:motion" pred="return" info="th" mood="dcl">
+        <rel name="Traveler">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Date">
+          <node id="n1:date" pred="*.01.01" kon="+"/>
+        </rel>
+        <rel name="Time">
+          <node id="n2:time" pred="13:31" kon="+" owner="s"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="departing from Helsinki_airport_L+H* LH% at 13:41_L+H* LL% .">
+    <lf>
+      <node id="d1:motion" pred="depart" info="th" mood="dcl">
+        <rel name="Theme">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Source">
+          <node id="h1:airport" pred="Helsinki_airport" kon="+"/>
+        </rel>
+        <rel name="Time">
+          <node id="n1:time" pred="13:41" kon="+" owner="s"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="arriving in Aalborg_L+H* at 1:51_L+H* LL% .">
+    <lf>
+      <node id="a1:motion" pred="arrive" info="th" mood="dcl" owner="s">
+        <rel name="Theme">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Goal">
+          <node id="a2:city" pred="Aalborg" kon="+"/>
+        </rel>
+        <rel name="Time">
+          <node id="n1:time" pred="1:51" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="where would you like to fly from LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="where" mood="int" owner="s">
+        <rel name="Restr">
+          <node idref="x1:location"/>
+        </rel>
+        <rel name="Body">
+          <node id="w2:state" pred="would">
+            <rel name="Body">
+              <node id="l1:experience" pred="like">
+                <rel name="Experiencer">
+                  <node id="p1:animate-being" pred="pro2"/>
+                </rel>
+                <rel name="Content">
+                  <node id="f1:motion" pred="fly">
+                    <rel name="Traveler">
+                      <node idref="p1:animate-being"/>
+                    </rel>
+                    <rel name="Source">
+                      <node idref="x1:location"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <comment> TBD:
+    nina107_040.wav	 From where?
+    nina107_041.wav	 And from where?
+  </comment>
+  <item numOfParses="1" string="and flying from which city LH% ?">
+    <lf>
+      <node id="a1:situation" pred="and" mood="int">
+        <rel name="Arg2">
+          <node id="w1:quantification" pred="which">
+            <rel name="Restr">
+              <node id="c1:city" pred="city" num="sg"/>
+            </rel>
+            <rel name="Body">
+              <node id="f1:motion" pred="fly">
+                <rel name="Traveler">
+                  <node idref="x1:phys-obj"/>
+                </rel>
+                <rel name="Source">
+                  <node idref="c1:city"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="what city do you want to fly from LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node id="c1:city" pred="city" num="sg"/>
+        </rel>
+        <rel name="Body">
+          <node id="w2:experience" pred="want" tense="pres">
+            <rel name="Experiencer">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Situation">
+              <node id="f1:motion" pred="fly">
+                <rel name="Traveler">
+                  <node idref="p1:animate-being"/>
+                </rel>
+                <rel name="Source">
+                  <node idref="c1:city"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="what is your departure city LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node idref="x1:sem-obj"/>
+        </rel>
+        <rel name="Body">
+          <node id="b1:state" pred="be" tense="pres">
+            <rel name="Arg">
+              <node idref="x1:sem-obj"/>
+            </rel>
+            <rel name="Pred">
+              <node id="c1:city" pred="city" num="sg">
+                <rel name="HasProp">
+                  <node id="d1:proposition" pred="departure"/>
+                </rel>
+                <rel name="GenOwner">
+                  <node id="p1:animate-being" pred="pro2"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="and going where LH% ?">
+    <lf>
+      <node id="a1:situation" pred="and" mood="int">
+        <rel name="Arg2">
+          <node id="w1:quantification" pred="where">
+            <rel name="Restr">
+              <node idref="x1:location"/>
+            </rel>
+            <rel name="Body">
+              <node id="g1:motion" pred="go">
+                <rel name="Traveler">
+                  <node idref="x2:phys-obj"/>
+                </rel>
+                <rel name="Goal">
+                  <node idref="x1:location"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="going where LH% ?">
+    <lf>
+      <node id="w1:quantification" pred="where" mood="int">
+        <rel name="Restr">
+          <node idref="x1:location"/>
+        </rel>
+        <rel name="Body">
+          <node id="g1:motion" pred="go">
+            <rel name="Traveler">
+              <node idref="x2:phys-obj"/>
+            </rel>
+            <rel name="Goal">
+              <node idref="x1:location"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="and where will you be flying to LL% ?">
+    <lf>
+      <node id="a1:situation" pred="and" mood="int" owner="s">
+        <rel name="Arg2">
+          <node id="w1:quantification" pred="where">
+            <rel name="Restr">
+              <node idref="x1:location"/>
+            </rel>
+            <rel name="Body">
+              <node id="w2:state" pred="will">
+                <rel name="Body">
+                  <node id="p1:state" pred="prog">
+                    <rel name="Body">
+                      <node id="f1:motion" pred="fly">
+                        <rel name="Traveler">
+                          <node id="p2:animate-being" pred="pro2"/>
+                        </rel>
+                        <rel name="Goal">
+                          <node idref="x1:location"/>
+                        </rel>
+                      </node>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="where are you going to from Barcelona_H* LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="where" info="rh" mood="int" owner="s">
+        <rel name="Restr">
+          <node idref="x1:location"/>
+        </rel>
+        <rel name="Body">
+          <node id="p1:state" pred="prog" tense="pres">
+            <rel name="Body">
+              <node id="g1:motion" pred="go">
+                <rel name="Traveler">
+                  <node id="p2:animate-being" pred="pro2"/>
+                </rel>
+                <rel name="Source">
+                  <node id="b1:city" pred="Barcelona" kon="+"/>
+                </rel>
+                <rel name="Goal">
+                  <node idref="x1:location"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="flying to what city LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node id="c1:city" pred="city" num="sg"/>
+        </rel>
+        <rel name="Body">
+          <node id="f1:motion" pred="fly">
+            <rel name="Traveler">
+              <node idref="x1:phys-obj"/>
+            </rel>
+            <rel name="Goal">
+              <node idref="c1:city"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="what city are you flying to LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node id="c1:city" pred="city" num="sg"/>
+        </rel>
+        <rel name="Body">
+          <node id="p1:state" pred="prog" tense="pres">
+            <rel name="Body">
+              <node id="f1:motion" pred="fly">
+                <rel name="Traveler">
+                  <node id="p2:animate-being" pred="pro2"/>
+                </rel>
+                <rel name="Goal">
+                  <node idref="c1:city"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="what is your destination city LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node idref="x1:sem-obj"/>
+        </rel>
+        <rel name="Body">
+          <node id="b1:state" pred="be" tense="pres">
+            <rel name="Arg">
+              <node idref="x1:sem-obj"/>
+            </rel>
+            <rel name="Pred">
+              <node id="c1:city" pred="city" num="sg">
+                <rel name="HasProp">
+                  <node id="d1:proposition" pred="destination"/>
+                </rel>
+                <rel name="GenOwner">
+                  <node id="p1:animate-being" pred="pro2"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="what is your destination LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node idref="x1:sem-obj"/>
+        </rel>
+        <rel name="Body">
+          <node id="b1:state" pred="be" tense="pres">
+            <rel name="Arg">
+              <node idref="x1:sem-obj"/>
+            </rel>
+            <rel name="Pred">
+              <node id="d1:location" pred="destination" num="sg">
+                <rel name="GenOwner">
+                  <node id="p1:animate-being" pred="pro2"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="leaving on what date LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node id="d1:date" pred="date" num="sg"/>
+        </rel>
+        <rel name="Body">
+          <node id="l1:motion" pred="leave">
+            <rel name="Theme">
+              <node idref="x1:phys-obj"/>
+            </rel>
+            <rel name="Date">
+              <node idref="d1:date"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="departing on what date LL% ?">
+    <lf>
+      <node id="w1:quantification" pred="what" mood="int" owner="s">
+        <rel name="Restr">
+          <node id="d1:date" pred="date" num="sg"/>
+        </rel>
+        <rel name="Body">
+          <node id="d2:motion" pred="depart">
+            <rel name="Theme">
+              <node idref="x1:phys-obj"/>
+            </rel>
+            <rel name="Date">
+              <node idref="d1:date"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+</regression>

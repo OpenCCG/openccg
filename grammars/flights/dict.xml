@@ -1,0 +1,1067 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dictionary xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../dict.xsd" name="flights">
+  <entry pos="Dummy" stem="*dummy*">
+    <member-of family="Dummy"/>
+  </entry>
+  <entry class="date" pos="NNP" stem="[*DATE*]"/>
+  <entry class="time" pos="NNP" stem="[*TIME*]"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="[*NUM*]"/>
+  <entry class="amt" pos="NNP" stem="[*AMT*]"/>
+  <entry class="dur" pos="NNP" stem="[*DUR*]"/>
+  <entry pos="BT" stem="L">
+    <member-of family="BoundaryTone-L-LL%"/>
+  </entry>
+  <entry pos="BT" stem="LL%">
+    <member-of family="BoundaryTone-L-LL%"/>
+  </entry>
+  <entry pos="BT" stem="LH%">
+    <member-of family="BoundaryTone-LH%"/>
+  </entry>
+  <entry pos="BT" stem="HH%">
+    <member-of family="BoundaryTone-HH%"/>
+  </entry>
+  <entry pos="," stem=",">
+    <member-of family="Comma"/>
+    <member-of pred="elab-rel" family="Comma-Elab"/>
+  </entry>
+  <entry pos="." stem=".">
+    <member-of family="FullStop"/>
+  </entry>
+  <entry pos="?" stem="?">
+    <member-of family="QuestionMark"/>
+  </entry>
+  <entry pos="Comp" stem="that">
+    <member-of family="Comp"/>
+  </entry>
+  <entry pos="RelPro" stem="that">
+    <member-of family="RelPro"/>
+    <member-of pred="elab-rel" family="RelPro-Appos"/>
+  </entry>
+  <entry macros="@1st" class="animate-being" pos="Pro" stem="pro1">
+    <member-of family="ProNP"/>
+    <word macros="@sg @nom" form="I"/>
+    <word macros="@sg @acc" form="me"/>
+    <word macros="@pl @nom" form="we"/>
+    <word macros="@pl @acc" form="us"/>
+  </entry>
+  <entry class="animate-being" pos="PossPro" stem="pro1">
+    <member-of family="PossPro"/>
+    <word macros="@sg-P" form="my"/>
+    <word macros="@pl-P" form="our"/>
+  </entry>
+  <entry macros="@2nd" class="animate-being" pos="Pro" stem="pro2" word="you">
+    <member-of family="ProNP"/>
+  </entry>
+  <entry class="animate-being" pos="PossPro" stem="pro2" word="your">
+    <member-of family="PossPro"/>
+  </entry>
+  <entry macros="@3rd" pos="Pro" stem="pro3f">
+    <member-of family="ProNP"/>
+    <word macros="@sg @nom" form="she"/>
+    <word macros="@sg @acc" form="her"/>
+  </entry>
+  <entry macros="@sg-P" pos="PossPro" stem="pro3f" word="her">
+    <member-of family="PossPro"/>
+  </entry>
+  <entry macros="@3rd" pos="Pro" stem="pro3m">
+    <member-of family="ProNP"/>
+    <word macros="@sg @nom" form="he"/>
+    <word macros="@sg @acc" form="him"/>
+  </entry>
+  <entry macros="@sg-P" pos="PossPro" stem="pro3m" word="his">
+    <member-of family="PossPro"/>
+  </entry>
+  <entry macros="@3rd" pos="Pro" stem="pro3n">
+    <member-of family="ProNP"/>
+    <word macros="@sg" form="it"/>
+    <word macros="@pl @nom" form="they"/>
+    <word macros="@pl @acc" form="them"/>
+  </entry>
+  <entry pos="PossPro" stem="pro3n">
+    <member-of family="PossPro"/>
+    <word macros="@sg-P" form="its"/>
+    <word macros="@pl-P" form="their"/>
+  </entry>
+  <entry macros="@3rd" pos="Pro" stem="this">
+    <member-of family="ProNP"/>
+    <word macros="@sg" form="this"/>
+    <word macros="@pl" form="these"/>
+  </entry>
+  <entry macros="@3rd" pos="Pro" stem="that">
+    <member-of family="ProNP"/>
+    <word macros="@sg" form="that"/>
+    <word macros="@pl" form="those"/>
+  </entry>
+  <entry pos="N" stem="pro_one">
+    <word macros="@sg" form="one"/>
+    <word macros="@pl" form="ones"/>
+  </entry>
+  <entry pos="Expl" stem="it">
+    <member-of family="ExplNP"/>
+  </entry>
+  <entry pos="Expl" stem="there">
+    <member-of family="ExplNP"/>
+  </entry>
+  <entry pos="Expl" stem="here">
+    <member-of family="ExplNP"/>
+  </entry>
+  <entry pos="Conj" stem="and">
+    <member-of family="Conj"/>
+    <stem-for entry="NP-Collective" family="Conj"/>
+    <stem-for entry="NP-Distributive-and" family="Conj"/>
+    <member-of family="Subconj-Initial-Only"/>
+  </entry>
+  <entry pos="Conj" stem="or">
+    <member-of family="Conj"/>
+    <stem-for entry="NP-Distributive-or" family="Conj"/>
+    <member-of family="Subconj-Initial-Only"/>
+  </entry>
+  <entry pos="Conj" stem="but">
+    <member-of family="Conj-Sentential-Binary"/>
+    <member-of family="Subconj-Initial-Only"/>
+    <member-of family="Subconj-Medial"/>
+  </entry>
+  <entry pos="Conj" stem="although">
+    <member-of family="Subconj-Initial"/>
+  </entry>
+  <entry pos="Conj" stem="if">
+    <member-of family="Subconj-Initial"/>
+  </entry>
+  <entry pos="Conj" stem="while">
+    <member-of family="Subconj-Medial"/>
+  </entry>
+  <entry macros="@sg-2" pos="QNP" pred="every" stem="everyone">
+    <member-of family="QuantNP"/>
+  </entry>
+  <entry macros="@pl-2" pos="QNP" stem="both">
+    <member-of family="QuantNP"/>
+  </entry>
+  <entry macros="@sg-2" pos="QNP" stem="neither">
+    <member-of family="QuantNP"/>
+  </entry>
+  <entry macros="@pl-2" pos="QNP" stem="none">
+    <member-of family="QuantNP"/>
+  </entry>
+  <entry macros="@pl-or-mass-2" pos="QNP" stem="all">
+    <member-of family="QuantNP"/>
+  </entry>
+  <entry pos="WhNP" stem="what">
+    <member-of family="WhNP"/>
+  </entry>
+  <entry macros="@X-location" pos="WhNP" stem="where">
+    <member-of family="WhNP"/>
+  </entry>
+  <entry macros="@X-person" pos="WhNP" stem="who">
+    <member-of family="WhNP"/>
+  </entry>
+  <entry macros="@sg-2" pos="Det" stem="a">
+    <member-of family="Det"/>
+    <word form="a"/>
+    <word form="an"/>
+  </entry>
+  <entry pos="Det" stem="some">
+    <member-of family="Det"/>
+  </entry>
+  <entry pos="Det" stem="the">
+    <member-of family="Det"/>
+  </entry>
+  <entry macros="@sg-2" pos="PDet" stem="another">
+    <member-of family="PDet"/>
+  </entry>
+  <entry pos="PDet" stem="this">
+    <member-of family="PDet"/>
+    <word macros="@sg-or-mass-2" form="this"/>
+    <word macros="@pl-2" form="these"/>
+  </entry>
+  <entry pos="PDet" stem="that">
+    <member-of family="PDet"/>
+    <word macros="@sg-or-mass-2" form="that"/>
+    <word macros="@pl-2" form="those"/>
+  </entry>
+  <entry pos="PossS" stem="'s">
+    <member-of family="PossS"/>
+  </entry>
+  <entry macros="@pl-or-mass-2" pos="QDet" stem="all">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry macros="@pl-2" pos="QDet" stem="both">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry macros="@sg-2" pos="QDet" stem="every">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry macros="@sg-2" pos="QDet" stem="neither">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry pos="QDet" stem="no">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry pos="Wh" stem="what">
+    <member-of family="WhDet"/>
+  </entry>
+  <entry pos="Wh" stem="which">
+    <member-of family="WhDet"/>
+  </entry>
+  <entry pos="Adv" stem="also">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="either">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="though">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="too">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Prep" stem="with">
+    <member-of family="Prep-Nom"/>
+    <member-of family="With-Poss"/>
+  </entry>
+  <entry pos="V" stem="can">
+    <member-of family="Modal"/>
+  </entry>
+  <entry pos="V" stem="may">
+    <member-of family="Modal"/>
+  </entry>
+  <entry pos="V" stem="should">
+    <member-of family="Modal"/>
+  </entry>
+  <entry pos="V" stem="would">
+    <member-of family="Modal"/>
+    <word form="would"/>
+    <word form="'d"/>
+  </entry>
+  <entry pos="V" stem="will">
+    <member-of family="Modal"/>
+    <word form="will"/>
+    <word form="'ll"/>
+  </entry>
+  <entry pos="V" stem="not">
+    <member-of family="Negation"/>
+    <word macros="@base @base6" form="not"/>
+    <word macros="@base @base6" form="n't"/>
+    <word macros="@adj @adj6" form="not"/>
+    <word macros="@adj @adj6" form="n't"/>
+  </entry>
+  <entry pos="V" stem="do">
+    <member-of family="Modal"/>
+    <member-of family="Do-Support"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="do"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="does"/>
+    <word macros="@pres @pl-agr" form="do"/>
+    <word macros="@past" form="did"/>
+  </entry>
+  <entry pos="V" stem="be">
+    <member-of family="Copula"/>
+    <member-of pred="prog" family="Progressive"/>
+    <member-of pred="there-be" family="ThereExistential"/>
+    <member-of pred="here-be" family="HereExistential"/>
+    <word excluded="Inverted" macros="@base" form="be"/>
+    <word macros="@pres @sg-agr @1st-agr" form="am"/>
+    <word macros="@pres @sg-agr @1st-agr" form="'m"/>
+    <word macros="@pres @sg-agr @2nd-agr" form="are"/>
+    <word macros="@pres @sg-agr @2nd-agr" form="'re"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="is"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="'s"/>
+    <word macros="@pres @pl-agr" form="are"/>
+    <word macros="@pres @pl-agr" form="'re"/>
+    <word macros="@past @sg-agr @1st-agr" form="was"/>
+    <word macros="@past @sg-agr @2nd-agr" form="were"/>
+    <word macros="@past @sg-or-mass-agr @3rd-agr" form="was"/>
+    <word macros="@past @pl-agr" form="were"/>
+  </entry>
+  <entry pos="V" stem="have">
+    <member-of family="Possession"/>
+    <word excluded="Inverted" macros="@base" form="have"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="have"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="has"/>
+    <word macros="@pres @pl-agr" form="have"/>
+    <word macros="@past" form="had"/>
+  </entry>
+  <entry pos="V" stem="like">
+    <member-of family="Experiencer-Subj"/>
+    <word macros="@base" form="like"/>
+    <word macros="@ng" form="liking"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="like"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="likes"/>
+    <word macros="@pres @pl-agr" form="like"/>
+    <word macros="@past" form="liked"/>
+  </entry>
+  <entry pos="V" stem="make">
+    <member-of family="Agentive-Causing"/>
+    <word macros="@base" form="make"/>
+    <word macros="@ng" form="making"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="make"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="makes"/>
+    <word macros="@pres @pl-agr" form="make"/>
+    <word macros="@past" form="made"/>
+  </entry>
+  <entry pos="V" stem="mention">
+    <member-of family="Statement"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="mention"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="mentions"/>
+    <word macros="@pres @pl-agr" form="mention"/>
+    <word macros="@past" form="mentioned"/>
+  </entry>
+  <entry pos="V" stem="say">
+    <member-of family="Statement"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="say"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="says"/>
+    <word macros="@pres @pl-agr" form="say"/>
+    <word macros="@past" form="said"/>
+  </entry>
+  <entry macros="@sg-2" class="num" pos="Num" stem="one">
+    <member-of family="One-Det"/>
+  </entry>
+  <entry macros="@sg-2" class="num" pos="Num" stem="1">
+    <member-of family="One-Det"/>
+  </entry>
+  <entry macros="@pl-2" class="num" pos="Num" stem="several"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="two"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="three"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="four"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="five"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="six"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="seven"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="eight"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="nine"/>
+  <entry macros="@pl-2" class="num" pos="Num" stem="ten"/>
+  <entry pos="BT" stem="LL%">
+    <member-of family="BoundaryTone-LL%-as-LH%"/>
+  </entry>
+  <entry pos="and" stem="and">
+    <member-of family="And-Punct"/>
+  </entry>
+  <entry pos="Prep" stem="about">
+    <member-of family="Prep-Nom"/>
+  </entry>
+  <entry pos="TempAdv" stem="after">
+    <member-of family="Prep-TimeRel"/>
+  </entry>
+  <entry pos="Prep" stem="at">
+    <member-of family="Prep-Nom"/>
+    <member-of family="Prep-Time"/>
+  </entry>
+  <entry pos="TempAdv" stem="before">
+    <member-of family="Prep-TimeRel"/>
+  </entry>
+  <entry pos="TempAdv" stem="between">
+    <member-of family="Between-TimeRel"/>
+  </entry>
+  <entry pos="TempAdv" stem="by">
+    <member-of family="Prep-TimeRel"/>
+  </entry>
+  <entry pos="TempAdv" stem="earlier">
+    <member-of family="Comparative-TimeRel"/>
+  </entry>
+  <entry pos="Prep" stem="for">
+    <member-of family="Prep-Nom"/>
+  </entry>
+  <entry pos="Prep" stem="from">
+    <member-of family="Prep-Nom"/>
+  </entry>
+  <entry pos="Prep" stem="in">
+    <member-of family="Prep-Nom"/>
+    <member-of family="Prep-TimeFrame"/>
+  </entry>
+  <entry pos="TempAdv" stem="later">
+    <member-of family="Comparative-TimeRel"/>
+  </entry>
+  <entry pos="Prep" stem="of">
+    <member-of family="Prep-Nom"/>
+  </entry>
+  <entry pos="Prep" stem="on">
+    <member-of family="Prep-Nom"/>
+    <member-of family="Prep-Date"/>
+    <member-of family="Prep-Airline"/>
+  </entry>
+  <entry pos="Adj" stem="on">
+    <member-of family="Prep-Loc"/>
+  </entry>
+  <entry pos="Prep" stem="to">
+    <member-of family="Prep-Nom"/>
+    <member-of family="To-Infinitive"/>
+  </entry>
+  <entry pos="TempAdv" stem="until">
+    <member-of family="Prep-TimeRel"/>
+  </entry>
+  <entry pos="Prep" stem="with">
+    <member-of family="Prep-Nom"/>
+  </entry>
+  <entry pos="Adv" stem="alternatively">
+    <member-of family="Transitional-Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="however">
+    <member-of family="Transitional-Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="only">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="on_time">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="today">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="Adv" stem="yesterday">
+    <member-of family="Adverb"/>
+  </entry>
+  <entry pos="V" stem="arrive">
+    <member-of family="Arriving"/>
+    <word macros="@base" form="arrive"/>
+    <word macros="@ng" form="arriving"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="arrive"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="arrives"/>
+    <word macros="@pres @pl-agr" form="arrive"/>
+    <word macros="@past" form="arrived"/>
+  </entry>
+  <entry pos="V" stem="book">
+    <member-of family="Booking"/>
+    <word macros="@base" form="book"/>
+    <word macros="@ng" form="booking"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="book"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="books"/>
+    <word macros="@pres @pl-agr" form="book"/>
+    <word macros="@past" form="booked"/>
+  </entry>
+  <entry pos="V" stem="choose">
+    <member-of family="Choosing"/>
+    <word macros="@base" form="choose"/>
+    <word macros="@ng" form="choosing"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="choose"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="chooses"/>
+    <word macros="@pres @pl-agr" form="choose"/>
+    <word macros="@past" form="chose"/>
+  </entry>
+  <entry pos="V" stem="connect">
+    <member-of family="Connecting"/>
+    <word macros="@base" form="connect"/>
+    <word macros="@ng" form="connecting"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="connect"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="connects"/>
+    <word macros="@pres @pl-agr" form="connect"/>
+    <word macros="@past" form="connected"/>
+  </entry>
+  <entry pos="V" stem="cost">
+    <member-of family="Costing"/>
+    <word macros="@base" form="cost"/>
+    <word macros="@ng" form="costing"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="cost"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="costs"/>
+    <word macros="@pres @pl-agr" form="cost"/>
+    <word macros="@past" form="cost"/>
+  </entry>
+  <entry pos="V" stem="depart">
+    <member-of family="Departing"/>
+    <word macros="@base" form="depart"/>
+    <word macros="@ng" form="departing"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="depart"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="departs"/>
+    <word macros="@pres @pl-agr" form="depart"/>
+    <word macros="@past" form="departed"/>
+  </entry>
+  <entry pos="V" stem="find">
+    <member-of family="Finding"/>
+    <word macros="@base" form="find"/>
+    <word macros="@ng" form="finding"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="find"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="finds"/>
+    <word macros="@pres @pl-agr" form="find"/>
+    <word macros="@past" form="found"/>
+  </entry>
+  <entry pos="V" stem="fly">
+    <member-of family="Travel"/>
+    <word macros="@base" form="fly"/>
+    <word macros="@ng" form="flying"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="fly"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="flies"/>
+    <word macros="@pres @pl-agr" form="fly"/>
+    <word macros="@past" form="flew"/>
+  </entry>
+  <entry pos="V" stem="get">
+    <member-of family="Conveyance"/>
+    <word macros="@base" form="get"/>
+    <word macros="@ng" form="getting"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="get"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="gets"/>
+    <word macros="@pres @pl-agr" form="get"/>
+    <word macros="@past" form="got"/>
+  </entry>
+  <entry pos="V" stem="go">
+    <member-of family="Travel"/>
+    <word macros="@base" form="go"/>
+    <word macros="@ng" form="going"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="go"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="goes"/>
+    <word macros="@pres @pl-agr" form="go"/>
+    <word macros="@past" form="went"/>
+  </entry>
+  <entry pos="V" stem="hear">
+    <member-of family="Hearing-About"/>
+    <word macros="@base" form="hear"/>
+    <word macros="@ng" form="hearing"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="hear"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="hears"/>
+    <word macros="@pres @pl-agr" form="hear"/>
+    <word macros="@past" form="heard"/>
+  </entry>
+  <entry pos="V" stem="leave">
+    <member-of family="Departing"/>
+    <word macros="@base" form="leave"/>
+    <word macros="@ng" form="leaving"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="leave"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="leaves"/>
+    <word macros="@pres @pl-agr" form="leave"/>
+    <word macros="@past" form="left"/>
+  </entry>
+  <entry pos="V" stem="match">
+    <member-of family="Evaluative-Comparison"/>
+    <word macros="@base" form="match"/>
+    <word macros="@ng" form="matching"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="match"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="matches"/>
+    <word macros="@pres @pl-agr" form="match"/>
+    <word macros="@past" form="matched"/>
+  </entry>
+  <entry pos="V" stem="need">
+    <member-of pred="need-to" family="Needing-To"/>
+    <word macros="@base" form="need"/>
+    <word macros="@ng" form="needing"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="need"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="needs"/>
+    <word macros="@pres @pl-agr" form="need"/>
+    <word macros="@past" form="needed"/>
+  </entry>
+  <entry pos="V" stem="offer">
+    <member-of family="Offering"/>
+    <word macros="@base" form="offer"/>
+    <word macros="@ng" form="offering"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="offer"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="offers"/>
+    <word macros="@pres @pl-agr" form="offer"/>
+    <word macros="@past" form="offered"/>
+  </entry>
+  <entry pos="V" stem="prefer">
+    <member-of family="Experiencer-Subj"/>
+    <word macros="@base" form="prefer"/>
+    <word macros="@ng" form="preferring"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="prefer"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="prefers"/>
+    <word macros="@pres @pl-agr" form="prefer"/>
+    <word macros="@past" form="preferred"/>
+  </entry>
+  <entry pos="V" stem="require">
+    <member-of family="Requiring"/>
+    <word macros="@base" form="require"/>
+    <word macros="@ng" form="requiring"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="require"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="requires"/>
+    <word macros="@pres @pl-agr" form="require"/>
+    <word macros="@past" form="required"/>
+  </entry>
+  <entry pos="V" stem="return">
+    <member-of family="Travel"/>
+    <word macros="@base" form="return"/>
+    <word macros="@ng" form="returning"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="return"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="returns"/>
+    <word macros="@pres @pl-agr" form="return"/>
+    <word macros="@past" form="returned"/>
+  </entry>
+  <entry pos="V" stem="take">
+    <member-of family="Taking-Time"/>
+    <word macros="@base" form="take"/>
+    <word macros="@ng" form="taking"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="take"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="takes"/>
+    <word macros="@pres @pl-agr" form="take"/>
+    <word macros="@past" form="took"/>
+  </entry>
+  <entry pos="V" stem="travel">
+    <member-of family="Travel"/>
+    <word macros="@base" form="travel"/>
+    <word macros="@ng" form="traveling"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="travel"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="travels"/>
+    <word macros="@pres @pl-agr" form="travel"/>
+    <word macros="@past" form="traveled"/>
+  </entry>
+  <entry pos="V" stem="want">
+    <member-of family="Wanting"/>
+    <word macros="@base" form="want"/>
+    <word macros="@ng" form="wanting"/>
+    <word macros="@pres @sg-agr @non-3rd-agr" form="want"/>
+    <word macros="@pres @sg-or-mass-agr @3rd-agr" form="wants"/>
+    <word macros="@pres @pl-agr" form="want"/>
+    <word macros="@past" form="wanted"/>
+  </entry>
+  <entry class="timeframe" pos="Adj" stem="afternoon">
+    <member-of family="Adj-TimeFrame"/>
+  </entry>
+  <entry pos="Adj" stem="available">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="better">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="best">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="cheap">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="cheaper">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="cheapest">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="connecting">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="departure">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="destination">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="direct">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="early">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="earlier">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="earliest">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="even">
+    <member-of family="Adjective"/>
+    <member-of family="Adjective-Measure"/>
+    <word excluded="Predicative" form="even"/>
+  </entry>
+  <entry class="timeframe" pos="Adj" stem="evening">
+    <member-of family="Adj-TimeFrame"/>
+  </entry>
+  <entry pos="Adj" stem="first">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="full">
+    <member-of family="Adj-Full"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="good">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="great">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="just">
+    <member-of family="Adjective"/>
+    <member-of family="Adjective-Measure"/>
+    <word excluded="Predicative" form="just"/>
+  </entry>
+  <entry pos="Adj" stem="last">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="late">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="later">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="scalar" pos="Adj" stem="latest">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry class="timeframe" pos="Adj" stem="morning">
+    <member-of family="Adj-TimeFrame"/>
+  </entry>
+  <entry pos="Adj" stem="next">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="nonstop">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="only">
+    <member-of family="Adjective"/>
+    <member-of family="Adjective-Measure"/>
+    <word excluded="Predicative" form="only"/>
+  </entry>
+  <entry pos="Adj" stem="other">
+    <member-of family="Adjective"/>
+    <word excluded="Predicative" form="other"/>
+  </entry>
+  <entry pos="Adj" stem="total">
+    <member-of family="Adjective"/>
+  </entry>
+  <entry pos="Adj" stem="willing">
+    <member-of family="Adj-Willing"/>
+  </entry>
+  <entry class="timeframe" pos="N" stem="afternoon">
+    <word macros="@sg" form="afternoon"/>
+    <word macros="@pl" form="afternoons"/>
+  </entry>
+  <entry class="airline" pos="N" stem="airline">
+    <word macros="@sg" form="airline"/>
+    <word macros="@pl" form="airlines"/>
+  </entry>
+  <entry macros="@mass" class="abstraction" pos="N" stem="availability">
+    <member-of family="Noun-Category"/>
+  </entry>
+  <entry class="scalar" pos="N" stem="cheapest"/>
+  <entry class="city" pos="N" stem="city">
+    <word macros="@sg" form="city"/>
+    <word macros="@pl" form="cities"/>
+  </entry>
+  <entry class="action" pos="N" stem="connection">
+    <member-of family="Noun-Path"/>
+    <word macros="@sg" form="connection"/>
+    <word macros="@pl" form="connections"/>
+  </entry>
+  <entry class="date" pos="N" stem="day">
+    <word macros="@sg" form="day"/>
+    <word macros="@pl" form="days"/>
+  </entry>
+  <entry class="date" pos="N" stem="date">
+    <word macros="@sg" form="date"/>
+    <word macros="@pl" form="dates"/>
+  </entry>
+  <entry class="location" pos="N" stem="destination">
+    <word macros="@sg" form="destination"/>
+    <word macros="@pl" form="destinations"/>
+  </entry>
+  <entry class="scalar" pos="N" stem="earliest"/>
+  <entry class="timeframe" pos="N" stem="evening">
+    <word macros="@sg" form="evening"/>
+    <word macros="@pl" form="evenings"/>
+  </entry>
+  <entry class="phys-obj" pos="N" stem="flight">
+    <member-of family="Noun-Travel"/>
+    <word macros="@sg" form="flight"/>
+    <word macros="@pl" form="flights"/>
+  </entry>
+  <entry class="scalar" pos="N" stem="latest"/>
+  <entry class="date" pos="N" stem="month">
+    <word macros="@sg" form="month"/>
+    <word macros="@pl" form="months"/>
+  </entry>
+  <entry class="timeframe" pos="N" stem="morning">
+    <word macros="@sg" form="morning"/>
+    <word macros="@pl" form="mornings"/>
+  </entry>
+  <entry class="abstraction" pos="N" stem="nonstop"/>
+  <entry class="abstraction" pos="N" stem="pound">
+    <word macros="@sg" form="pound"/>
+    <word macros="@pl" form="pounds"/>
+  </entry>
+  <entry class="abstraction" pos="N" stem="option">
+    <word macros="@sg" form="option"/>
+    <word macros="@pl" form="options"/>
+  </entry>
+  <entry class="abstraction" pos="N" stem="price">
+    <word macros="@sg" form="price"/>
+    <word macros="@pl" form="prices"/>
+  </entry>
+  <entry class="mental-obj" pos="N" stem="requirement">
+    <word macros="@sg" form="requirement"/>
+    <word macros="@pl" form="requirements"/>
+  </entry>
+  <entry class="phys-obj" pos="N" stem="seat">
+    <word macros="@sg" form="seat"/>
+    <word macros="@pl" form="seats"/>
+    <member-of family="Noun-Category"/>
+  </entry>
+  <entry class="action" pos="N" stem="stopover">
+    <member-of family="Noun-Path"/>
+    <word macros="@sg" form="stopover"/>
+    <word macros="@pl" form="stopovers"/>
+  </entry>
+  <entry class="mental-obj" pos="N" stem="ticket">
+    <word macros="@sg" form="ticket"/>
+    <word macros="@pl" form="tickets"/>
+  </entry>
+  <entry class="time" pos="N" stem="time">
+    <word macros="@sg" form="time"/>
+    <word macros="@pl" form="times"/>
+  </entry>
+  <entry class="abstraction" pos="N" stem="travel_time">
+    <member-of family="Noun-Duration"/>
+    <word macros="@sg" form="travel_time"/>
+    <word macros="@pl" form="travel_times"/>
+  </entry>
+  <entry class="time" pos="NNP" stem="noon"/>
+  <entry class="time" pos="NNP" stem="midnight"/>
+  <entry macros="@sg-2" class="person" pos="NNP" stem="Bob"/>
+  <entry macros="@sg-2" class="person" pos="NNP" stem="Gil"/>
+  <entry macros="@sg-2" class="person" pos="NNP" stem="Ted"/>
+  <entry macros="@sg-2" class="fareclass" pos="NNP" stem="business"/>
+  <entry macros="@sg-2" class="fareclass" pos="NNP" stem="business_class"/>
+  <entry macros="@sg-2" class="fareclass" pos="NNP" stem="coach"/>
+  <entry macros="@sg-2" class="fareclass" pos="NNP" stem="economy"/>
+  <entry macros="@sg-2" class="fareclass" pos="NNP" stem="first"/>
+  <entry macros="@sg-2" class="fareclass" pos="NNP" stem="first_class"/>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Air_France"/>
+  <entry class="airline" pos="Adj" stem="Air_France">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="American"/>
+  <entry class="airline" pos="Adj" stem="American">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="BMI"/>
+  <entry class="airline" pos="Adj" stem="BMI">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="British_Airways"/>
+  <entry class="airline" pos="Adj" stem="British_Airways">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Delta"/>
+  <entry class="airline" pos="Adj" stem="Delta">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Easyjet"/>
+  <entry class="airline" pos="Adj" stem="Easyjet">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Flybe"/>
+  <entry class="airline" pos="Adj" stem="Flybe">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="KLM"/>
+  <entry class="airline" pos="Adj" stem="KLM">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Lufthansa"/>
+  <entry class="airline" pos="Adj" stem="Lufthansa">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="SN_Brussels_Airlines"/>
+  <entry class="airline" pos="Adj" stem="SN_Brussels_Airlines">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Ryanair"/>
+  <entry class="airline" pos="Adj" stem="Ryanair">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="Scot_Airways"/>
+  <entry class="airline" pos="Adj" stem="Scot_Airways">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="United"/>
+  <entry class="airline" pos="Adj" stem="United">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airline" pos="NNP" stem="VLM"/>
+  <entry class="airline" pos="Adj" stem="VLM">
+    <member-of family="Adj-Airline"/>
+  </entry>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="Amsterdam_Schiphol"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="Boston_Logan"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="Helsinki_airport"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="London_City_Airport"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="London_Gatwick"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="London_Heathrow"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="Heathrow"/>
+  <entry macros="@sg-2" class="airport" pos="NNP" stem="San_Francisco_International"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Aalborg"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Amsterdam"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Barcelona"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Berlin"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Birmingham"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Boston"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Bristol"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Brussels"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Dublin"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Edinburgh"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Frankfurt"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Helsinki"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="London"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Manchester"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Madrid"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Milan"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="Paris"/>
+  <entry macros="@sg-2" class="city" pos="NNP" stem="San_Francisco"/>
+  <macro name="@mass">
+    <fs val="mass" attr="num" id="2"/>
+  </macro>
+  <macro name="@sg">
+    <fs val="sg" attr="num" id="2"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="sg"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@sg-agr">
+    <fs val="sg" attr="num" id="1"/>
+    <fs val="sg" attr="num" id="2"/>
+  </macro>
+  <macro name="@sg-or-mass-agr">
+    <fs id="1">
+      <feat attr="num">
+        <featvar name="NUM:sg-or-mass"/>
+      </feat>
+    </fs>
+    <fs id="2">
+      <feat attr="num">
+        <featvar name="NUM:sg-or-mass"/>
+      </feat>
+    </fs>
+  </macro>
+  <macro name="@sg-2">
+    <fs val="sg" attr="num" id="2"/>
+  </macro>
+  <macro name="@sg-or-mass-2">
+    <fs val="sg-or-mass" attr="num" id="2"/>
+  </macro>
+  <macro name="@sg-P">
+    <lf>
+      <satop nomvar="P">
+        <diamond mode="num">
+          <prop name="sg"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl">
+    <fs val="pl" attr="num" id="2"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="pl"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl-agr">
+    <fs val="pl" attr="num" id="1"/>
+    <fs val="pl" attr="num" id="2"/>
+  </macro>
+  <macro name="@pl-2">
+    <fs val="pl" attr="num" id="2"/>
+  </macro>
+  <macro name="@pl-or-mass-2">
+    <fs val="pl-or-mass" attr="num" id="2"/>
+  </macro>
+  <macro name="@pl-P">
+    <lf>
+      <satop nomvar="P">
+        <diamond mode="num">
+          <prop name="pl"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@1st">
+    <fs val="1st" attr="pers" id="2"/>
+  </macro>
+  <macro name="@1st-agr">
+    <fs val="1st" attr="pers" id="1"/>
+    <fs val="1st" attr="pers" id="2"/>
+  </macro>
+  <macro name="@2nd">
+    <fs val="2nd" attr="pers" id="2"/>
+  </macro>
+  <macro name="@2nd-agr">
+    <fs val="2nd" attr="pers" id="1"/>
+    <fs val="2nd" attr="pers" id="2"/>
+  </macro>
+  <macro name="@non-3rd-agr">
+    <fs id="1">
+      <feat attr="pers">
+        <featvar name="PERS:non-3rd"/>
+      </feat>
+    </fs>
+    <fs id="2">
+      <feat attr="pers">
+        <featvar name="PERS:non-3rd"/>
+      </feat>
+    </fs>
+  </macro>
+  <macro name="@3rd">
+    <fs val="3rd" attr="pers" id="2"/>
+  </macro>
+  <macro name="@3rd-agr">
+    <fs val="3rd" attr="pers" id="1"/>
+    <fs val="3rd" attr="pers" id="2"/>
+  </macro>
+  <macro name="@nom">
+    <fs val="nom" attr="case" id="2"/>
+  </macro>
+  <macro name="@acc">
+    <fs val="acc" attr="case" id="2"/>
+  </macro>
+  <macro name="@pp-from">
+    <fs val="from" attr="lex" id="3"/>
+  </macro>
+  <macro name="@pp-to">
+    <fs val="to" attr="lex" id="3"/>
+  </macro>
+  <macro name="@prt-up">
+    <fs val="up" attr="lex" id="4"/>
+  </macro>
+  <macro name="@prt-with">
+    <fs val="with" attr="lex" id="4"/>
+  </macro>
+  <macro name="@ng">
+    <fs val="ng" attr="form" id="1"/>
+  </macro>
+  <macro name="@base">
+    <fs val="base" attr="form" id="1"/>
+  </macro>
+  <macro name="@base6">
+    <fs val="base" attr="form" id="6"/>
+  </macro>
+  <macro name="@dcl">
+    <fs id="1">
+      <feat val="dcl" attr="form"/>
+    </fs>
+  </macro>
+  <macro name="@adj">
+    <fs val="adj" attr="form" id="1"/>
+  </macro>
+  <macro name="@adj6">
+    <fs val="adj" attr="form" id="6"/>
+  </macro>
+  <macro name="@X-location">
+    <fs id="2">
+      <feat attr="index">
+        <lf>
+          <nomvar name="X:location"/>
+        </lf>
+      </feat>
+    </fs>
+  </macro>
+  <macro name="@X-person">
+    <fs id="2">
+      <feat attr="index">
+        <lf>
+          <nomvar name="X:person"/>
+        </lf>
+      </feat>
+    </fs>
+  </macro>
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+</dictionary>

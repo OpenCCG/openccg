@@ -1,0 +1,1477 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file contains the lexical families.
+
+Copyright (C) 2006 Michael White
+$Revision: 1.6 $, $Date: 2006/04/25 05:21:25 $ 
+-->
+<ccg-lexicon 
+  name="routes"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="../lexicon.xsd"
+>
+
+  <!-- The sort order for relations in the LFs. -->
+  <relation-sorting order="Actor Action Patient Road Direction * Dist Loc Path TempRel"/>
+  
+  
+  <!-- ==================== The "Noun" family ===================== -->
+  <!-- 
+       This family is taken from the 'tiny' grammar.
+  -->
+  <family name="Noun" pos="N">
+    <entry name="Primary">
+      <atomcat type="n">
+        <fs id="2">
+          <feat attr="num"> <featvar name="NUM"/> </feat>
+          <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+  </family>
+
+  
+  <!-- ==================== The "ProNP" family ===================== -->
+  <!-- 
+       Also from the 'tiny' grammar.
+  -->
+  <family name="ProNP" pos="Pro" closed="true">
+    <entry name="Primary">
+      <atomcat type="np">
+        <fs id="2">
+          <feat attr="num"> <featvar name="NUM"/> </feat>
+          <feat attr="pers"> <featvar name="PERS:pers-vals"/> </feat>
+          <feat attr="case"> <featvar name="CASE"/> </feat>
+          <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+  </family>
+
+  
+  <!-- ==================== The PossPro family ===================== -->
+  <!-- 
+       Possessive pronouns introduce a Gen(eralized)Owner modifier:
+       
+         np[X]/n[X] : @X(<GenOwner>(P ^ *DEFAULT*))
+  -->
+  <family name="PossPro" pos="PossPro" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="pers" val="3rd"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="GenOwner">
+              <nomvar name="P:sem-obj"/>
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================= The Adjective families ==================== -->
+  <!-- 
+       Adjectives have a prenominal (1) and predicative (2) form:  
+       
+         (1) n[X]/n[X] : @X(<HasProp>(P ^ *DEFAULT*))
+         (2) s[adj,P]\np[X] : @P(*DEFAULT* ^ <Of>X)
+       
+       With the former, the predicate is a modifier, whereas 
+       with the latter, the predicate is the semantic head.
+  -->
+  <family name="Adjective" pos="Adj">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="HasProp">
+              <nomvar name="P:property"/>
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  <family name="PredicativeAdjective" pos="Adj" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="form" val="adj"/>
+            <feat attr="index"> <lf> <nomvar name="P"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" ability="inert" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="P:property">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Of"> <nomvar name="X:sem-obj"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  
+  <!-- ====================== The Num family ======================= -->
+  <!-- 
+       Numbers get their own category, as well as an adjectival one, 
+       that adds a Card(inality) relation:
+       
+         n[X]/n[X] : @X(<Card>(N ^ *DEFAULT*))
+  -->
+  <family name="Num" pos="Num">
+    <entry name="Primary">
+      <atomcat type="num">
+        <fs id="2">
+          <feat attr="num"> <featvar name="NUM"/> </feat>
+          <feat attr="index"> <lf> <nomvar name="X"/> </lf>
+          </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:num">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <entry name="Adjectival">
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="Card">
+              <nomvar name="N:num"/>
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================== The Proper Name family =================== -->
+  <!-- 
+       Proper names are 3rd person.
+       The main entry is your basic NP.
+       There is also adjectival category that adds a Name relation:
+       
+         n[X]/n[X] : @X(<Name>(N ^ *DEFAULT*))
+  -->
+  <family name="Name" pos="NNP">
+	  <entry name="Primary">
+      <atomcat type="np">
+        <fs id="2">
+          <feat attr="pers" val="3rd"/>
+          <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <entry name="Adjectival">
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="Name">
+              <nomvar name="N:sem-obj"/>
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+	<!-- ===================== The "Det" family ====================== -->
+  <!-- 
+       Also from the 'tiny' grammar.
+  -->
+  <family name="Det" pos="Det" closed="true" indexRel="det">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="pers" val="3rd"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="det"> <prop name="[*DEFAULT*]"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+	<!-- ========================== One-Det ========================== -->
+  <!-- 
+       "One" as a determiner.
+  -->
+  <family name="One-Det" pos="Num" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="pers" val="3rd"/>
+            <feat attr="index"> <lf> <nomvar name="W"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="W"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="W:sem-obj">
+            <diamond mode="det">
+              <prop name="nil"/>
+            </diamond>
+            <diamond mode="Card">
+              <nomvar name="X:num"/>
+            </diamond>
+          </satop>
+          <satop nomvar="X:num">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="one"/>
+    <member stem="1"/>
+  </family>
+  
+  
+  <!-- ================== The "Prep-Nom" family ==================== -->
+  <!-- 
+       Also from the 'tiny' grammar.
+  -->
+  <family name="PrepNom" pos="Prep" closed="true" indexRel="*NoSem*">
+    <entry name="Nominal">
+      <complexcat>
+        <atomcat type="pp">
+          <fs inheritsFrom="3">
+            <feat attr="lex" val="[*DEFAULT*]"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </entry>
+  </family>
+  
+  
+  <!-- ======================== Particles ========================== -->
+  <!-- 
+       Eg 'off'.
+  -->
+  <family name="Particle" pos="Prep" closed="true" indexRel="*NoSem*">
+    <entry name="Primary">
+      <atomcat type="prt">
+        <fs>
+          <feat attr="lex" val="[*DEFAULT*]"/>
+        </fs>
+      </atomcat>
+    </entry>
+  </family>
+  
+  
+  <!-- ================== The "Path PP" family ===================== -->
+  <!-- 
+       Path prepositions, such as 'onto', 'towards', 'to', etc., 
+       can specify a Path argument as a clausal modifier:
+    
+         s[E]\s[E]/np[Y] : @E(<Path>(P ^ *DEFAULT* ^ <Ref>Y))
+         
+       The "Fronted Path PP" family, below, similarly provides 
+       a fronted modifier with comma, for eg 'from MIT ,':
+    
+         s[E]/s[E]/punct[,]/np[Y] : @E(<Path>(P ^ *DEFAULT* ^ <Ref>Y))
+         
+  -->
+  <family name="PathPP" pos="Prep" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="Path">
+              <nomvar name="P:path"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Ref">
+                <nomvar name="Y:location"/>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  <family name="Fronted-PathPP" pos="Prep" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <atomcat type="punct">
+          <fs> <feat attr="lex" val=","/> </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="Path">
+              <nomvar name="P:path"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Ref">
+                <nomvar name="Y:location"/>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  
+  <!-- ====================== Locative PPs ========================= -->
+  <!-- 
+       Locative prepositions, such as 'at', 'in', etc., 
+       can specify a Loc argument as a clausal modifier, 
+       which may be fronted with a comma:
+    
+         s[E]\s[E]/np[Y] : @E(<Loc>(P ^ *DEFAULT* ^ <Ref>Y))
+         s[E]/s[E]/punct[,]/np[Y] : @E(<Loc>(P ^ *DEFAULT* ^ <Ref>Y))
+         
+       Alternatively, they can head a predicative adjective category:
+       
+         s[adj,P]\np[X]/np[Y] : @P(*DEFAULT* ^ <Arg>X ^ <Ref>Y)
+  -->
+  <family name="LocPP" pos="Prep" closed="true">
+    <entry name="SMod">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="Loc">
+              <nomvar name="P:location"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Ref"> <nomvar name="Y:location"/> </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="Fronted">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <atomcat type="punct">
+          <fs> <feat attr="lex" val=","/> </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="Loc">
+              <nomvar name="P:location"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Ref">
+                <nomvar name="Y:location"/>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="PredAdj">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="form" val="adj"/>
+            <feat attr="index"> <lf> <nomvar name="P"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" ability="inert" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="P:location">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Arg"> <nomvar name="X:sem-obj"/> </diamond>
+            <diamond mode="Ref"> <nomvar name="Y:location"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  
+  <!-- ================== The "For-Dist" family ==================== -->
+  <!-- 
+       This family specifies distance 'for'-adverbials, such 
+       as "for one mile".
+    
+         s[E]\s[E]/np[D] : @E(<Dist>D:dist)
+         
+  -->
+  <family name="For-Dist" pos="Prep" closed="true" indexRel="Dist">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="index"> <lf> <nomvar name="D"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <diamond mode="Dist"> <nomvar name="D:dist"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================== Temporal Adverbials ====================== -->
+  <!-- 
+       Temporal adverbials take a finite clause as an argument that 
+       fills the Situation argument, and supply a clausal or fronted 
+       modifier, eg 'until you reach Cambridge Street':
+       
+         s[E]\s[E]/s[dcl,E2] : @E(<TempRel>(P ^ *DEFAULT* ^ <Situation>E2))
+         s[E]/s[E]/punct[,]/s[dcl,E2] : @E(<TempRel>(P ^ *DEFAULT* ^ <Situation>E2))
+         
+  -->
+  <family name="TempAdv" pos="Adv" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="^"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="s">
+          <fs>
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E2"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <diamond mode="TempRel">
+              <nomvar name="P:path"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Situation">
+                <nomvar name="E2:situation"/>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="Fronted">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <atomcat type="punct">
+          <fs> <feat attr="lex" val=","/> </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="s">
+          <fs>
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E2"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <diamond mode="TempRel">
+              <nomvar name="P:path"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Situation">
+                <nomvar name="E2:situation"/>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ============= Locative Temporal Adverbials ================== -->
+  <!-- 
+       For temporal adverbials that just take an NP specifying a 
+       location, eg 'until Cambridge Street':
+       
+         s[E]\s[E]/np[Y] : @E(<TempRel>(P ^ *DEFAULT* ^ <Ref>Y))
+         
+  -->
+  <family name="Loc-TempAdv" pos="Adv" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <diamond mode="TempRel">
+              <nomvar name="P:path"/>
+              <prop name="[*DEFAULT*]"/>
+              <diamond mode="Ref">
+                <nomvar name="Y:location"/>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ========================= Adverbs =========================== -->
+  <!-- 
+       Adverbs are just medial for the moment:
+       
+         s[E]\np[X]/(s[E]\np[X]) : @E:situation(<HasProp>(P:property ^ *DEFAULT*))
+         
+  -->
+  <family name="Adverb" pos="Adv" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <complexcat>
+          <atomcat type="s"> <fs id="1"/> </atomcat>
+          <slash dir="\" mode="&lt;"/>
+          <atomcat type="np"> <fs id="2"/> </atomcat>
+        </complexcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="HasProp">
+              <nomvar name="P:property"/>
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  
+  <!-- =============== The Intransitive Verb family ================ -->
+  <!-- 
+       This family defines the category s\np. The result category (s)
+       has a feature structure with id=1 (this is referenced in the
+       macros in the morph.xml file), and has an index (E for event
+       variable).  By default, its form is declarative (dcl).
+       
+       The subject NP has a feature structure with id=2, and has number,
+       person, and case attributes, where case is required to be
+       nominative. Its index is X, which is used to unify the nominal of
+       the subject into the Actor slot in the logical form, ie
+       @E:situation(<Actor>X:animate-being). Note that the types of the
+       nominals are specified in the LF.
+  -->
+  <family name="IntransitiveVerbs" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="num"> <featvar name="NUM"/> </feat>
+            <feat attr="pers"> <featvar name="PERS:pers-vals"/> </feat>
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================ The Transitive Verb family ================= -->
+  <!-- 
+       Transitives are intransitives plus an accusative NP 
+       that supplies the Patient role.
+  -->
+  <family name="TransitiveVerbs" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Patient"> <nomvar name="Y:sem-obj"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ======================= The Copula ========================== -->
+  <!-- 
+       The copula can take a predicative adjective or NP as its 
+       complement:
+       
+         (1) s[E]\np[X]/(s[adj,P]\np[X]) : @E:state(be ^ <Arg>X ^ <Prop>P:property)
+         (2) s[E]\np[X]/np[Y] : @E:state(be ^ <Arg>X ^ <Pred>Y)
+         
+       In the latter case, the NP complement is taken to supply a predication 
+       in some vague way, eg as identity ('This is Broadway') or 
+       as an is-a relation ('This is a short tunnel').
+  -->
+  <family closed="true" pos="V" name="Copula">
+    <entry name="Pred">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs>
+              <feat attr="form" val="adj"/>
+              <feat attr="index"> <lf> <nomvar name="P"/> </lf> </feat>
+            </fs>
+          </atomcat>
+          <slash dir="\" ability="inert" mode="&lt;"/>
+          <atomcat type="np">
+            <fs id="2">
+              <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+            </fs>
+          </atomcat>
+        </complexcat>
+        <lf>
+          <satop nomvar="E:state">
+            <prop name="be"/>
+            <diamond mode="Arg">
+              <nomvar name="X:sem-obj"/>
+            </diamond>
+            <diamond mode="Prop">
+              <nomvar name="P:property"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="NP">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:state">
+            <prop name="be"/>
+            <diamond mode="Arg">
+              <nomvar name="X:sem-obj"/>
+            </diamond>
+            <diamond mode="Pred">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  
+  
+  <!-- ================ The Modal Auxiliary family ================= -->
+  <!-- 
+       Modals like "will" are VP premodifiers:
+       
+         s[E]\np[X]/(s[base,E2]\np[X]) : @E(*DEFAULT* ^ <Body>E2)
+  -->
+  <family name="Modal" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs>
+              <feat attr="form" val="base"/>
+              <feat attr="index"> <lf> <nomvar name="E2"/> </lf> </feat>
+            </fs>
+          </atomcat>
+          <slash dir="\" mode="&lt;"/>
+          <atomcat type="np"> <fs id="2"/> </atomcat>
+        </complexcat>
+        <lf>
+          <satop nomvar="E:state">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Body"> <nomvar name="E2:situation"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- =============== The "Taking Action" family ================= -->
+  <!-- 
+       This family is for eg 'take a right turn'.
+       It takes an action as an NP complement:
+       
+         s[E]\np[X]/np[Y] : @E(take ^ <Actor>X ^ <Action>Y)
+  -->
+  <family name="TakeAction" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Action"> <nomvar name="Y:action"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================ The "Taking Road" family ================== -->
+  <!-- 
+       This family is for eg 'take Broadway'.
+       It takes a road as an NP complement:
+       
+         s[E]\np[X]/np[Y] : @E(take ^ <Actor>X ^ <Road>Y)
+  -->
+  <family name="TakeRoad" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Road"> <nomvar name="Y:road"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================ The "Getting off" family ================== -->
+  <!-- 
+       This family is for eg 'getting off Broadway'.
+       Its headed by 'get' and takes a road as an optional NP complement, 
+       plus the 'off' particle:
+       
+         s[E]\np[X]/prt[off] : @E(get-off ^ <Actor>X)
+         s[E]\np[X]/np[Y]/prt[off] : @E(get-off ^ <Actor>X ^ <Road>Y)
+  -->
+  <family name="GetOff" pos="V" closed="true">
+    <entry name="Intrans">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="prt">
+          <fs attr="lex" val="off"/>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="NP-Road">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="prt">
+          <fs attr="lex" val="off"/>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Road"> <nomvar name="Y:road"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================ The "Getting on" family =================== -->
+  <!-- 
+       This family is for eg 'getting on Broadway'.
+       Its headed by 'get' and takes a road as an NP complement, 
+       plus either 'on' or 'onto' as a particle:
+       
+         s[E]\np[X]/np[Y]/prt[on] : @E(get-on ^ <Actor>X ^ <Road>Y)
+         s[E]\np[X]/np[Y]/prt[onto] : @E(get-on ^ <Actor>X ^ <Road>Y)
+  -->
+  <family name="GetOn" pos="V" closed="true">
+    <entry name="Prt-On">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="prt">
+          <fs attr="lex" val="on"/>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Road"> <nomvar name="Y:road"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="Prt-Onto">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="prt">
+          <fs attr="lex" val="onto"/>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Road"> <nomvar name="Y:road"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================ The "Getting to" family =================== -->
+  <!-- 
+       This family is for eg 'getting to Central Square'.
+       Its headed by 'get' and takes a location as an NP complement, 
+       plus either 'to' as a particle:
+       
+         s[E]\np[X]/np[Y]/prt[to] : @E(get-to ^ <Actor>X ^ <Loc>Y)
+  -->
+  <family name="GetTo" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="prt">
+          <fs attr="lex" val="to"/>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Loc"> <nomvar name="Y:location"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================= The "Reaching" family ==================== -->
+  <!-- 
+       This family is for eg 'reaching Central Square'.
+       Like 'getting to', it takes a location as an NP complement:
+       
+         s[E]\np[X]/np[Y] : @E(*DEFAULT* ^ <Actor>X ^ <Loc>Y)
+  -->
+  <family name="Reach" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Loc"> <nomvar name="Y:location"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================ The "Go Direction" family ================= -->
+  <!-- 
+       This family is for eg 'turn right' or 'go west'.
+       It takes a direction as a bare N complement:
+       
+         s[E]\np[X]/n[Y] : @E(*DEFAULT* ^ <Actor>X ^ <Direction>Y)
+  -->
+  <family name="GoDirection" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="3">
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Direction"> <nomvar name="Y:direction"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ================== The Perceiving family =================== -->
+  <!-- 
+       E.g. "see", with Perceiver and Phenomenon roles.
+  -->
+  <family name="Perceiving" pos="V" closed="true">
+    <entry name="Primary">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="case" val="nom"/>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="case" val="acc"/>
+            <feat attr="index"> <lf> <nomvar name="Y"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Perceiver"> <nomvar name="X:animate-being"/> </diamond>
+            <diamond mode="Phenomenon"> <nomvar name="Y:sem-obj"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- =================== The FullStop family ===================== -->
+  <!-- 
+       This family defines the categories for a sentence-final period, 
+       which add declarative or imperative mood and promote an 's' to 
+       a full sentence cat 'sent':
+       
+          1. sent[E]\s[dcl,E] : @E(<mood>dcl) 
+          2. sent[E]\s[imp,E] : @E(<mood>imp)
+          
+       Note that the imperative category works in concert with the 
+       imperative unary rule, which fills in the NP subject with pro2, 
+       for 2nd person.
+  -->
+  <family name="FullStop" closed="true" pos="." indexRel="mood">
+    <entry name="Declarative">
+      <complexcat>
+        <atomcat type="sent">
+          <fs>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="*"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="dcl"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="mood"> <prop name="dcl"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="Imperative">
+      <complexcat>
+        <atomcat type="sent">
+          <fs>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="*"/>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="imp"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:situation">
+            <diamond mode="mood"> <prop name="imp"/> </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+
+  
+  <!-- ==================== The Comma family ======================= -->
+  <!-- 
+       This family defines the categories for a comma.
+       The purely syntactic category is simply punct[,].
+  -->
+  <family name="Comma" pos="," closed="true">
+    <entry name="Primary" indexRel="*NoSem*">
+      <atomcat type="punct">
+        <fs> <feat attr="lex" val=","/> </fs>
+      </atomcat>
+    </entry>
+  </family>
+  
+</ccg-lexicon>

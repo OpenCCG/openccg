@@ -1,0 +1,17 @@
+Loading grammar from URL: file:/home/bozsahin/openccg/grammars/mini-dyirbal/grammar.xml
+
+Parse	Realize	String
+-----	-------	------
+ok	-	bayi yara walngarra nabaygu
+ok	-	bayi yara walngarra bural naygu bagun yibi gu
+ok	-	bayi yara walngarra bangun yibi ngu burali
+ok	-	yabu numa ngu gigan banagaygu
+ok	-	naja bayi yara gigan gubi ngu mawali
+ok	-	*naja bayi yara gigan bayi gubi mawali
+ok	-	bayi yara miyanda nu yanu
+ok	-	balan yibi bangul yara ngu miyanda nu ru buran
+ok	-	bayi yara jilwal na nu bagun guda gu yanu
+ok	-	bayi burrbula bangul gubi ngu baran , bajigu
+FAILED	-	*bangul gubi ngu bayi burrbula baran , bajigu
+ok	-	bayi yara yanu , bangun yibi ngu buran
+ok	-	nyurra nanana buran , banaganyu

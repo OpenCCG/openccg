@@ -1,0 +1,262 @@
+<?xml version="1.0"?>
+
+<dictionary name="Turkish">
+ 
+<!-- Conj  -->
+  <entry stem="ve" pred="and" pos="Conj">
+    <member-of family="Conj"/>
+    <word form="ve" />
+  </entry>
+  <entry stem="ama" pred="but" pos="Conj">
+    <member-of family="Conj"/>
+    <word form="ama" />
+  </entry>
+
+  <entry stem="da" pred="and" pos="Conj">
+    <member-of family="ConjPart"/>
+    <word form="de"/>
+    <word form="da"/>
+  </entry>
+
+<!-- Noun -->
+  <entry stem="adam" pred="man" pos="N">
+    <member-of family="Noun"/>
+    <word form="adam" macros="@sg @3rd"/>
+  </entry>
+  <entry stem="kadin" pred="woman" pos="N">
+    <member-of family="Noun"/>
+    <word form="kadin" macros="@sg @3rd"/>
+  </entry>
+  <entry stem="cocuk" pred="child" pos="N">
+    <member-of family="Noun"/>
+    <word form="cocuk" macros="@sg @3rd"/>
+    <word form="cocug" macros="@sg @3rd"/>
+  </entry>
+  <entry stem="kitap" pred="book" pos="N">
+    <member-of family="Noun"/>
+    <word form="kitap" macros="@sg @3rd"/>
+    <word form="kitab" macros="@sg @3rd"/>
+  </entry>
+  <entry stem="dergi" pred="magazine" pos="N">
+    <member-of family="Noun"/>
+    <word form="dergi" macros="@sg @3rd"/>
+  </entry>
+  <entry stem="kiz" pred="girl" pos="N">
+    <member-of family="Noun"/>
+    <word form="kiz" macros="@sg @3rd"/>
+  </entry>
+  
+
+<!-- Intransitive -->
+  <entry stem="dus" pred="fell-down" pos="V">
+    <member-of family="IV"/>
+    <word form="dustu" macros="@past"/>
+    <word form="dus" macros="@past @non-fin"/>
+  </entry>
+  <entry stem="uyu" pred="sleep" pos="V">
+    <member-of family="IV"/>
+    <word form="uyudu" macros="@past"/>
+    <word form="uyu" macros="@past @non-fin"/>
+  </entry>
+
+<!-- Transitive -->
+  <entry stem="gor" pred="see" pos="V">
+    <member-of family="TV"/>
+    <word form="gor" macros="@acc2 @non-fin"/>
+    <word form="gordu" macros="@acc2 @past"/>
+  </entry>
+  <entry stem="bak" pred="look" pos="V">
+    <member-of family="TV"/>
+    <word form="bakti" macros="@dat2 @past"/>
+    <word form="bak" macros="@dat2 @non-fin"/>
+  </entry>
+  <entry stem="al" pred="buy" pos="V">
+    <member-of family="TV"/>
+    <word form="al" macros="@acc2 @non-fin"/>
+    <word form="almisti" macros="@acc2 @past"/>
+  </entry>
+  <entry stem="oku" pred="read" pos="V">
+    <member-of family="TV"/>
+    <word form="okudu" macros="@acc2 @past"/>
+    <word form="oku" macros="@acc2 @non-fin"/>
+  </entry>
+  <entry stem="carp" pred="run-into" pos="V">
+    <member-of family="TV"/>
+    <word form="carpti" macros="@dat2 @past"/>
+    <word form="carp" macros="@dat2 @non-fin"/>
+  </entry>
+
+
+<!-- Transitive + control-->
+  <entry stem="iste" pred="want" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="istedi" macros="@acc3 @past"/>
+    <word form="iste" macros="@acc3 @non-fin"/>
+  </entry>
+  <entry stem="calis" pred="try" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="calisti" macros="@dat3 @past"/>
+    <word form="calis" macros="@dat3 @non-fin"/>
+  </entry>
+  <entry stem="sozver" pred="promise" pos="V">
+    <member-of family="IV"/>
+    <member-of family="IV-control1"/>
+    <member-of family="TV-control1"/>
+    <word form="sozverdi" macros="@dat3 @past"/>
+    <word form="sozver" macros="@dat3 @non-fin"/>
+  </entry>
+  <entry stem="zorla" pred="force" pos="V">
+    <member-of family="TV"/>
+    <member-of family="TV-control2"/>
+    <word form="zorladi" macros="@dat3 @past"/>
+    <word form="zorla" macros="@dat3 @non-fin"/>
+  </entry>
+
+<!-- Ditransitive -->
+
+  <entry stem="ver" pred="give" pos="V">
+    <member-of family="DV"/>
+    <word form="verdi" macros="@past"/>
+    <word form="ver" macros="@non-fin"/>
+  </entry>
+
+
+<!-- Affix -->
+  <entry stem="mek" pos="Affix">
+    <member-of family="To-Infinitive"/>
+    <word form="me" />
+    <word form="ma" />
+    <word form="mek"/>
+    <word form="mak"/>
+  </entry>
+  <entry stem="yi" pos="Affix">
+    <member-of family="case"/>
+    <member-of family="inf-case"/>
+    <word form="yu" macros="@acc0 @def0"/>
+    <word form="yi" macros="@acc0 @def0"/>
+    <word form="i" macros="@acc0 @def0"/>
+    <word form="u" macros="@acc0 @def0"/>
+  </entry>
+  <entry stem="in" pos="Affix">
+    <member-of family="agr-case"/>
+    <word form="in" />
+    <word form="un" />
+    <word form="n" />
+  </entry>
+  <entry stem="ya" pred="to" pos="Affix">
+    <member-of family="case"/>
+    <member-of family="inf-case"/>
+    <word form="ya" macros="@dat0 @def0"/>
+    <word form="ye" macros="@dat0 @def0"/>
+    <word form="a" macros="@dat0 @def0"/>
+    <word form="e" macros="@dat0 @def0"/>
+  </entry>
+  <entry stem="yan" pred="that" pos="Affix">
+    <member-of family="rel"/>
+    <word form="yan" macros="@nom2"/>
+    <word form="yen" macros="@nom2"/>
+    <word form="en" macros="@nom2"/>
+    <word form="an" macros="@nom2"/> 
+  </entry>
+  <entry stem="dik" pred="whom" pos="Affix">
+    <member-of family="rel"/>
+    <word form="digi" macros="@agr1"/> <!--embedded IV must be IVagr,cf an-->
+    <word form="dugu" macros="@agr1"/>
+    <word form="tigi" macros="@agr1"/>
+    <word form="tugu" macros="@agr1"/>
+  </entry>
+
+
+<macro name="@agr1">
+  <fs id="1" attr="agr" val="true"/>
+</macro>
+<macro name="@gen1">
+  <fs id="1" attr="case" val="gen"/>
+</macro>
+<macro name="@gen2">
+  <fs id="2" attr="case" val="gen"/>
+</macro>
+<macro name="@acc0">
+  <fs id="0" attr="case" val="p-case"/>
+</macro>
+<macro name="@acc1">
+  <fs id="1" attr="case" val="p-case"/>
+</macro>
+<macro name="@acc2">
+  <fs id="2" attr="case" val="p-case"/>
+</macro>
+<macro name="@acc3">
+  <fs id="3" attr="case" val="p-case"/>
+</macro>
+<macro name="@def0">
+  <fs id="0" attr="def" val="true"/>
+</macro>
+<macro name="@nom0">
+  <fs id="0" attr="case" val="subject-case"/>
+</macro>
+<macro name="@nom1">
+  <fs id="1" attr="case" val="subject-case"/>
+</macro>
+<macro name="@nom2">
+  <fs id="2" attr="case" val="subject-case"/>
+</macro>
+<macro name="@dat0">
+  <fs id="0" attr="case" val="dat"/>
+</macro>
+<macro name="@dat2">
+  <fs id="2" attr="case" val="dat"/>
+</macro>
+<macro name="@dat3">
+  <fs id="3" attr="case" val="dat"/>
+</macro>
+<macro name="@sg">
+  <fs id="0" attr="num" val="sing"/>
+</macro>
+<macro name="@sg1">
+  <fs id="1" attr="num" val="sing"/>
+</macro>
+<macro name="@sg2">
+  <fs id="2" attr="num" val="sing"/>
+</macro>
+<macro name="@sg3">
+  <fs id="3" attr="num" val="sing"/>
+</macro>
+<macro name="@3rd">
+  <fs id="0" attr="person" val="3"/>
+</macro>
+<macro name="@3rd1">
+  <fs id="1" attr="person" val="3"/>
+</macro>
+<macro name="@3rd2">
+  <fs id="2" attr="person" val="3"/>
+</macro>
+<macro name="@3rd3">
+  <fs id="3" attr="person" val="3"/>
+</macro>
+<macro name="@1st">
+  <fs id="0" attr="person" val="1"/>
+</macro>
+<macro name="@1st1">
+  <fs id="1" attr="person" val="1"/>
+</macro>
+<macro name="@1st2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@2nd">
+  <fs id="0" attr="person" val="1"/>
+</macro>
+<macro name="@2nd1">
+  <fs id="1" attr="person" val="2"/>
+</macro>
+<macro name="@2nd2">		    
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@non-fin">
+  <fs id="0" attr="vform" val="non-fin"/> 
+  </macro>
+<macro name="@past">
+  <fs id="0" attr="vform" val="finite"/> 
+</macro>
+</dictionary>

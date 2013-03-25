@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!-- Basque's parameter specifications - June 2004 Cem Bozsahin -->
+
+<language name="Dyirbal" type="erg" 
+	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:noNamespaceSchemaLocation="../parameters.xsd"> 
+	
+  <parameters>
+
+   <!-- NB1: predicate, setarg, arg, x-argument are pre-CCG categories.
+             This notation is mapped to CCG notation by lexical rules.
+             setarg and arg are serialized as in CCG.
+  
+        NB2: TV skeleton should NOT carry case information; it is set up 
+             from language type and single argument of the IV
+
+        NB3: IV's only argument MUST have its case specified 
+        
+    -->
+		
+    <infinitive subject-type="syntactic"/>
+       
+    <iv>
+      <predicate syn-type="s"/>
+      <arg>
+        <s-argument dir="\" syn-type="np" case="abs"/>
+      </arg>
+    </iv>
+
+   <!-- For example, Basque's
+        tv category simply says the order is V-A-P and V-P-A because
+        the specs give Pred{\A-Arg, \P-Arg}.
+        Pred, A-Arg, P-Arg are syntactically: s, np, np. 
+     -->
+		
+    <tv>
+      <predicate syn-type="s"/>
+      <setarg>
+        <p-argument dir="\" syn-type="np"/>
+        <a-argument dir="\" syn-type="np"/>
+      </setarg>
+    </tv>
+	
+  </parameters>
+
+</language>

@@ -1,0 +1,9 @@
+Loading grammar from URL: file:/home/bozsahin/openccg/grammars/mini-english/grammar.xml
+
+Parse	Realize	String
+-----	-------	------
+ok	-	John promised him to exercise
+ok	-	John persuaded him to read the book
+ok	-	*John promised him Sue see
+ok	-	John gave Mary and read a book
+ok	-	the doctor punched the patient and fell-down

@@ -1,0 +1,68 @@
+# A minimal grammar which shows inheritance.
+# Jason Baldridge, September 2007
+
+################## Features #################
+
+feature {
+  case: nom acc;
+}
+
+################## Words #################
+
+word John:NP (pred=john);
+word Fido:NP (pred=fido);
+word food:NP (pred=food);
+word to:PP;
+word sleeps:IntransV (pred=sleep);
+word saw:TransV (pred=see);
+word gave:DitransV (pred=give);
+
+################## Categories #################
+
+family NP {
+  entry: np[X]:X(*);  
+}
+
+family PP {
+  entry: pp[X]/np[X]:X(<Prep>*);  
+}
+
+def iv_cat (PostSyn, MoreSem) {
+  s[E] \ np[X nom] PostSyn: E(* <Actor>X MoreSem)
+}
+
+def tv_cat (PreSyn, PostSyn, MoreSem) {
+  iv_cat(PreSyn / np[Y acc] PostSyn, <Patient>Y MoreSem)
+}
+
+family IntransV(V) {
+  entry: iv_cat(,);
+}
+
+family TransV(V) {
+  entry: tv_cat(,,);
+}
+
+family DitransV(V) {
+  entry: tv_cat(            , / np[Z acc] , <Addressee>Z);
+  entry: tv_cat(/ pp[Z acc] ,             , <Addressee>Z);
+}
+
+
+################## Test sentences #################
+
+testbed {
+  John sleeps: 1;
+  John saw Fido: 1;
+  John gave Fido food: 1;
+  John gave food to Fido: 1;
+}
+
+
+
+
+
+
+
+
+

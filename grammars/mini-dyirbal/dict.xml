@@ -1,0 +1,251 @@
+<?xml version="1.0"?>
+
+<dictionary name="Dyirbal">
+ 
+  <entry stem="," pred="and" pos="Conj">
+    <member-of family="Conj"/>
+    <word form=","/>
+  </entry>
+  <entry stem="naba" pred="bathe" pos="V">
+    <member-of family="IV"/>
+    <word form="nabaygu"/>
+  </entry>
+  <entry stem="miyanda" pred="laugh" pos="V">
+    <member-of family="IV"/>
+    <word form="miyanda"/>
+  </entry>
+  <entry stem="ya" pred="go" pos="V">
+    <member-of family="IV"/>
+    <word form="yanu" macros="@nfut"/>
+  </entry>
+  <entry stem="baji" pred="fall-down" pos="V">
+    <member-of family="IV"/>
+    <word form="bajigu" macros="@purp"/>
+  </entry>
+  <entry stem="banaga" pred="return" pos="V">
+    <member-of family="IV"/>
+    <word form="banaganyu" macros="@nfut"/>
+    <word form="banagaygu" macros="@purp"/>
+  </entry>
+  <entry stem="bural" pred="see" pos="V">
+    <member-of family="TV"/>
+    <word form="bural" macros="@purp"/>
+    <word form="buran" macros="@nfut"/>
+    <word form="burali" macros="@purp"/>
+  </entry>
+  <entry stem="jilwal" pred="kick" pos="V">
+    <member-of family="TV"/>
+    <word form="jilwal"/>
+  </entry>
+  <entry stem="bara" pred="punch" pos="V">
+    <member-of family="TV"/>
+    <word form="baran" macros="@purp"/>
+  </entry>
+  <entry stem="mawa" pred="examine" pos="V">
+    <member-of family="TV"/>
+    <word form="mawali" macros="@purp"/>
+  </entry>
+  <entry stem="walngarra" pred="want" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="walngarra"/>
+  </entry>
+  <entry stem="giga" pred="tell" pos="V">
+    <member-of family="TV"/>
+    <member-of family="TV-control2"/>
+    <word form="gigan" macros="@nfut" />
+  </entry>
+  <entry stem="yara" pred="man" pos="NP">
+    <member-of family="Noun"/>
+    <word form="yara" macros="@abs @n1" />
+  </entry>
+  <entry stem="burrbula" pos="NP">
+    <member-of family="Noun"/>
+    <word form="burrbula" macros="@abs @n1" />
+  </entry>
+  <entry stem="numa" pred="father" pos="NP">
+    <member-of family="Noun"/>
+    <word form="numa" macros="@abs @n1" />
+  </entry>
+  <entry stem="gubi" pred="doctor" pos="NP">
+    <member-of family="Noun"/>
+    <word form="gubi" macros="@abs @n1" />
+  </entry>
+  <entry stem="yibi" pred="woman" pos="NP">
+    <member-of family="Noun"/>
+    <word form="yibi" macros="@abs @n2" />
+  </entry>
+  <entry stem="yabu" pred="mother" pos="NP">
+    <member-of family="Noun"/>
+    <word form="yabu" macros="@abs @n2" />
+  </entry>
+  <entry stem="guda" pred="dog" pos="NP">
+    <member-of family="Noun"/>
+    <word form="guda" macros="@abs @n2" />
+  </entry>
+  <entry stem="naja" pred="i" pos="NNP">
+    <member-of family="pronoun"/>
+    <word form="naja" macros="@erg"/>
+  </entry>
+  <entry stem="nyurra" pred="you" pos="NNP">
+    <member-of family="pronoun"/>
+    <word form="nyurra" macros="@erg"/>
+  </entry>
+  <entry stem="nanana" pred="we" pos="NNP">
+    <member-of family="pronoun"/>
+    <word form="nanana" macros="@abs"/>
+  </entry>
+  <entry stem="ba" pred="class" pos="NP">
+    <member-of family="N-class"/>
+    <word form="bayi" macros="@abs @n1" />
+    <word form="bangul" macros="@erg @n1" />
+    <word form="bagul" macros="@dat @n1" />
+    <word form="banul" macros="@gen @n1" />
+    <word form="balan" macros="@abs @n2" />
+    <word form="bangun" macros="@erg @n2" />
+    <word form="bagun" macros="@dat @n2" />
+    <word form="banun" macros="@gen @n2" />
+    <word form="balam" macros="@abs @n3" />
+    <word form="bagun" macros="@erg @n3" />
+    <word form="bagum" macros="@dat @n3" />
+    <word form="bala" macros="@abs @n4" />
+    <word form="baygu" macros="@erg @n4" />
+    <word form="bagu" macros="@dat @n4" />
+    <word form="banu" macros="@gen @n4" />
+  </entry>
+  <entry stem="ngu" pos="Affix">
+    <member-of family="case"/>
+    <word form="ngu" macros="@erg" />
+  </entry>
+  <entry stem="gu" pos="Affix">
+    <member-of family="adjunct-case"/>
+    <word form="gu" macros="@dat2" />
+  </entry>
+  <entry stem="nu" pos="Affix">
+    <member-of family="rel"/>
+    <word form="nu" />
+  </entry>
+  <entry stem="ru" pos="Affix">
+    <member-of family="rel-case"/>
+    <word form="ru" />
+  </entry>
+  <entry stem="na" pred="anti-p" pos="Affix">
+    <member-of family="voice"/>
+    <word form="na" />
+    <word form="naygu" />
+  </entry>
+
+<macro name="@purp">
+  <fs id="0" attr="v-form" val="purposive"/>
+</macro>
+<macro name="@nfut">
+  <fs id="0" attr="v-form" val="purposive"/>
+</macro>
+<macro name="@n1">
+  <fs id="0" attr="class" val="1"/>
+  <lf>
+     <satop nomvar="X">
+       <diamond mode="Class">
+         <prop name="1"/>
+       </diamond>
+      </satop>
+   </lf>
+</macro>
+<macro name="@n2">
+  <fs id="0" attr="class" val="2"/>
+  <lf>
+     <satop nomvar="X">
+       <diamond mode="Class">
+         <prop name="2"/>
+       </diamond>
+      </satop>
+   </lf>
+</macro>
+<macro name="@n3">
+  <fs id="0" attr="class" val="3"/>
+  <lf>
+     <satop nomvar="X">
+       <diamond mode="Class">
+         <prop name="3"/>
+       </diamond>
+      </satop>
+   </lf>
+</macro>
+<macro name="@n4">
+  <fs id="0" attr="class" val="4"/>
+   <lf>
+     <satop nomvar="X">
+       <diamond mode="Class">
+         <prop name="3"/>
+       </diamond>
+      </satop>
+   </lf>
+</macro>
+<macro name="@gen">
+  <fs id="0" attr="case" val="gen"/>
+</macro>
+<macro name="@abs">
+  <fs id="0" attr="case" val="subject-case"/>
+</macro>
+<macro name="@abs1">
+  <fs id="1" attr="case" val="subject-case"/>
+</macro>
+<macro name="@abs2">
+  <fs id="2" attr="case" val="subject-case"/>
+</macro>
+<macro name="@erg">
+  <fs id="0" attr="case" val="a-case"/>
+</macro>
+<macro name="@erg1">
+  <fs id="1" attr="case" val="a-case"/>
+</macro>
+<macro name="@erg2">
+  <fs id="2" attr="case" val="a-case"/>
+</macro>
+<macro name="@dat">
+  <fs id="0" attr="case" val="dat"/>
+</macro>
+<macro name="@dat2">
+  <fs id="2" attr="case" val="dat"/>
+</macro>
+<macro name="@sg">
+  <fs id="0" attr="num" val="sing"/>
+</macro>
+<macro name="@sg1">
+  <fs id="1" attr="num" val="sing"/>
+</macro>
+<macro name="@sg2">
+  <fs id="2" attr="num" val="sing"/>
+</macro>
+<macro name="@3rd">
+  <fs id="0" attr="person" val="3"/>
+</macro>
+<macro name="@3rd1">
+  <fs id="1" attr="person" val="3"/>
+</macro>
+<macro name="@3rd2">
+  <fs id="2" attr="person" val="3"/>
+</macro>
+<macro name="@1st">
+  <fs id="0" attr="person" val="1"/>
+</macro>
+<macro name="@1st1">
+  <fs id="1" attr="person" val="1"/>
+</macro>
+<macro name="@1st2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@2nd">
+  <fs id="0" attr="person" val="1"/>
+</macro>
+<macro name="@2nd1">
+  <fs id="1" attr="person" val="1"/>
+</macro>
+<macro name="@2nd2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@non-fin">
+  <fs id="0" attr="vform" val="non-fin"/> 
+</macro>
+
+</dictionary>

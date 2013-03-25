@@ -1,0 +1,74 @@
+<!-- $Id: build.xml,v 1.2 2007/03/26 18:31:14 mwhite14850 Exp $ -->
+<!-- Copyright (C) 2006 Michael White -->
+<project default="grammar" basedir=".">
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <property name="Name" value="OpenCCG"/>
+    <property name="name" value="openccg"/>
+
+    <echo message="----------- ${Name} ------------"/>
+
+    <property name="lib.dir" value="${openccg.home}/lib"/>
+    <property name="grammars.dir" value="${openccg.home}/grammars"/>
+
+    <path id="validate.classpath">
+      <pathelement location="${lib.dir}/xercesImpl.jar"/>
+      <pathelement location="${lib.dir}/${name}.jar"/>
+    </path>
+  </target>
+  
+
+  <!-- =================================================================== -->
+  <!-- Help on usage                                                       -->
+  <!-- =================================================================== -->
+  <target name="usage">
+    <echo message=""/>
+    <echo message=""/>
+    <echo message="OpenCCG grammar build file"/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=" Available targets are:"/>
+    <echo message=""/>
+    <echo message="   grammar  --> builds the grammar (default)"/>
+    <echo message=""/>
+    <echo message=" See the comments inside the build.xml file for more details."/>
+    <echo message="-------------------------------------------------------------"/>
+    <echo message=""/>
+    <echo message=""/>
+  </target>
+  
+
+  <!-- =================================================================== -->
+  <!-- Builds grammar                                                     -->
+  <!-- =================================================================== -->
+  <target name="grammar" depends="init" description="builds grammar">
+    <echo message="Adding family members from dict.xml to lexicon-base.xml, yielding lexicon.xml"/>
+    <java classname="org.apache.xalan.xslt.Process"> 
+      <arg value="-IN"/> <arg value="lexicon-base.xml"/>
+      <arg value="-XSL"/> <arg value="${grammars.dir}/add-family-members.xsl"/>
+      <arg value="-PARAM"/> <arg value="dict-file"/> <arg value="${basedir}/dict.xml"/>
+      <arg value="-OUT"/> <arg value="lexicon.xml"/>
+    </java>
+    <echo message="Extracting morph items from dict.xml to morph.xml"/>
+    <java classname="org.apache.xalan.xslt.Process"> 
+      <arg value="-IN"/> <arg value="dict.xml"/>
+      <arg value="-XSL"/> <arg value="${grammars.dir}/extract-morph.xsl"/>
+      <arg value="-OUT"/> <arg value="morph.xml"/>
+    </java>
+    <echo message="Validating grammar.xml, lexicon.xml, morph.xml, rules.xml and types.xml"/>
+    <java classname="opennlp.ccg.test.Validator" classpathref="validate.classpath" fork="true"> 
+      <arg value="grammar.xml"/>
+      <arg value="lexicon.xml"/>
+      <arg value="morph.xml"/>
+      <arg value="rules.xml"/>
+      <arg value="types.xml"/>
+    </java>
+  </target>
+
+</project>
+
+<!-- End of file -->

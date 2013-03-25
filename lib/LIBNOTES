@@ -1,0 +1,115 @@
+
+This file briefly describes the libraries which are used by the 
+OpenNLP CCG Library. See the appropriate license files also in this directory.
+
+------------------------------------------------------------------------
+ant.jar, ant-launcher.jar, ant-junit.jar, ant-junit4.jar, ant-contrib.jar
+
+The Apache Ant Build System, version 1.9.0
+Homepage: http://ant.apache.org/
+ANT Contrib, version 1.0b3
+Homepage: http://sourceforge.net/projects/ant-contrib/
+License: Apache Software License (ASL)
+
+A Java based build tool. 
+
+
+------------------------------------------------------------------------
+jdom.jar
+
+JDOM, version 1.1
+Homepage: http://www.jdom.org
+License: See jdom.license
+
+A complete, Java-based solution for accessing, manipulating, and
+outputting XML data from Java code.
+
+
+------------------------------------------------------------------------
+jgrapht-jdk1.6.jar
+
+JGraphT, version 0.8.3
+Homepage: http://www.jgrapht.org
+License: LGPL 
+
+A free Java graph library that provides mathematical graph-theory objects 
+and algorithms.
+
+
+------------------------------------------------------------------------
+jline.jar
+
+jLine, version 1.0
+Homepage: http://jline.sourceforge.net/
+License: See jline.license
+
+JLine is a Java library for handling console input.  
+It is similar in functionality to BSD editline and GNU readline,
+providing a command input history and more.
+
+
+------------------------------------------------------------------------
+junit-4.10.jar
+
+JUnit, version 4.10
+Homepage: http://junit.sourceforge.net/
+License: Common Public License - v 1.0
+
+JUnit is a simple, open source framework to write and run repeatable
+tests. 
+
+
+------------------------------------------------------------------------
+libken.so
+
+KenLM, version 4
+Homepage: http://kheafield.com/code/kenlm/
+License: LGPL primarily (see src/kenlm/LICENSE)
+
+KenLM is a language modeling toolkit supporting large LMs via a
+memory-mapped binary format.  JNI interface for linux adapted from the
+Joshua decoder; other platforms possible in principle.
+
+
+------------------------------------------------------------------------
+trove.jar
+
+GNU Trove, version 1.0.2
+Homepage: http://trove4j.sf.net
+License: LGPL
+
+High performance collections for Java.
+
+
+------------------------------------------------------------------------
+xalan.jar, xercesImpl.jar, xml-apis.jar, xlstc.jar, serializer.jar
+
+The Apache Xalan-J XML transformation processor, version 2.7.1
+The Apache Xerces-J XML parser, version 2.9.0
+Homepage: http://xml.apache.org
+License: Apache Software License (ASL)
+
+XSLT transformation library and associated XML parser,
+with schema validation support.
+
+
+------------------------------------------------------------------------
+jopt-simple.jar
+
+JOpt Simple, version 3.1
+Homepage: http://jopt-simple.sourceforge.net/
+License: MIT License
+
+Command-line options parsing library.
+
+
+------------------------------------------------------------------------
+javacc.jar
+
+JavaCC, version 4.0
+Homepage: https://javacc.dev.java.net/
+License: SUN License
+
+Java parser generator.
+
+

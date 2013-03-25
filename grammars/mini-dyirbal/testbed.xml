@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<regression>
+  <item numOfParses="1" string="bayi yara walngarra nabaygu"/>
+  <item numOfParses="2" string="bayi yara walngarra bural naygu bagun yibi gu"/>
+  <item numOfParses="1" string="bayi yara walngarra bangun yibi ngu burali"/>
+  <item numOfParses="1" string="yabu numa ngu gigan banagaygu"/>
+  <item numOfParses="1" string="naja bayi yara gigan gubi ngu mawali"/>
+  <item numOfParses="0" string="naja bayi yara gigan bayi gubi mawali"/>
+  <item numOfParses="1" string="bayi yara miyanda nu yanu"/>
+  <item numOfParses="1" string="balan yibi bangul yara ngu miyanda nu ru buran"/>
+  <item numOfParses="1" string="bayi yara jilwal na nu bagun guda gu yanu"/>
+  <item numOfParses="2" string="bayi burrbula bangul gubi ngu baran , bajigu"/>
+  <item numOfParses="0" string="bangul gubi ngu bayi burrbula baran , bajigu"/>
+  <item numOfParses="2" string="bayi yara yanu , bangun yibi ngu buran"/>
+  <item numOfParses="1" string="nyurra nanana buran , banaganyu"/>
+</regression>

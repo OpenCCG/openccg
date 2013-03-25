@@ -1,0 +1,10 @@
+static void jjtreeOpenNodeScope(Node n)
+    {
+      ((SimpleNode)n).first_token = getToken(1);
+    }
+
+static void jjtreeCloseNodeScope(Node n)
+    {
+      ((SimpleNode)n).last_token = getToken(0);
+    }
+

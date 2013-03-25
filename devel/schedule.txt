@@ -1,0 +1,123 @@
+CCG editor schedule
+
+Step 1
+
+- get a simple editor working; has buttons and/or menu across the top with
+  new/edit/save buttons; for "formatted text" just display text as-is
+  -- add some small buttons at top of editing area for insertion of common
+     CCG structures
+  -- add popup help on these buttons (right click, select "help", or something)
+     that shows in more detail the expected format
+  -- add extra buttons (top or bottom) for particular CCG symbols (e.g. the
+     symbols used to indicate different slash modes); pressing on them
+     inserts the appropriate symbol char(s) and they have help text shown
+     when moving over them
+
+More strictly:
+
+-- use the PyEdit code from Python Cookbook (not sure about legality; if
+   not, we can just rewrite it, but i don't think it'll be a problem).
+-- run the editor, examine it in action, figure out how it works by examining
+   the code; in particular, figure out how keystrokes are handled, since i
+   don't see any keystroke code.
+-- create two separate modules.  one just compiles the code, while the other
+   is the GUI.
+-- one idea for layout:
+(1) for the GUI, originally follow Wikipedia's model in which the layout
+    view is the "normal" view and editing is performed as a temporary
+    operation with a "preview" that brings up the layout view in a pane
+    above the edit window, so that further editing can be performed,
+    in addition to an "accept" that goes back to the regular layout view only.
+
+(2) this one is editor centric.  View pops up a "view" [FIX THIS] add a
+    toolbar under the window with textual buttons for Load, New, View;
+    originally display an empty edit screen.  New, Load create new
+    top-level windows; make sure that multiple windows work. Load loads an
+    existing file into a new window.  View runs the compiler (see below),
+    and displays the error results into a new pane below the edit window.
+    There should be next-error and previous-error commands.  This pane can
+    be hidden, but it reappears on the next next/previous-error commands.
+
+-- copy all related files from quiche/mangue, get full environment set up
+   locally; also create subversion repository
+
+-- add a "compile" button; this runs the CCG2XML compiler and displays any
+   error messages in a separate pane of the window; pane can be viewed or
+   hidden using menu item or button
+  -- then, parse error messages to get the line number; clicking on an error
+     message shows the appropriate line in the text
+-- improve on display
+  -- run compiler before displaying; using result of parsing, display separate
+     sections corresponding to major sections of text (e.g. feature {}
+     declaration, family {} declarations)
+     -- initially, just show actual text corresponding to section
+     -- get working the ability to hide/display a particular section and to
+        edit just that section
+     -- gradually, format into something more intelligent; do this section
+        by section
+        -- we already have some code for formatting CCG categories
+     -- add controls for display of CCG categories
+-- figure out what to do about macros
+  -- at first, just do whatever works in order to get the editor up and running
+  -- macro definitions themselves should be shown with their raw text; it's
+     not clear we can do much more
+  -- macros can cause arbitrary text to be expanded at a particular position;
+     perhaps in display we show macro-expanded sections in a separate color,
+     and allow the sections to be collapsed back to the original text that
+     led to the expansions, on a macro-by-macro basis (some sort of options
+     menu showing all macros and check marks by them for expansion or not)
+
+
+
+
+Step 1:
+
+toolbar across top, with buttons "Display", "Edit", "Test"
+each of these changes the widgets below it, and potentially the menubar above
+  it; each has a second toolbar above a large text widget showing something
+title bar should show name of file
+status bar at the bottom, ala emacs
+  shows the current mode (display/edit/test) plus other mode-specific info
+  (e.g. for edit, success or failure of recent compilation)
+Display:
+  buttons for controlling the display (e.g. presence or absence of features)
+  widget showing formatted display
+Edit:
+  buttons for editing common CCG structures
+  has a preview button, which compiles the text and then displays a second
+    pane below, showing either the errors from compilation or 
+  has a save button, which saves 
+  text editor widget
+Test:
+  FIXME: fill in; should allow for running the CCG interpreter and/or web
+  front end (or something that behaves similarly)
+
+implementation:
+
+- should allow for multiple top-level windows editing different files;
+  hence do not use global variables for status information, but store
+  inside of a "file" object
+
+Display, Edit, Test are subclasses of Frame
+clicking on Display/Edit/Test toolbar buttons:
+  -- hides the existing frame for this mode and displays the new frame
+  -- should not cause window resize!
+
+-- should start in Edit mode
+-- when switching from edit to display, if text has been modified, we either
+need to bring up a dialog box asking whether to discard the text, or
+remember the modified text and display in the status bar that the text has
+been modified
+-- in Edit mode, you have Save and Display buttons; Display asks to save Save saves text
+
+  another row of toolbar buttons below, for inserting common brings up a 
+- get a simple editor working; has buttons and/or menu across the top with
+  new/edit/save buttons; for "formatted text" just display text as-is
+  -- add some small buttons at top of editing area for insertion of common
+     CCG structures
+  -- add popup help on these buttons (right click, select "help", or something)
+     that shows in more detail the expected format
+  -- add extra buttons (top or bottom) for particular CCG symbols (e.g. the
+     symbols used to indicate different slash modes); pressing on them
+     inserts the appropriate symbol char(s) and they have help text shown
+     when moving over them

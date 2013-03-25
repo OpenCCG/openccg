@@ -1,0 +1,5 @@
+#!/bin/bash
+for i in 10 11 12 13
+do
+   ccg-build -Dsect=$i -f build-rz.xml gen-realizer-events &> logs/log.gen.realizer.events.$i 
+done

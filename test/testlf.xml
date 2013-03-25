@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+
+<!-- bank of holland , wuhan office , was also officially established just recently .-->
+<lf>
+  <satop nom="w7">
+    <prop name="be"/>
+    <diamond mode="mood">
+      <prop name="dcl"/>
+    </diamond>
+    <diamond mode="tense">
+      <prop name="past"/>
+    </diamond>
+    <diamond mode="Arg0">
+      <chunk>
+        <nom name="w0"/>
+        <prop name="bank"/>
+        <diamond mode="det">
+          <prop name="nil"/>
+        </diamond>
+        <diamond mode="Mod">
+          <chunk>
+            <nom name="w1"/>
+            <prop name="of"/>
+            <diamond mode="Arg1">
+              <chunk>
+                <nom name="w2"/>
+                <prop name="holland"/>
+                <diamond mode="det">
+                  <prop name="nil"/>
+                </diamond>
+                <diamond mode="num">
+                  <prop name="sg"/>
+                </diamond>
+                <diamond mode="ApposRel">
+                  <chunk>
+                    <nom name="w5"/>
+                    <prop name="office"/>
+                    <diamond mode="det">
+                      <prop name="nil"/>
+                    </diamond>
+                    <diamond mode="num">
+                      <prop name="sg"/>
+                    </diamond>
+                    <diamond mode="Mod">
+                      <nom name="w4"/>
+                      <prop name="wuhan"/>
+                      <diamond mode="num">
+                        <prop name="sg"/>
+                      </diamond>
+                    </diamond>
+                  </chunk>
+                </diamond>
+              </chunk>
+            </diamond>
+          </chunk>
+        </diamond>
+      </chunk>
+    </diamond>
+    <diamond mode="Arg1">
+      <chunk>
+        <nom name="w9"/>
+        <prop name="officially"/>
+        <diamond mode="Arg0">
+          <nom name="w0"/>
+        </diamond>
+      </chunk>
+    </diamond>
+    <diamond mode="Mod">
+      <nom name="w8"/>
+      <prop name="also"/>
+    </diamond>
+    <diamond mode="GenRel">
+      <chunk>
+        <nom name="w10"/>
+        <prop name="establish"/>
+        <diamond mode="tense">
+          <prop name="past"/>
+        </diamond>
+        <diamond mode="Arg1">
+          <nom name="w0"/>
+        </diamond>
+        <diamond mode="Mod">
+          <nom name="w11"/>
+          <prop name="just"/>
+        </diamond>
+        <diamond mode="Mod">
+          <nom name="w12"/>
+          <prop name="recently"/>
+        </diamond>
+      </chunk>
+    </diamond>
+  </satop>
+</lf>

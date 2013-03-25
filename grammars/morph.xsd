@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 University of Edinburgh (Michael White) 
+$Revision: 1.9 $, $Date: 2004/12/07 12:00:39 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for morph file.
+    
+    A morph file lists all the known word forms (morph items) together with 
+    their stems, parts of speech, semantic classes, associated macros, and 
+    excluded lexical categories.
+    
+    The part of speech is used to help determine the mapping between morph 
+    items and lexical categories.  A morph item is automatically associated 
+    with all open families with matching parts of speech.  With closed 
+    families, the morph item's stem must be listed as a family member, 
+    and the parts of speech must match.  It is also possible to exclude 
+    certain lexical category entries or families, by including the entry 
+    name, qualified entry name or family name in the morph item's list of 
+    excluded lexical categories.
+    
+    NB: A limitation of the current implementation is that the mapping between  
+    morph items and open families can only be done with the stem as the predicate; 
+    to use different predicates, closed families must be used.
+
+    Semantic classes may also be given, for n-gram ranking purposes, and for 
+    restricting the unification of nominals to compatible types, specified 
+    in the types file.  When a category is instantiated, the semantic class 
+    is assigned to the nominal var(s) for the proposition with the reserved name 
+    '[*DEFAULT*]'.  The types of all nominal vars are then propagated to all 
+    other nominal vars with the same name, throughout the category.
+
+    The macros are used to add features or semantic predications to a lexical 
+    category that depend on the particular morph item (e.g. tense, number, case, etc.).
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="categories.xsd"/>
+  
+  <xsd:element name="morph">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element, containing a list of entries (morph items) and macros.
+      Each macro must have a unique name.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="entry" maxOccurs="unbounded"/>
+        <xsd:element ref="macro" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:unique name="macroNameUniqueness">
+      <xsd:selector xpath="macro"/>
+      <xsd:field    xpath="@name"/>
+    </xsd:unique>
+  </xsd:element>
+
+  <xsd:element name="entry">
+    <xsd:annotation>
+    <xsd:documentation>
+      A morph item, with its word form, stem, part of speech, and optional semantic class, 
+      associated macros, and excluded lexical categories.  The stem defaults to word form.
+      At run time, when the grammar is loaded, a cross-reference check is 
+      performed on the names in the lists of associated macros and excluded 
+      lexical categories.
+      
+      The coart flag indicates that this entry is a coarticulation, eg a pitch accent, 
+      gesture, or other word-associated element.  With coarticulations, the word form 
+      should be one or more attribute-value pairs, with attributes and values separated 
+      by hyphens, and multiple pairs separated by colons.  When multiple attribute-value 
+      pairs are given, only the first one is used for indexing purposes.  An identifying 
+      value for the stem should also be given, eg *accent* for a pitch accent.
+      
+      NB: Lexical attributes supplied by coarticulations must be done so uniformly; that 
+      is, they cannot appear already on some lexical items.  Also, when there are 
+      multipled, independent coarticulations, they must supply disjoint sets of lexical 
+      attributes, and their categories must be capable of applying in any order.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="word" type="token" use="required"/>
+      <xsd:attribute name="stem" type="token"/>
+      <xsd:attribute name="pos" type="token" use="required"/>
+      <xsd:attribute name="class" type="token"/>
+      <xsd:attribute name="macros" type="listOfMacroNames"/>
+      <xsd:attribute name="excluded" type="listOfTokens"/>  
+      <xsd:attribute name="coart" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="macro">
+    <xsd:annotation>
+    <xsd:documentation>
+      A named macro, with a set of features and/or semantic predications to add to
+      a lexical category.
+      
+      The features are given by feature structure declarations, where the id is used 
+      to indicate where the features are to be added (i.e., to the feature structure 
+      of which atomic category).
+      
+      The semantic predications are given in an 'lf' element; at run time, these HLDS 
+      predications are flattened and added to any predications already present in 
+      the lexical category.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="fs" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="lf" type="hldsPreds" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="macroName" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="macroName">
+    <xsd:annotation>
+    <xsd:documentation>
+      Macro names begin with @ (for historical reasons) and are followed 
+      by at least one non-whitespace character.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="@\S+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="listOfMacroNames">
+    <xsd:list itemType="macroName"/>
+  </xsd:simpleType>
+
+</xsd:schema>
+

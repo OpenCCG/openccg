@@ -1,0 +1,55 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rules
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../rules.xsd"
+>
+  <application dir="forward"/>
+  <application dir="backward"/>
+  <composition dir="forward" harmonic="true"/>
+  <composition dir="forward" harmonic="false"/>
+  <composition dir="backward" harmonic="true"/>
+  <composition dir="backward" harmonic="false"/>
+  <typeraising dir="forward" useDollar="true"/>
+  <typeraising dir="backward" useDollar="true"/>
+  <substitution dir="forward" harmonic="true"/>
+  <substitution dir="forward" harmonic="false"/>
+  <substitution dir="backward" harmonic="true"/>
+  <substitution dir="backward" harmonic="false"/>
+
+  <typechanging name="pd">
+    <arg>
+      <complexcat>
+        <atomcat type="s">
+            <fs id="1">
+            <feat attr="index">
+             <lf>
+              <nomvar name="E"/>
+             </lf>
+            </feat>
+            </fs>
+          </atomcat>
+          <slash dir="\"/>
+          <atomcat type="np">
+            <fs id="2">
+              <feat attr="index">
+               <lf>
+                <nomvar name="X"/>
+               </lf>
+              </feat>
+            </fs>
+          </atomcat>
+      </complexcat>
+    </arg>
+    <result>
+      <atomcat type="s">
+        <fs >
+          <feat attr="index">
+            <lf>
+             <nomvar name="E"/>
+            </lf>
+          </feat>
+        </fs>
+      </atomcat>
+    </result>
+  </typechanging>
+</rules>

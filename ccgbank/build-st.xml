@@ -1,0 +1,258 @@
+<!--
+ Copyright (C) 2010 Michael White and Dennis Mehay
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- This build file is for supertagging models using the converted CCGbank. -->
+
+<!-- $Id: build-st.xml,v 1.4 2011/11/12 22:37:21 mwhite14850 Exp $ -->
+<project name="CCGbankSupertaggerModels" default="all" basedir=".">
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <property file="build.properties"/>
+  <property file="build-models.properties"/>
+  <property file="build-st.properties"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <!-- initial supertagger dependencies -->
+    <uptodate targetfile="${train.pos.seq}" srcfile="${factors.train}" property="train.pos.seq.uptodate"/>
+    <uptodate targetfile="${train.st.seq}" srcfile="${factors.train}" property="train.st.seq.uptodate"/>
+    <uptodate targetfile="${vocab.train}" srcfile="${factors.train}" property="vocab.train.uptodate"/>
+    <uptodate targetfile="${pos.dict}" srcfile="${factors.train}" property="pos.dict.uptodate"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- POS tagger and supertagger                                          -->
+  <!-- =================================================================== -->
+
+  <target name="get-pos-sequences" depends="init" unless="train.pos.seq.uptodate">
+    <echo message="Extracting pos tag sequences to ${train.pos.seq}"/>
+    <java classname="opennlp.ccg.parse.postagger.POSTagSequenceGetter">
+      <arg value="-i"/> <arg value="${factors.train}"/>
+      <arg value="-o"/> <arg value="${train.pos.seq}"/>
+    </java>
+  </target>
+
+  <target name="check-pos-lm" depends="init">
+    <uptodate targetfile="${pos.lm}" srcfile="${train.pos.seq}" property="pos.lm.uptodate"/>
+  </target>
+
+  <target name="make-pos-lm" depends="get-pos-sequences,check-pos-lm" unless="pos.lm.uptodate">
+    <echo message="Writing pos language model to ${pos.lm}"/>
+    <exec executable="ngram-count">
+      <arg value="-wbdiscount"/>
+      <arg value="-lm"/> <arg value="${pos.lm}"/>
+      <arg value="-order"/> <arg value="9"/>
+      <arg value="-text"/> <arg value="${train.pos.seq}"/>
+    </exec>
+  </target>
+
+  <target name="get-st-sequences" depends="init" unless="train.st.seq.uptodate">
+    <echo message="Extracting supertag sequences to ${train.st.seq}"/>
+    <java classname="opennlp.ccg.parse.supertagger.util.SupertagSequenceGetter">
+      <arg value="-i"/> <arg value="${factors.train}"/>
+      <arg value="-o"/> <arg value="${train.st.seq}"/>
+    </java>
+  </target>
+
+  <target name="check-st-lm" depends="init">
+    <uptodate targetfile="${st.lm}" srcfile="${train.st.seq}" property="st.lm.uptodate"/>
+  </target>
+
+  <target name="make-st-lm" depends="get-st-sequences,check-st-lm" unless="st.lm.uptodate">
+    <echo message="Writing supertag language model to ${st.lm}"/>
+    <exec executable="ngram-count">
+      <arg value="-wbdiscount"/>
+      <arg value="-lm"/> <arg value="${st.lm}"/>
+      <arg value="-order"/> <arg value="9"/>
+      <arg value="-text"/> <arg value="${train.st.seq}"/>
+    </exec>
+  </target>
+
+  <target name="get-vocab" depends="init" unless="vocab.train.uptodate">
+    <echo message="Writing counts from factor file"/>
+    <exec executable="fngram-count" dir="${supertagger.models.dir}">
+      <arg value="-text"/> <arg value="${basedir}/${factors.train}"/> 
+      <arg line="-factor-file vocab.flm -write-counts -sort"/>
+    </exec>
+    <for list="w,t,p" param="F">
+      <sequential>
+	<exec executable="cut" dir="${supertagger.models.dir}" output="${supertagger.models.dir}/uni.count">
+	  <arg line="-f 2,3 @{F}.count"/>
+	</exec>
+	<move file="${supertagger.models.dir}/uni.count" tofile="${supertagger.models.dir}/@{F}.count"/>
+      </sequential>
+    </for>
+    <echo message="Writing counts from text file with semantic class replacement"/>
+    <exec executable="ngram-count" dir="${supertagger.models.dir}" output="${supertagger.models.dir}/sc.count">
+      <arg value="-text"/> <arg value="${basedir}/${text.sc.train}"/> 
+      <arg line="-order 1"/>
+    </exec>
+    <echo message="Writing vocab with frequency cutoffs"/>
+    <concat destfile="${supertagger.models.dir}/wsc.count">
+      <filelist dir="${supertagger.models.dir}" files="w.count,sc.count"/>
+    </concat>
+    <exec executable="ngram-count" dir="${supertagger.models.dir}">
+      <arg line="-read p.count -write-vocab vocab.pos -sort"/>
+    </exec>
+    <exec executable="ngram-count" dir="${supertagger.models.dir}">
+      <arg line="-read w.count -read wsc.count -gt1min 3 -write-vocab vocab.words -read-with-mincounts -sort"/>
+    </exec>
+    <exec executable="ngram-count" dir="${supertagger.models.dir}">
+      <arg line="-read t.count -gt1min ${catfreq.cutoff} -write-vocab vocab.st -read-with-mincounts -sort"/>
+    </exec>
+    <concat destfile="${vocab.train}">
+      <filelist dir="${supertagger.models.dir}" files="vocab.pos,vocab.st,vocab.words"/>
+    </concat>
+    <delete>
+      <filelist dir="${supertagger.models.dir}" files="w.count,t.count,p.count,sc.count,wsc.count"/>
+    </delete>
+  </target>
+
+  <target name="check-pos-prior-lm" depends="init">
+    <uptodate targetfile="${posprior.lm}" srcfile="${vocab.train}" property="posprior.lm.uptodate"/>
+  </target>
+
+  <target name="make-pos-prior-lm" depends="get-vocab,check-pos-prior-lm" unless="posprior.lm.uptodate">
+    <echo message="Making POS prior language model using ${supertagger.models.dir}/posprior.flm"/>
+    <exec executable="fngram-count" dir="${supertagger.models.dir}">
+      <arg value="-text"/> <arg value="${basedir}/${factors.train}"/> 
+      <arg line="-factor-file posprior.flm -vocab vocab.train -lm -unk -write-counts -nonull"/>
+      <arg line="-no-virtual-begin-sentence -no-virtual-end-sentence"/>
+      <arg line="-no-add-start-sentence-token -no-add-end-sentence-token"/>
+    </exec>
+  </target>
+
+  <target name="check-pos-feats" depends="init">
+    <uptodate targetfile="${pos.feats}" srcfile="${posprior.lm}" property="pos.feats.uptodate"/>
+  </target>
+
+  <target name="get-pos-feats" depends="make-pos-prior-lm,check-pos-feats" unless="pos.feats.uptodate">
+    <echo message="Extracting POS training features to ${pos.feats}"/>
+    <java classname="opennlp.ccg.parse.postagger.ml.POSTagFex"
+	  input="${factors.train}" output="${pos.feats}">
+      <arg value="-p"/> <arg value="${supertagger.models.dir}/posprior.flm"/>
+      <arg value="-v"/> <arg value="${supertagger.models.dir}/vocab.train"/>
+    </java>
+    <echo message="Filtering POS training features by frequency"/>
+    <exec executable="python">
+      <arg value="bin/filter_feats.py"/>
+      <arg value="-i"/> <arg value="${pos.feats}"/>
+      <arg value="-o"/> <arg value="${supertagger.feats.dir}/pos.feats.tmp"/>
+      <arg line="-n 1 -f 5"/>
+    </exec>
+    <move file="${supertagger.feats.dir}/pos.feats.tmp" tofile="${pos.feats}"/>
+  </target>
+
+  <target name="check-pos-model" depends="init">
+    <uptodate targetfile="${pos.mod}" srcfile="${pos.feats}" property="pos.mod.uptodate"/>
+  </target>
+
+  <target name="make-pos-model" 
+	  depends="make-pos-lm,get-pos-feats,check-pos-model" 
+	  unless="pos.mod.uptodate">
+    <echo message="Making POS tagging model to ${pos.mod}"/>
+    <exec executable="maxent" output="${log.dir}/pos.log">
+      <arg value="${pos.feats}"/> 
+      <arg line="-v --lbfgs -c 0 -i 200 -g 1"/>
+      <arg value="-m"/> <arg value="${pos.mod}"/>
+    </exec>
+  </target>
+
+  <target name="test-pos-model" depends="init">
+    <echo message="Testing POS tagging model on dev set to ${log.dir}/pos.dev.log"/>
+    <java classname="opennlp.ccg.parse.postagger.BasicPOSTagger"
+	  input="${factors.dev}" output="${log.dir}/pos.dev.log">
+      <arg value="-c"/> <arg value="${supertagger.models.dir}/pos.config"/>
+      <arg value="-e"/>
+    </java>
+  </target>
+
+  <target name="get-tag-dicts" depends="init" unless="pos.dict.uptodate">
+    <echo message="Extracting tag dictionaries to ${pos.dict} and ${word.dict}"/>
+    <java classname="opennlp.ccg.parse.supertagger.util.TaggingDictionaryExtractor">
+      <arg value="-i"/> <arg value="${factors.train}"/>
+      <arg value="-f"/> <arg value="${catfreq.cutoff}"/>
+      <arg value="-p"/> <arg value="${pos.dict}"/>
+      <arg value="-w"/> <arg value="${word.dict}"/>
+    </java>
+  </target>
+
+  <target name="check-st-feats" depends="init">
+    <uptodate targetfile="${st.feats}" srcfile="${supertagger.models.dir}/vocab.train" property="st.feats.uptodate"/>
+  </target>
+
+  <target name="get-st-feats" depends="get-vocab,check-st-feats" unless="st.feats.uptodate">
+    <echo message="Extracting supertagger training features to ${st.feats}"/>
+    <java classname="opennlp.ccg.parse.supertagger.ml.STFex"
+	  input="${factors.train}" output="${st.feats}">
+      <arg value="-v"/> <arg value="${supertagger.models.dir}/vocab.train"/>
+      <arg value="-p"/> <arg value="${supertagger.models.dir}/pos.config"/>
+    </java>
+    <echo message="Filtering supertagger training features by frequency"/>
+    <exec executable="python">
+      <arg value="bin/filter_feats.py"/>
+      <arg value="-i"/> <arg value="${st.feats}"/>
+      <arg value="-o"/> <arg value="${supertagger.feats.dir}/st.feats.tmp"/>
+      <arg line="-n ${catfreq.cutoff} -f 2"/>
+    </exec>
+    <move file="${supertagger.feats.dir}/st.feats.tmp" tofile="${st.feats}"/>
+  </target>
+
+  <target name="make-st-model" depends="make-pos-model,make-st-lm,get-tag-dicts,get-st-feats">
+    <!-- outofdate task seems to be working here whereas uptodate was not (strange?!) -->
+    <outofdate>
+      <sourcefiles>
+	<fileset file="${pos.dict}"/>
+	<fileset file="${st.feats}"/>
+      </sourcefiles>
+      <targetfiles path="${st.mod}"/>
+      <sequential>
+	<echo message="Making supertagging model to ${st.mod}"/>
+	<exec executable="maxent" output="${log.dir}/st.log">
+	  <arg value="${st.feats}"/> 
+	  <arg line="-v --lbfgs -c 0 -i 400 -g 1"/>
+	  <arg value="-m"/> <arg value="${st.mod}"/>
+	</exec>
+      </sequential>
+    </outofdate>
+  </target>
+
+  <target name="test-st-model" depends="init">
+    <echo message="Testing supertagging model on dev set to ${log.dir}/st.dev.log"/>
+    <java classname="opennlp.ccg.parse.supertagger.WordAndPOSDictionaryLabellingStrategy"
+	  input="${factors.dev}" output="${log.dir}/st.dev.log" error="${log.dir}/st.dev.report">
+      <arg value="-c"/> <arg value="${supertagger.models.dir}/st.config"/>
+      <arg value="-e"/>
+      <arg value="-beta"/> <arg value="0.1"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Top-level                                                           -->
+  <!-- =================================================================== -->
+
+  <target name="all" depends="make-pos-model,make-st-model"/>
+  <target name="test" depends="test-pos-model,test-st-model"/>
+
+</project>

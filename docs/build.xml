@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<project name="OpenCCG Documentation" basedir="." default="compile">
+
+  <target name="compile">
+  	<subant antfile="./guide/build.xml" buildpath="${basedir}"/>
+  	<subant antfile="./realizer/build.xml" buildpath="${basedir}"/>
+  </target>
+
+  <target name="clean">
+    <subant antfile="./guide/build.xml" buildpath="${basedir}" target="clean"/>
+    <subant antfile="./realizer/build.xml" buildpath="${basedir}"
+      target="clean"/>
+  </target>
+  
+</project>

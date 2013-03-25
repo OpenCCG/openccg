@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright (C) 2003-4 University of Edinburgh (Michael White)
+$Revision: 1.2 $, $Date: 2004/11/20 16:34:44 $ 
+-->
+<types name="flights" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="../types.xsd"
+>
+
+  <!-- additional sorts for flights (builds on ../core-en/types.xml) -->
+  <type name="airline" parents="organization"/>
+  <type name="airport" parents="location phys-obj"/>
+  <type name="fareclass" parents="abstraction"/>
+  <type name="scalar" parents="proposition"/>
+  <type name="timeframe" parents="abstraction"/>
+  <type name="travel" parents="action motion"/>
+  
+</types>

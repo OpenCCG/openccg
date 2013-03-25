@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!-- 
+Copyright (C) 2003-4 University of Edinburgh (Michael White) 
+$Revision: 1.4 $, $Date: 2005/03/22 21:16:45 $ 
+-->
+<grammar name="worldcup"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../grammar.xsd"
+>
+
+  <lexicon file="lexicon.xml"/>
+  <morphology file="morph.xml"/>
+  <rules file="rules.xml"/>
+  <tokenizer replacement-sem-classes="ATT_ADV COLOR COUNTRY 
+    MANNER_ADV PERSON PLACE TEMP_ADV"/>
+
+  <LF-from-XML>
+    <transform file="../convert-to-hlds.xsl"/>
+    <transform file="add-chunks.xsl"/>
+  </LF-from-XML>
+
+  <LF-to-XML>
+    <transform file="raise-nodes.xsl"/>
+    <transform file="../convert-to-graph.xsl"/>
+  </LF-to-XML>
+
+</grammar>
+

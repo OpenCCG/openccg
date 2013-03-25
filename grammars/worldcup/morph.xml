@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003-4 Jason Baldridge and University of Edinburgh (Michael White) 
+$Revision: 1.35 $, $Date: 2005/07/16 19:58:51 $ 
+-->
+<morph xmlns:xalan2="http://xml.apache.org/xslt" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd" name="worldcup">
+  <entry word="that" pos="Pron"/>
+  <entry word="and" pos="Conj"/>
+  <entry word="or" pos="Conj"/>
+  <entry word="." pos="."/>
+  <entry word="?" pos="?"/>
+  <entry word="everyone" pos="QNP"/>
+  <entry word="who" pos="WhNP"/>
+  <entry pos="Det" word="a"/>
+  <entry pos="Det" word="an" stem="a"/>
+  <entry word="the" pos="Det"/>
+  <entry word="his" pos="Det" class="PPRO"/>
+  <entry word="my" pos="Det" class="PPRO"/>
+  <entry word="its" pos="Det" class="PPRO"/>
+  <entry word="all" pos="QDet"/>
+  <entry word="every" pos="QDet"/>
+  <entry word="no" pos="QDet"/>
+  <entry word="which" pos="Wh"/>
+  <entry word="up" pos="Prep"/>
+  <entry word="with" pos="Prep"/>
+  <entry word="from" pos="Prep"/>
+  <entry word="to" pos="Prep"/>
+  <entry word="without" pos="Prep"/>
+  <entry word="'s" pos="Prep"/>
+  <entry word="of" pos="Prep"/>
+  <entry word="about" pos="Prep"/>
+  <entry word="after" pos="Prep"/>
+  <entry word="on" pos="Prep"/>
+  <entry word="for" pos="Prep"/>
+  <entry word="in" pos="Prep"/>
+  <entry word="by" pos="Prep"/>
+  <entry word="between" pos="Prep"/>
+  <entry word="red" pos="Adj" class="COLOR"/>
+  <entry word="yellow" pos="Adj" class="COLOR"/>
+  <entry word="aggressive" pos="Adj"/>
+  <entry word="reckless" pos="Adj"/>
+  <entry word="quick" pos="Adj"/>
+  <entry word="powerful" pos="Adj"/>
+  <entry word="well-deserved" pos="Adj"/>
+  <entry word="first" pos="Adj"/>
+  <entry word="cup" pos="Adj"/>
+  <entry word="today" pos="Adv" class="TEMP_ADV"/>
+  <entry word="yesterday" pos="Adv" class="TEMP_ADV"/>
+  <entry word="previously" stem="previous" pos="Adv"/>
+  <entry word="skeptically" stem="skeptic" pos="Adv" class="ATT_ADV"/>
+  <entry word="joyfully" stem="joyful" pos="Adv" class="ATT_ADV"/>
+  <entry word="easily" stem="easy" pos="Adv" class="MANNER_ADV"/>
+  <entry word="quickly" stem="quick" pos="Adv" class="MANNER_ADV"/>
+  <entry word="skillfully" stem="skillful" pos="Adv" class="MANNER_ADV"/>
+  <entry word="angrily" stem="angry" pos="Adv" class="MANNER_ADV"/>
+  <entry word="may" pos="V"/>
+  <entry word="will" pos="V"/>
+  <entry word="should" pos="V"/>
+  <entry word="would" pos="V"/>
+  <entry word="not" pos="V" macros="@nonfin"/>
+  <entry word="did" stem="do" pos="V" macros="@past"/>
+  <entry word="celebrated" stem="celebrate" pos="V" macros="@past"/>
+  <entry pos="V" word="cheer" macros="@nonfin"/>
+  <entry pos="V" word="cheered" stem="cheer" macros="@past"/>
+  <entry pos="V" word="come" macros="@nonfin"/>
+  <entry pos="V" word="came" stem="come" macros="@past"/>
+  <entry pos="V" word="leave" macros="@nonfin"/>
+  <entry pos="V" word="left" stem="leave" macros="@past"/>
+  <entry word="misses" stem="miss" pos="V" macros="@pres @+3rd-agr @sg-agr"/>
+  <entry pos="V" word="score" macros="@nonfin"/>
+  <entry pos="V" word="scores" stem="score" macros="@pres @+3rd-agr @sg-agr"/>
+  <entry pos="V" word="scored" stem="score" macros="@past"/>
+  <entry pos="V" word="shoot" macros="@nonfin"/>
+  <entry pos="V" word="shoots" stem="shoot" macros="@pres @+3rd-agr @sg-agr"/>
+  <entry pos="V" word="smile" macros="@nonfin"/>
+  <entry pos="V" word="smile" macros="@pres @-3rd-agr"/>
+  <entry pos="V" word="smiles" stem="smile" macros="@pres @+3rd-agr @sg-agr"/>
+  <entry pos="V" word="smile" macros="@pres @+3rd-agr @pl-agr"/>
+  <entry pos="V" word="smiled" stem="smile" macros="@past"/>
+  <entry word="stayed" stem="stay" pos="V" macros="@past"/>
+  <entry pos="V" word="won" stem="win" macros="@past"/>
+  <entry pos="V" word="win" macros="@nonfin"/>
+  <entry word="astonished" stem="astonish" pos="V" macros="@past"/>
+  <entry word="beat" pos="V" macros="@past"/>
+  <entry word="blocked" stem="block" pos="V" macros="@past"/>
+  <entry pos="V" word="defeat" macros="@nonfin"/>
+  <entry pos="V" word="defeated" stem="defeat" macros="@past"/>
+  <entry word="enjoying" stem="enjoy" pos="V" macros="@gerund"/>
+  <entry word="hosted" stem="host" pos="V" macros="@past"/>
+  <entry word="kicked" stem="kick" pos="V" macros="@past"/>
+  <entry pos="V" word="meet" macros="@nonfin"/>
+  <entry pos="V" word="met" stem="meet" macros="@past"/>
+  <entry pos="V" word="play" macros="@nonfin"/>
+  <entry pos="V" word="played" stem="play" macros="@past"/>
+  <entry word="read" stem="read" pos="V" macros="@past"/>
+  <entry word="saw" stem="see" pos="V" macros="@past"/>
+  <entry word="support" pos="V" macros="@nonfin"/>
+  <entry word="threw" stem="throw" pos="V" macros="@past"/>
+  <entry word="watched" stem="watch" pos="V" macros="@past"/>
+  <entry pos="V" word="return" macros="@pp-from @nonfin"/>
+  <entry pos="V" word="returned" stem="return" macros="@pp-from @past"/>
+  <entry pos="V" word="travel" macros="@pp-to @nonfin"/>
+  <entry pos="V" word="traveled" stem="travel" macros="@pp-to @past"/>
+  <entry word="knew" stem="know" pos="V" macros="@past"/>
+  <entry word="predicted" stem="predict" pos="V" macros="@past"/>
+  <entry word="said" stem="say" pos="V" macros="@past"/>
+  <entry word="thought" stem="think" pos="V" macros="@past"/>
+  <entry word="picked" stem="pick-up" pos="V" macros="@past @prt-up"/>
+  <entry pos="V" word="tie" stem="tie-with" macros="@prt-with @nonfin"/>
+  <entry pos="V" word="tied" stem="tie-with" macros="@prt-with @past"/>
+  <entry word="bought" stem="buy" pos="V" macros="@past"/>
+  <entry pos="V" word="give" macros="@nonfin"/>
+  <entry pos="V" word="gives" stem="give" macros="@pres @+3rd-agr @sg-agr"/>
+  <entry pos="V" word="gave" stem="give" macros="@past"/>
+  <entry word="offered" stem="offer" pos="V" macros="@past"/>
+  <entry pos="V" word="persuade" macros="@nonfin"/>
+  <entry pos="V" word="persuades" stem="persuade" macros="@pres @+3rd-agr @sg-agr"/>
+  <entry pos="V" word="persuaded" stem="persuade" macros="@past"/>
+  <entry word="shot" pos="N" macros="@sg"/>
+  <entry word="ball" pos="N" macros="@sg"/>
+  <entry word="cup" pos="N" macros="@sg"/>
+  <entry word="friend" pos="N" macros="@sg"/>
+  <entry word="family" pos="N" macros="@sg"/>
+  <entry word="victory" pos="N" macros="@sg"/>
+  <entry pos="N" word="ticket" macros="@sg"/>
+  <entry pos="N" word="tickets" stem="ticket" macros="@pl"/>
+  <entry word="book" pos="N" macros="@sg"/>
+  <entry word="card" pos="N" macros="@sg"/>
+  <entry pos="N" word="goal" macros="@sg"/>
+  <entry pos="N" word="goals" stem="goal" macros="@pl"/>
+  <entry word="referee" pos="N" macros="@sg"/>
+  <entry pos="N" word="team" macros="@sg"/>
+  <entry pos="N" word="teams" stem="team" macros="@pl"/>
+  <entry pos="N" word="game" macros="@sg"/>
+  <entry pos="N" word="games" stem="game" macros="@pl"/>
+  <entry word="fan" pos="N" macros="@sg"/>
+  <entry word="final" pos="N" macros="@sg"/>
+  <entry word="field" pos="N" macros="@sg" class="PLACE"/>
+  <entry word="stadium" pos="N" macros="@sg" class="PLACE"/>
+  <entry word="country" pos="N" macros="@sg"/>
+  <entry word="detractor" pos="N" macros="@sg"/>
+  <entry pos="N" word="player" macros="@sg"/>
+  <entry pos="N" word="players" stem="player" macros="@pl"/>
+  <entry word="I" pos="NNP" macros="@-3rd @sg" class="PRO"/>
+  <entry word="me" pos="NNP" macros="@-3rd @sg" class="PRO"/>
+  <entry word="he" pos="NNP" macros="@sg" class="PRO"/>
+  <entry word="it" pos="NNP" macros="@sg" class="PRO"/>
+  <entry word="you" pos="NNP" macros="@-3rd" class="PRO"/>
+  <entry word="Spain" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry word="Germany" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry word="Brazil" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry word="Turkey" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry word="China" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry word="Paraguay" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry word="John" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Joao" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Maria" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Bill" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Ronaldo" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Ronaldinho" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Rivaldo" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Marcos" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Kahn" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry word="Unsal" pos="NNP" macros="@sg" class="PERSON"/>
+  <macro name="@+3rd-agr">
+    <fs id="1" attr="3rd" val="+"/>
+    <fs id="2" attr="3rd" val="+"/>
+  </macro>
+  <macro name="@-3rd">
+    <fs id="1" attr="3rd" val="-"/>
+    <fs id="2" attr="3rd" val="-"/>
+  </macro>
+  <macro name="@-3rd-agr">
+    <fs id="1" attr="3rd" val="-"/>
+    <fs id="2" attr="3rd" val="-"/>
+  </macro>
+  <macro name="@sg">
+    <fs id="2" attr="num" val="sg"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="sg"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@sg-agr">
+    <fs id="1" attr="num" val="sg"/>
+    <fs id="2" attr="num" val="sg"/>
+  </macro>
+  <macro name="@pl">
+    <fs id="2" attr="num" val="pl"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="pl"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl-agr">
+    <fs id="1" attr="num" val="pl"/>
+    <fs id="2" attr="num" val="pl"/>
+  </macro>
+  <macro name="@pp-from">
+    <fs id="3" attr="lex" val="from"/>
+  </macro>
+  <macro name="@pp-to">
+    <fs id="3" attr="lex" val="to"/>
+  </macro>
+  <macro name="@prt-up">
+    <fs id="4" attr="lex" val="up"/>
+  </macro>
+  <macro name="@prt-with">
+    <fs id="4" attr="lex" val="with"/>
+  </macro>
+  <macro name="@gerund">
+    <fs id="1" attr="vform" val="ger"/>
+  </macro>
+  <macro name="@nonfin">
+    <fs id="1" attr="vform" val="non-fin"/>
+  </macro>
+  <macro name="@finite">
+    <fs id="1">
+      <feat attr="vform" val="fin"/>
+    </fs>
+  </macro>
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+</morph>

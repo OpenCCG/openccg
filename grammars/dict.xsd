@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 University of Edinburgh (Michael White) 
+$Revision: 1.4 $, $Date: 2004/12/07 16:19:27 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for dict file.
+    
+    A dict file is a more refined version of a morph file that groups 
+    word forms by their stems (and parts of speech) and lists the mappings 
+    to lexical categories.  See the grammar build targets in build.xml 
+    for how a dict file can be straightforwardly transformed into the 
+    morph.xml and lexicon.xml files required by the run-time system.
+    
+    See morph.xsd for more information on the the mapping between morph 
+    items and lexical categories, and on the macros.
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="morph.xsd"/>
+  
+  
+  <xsd:element name="dictionary">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element, containing a list of dictionary entries and macros.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="entry" type="dictEntryType" maxOccurs="unbounded"/>
+        <xsd:element ref="macro" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  
+  <xsd:complexType name="dictEntryType">
+    <xsd:annotation>
+    <xsd:documentation>
+      A dictionary entry includes any number of 'member-of' and 'stem-for' mapping  
+      elements, followed by any number of 'word' elements for different word forms.
+      The stem and part of speech (pos) attributes are required.
+      If there is just a single word form, it can be specified using the 'word' 
+      attribute, with the stem as the default.
+      The predicate may also be given with the 'pred' attribute, if it 
+      differs from the stem.
+      Any macros that apply to all of the entry's word forms may also be listed.
+      See morph.xsd for info on the (semantic) class and coart(iculation) attributes.
+    </xsd:documentation>
+    </xsd:annotation>
+      <xsd:sequence>
+        <xsd:element ref="member-of" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="stem-for" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element ref="word" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    <xsd:attribute name="word" type="token"/>
+    <xsd:attribute name="stem" type="token" use="required"/>
+    <xsd:attribute name="pos" type="token" use="required"/>
+    <xsd:attribute name="pred" type="token"/>
+    <xsd:attribute name="macros" type="listOfMacroNames"/>
+    <xsd:attribute name="class" type="token"/>
+    <xsd:attribute name="coart" type="xsd:boolean"/>
+  </xsd:complexType>
+
+
+  <xsd:element name="member-of">
+    <xsd:annotation>
+    <xsd:documentation>
+      Specifies a mapping from the entry to a family of lexical categories. 
+      The 'family' attribute should provide the name of a category family.
+      The 'pred' attribute may be used to specify a different predicate 
+      to use with this family.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="family" type="token" use="required"/>
+      <xsd:attribute name="pred" type="token"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="stem-for">
+    <xsd:annotation>
+    <xsd:documentation>
+      Specifies a mapping from the entry to a particular entry in a family of 
+      lexical categories.
+      The 'family' and 'entry' attributes should provide the names of a 
+      category family and entry therein.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="family" type="token" use="required"/>
+      <xsd:attribute name="entry" type="token" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+
+  <xsd:element name="word">
+    <xsd:annotation>
+    <xsd:documentation>
+      A specific word form, given by the 'form' attribute.
+      Any macros that are particular to the word form may be listed.
+      Any lexical category families or entries whose mapping should be 
+      blocked may also be listed.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="form" type="token" use="required"/>
+      <xsd:attribute name="macros" type="listOfMacroNames"/>
+      <xsd:attribute name="excluded" type="listOfTokens"/>  
+    </xsd:complexType>
+  </xsd:element>
+  
+</xsd:schema>
+

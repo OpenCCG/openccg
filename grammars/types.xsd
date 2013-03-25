@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 Gunes Erkan
+$Revision: 1.2 $, $Date: 2003/08/26 09:58:19 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for type hierarchy file.
+
+    A type hierarchy file specifies the hierarchy of simple types which
+    constitute the domain of syntactic feature values.
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="tokens.xsd"/>
+
+  <xsd:element name="types">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element, containing a list of type entries.
+      Each type must have a unique name.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="type" maxOccurs="unbounded">
+          <xsd:annotation>
+          <xsd:documentation>
+            A simple type, with its name and immediate parents in the hierarchy.
+            Parents are specified as a space-separated list of type names.
+            Parents attribute is optional and defaults to the built-in type "top".
+            Only the immediate parents should be specified. 
+            The whole hierarchy is constructed during the initial grammar loading process.
+          </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:attribute name="name" type="token" use="required"/>
+            <xsd:attribute name="parents" type="listOfTokens"/>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:unique name="typeNameUniqueness">
+      <xsd:selector xpath="type"/>
+      <xsd:field    xpath="@name"/>
+    </xsd:unique>
+  </xsd:element>
+</xsd:schema>

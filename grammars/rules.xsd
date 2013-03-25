@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 University of Edinburgh (Michael White) 
+$Revision: 1.4 $, $Date: 2004/10/05 11:01:40 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for combinatory rules file.
+    
+    A rules file specifies the combinatory rules to use.
+    These rules include the (potentially) universal set of application, 
+    composition, type raising and substitution rules; they are only 
+    "potentially" universal because for efficiency one might want to 
+    use a restricted subset of the rules, and because the type raising 
+    rules are defined to work with specific, configurable argument and 
+    result types.
+    
+    The rules file may also specify unary type changing rules, which 
+    may be thought of as signs for zero morphemes, and thus conceptually 
+    belonging to the lexicon rather than to the (potentially) universal 
+    rule set.  They are defined in the rules file since, algorithmically, 
+    they are handled at the same time as the other combinatory rules.
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="categories.xsd"/>
+  
+  
+  <xsd:element name="rules">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element.
+    </xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:complexType>
+      <xsd:sequence>
+
+        <xsd:element name="application" minOccurs="0" maxOccurs="2">
+          <xsd:annotation>
+          <xsd:documentation>
+            Application, e.g. X/Y Y => X.
+          </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:attribute ref="dir" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="composition" minOccurs="0" maxOccurs="4">
+          <xsd:annotation>
+          <xsd:documentation>
+            Composition, e.g. X/Y Y/Z => X/Z.
+          </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:attribute ref="dir" use="required"/>
+            <xsd:attribute ref="harmonic" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="typeraising" type="typeraisingType" minOccurs="0" maxOccurs="unbounded"/>
+
+        <xsd:element name="substitution" minOccurs="0" maxOccurs="4">
+          <xsd:annotation>
+          <xsd:documentation>
+            Substitution, e.g. X/Y/Z Y/Z => X/Z.
+          </xsd:documentation>
+          </xsd:annotation>
+          <xsd:complexType>
+            <xsd:attribute ref="dir" use="required"/>
+            <xsd:attribute ref="harmonic" use="required"/>
+          </xsd:complexType>
+        </xsd:element>
+
+        <xsd:element name="typechanging" type="typechangingType" minOccurs="0" maxOccurs="unbounded"/>
+
+      </xsd:sequence>
+      
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  
+  <xsd:attribute name="dir">
+    <xsd:annotation>
+    <xsd:documentation>
+      Specifies the direction of the rule.
+      With forward combination, the functor appears on the left; 
+      with backward combination, it appears on the right.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:simpleType>
+      <xsd:restriction base="xsd:string">
+        <xsd:enumeration value="forward"/>
+        <xsd:enumeration value="backward"/>
+      </xsd:restriction>
+    </xsd:simpleType>
+  </xsd:attribute>
+  
+  <xsd:attribute name="harmonic" type="xsd:boolean">
+    <xsd:annotation>
+    <xsd:documentation>
+      Specifies whether the rule is harmonic (true) or permutative (false).
+    </xsd:documentation>
+    </xsd:annotation>
+  </xsd:attribute>
+
+  
+  <xsd:complexType name="typeraisingType">
+    <xsd:annotation>
+    <xsd:documentation>
+      Type raising, e.g. np => s/(s\np).
+      The default category for the arg is "np"; 
+      the default for the result is "s".
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="arg" type="atomcatContainer" minOccurs="0"/>
+      <xsd:element name="result" type="atomcatContainer" minOccurs="0"/>
+    </xsd:sequence>
+    <xsd:attribute ref="dir" use="required"/>
+    <xsd:attribute name="useDollar" type="xsd:boolean" use="required">
+      <xsd:annotation>
+      <xsd:documentation>
+        Specifies whether a coindexed dollar variable is included on 
+        the argument and result categories.
+      </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+
+
+  <xsd:complexType name="typechangingType">
+    <xsd:annotation>
+    <xsd:documentation>
+      Unary type changing rule, e.g. np => s/(s/np) for topicalization.
+      The arg and result categories are required, as is the name attribute.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="arg" type="categoryContainer"/>
+      <xsd:element name="result" type="categoryContainer"/>
+    </xsd:sequence>
+    <xsd:attribute name="name" type="token" use="required"/>
+  </xsd:complexType>
+
+
+  <xsd:complexType name="atomcatContainer">
+    <xsd:sequence>
+      <xsd:element ref="atomcat"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+  <xsd:complexType name="categoryContainer">
+    <xsd:sequence>
+      <xsd:element ref="category"/>
+    </xsd:sequence>
+  </xsd:complexType>
+  
+</xsd:schema>
+

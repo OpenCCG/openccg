@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003-4 University of Edinburgh (Michael White) 
+$Revision: 1.11 $, $Date: 2010/11/11 21:23:49 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for grammar file.
+    
+    A grammar file lists the lexicon, morphology and rules files, 
+    and optionally lists the types file and sequences of 
+    XSLT transformations to use in loading/saving LFs from/to XML.
+    It may also specify a custom list of features to use with 
+    supertag names, a custom tokenizer, and/or list semantic classes to 
+    replace words with for language models.
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="tokens.xsd"/>
+
+  <xsd:element name="grammar">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="lexicon" type="lexiconType"/>
+        <xsd:element name="morphology" type="fileType"/>
+        <xsd:element name="rules" type="rulesType"/>
+        <xsd:element name="types" type="fileType" minOccurs="0"/>
+        <xsd:element name="supertags" type="supertagsType" minOccurs="0"/>
+        <xsd:element name="tokenizer" type="tokenizerType" minOccurs="0"/>
+        <xsd:element name="LF-from-XML" type="transformList" minOccurs="0"/>
+        <xsd:element name="LF-to-XML" type="transformList" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:complexType name="fileType">
+    <xsd:annotation>
+    <xsd:documentation>
+      An element with a file attribute specifying a filename.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="file" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="lexiconType">
+    <xsd:annotation>
+    <xsd:documentation>
+      An element with a file attribute specifying a filename for the
+      lexicon file, plus an optional openlex attribute indicating
+      whether lexical category assignments are complete (for openlex
+      false) or incomplete (for openlex true).
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="fileType">
+        <xsd:attribute name="openlex" type="xsd:boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="rulesType">
+    <xsd:annotation>
+    <xsd:documentation>
+      An element with a file attribute specifying a filename 
+      for the rules file. An optional combosfile attribute 
+      gives the filename for the list of observed supercat-rule 
+      combos.  The format of the combos file is one combo per line, 
+      where each combo is either a supertag and a rule name, or a 
+      pair of supertags and a rule name, separated by single spaces.
+      The optional dynamic-combos flag indicates whether the 
+      observed combos should be determined dynamically (using the ones 
+      in the combos file as a starting point, if present).  By default, 
+      dynamic-combos is true if a combos file is given, and false if not.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="fileType">
+        <xsd:attribute name="combosfile" type="xsd:string"/>
+        <xsd:attribute name="dynamic-combos" type="xsd:boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="supertagsType">
+    <xsd:annotation>
+    <xsd:documentation>
+      An element which gives the features to use in constructing 
+      supertag names.  The feature names are given as a space-delimited list 
+      in the feats attribute.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="feats" type="listOfTokens" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="tokenizerType">
+    <xsd:annotation>
+    <xsd:documentation>
+      An element which gives the fully qualified class name for 
+      a custom tokenizer, and/or lists semantic classes to replace words 
+      with for language models.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="classname" type="xsd:string"/>
+    <xsd:attribute name="replacement-sem-classes" type="xsd:string"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="transformList">
+    <xsd:annotation>
+    <xsd:documentation>
+      Specifies a sequence of XSLT transformations.
+    </xsd:documentation>
+    </xsd:annotation>
+      <xsd:sequence>
+        <xsd:element name="transform" type="fileType" maxOccurs="unbounded"/>
+      </xsd:sequence>
+  </xsd:complexType>
+  
+</xsd:schema>

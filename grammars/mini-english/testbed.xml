@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<regression>
+  <item numOfParses="1" string="John promised him to exercise"/>
+  <item numOfParses="1" string="John persuaded him to read the book"/>
+  <item numOfParses="0" string="John promised him Sue see"/>
+  <item numOfParses="2" string="John gave Mary and read a book"/>
+  <item numOfParses="1" string="the doctor punched the patient and fell-down"/>
+</regression>

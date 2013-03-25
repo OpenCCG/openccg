@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!-- 
+Copyright (C) 2003 University of Edinburgh (Michael White) and Cem Bozsahin
+$Revision: 1.1 $, $Date: 2005/08/03 14:23:27 $ 
+-->
+<grammar name="Basque"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../grammar.xsd"
+>
+
+  <lexicon file="lexicon.xml"/>
+  <morphology file="morph.xml"/>
+  <rules file="rules.xml"/>
+  <types file="types.xml"/>
+
+</grammar>
+

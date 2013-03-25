@@ -1,0 +1,46 @@
+#!/bin/sh
+# sets OpenCCG environment variables
+
+if [ "$JAVA_HOME" = "" ] ; then
+  echo
+  echo "Error: JAVA_HOME not found in your environment."
+  echo
+  echo "Please set the JAVA_HOME variable in your environment to match the"
+  echo "location of the Java Virtual Machine you want to use."
+  exit 1
+fi
+
+if [ "$OPENCCG_HOME" = "" ] ; then
+  echo
+  echo "Error: OPENCCG_HOME not found in your environment."
+  echo
+  echo "Please set the OPENCCG_HOME variable in your environment to match the"
+  echo "location of your OpenNLP CCG Library distribution."
+  exit 1
+fi
+
+case `uname` in
+  CYGWIN* ) OPENCCG_HOME="`cygpath -w $OPENCCG_HOME`"
+  ;;
+esac
+
+OPENCCG_LIB="$OPENCCG_HOME/lib"
+OPENCCG_SRC="$OPENCCG_HOME/src"
+OPENCCG_CLASSES="$OPENCCG_HOME/output/classes"
+OPENCCG_JAR="$OPENCCG_HOME/lib/openccg.jar"
+case `uname` in
+  CYGWIN* ) DIRLIBS="$OPENCCG_LIB/trove.jar;$OPENCCG_LIB/jdom.jar;$OPENCCG_LIB/jline.jar;$OPENCCG_LIB/jopt-simple.jar"
+            CP="${OPENCCG_JAR};${DIRLIBS};."
+  ;;
+  * ) DIRLIBS="$OPENCCG_LIB/trove.jar:$OPENCCG_LIB/jdom.jar:$OPENCCG_LIB/jline.jar:$OPENCCG_LIB/jopt-simple.jar"
+      CP="${OPENCCG_JAR}:${DIRLIBS}:."
+  ;;
+esac
+# variant for use with 'build compile' option, if desired:
+#CP="${OPENCCG_CLASSES}:${OPENCCG_SRC}:${DIRLIBS}"
+JAVA="$JAVA_HOME/bin/java"
+JAVA_MEM="-Xmx256m"
+#JAVA_MEM="-Xmx2048m"
+#JAVA_MEM="-Xmx8g"
+#JAVA_MEM="-Xmx16g"
+JAVA_ARGS="$JAVA_MEM -classpath $CP -Dfile.encoding=UTF8"

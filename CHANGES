@@ -1,0 +1,539 @@
+0.9.5 - dependency length minimization, disjunctivizer, KenLM
+-------------------------------------------------------------
+
+* Added features for dependency ordering and dependency length
+  minimization in realization.
+
+* Added disjunctivizer package, for creating a disjunctive LF XML
+  structure based on an LF graph difference.
+
+* Added support for using a very large 5-gram memory-mapped language
+  model with KenLM on linux.
+
+* Added n-best parser output.
+
+* Added option for in-memory perceptron training.
+
+
+0.9.4 - broad coverage paraphrasing, CCGbank training
+-----------------------------------------------------
+
+* Added Hockenmaier-style generative probability model for parsing and
+  realization.
+
+* Added supertagger and use of adaptive supertagging in parsing.
+
+* Added build files for CCGbank training, documented in
+  docs/ccgbank-README, as well as ones for parsing and realizing
+  novel text (thereby generating grammatical paraphrases).
+
+* Added release targets for CCGbank data and pre-built English models.
+
+* Added use of Stanford tokenizer, morphological analyzer and named
+  entity recognizer in parsing novel text.
+
+* Added use of ordinary hashing for lex signs, so that signs that
+  differ only in the pos tag can be distinguished (for robustness).
+
+* Added hypertagger input option and derivation history output to ccg-realize.
+
+* Added n-best realization output to ccg-test.
+
+* Added tracking of lex heads to signs via modifier attr on slashes.
+
+* Added gold standard pred info for training with hypertagger.
+
+* Added initial syntactic feature extractor.
+
+* Added caching of supertags in cats.
+
+* Added option to use word positions in converting atoms in the LFs, 
+  which is now the default.  Added :nowordpos command in tccg to 
+  change the preference to the lexical naming option.
+  
+* Changed tccg to also update Grammar.theGrammar.prefs, which seems 
+  to have fixed issue with :nosem option not working.
+  
+* Refactored feature extraction to use a trie for representing features 
+  as a sequence of interned string keys, to allow for lazy feature 
+  extraction that more quickly filters features not in the alphabet.
+  
+* Added serialization of signs.
+
+* Added python script for drawing derivs in .auto files as trees (uses NLTK).
+
+* Added cell pruning limit in realization.
+  
+* Added support for 'magic tokens' (like numbers) in ccg2xml,
+  contributed by vanjena@users.sourceforge.net.
+
+* Turned off caching of category hash codes b/c of problems with stale 
+  values (a method of checking for staleness might be added later).
+
+* Improved utf8 support (esp. for macs).  Note that utf8 support seems
+  hopelessly broken for the Windows command-line, in that none of the
+  available terminal apps (including for cygwin) both display
+  characters correctly and work with tccg.  I/O to files works fine
+  though.
+
+* Added xml escaping for bleu and nbest output.
+
+* Added ccg-draw-graph tool for visualizing semantic dependency
+  graphs.
+
+  
+0.9.3 - minor changes
+-------------------
+
+* Added runCommand method in Visualizer so that the latex
+  visualization works on Linux
+
+* Added id info to test items and bleu output.
+
+* Changed default lex licensing feature to be last in Lexicon.loadLicensingFeatures.
+
+* Added loop for computing closure of licensed no sem edges in EdgeFactory.
+
+* Changed FeatureLicenser to unify feat strucs instead of cats.
+
+ 
+0.9.2 - VisCCG release plus initial hypertagger support
+-------------------------------------------------------
+* Added check for unary rule cycles in parser and realizer.
+
+* Added initial version of greedy fragment assembly in realization when 
+  a complete realization is not found.
+  
+* Added case for composition of X/Y Y/Z where Y has arity 2.
+
+* Added option to filter rule apps by observed supercat-rule combos.
+
+* VisCCG: Please see the list of changes in the archives at http://comp.ling.utexas.edu/wiki/doku.php/openccg/dev
+
+* Added LexSemOrigin interface for tracking of origin of lexical 
+  predications back to a sign or unary type changing rule.
+
+* Removed unused LF in DataItem.
+
+* Added supertagger-based filtering to lexical lookup.
+
+* Upgraded to JDOM 1.1.
+
+* Upgraded parser to use ambiguity packing.
+
+* Added scoring and n-best pruning to parser.
+
+* Refactored SignScorer to synsem package, for shared use
+  by the realizer and parser.  NB:  This may require minor
+  refactoring of imports and recompilation of realizer clients.
+
+* Changed realizer to check instantiation of outermost args by 
+  default, thereby improving completness at minor cost to efficiency.
+  Accordingly, renamed checkInstantiation flag in EdgeFactory to 
+  debugInstantiation, which now controls whether to report such 
+  cats to System.err.
+
+* Added hypertagger (realizer supertagger) interface and initial 
+  version of beta-best realization using it.
+  
+* Changed Family.deriveSupertag to remove the semantic part of a 
+  cat name following a colon.
+
+
+0.9.1 - New tools: grammardoc, ccg2xml; other misc updates
+----------------------------------------------------------
+* Changed dateFormatNoYear to "*.MM.dd" to avoid ambiguity with 
+  numbers.
+  
+* Changed Grammar.initializeTransformers to set indenting more robustly 
+  by adding try-catch blocks for illegal argument exceptions.
+  
+* Refactored RuleGroup to apply unary and binary rules separately.
+
+* Refactored Lexicon and RuleGroup to load lex/morph/rule info incrementally, 
+  using a new XmlScanner utility class.  These changes avoid the need to 
+  store large XML docs all in memory at once, while keeping the refactoring 
+  to a minimum.
+  
+* Revised LF flattening to propapage the alts, opts & chunks based on 
+  the expression structure, rather than the graph structure.  
+  This change makes the 'shared' attribute (on nominal references) 
+  more transparent in how it works with disjunctions that operate on 
+  different levels of the tree.
+
+* Revised LF compaction to allow duplicate predications, where an attempt 
+  is made to attach them in different locations if possible.
+
+* Added GrammarDoc, which generates HTML documentation from a source grammar.
+  See README, under `Generating Grammar Documentation' for more information.
+
+* Added initial version of ccg2xml, for specifying grammars in the 
+  more human-friendly .ccg format.
+  
+* Changed build system
+  - Made separate build files for ccg2xml and documentation
+  - Made the `release' target of the main build file create a binary for
+    distribution, instead of just the source
+  
+  
+0.9.0 - Disjunctive LFs
+-----------------------
+* Refactored realizer to put all no-sem edges on the agenda, 
+  which requires making an exception for edges with no indices 
+  in the implementation of the index filter, but otherwise 
+  yields a more uniform approach to creating edges.
+  
+* Refactored realizer to use representative edges (one per cat) 
+  instead of edge groups, which ends up being simpler on the whole 
+  and should be easier to explain.
+  
+* Refactored categories to allow for equality checks with and 
+  without taking the LFs into consideration.
+  
+* Refactored edge equiv classes to use coverage bit vector 
+  and cat sans LF to check equality.
+  
+* Refactored lex instantiation to produce all possible instantiations 
+  that respect the alt exclusivity constraints.
+  
+* Changed Sign, DerivationHistory to store rule object.
+
+* Changed alt edge construction to create new LF from input signs and rule, 
+  since signs in equiv class of alts can now have different LFs.
+  
+* Added active alt tracking and completing of edges with optional bits.
+
+* Changed HyloVar to check for equal types when checking for equality up 
+  to var renaming.
+  
+* Refactored generics to avoid type warnings in Eclipse.
+
+* Relaxed LF chunking constraints to allow combinations with edges 
+  (or trackers more generally) that are shared across multiple 
+  alt set options.
+  
+* Added "shared" attribute to nominal terms to indicate references 
+  to nodes that are shared across alternatives in a disjunctive LF; 
+  then revamped and reinforced the LF chunking constraints.
+  
+* Fixed problem with signMap not pointing to opt-completed edge.
+
+* Improved edge printing from realizer chart to show derivations.
+
+* Updated realizer to keep edges whose signs have the simplest derivation, 
+  among those with the same surface words.
+  
+* Added filter for ungrammatical test cases in ccg-test text output.
+
+* Added first draft of realizer manual.
+
+  
+0.8.6 - Java 1.5 switch, n-gram scoring improvements
+----------------------------------------------------
+* Added propagation of reverse flag on n-gram models.
+
+* Refactored LinearNgramScorerCombo and n-gram models to 
+  support interpolation at the word level.
+
+* Added caching of log probs in NgramScorer, to avoid recomputing 
+  log prob of words for a sign's initial sign.
+
+* Added n-gram diversity pruning strategy.
+
+* Changed SignHash to only keep signs that are unique up to surface words, 
+  thereby ignoring different POS or supertags; also changed it to keep 
+  signs with lower derivational complexity during insertion.
+  
+* Added reverse flag for loaded n-gram models with ccg-test, ccg-realize.
+
+* Fixed sentence delimiter text output for reversible standard n-gram models; 
+  made AAnFilter reversible.
+  
+* Added Xalan 2.6.0 jars, to support Java 1.5 builds.
+
+* Added support for duration special tokens; note that the implementation has 
+  an unavoidable dependency on Java 1.5.
+ 
+ 
+0.8.5 - "Rough Guide", sem types, command history/completion, and more
+---------------------------------------------------------------------- 
+* Added initial core-en/types.xml.
+
+* Generalized feature licensing to allow for selective listing of supertypes 
+  in the also-licensed-by attribute.
+  
+* Fixed bug in unifying two vars with simple types.
+
+* Removed useless SignHash.values method; clarified intention to 
+  eventually remove this class.
+  
+* Streamlined lexical access for realization.
+
+* Removed superfluous unique stamps in var classes.
+
+* Added support for using simple types (aka sorts) with semantic features 
+  and nominals.  During category instantiation, a morph item's class is 
+  assigned to the nominal var(s) for the [*DEFAULT*] proposition, and
+  the types of all nominal vars are then propagated to all other 
+  nominal vars with the same name, throughout the category.  
+  
+* Changed tokenizer keep-words-with-sem-classes option in grammar.xsd 
+  to replacement-sem-classes option, where all semantic classes to use 
+  in replacing words with sem classes for language models are listed. 
+  Also changed semantic class replacement routine to uppercase semantic 
+  class names.
+  
+* Added initial sem types to core-en, comic, and flights grammars.
+
+* Fixed bug in constructing type hierarchies with multiple inheritance.
+
+* Added ccg-update tool, with initial task to add full words (pre-parsed) 
+  to the testbed file; also updated ccg-test to use the pre-parsed words 
+  when writing training text files.
+  
+* Updated ccg-cvr tool to use full words when present.
+  Also added filter to remove test item duplicates from 
+  cross-validation training sets.
+
+* Added reporting of mean reciprocal rank to ccg-test, as well 
+  as residual mean reciprocal rank, based on the cases that do 
+  not match the target exactly.
+
+* Updated ccg-cvr tool to work with factored language models.
+
+* Fixed null pointer exception in DefaultTokenizer.format, Word.setW methods.
+
+* Added timing of lex lookup to realization metrics.
+
+* Added David's JLine console support to tccg, with command completion and 
+  per grammar history.
+
+* Added handling of coarticulations in the lexicon.
+
+* Added caching of lex lookup during realization.
+
+* Updated to-apml.xsl to handle 'and' in multiword elements.
+
+* Updated visualizer to handle word lists and to ignore coarts.
+
+* Added repetition scorer, for discounting repetitive realizations.
+
+* Added scorer class, pruning strategy class options to ccg-realize.
+
+* Added workaround for saving command history correctly with Java 1.4 on Linux.
+ 
+* Added 'tiny' grammar.
+
+* Added grammars "rough guide".
+
+* Added supertag as another word attr.
+
+* Revamped LMs to use trie maps, for better speed & scalability.
+
+* Improved handling of nulls in FLMs.
+
+* Cleaned up word representations.
+
+* Added even/odd selection for scoring too in ccg-test.
+
+* Added -reverse and -scorer options to ccg-test.
+
+* Added reverse LM capability.
+
+* Made supertag attrs configurable.
+
+* Switched to JDOM 1.0.
+
+
+0.8.4 - Factored language models (initial support), packing/unpacking, and more
+--------------------------------------------------------------- 
+* Added Alex's latex visualization of derivations
+  (nb: launch of previewer works better on Windows than Linux)
+
+* Added customizable tokenization and expansion routines for 
+  dates/times/nums/amounts and other named entities.
+  
+* Added -2apml option to ccg-test.
+
+* Added Word class and many related changes to tokenization.
+
+* Added -textf|-textfsc options to ccg-test, for writing files in the format 
+  expected by the SRILM toolkit for factored language models.
+
+* Updated copyright notices.
+
+* Changed ngram model to use canonical lists of words as keys, 
+  removing size restriction. 
+  
+* Added -aanfilter option to ccg-test, with an optional list of
+  exceptions, which may be culled from bigram counts.
+
+* Added keep-words-with-sem-classes option to grammar.xsd, to 
+  specify exceptional semantic classes where the word form is also 
+  considered relevant for scoring models.
+  
+  NB: Also changed grammar.xsd to specify a custom tokenizer class name 
+      and/or keep-words-with-sem-classes on a separate 
+      tokenizer element.
+
+* Added support for factored language models with fixed backoff paths,
+  arranged into families of models for different child variables,
+  and with the option to have secondary models for shorter available
+  histories.  Also added corresponding -flm|-flmsc options to
+  ccg-test.
+
+* Added option to do scoring in a second stage, starting from a packed
+  representation.
+  
+* Switch from cached combos to collected combos, making the anytime case
+  more like the packed case.
+  
+* Added compacting of gen forest when unpacking is turned off.
+
+* Added pretty-printing of regex-like gen forest.
+
+
+0.8.3 - New efficiency methods, Cem-* grammars, and more
+--------------------------------------------------------------- 
+* Added grammars from Bozsahin and Steedman (2003).
+
+* Improved instantiation of unary rules, ensuring that the 
+  first pred is used for indexing, and fixing a bug whereby 
+  a rule indexed by a lex pred would be missed.
+  
+* Added initial capability to use semantic classes in n-gram scoring, 
+  as shown in ccg-realize.
+  
+* Added LF chunking rules, which yields the most dramatic improvement in
+  efficiency. 
+
+* Added systematic feature-based licensing and instantiation.
+
+* Added caching of category combinations.
+
+* Added labeling of the phrase in the XML output headed by the index
+  associated with the <mark>+ semantic feature.
+  
+* Added feature filtering and LF indenting to tccg display options.
+
+* Added XML configuration of LF relation sorting.
+
+* Added :2tb (to testbed) command for adding the current parse to the 
+  testbed.
+  
+* Fixed grammar loading so it no longer has to be from the current directory.
+
+* Made it possible to list a stem as a member of an open class family with a
+  separate pred, without getting an entry with the default pred too.
+
+* Enabled indexRel to be declared at the level of entries or families.
+
+* Added prefs import/export to tccg.
+
+* Added ccg-cvr tool for cross-validating realizer.
+
+* Reconfigured ccg-test with various new switches. 
+
+* Put feature licensing on a switch.
+
+* Made pruning strategy configurable.
+
+* Changed representation of coord to work better with 
+  chunking (though less concise).
+
+* Added option to stop realizer after new best time limit (past first 
+  complete realization) is exceeded, via :nbtl N command
+
+
+0.8.2 - Edge pruning during realization, XML/APML I/O, and more
+--------------------------------------------------------------- 
+* Changed build to ccg-build, in bin directory; 
+  also added separate build.xml files to each sample 
+  grammar directory.  This way, a call to ccg-build 
+  either builds the system or the current grammar, 
+  depending on what directory you're in.
+  
+* Changed realizer to no longer allow unmatched 
+  attr preds (ie sem features).  This way, the presence 
+  of certain sem features can be used to control realization 
+  choices, instead of requiring these features to always 
+  be present.  To underspecify these choices, the idea 
+  is to eventually allow for their optional inclusion. 
+
+* Added more options to turn settings off individually in tccg.
+
+* Enabled realizer to handle type changing rules with 
+  their own semantics in the result category.
+  
+* Added configurable edge pruning per category during 
+  realization, which controls the number of edges with 
+  equivalent categories to keep in the chart.
+  
+* Fixed unification bug by adding occurs checks to Dollar's fill 
+  method, needed at least in part b/c ArgStack doesn't quite 
+  implement Unifiable.
+  
+* Replaced hashString with hashCode and equals up to var names, 
+  yielding a 4-5% improvement in efficiency.
+  
+* Switched to grammar.xml file.  If none exists, an attempt is 
+  made to load from the default files lexicon.xml, morph.xml and 
+  rules.xml.  See grammar.xsd for format.
+  
+* Added LF load/save from/to XML via a sequence of transformations 
+  specified in the grammar.xml file.
+
+* Added save-to-xml (:2xml) option for saving LFs to XML 
+  files from tccg.
+  
+* Added save-to-apml (:2apml) option for saving last input string to 
+  APML files from tccg.
+  
+* Updated parser to apply unary rules repeatedly.
+
+* Various updates to flights grammar, including use of FrameNet roles.
+  
+
+0.8.1 - OpenCCG Release with XML Schemas (!)
+---------------------------------------------------- 
+This release adds XML Schema validation to the grammar build 
+process, where the comments in the XML schemas also 
+serve as reference documentation for the grammar formats (wahoo!).
+The release also contains several bug fixes to the unification 
+routines, and a more substantial "flights" grammar with 
+semantic control over pitch accents and boundary tones.
+
+
+0.8.0 - First OpenNLP CCG Library Release 
+---------------------------------------------------- 
+Reorganized directories and renamed packages and tools. 
+Added build target for worldcup sample grammar. 
+Rewrote scripts for simplicity and parallelism. 
+Cut out pre-processing components and any classes and  
+libraries that looked like dead wood.  Started removing 
+unnecessary interfaces.
+
+
+Grok 0.7.0 - Towards a CCG Realizer
+---------------------------------------------------- 
+Mike is taking over Grok development and repurposing it for primary 
+use as a CCG Realizer in limited domain dialogue systems. 
+See http://www.iccs.informatics.ed.ac.uk/~mwhite/White-Baldridge-ENLG-2003-to-appear.pdf 
+for a description of the effort so far.
+Version 0.7.0 will be the last Grok release.
+After this version, Grok will be split into separately usable 
+and separately developed OpenNLP components.
+Tom Morton will be responsible for further development of the 
+pre-processing components.
+Mike will be responsible for further development of the CCG 
+parser and realizer.
+
+
+Grok 0.6.0 - Multi-Modal CCG
+---------------------------------------------------- 
+For more information, see Jason's dissertation available at:
+http://www.iccs.inf.ed.ac.uk/~jmb/dissertation
+
+
+See Grok site for further history ...
+

@@ -1,0 +1,50 @@
+Loading grammar from URL: file:/home/bozsahin/openccg/grammars/mini-basque/grammar.xml
+
+Parse	Realize	String
+-----	-------	------
+ok	-	joan
+ok	-	ikusi
+ok	-	zuen
+ok	-	zen
+ok	-	klase ra
+ok	-	eskola n
+ok	-	ama aitak ikusi zuen
+ok	-	ama joan
+ok	-	*ama k joan
+ok	-	*ama k joan du
+(2)	-	ama k seme a ikusi du
+(2)	-	seme a ama k ikusi du
+(2)	-	nik liburu a emakume ari eman nahi dut
+FAILED	-	*nik liburu a aita k eman nahi dut
+FAILED	-	*nik aita k liburu a eman nahi dut
+ok	-	ama k seme a emakume ari eman dio
+ok	-	seme a ama k emakume ari eman dio
+ok	-	emakume ari seme a ama k eman dio
+ok	-	nik joan nahi dut
+(2)	-	nik kafe a egin nahi dut
+ok	-	*nik kafe a egin nahi du
+ok	-	nik kafe a egin nahi
+FAILED	-	*nik aita k ikusi nahi dut
+ok	-	nik ikusi nahi dud an gizon a joan da
+ok	-	gizon a ikusi nahi dud an seme a joan da
+ok	-	emakume ari liburu a eman dio n gizon a joan du
+FAILED	-	emakume ari liburu a eman dio n gizon a nik ikusi dut
+ok	-	*emakume ari liburu a eman dio n gizon ak ni ikusi dut
+ok	-	emakume ari liburu a eman dio n gizon ak ni ikusi
+(2)	-	gizon ak emakume ari eman dio n liburu a aita k ikusi du
+(3)	-	gizon ak liburu a eman dio n emakume a
+ok	-	gizon ak liburu a eman dio n emakume a joan du
+(3)	-	aita k seme a eskola n utzi zuen eta klase ra joan zen
+(3)	-	seme a eskola n utzi zuen eta klase ra joan zen
+(3)	-	seme a eskola n utzi eta klase ra joan zen
+ok	-	*seme a eskola n utzi eta klase ra joan zuen
+ok	-	ama joan zen eta aita k ikusi zuen
+ok	-	aita k ikusi zuen eta klase ra joan zen
+ok	-	*ama k joan eta aita ikusi zuen
+ok	-	aitak ama ikusi zuen eta joan zen
+ok	-	ama aitak ikusi zuen eta joan zen
+ok	-	joan zen eta ama ikusi zuen
+ok	-	joan zen eta aitak ikusi zuen
+FAILED	-	sagarrak emakume ak egosten ditu eta gizonak jaten ditu
+ok	-	sagarrak emakume ak egosten ditu eta usteltzen dira
+ok	-	sagarrak usteltzen dira eta emakume ak egosten ditu

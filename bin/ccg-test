@@ -1,0 +1,4 @@
+#!/bin/sh
+# For usage, do: ccg-test -h
+. ccg-env
+"$JAVA" $JAVA_ARGS opennlp.ccg.test.Regression "$@"

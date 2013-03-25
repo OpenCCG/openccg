@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2006 Michael White
+$Revision: 1.11 $, $Date: 2008/01/29 17:18:52 $ 
+-->
+<morph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd" name="routes">
+  <!-- ===================== Simple determiners ==================== -->
+  <entry pos="Det" word="a" macros="@sg"/>
+  <entry pos="Det" word="an" stem="a" macros="@sg"/>
+  <entry word="about" pos="Det"/>
+  <entry word="the" pos="Det"/>
+  <!-- ======================== Pronouns =========================== -->
+  <entry pos="Pro" word="I" stem="pro1" class="animate-being" macros="@1st @sg @nom @sg-X"/>
+  <entry pos="Pro" word="me" stem="pro1" class="animate-being" macros="@1st @sg @acc @sg-X"/>
+  <entry pos="Pro" word="we" stem="pro1" class="animate-being" macros="@1st @pl @nom @pl-X"/>
+  <entry pos="Pro" word="us" stem="pro1" class="animate-being" macros="@1st @pl @acc @pl-X"/>
+  <entry word="you" stem="pro2" pos="Pro" class="animate-being" macros="@2nd"/>
+  <entry pos="Pro" word="she" stem="pro3f" class="animate-being" macros="@3rd @sg @nom @sg-X"/>
+  <entry pos="Pro" word="her" stem="pro3f" class="animate-being" macros="@3rd @sg @acc @sg-X"/>
+  <entry pos="Pro" word="he" stem="pro3m" class="animate-being" macros="@3rd @sg @nom @sg-X"/>
+  <entry pos="Pro" word="him" stem="pro3m" class="animate-being" macros="@3rd @sg @acc @sg-X"/>
+  <entry pos="Pro" word="it" stem="pro3n" macros="@3rd @sg @sg-X"/>
+  <entry pos="Pro" word="they" stem="pro3n" macros="@3rd @pl @nom @pl-X"/>
+  <entry pos="Pro" word="them" stem="pro3n" macros="@3rd @pl @acc @pl-X"/>
+  <entry pos="Pro" word="this" macros="@3rd @sg @sg-X"/>
+  <entry pos="Pro" word="these" stem="this" macros="@3rd @pl @pl-X"/>
+  <entry pos="Pro" word="that" macros="@3rd @sg @sg-X"/>
+  <entry pos="Pro" word="those" stem="that" macros="@3rd @pl @pl-X"/>
+  <entry pos="PossPro" word="my" stem="pro1" class="animate-being" macros="@sg-P"/>
+  <entry pos="PossPro" word="our" stem="pro1" class="animate-being" macros="@pl-P"/>
+  <entry word="your" stem="pro2" pos="PossPro" class="animate-being"/>
+  <entry word="her" stem="pro3f" pos="PossPro" macros="@sg-P"/>
+  <entry word="his" stem="pro3m" pos="PossPro" macros="@sg-P"/>
+  <entry pos="PossPro" word="its" stem="pro3n" macros="@sg-P"/>
+  <entry pos="PossPro" word="their" stem="pro3n" macros="@pl-P"/>
+  <!-- ======================= Prepositions ======================== -->
+  <entry word="at" pos="Prep"/>
+  <entry word="after" pos="Prep"/>
+  <entry word="before" pos="Prep"/>
+  <entry word="off" pos="Prep"/>
+  <entry word="on" pos="Prep"/>
+  <entry word="along" pos="Prep"/>
+  <entry word="from" pos="Prep"/>
+  <entry word="for" pos="Prep"/>
+  <entry word="across" pos="Prep"/>
+  <entry word="into" pos="Prep"/>
+  <entry word="out_of" pos="Prep"/>
+  <entry word="over" pos="Prep"/>
+  <entry word="past" pos="Prep"/>
+  <entry word="through" pos="Prep"/>
+  <entry word="under" pos="Prep"/>
+  <entry word="via" pos="Prep"/>
+  <entry word="away_from" pos="Prep"/>
+  <entry word="toward" pos="Prep"/>
+  <entry word="onto" pos="Prep"/>
+  <entry word="to" pos="Prep"/>
+  <entry word="up" pos="Prep"/>
+  <entry word="down" pos="Prep"/>
+  <!-- ========================= Adverbs =========================== -->
+  <entry word="soon" pos="Adv"/>
+  <!-- ======================== Adverbials ========================= -->
+  <entry word="until" pos="Adv"/>
+  <entry word="when" pos="Adv"/>
+  <!-- ======================= Punctuation ========================= -->
+  <entry word="." pos="."/>
+  <entry word="," pos=","/>
+  <!-- ========================= Numbers =========================== -->
+  <entry word="[*NUM*]" class="num" pos="Num" macros="@pl"/>
+  <entry word="one" class="num" pos="Num" macros="@sg"/>
+  <entry word="1" class="num" pos="Num" macros="@sg"/>
+  <entry word="several" class="num" pos="Num" macros="@pl"/>
+  <entry word="two" class="num" pos="Num" macros="@pl"/>
+  <entry word="three" class="num" pos="Num" macros="@pl"/>
+  <entry word="four" class="num" pos="Num" macros="@pl"/>
+  <entry word="five" class="num" pos="Num" macros="@pl"/>
+  <!-- ======================== Adjectives ========================= -->
+  <entry word="left" class="direction" pos="Adj"/>
+  <entry word="right" class="direction" pos="Adj"/>
+  <entry word="first" class="ord" pos="Adj"/>
+  <entry word="second" class="ord" pos="Adj"/>
+  <entry word="third" class="ord" pos="Adj"/>
+  <entry word="last" class="ord" pos="Adj"/>
+  <entry word="immediate" class="dist" pos="Adj"/>
+  <entry word="long" pos="Adj"/>
+  <entry word="short" pos="Adj"/>
+  <entry word="traffic" pos="Adj"/>
+  <!-- ========================== Nouns ============================ -->
+  <entry pos="N" word="bridge" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="bridges" stem="bridge" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="destination" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="destinations" stem="destination" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="exit" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="exits" stem="exit" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="house" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="houses" stem="house" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="light" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="lights" stem="light" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="pizzeria" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="pizzerias" stem="pizzeria" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="river" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="rivers" stem="river" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="Starbucks" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="Starbuckses" stem="Starbucks" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="tunnel" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="tunnels" stem="tunnel" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="underpass" class="landmark" macros="@sg @sg-X"/>
+  <entry pos="N" word="underpasses" stem="underpass" class="landmark" macros="@pl @pl-X"/>
+  <entry pos="N" word="expressway" class="road" macros="@sg @sg-X"/>
+  <entry pos="N" word="expressways" stem="expressway" class="road" macros="@pl @pl-X"/>
+  <entry pos="N" word="road" class="road" macros="@sg @sg-X"/>
+  <entry pos="N" word="roads" stem="road" class="road" macros="@pl @pl-X"/>
+  <entry pos="N" word="way" class="road" macros="@sg @sg-X"/>
+  <entry pos="N" word="ways" stem="way" class="road" macros="@pl @pl-X"/>
+  <entry pos="N" word="left" class="turn" macros="@sg @sg-X"/>
+  <entry pos="N" word="lefts" stem="left" class="turn" macros="@pl @pl-X"/>
+  <entry pos="N" word="right" class="turn" macros="@sg @sg-X"/>
+  <entry pos="N" word="rights" stem="right" class="turn" macros="@pl @pl-X"/>
+  <entry pos="N" word="fork" class="action" macros="@sg @sg-X"/>
+  <entry pos="N" word="forks" stem="fork" class="action" macros="@pl @pl-X"/>
+  <entry pos="N" word="turn" class="action" macros="@sg @sg-X"/>
+  <entry pos="N" word="turns" stem="turn" class="action" macros="@pl @pl-X"/>
+  <entry word="left" class="direction" pos="N"/>
+  <entry word="right" class="direction" pos="N"/>
+  <entry word="straight" class="direction" pos="N"/>
+  <entry word="north" class="direction" pos="N"/>
+  <entry word="south" class="direction" pos="N"/>
+  <entry word="east" class="direction" pos="N"/>
+  <entry word="west" class="direction" pos="N"/>
+  <entry word="northeast" class="direction" pos="N"/>
+  <entry word="northwest" class="direction" pos="N"/>
+  <entry word="southeast" class="direction" pos="N"/>
+  <entry word="southwest" class="direction" pos="N"/>
+  <entry pos="N" word="mile" class="dist" macros="@sg @sg-X"/>
+  <entry pos="N" word="miles" stem="mile" class="dist" macros="@pl @pl-X"/>
+  <!-- ========================== Verbs ============================ -->
+  <!-- 'be' -->
+  <!-- 
+    <member-of pred="there-be" family="ThereExistential"/>
+    -->
+  <entry pos="V" word="be" macros="@base"/>
+  <entry pos="V" word="am" stem="be" macros="@pres @1st @sg"/>
+  <entry pos="V" word="'m" stem="be" macros="@pres @1st @sg"/>
+  <entry pos="V" word="are" stem="be" macros="@pres @2nd @sg"/>
+  <entry pos="V" word="'re" stem="be" macros="@pres @2nd @sg"/>
+  <entry pos="V" word="is" stem="be" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="'s" stem="be" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="are" stem="be" macros="@pres @pl"/>
+  <entry pos="V" word="'re" stem="be" macros="@pres @pl"/>
+  <entry pos="V" word="was" stem="be" macros="@past @1st @sg"/>
+  <entry pos="V" word="were" stem="be" macros="@past @2nd @sg"/>
+  <entry pos="V" word="was" stem="be" macros="@past @3rd @sg"/>
+  <entry pos="V" word="were" stem="be" macros="@past @pl"/>
+  <!-- Modal verbs -->
+  <entry word="should" pos="V"/>
+  <entry pos="V" word="will"/>
+  <entry pos="V" word="'ll" stem="will"/>
+  <!-- Regular verbs -->
+  <entry pos="V" word="bear" class="action" macros="@base"/>
+  <entry pos="V" word="bear" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="bears" stem="bear" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="bear" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="bore" stem="bear" class="action" macros="@past"/>
+  <entry pos="V" word="continue" class="action" macros="@base"/>
+  <entry pos="V" word="continue" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="continues" stem="continue" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="continue" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="continued" stem="continue" class="action" macros="@past"/>
+  <entry pos="V" word="cross" class="action" macros="@base"/>
+  <entry pos="V" word="cross" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="crosses" stem="cross" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="cross" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="crossed" stem="cross" class="action" macros="@past"/>
+  <entry pos="V" word="drive" class="action" macros="@base"/>
+  <entry pos="V" word="drive" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="drives" stem="drive" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="drive" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="drove" stem="drive" class="action" macros="@past"/>
+  <entry pos="V" word="fork" class="action" macros="@base"/>
+  <entry pos="V" word="fork" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="forks" stem="fork" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="fork" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="forked" stem="fork" class="action" macros="@past"/>
+  <entry pos="V" word="get" class="action" macros="@base"/>
+  <entry pos="V" word="get" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="gets" stem="get" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="get" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="got" stem="get" class="action" macros="@past"/>
+  <entry pos="V" word="go" class="action" macros="@base"/>
+  <entry pos="V" word="go" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="goes" stem="go" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="go" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="went" stem="go" class="action" macros="@past"/>
+  <entry pos="V" word="pass" class="action" macros="@base"/>
+  <entry pos="V" word="pass" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="passes" stem="pass" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="pass" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="passed" stem="pass" class="action" macros="@past"/>
+  <entry pos="V" word="reach" class="action" macros="@base"/>
+  <entry pos="V" word="reach" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="reaches" stem="reach" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="reach" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="reached" stem="reach" class="action" macros="@past"/>
+  <entry pos="V" word="see" class="action" macros="@base"/>
+  <entry pos="V" word="see" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="sees" stem="see" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="see" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="saw" stem="see" class="action" macros="@past"/>
+  <entry pos="V" word="stay" class="action" macros="@base"/>
+  <entry pos="V" word="stay" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="stays" stem="stay" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="stay" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="stayed" stem="stay" class="action" macros="@past"/>
+  <entry pos="V" word="take" class="action" macros="@base"/>
+  <entry pos="V" word="take" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="takes" stem="take" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="take" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="took" stem="take" class="action" macros="@past"/>
+  <entry pos="V" word="turn" class="action" macros="@base"/>
+  <entry pos="V" word="turn" class="action" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="turns" stem="turn" class="action" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="turn" class="action" macros="@pres @pl"/>
+  <entry pos="V" word="turned" stem="turn" class="action" macros="@past"/>
+  <!-- ======================== Proper Names ======================= -->
+  <entry word="Broadway" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Cambridge" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Cambridge_Street" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Concord_Avenue" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Irving_Terrace" pos="NNP" class="road" macros="@sg"/>
+  <entry word="JFK_Street" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Mass_Pike" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Memorial_Drive" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Prescott_Street" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Prospect_Street" pos="NNP" class="road" macros="@sg"/>
+  <entry word="River_Street" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Route_2" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Storrow_Drive" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Sumner_Road" pos="NNP" class="road" macros="@sg"/>
+  <entry word="Charles" pos="NNP" class="person" macros="@sg"/>
+  <entry word="Longfellow" pos="NNP" class="person" macros="@sg"/>
+  <entry word="Mona_Lisa" pos="NNP" class="person" macros="@sg"/>
+  <entry word="Alston_tolls" pos="NNP" class="place" macros="@sg"/>
+  <entry word="Central_Square" pos="NNP" class="place" macros="@sg"/>
+  <entry word="Harvard" pos="NNP" class="place" macros="@sg"/>
+  <entry word="Harvard_Square" pos="NNP" class="place" macros="@sg"/>
+  <entry word="Harvard_Yard" pos="NNP" class="place" macros="@sg"/>
+  <entry word="Kendall_Square" pos="NNP" class="place" macros="@sg"/>
+  <entry word="mid-Cambridge" pos="NNP" class="place" macros="@sg"/>
+  <entry word="MIT" pos="NNP" class="place" macros="@sg"/>
+  <!-- ========================== Macros =========================== -->
+  <!-- ============================================================= -->
+  <!--
+    The macro @non-3rd supplies a syntactic number value that is
+    compatible with both @1st and @2nd, as specified in types.xml.
+  -->
+  <macro name="@1st">
+    <fs id="2" attr="pers" val="1st"/>
+  </macro>
+  <macro name="@2nd">
+    <fs id="2" attr="pers" val="2nd"/>
+  </macro>
+  <macro name="@3rd">
+    <fs id="2" attr="pers" val="3rd"/>
+  </macro>
+  <macro name="@non-3rd">
+    <fs id="2" attr="pers" val="non-3rd"/>
+  </macro>
+  <macro name="@nom">
+    <fs id="2" attr="case" val="nom"/>
+  </macro>
+  <macro name="@acc">
+    <fs id="2" attr="case" val="acc"/>
+  </macro>
+  <macro name="@sg">
+    <fs id="2" attr="num" val="sg"/>
+  </macro>
+  <macro name="@pl">
+    <fs id="2" attr="num" val="pl"/>
+  </macro>
+  <!--
+    The @base macro is for bare verbal forms.
+  -->
+  <macro name="@base">
+    <fs id="1" attr="form" val="base"/>
+  </macro>
+  <!-- 
+    The macros @sg-X and @pl-X add a semantic number feature on the
+    nominal head X to the LFs of nouns and pronouns; 
+    @sg-P and @pl-P are analogous for the nominal var P.
+  -->
+  <macro name="@sg-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="sg"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="pl"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@sg-P">
+    <lf>
+      <satop nomvar="P">
+        <diamond mode="num">
+          <prop name="sg"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl-P">
+    <lf>
+      <satop nomvar="P">
+        <diamond mode="num">
+          <prop name="pl"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <!--
+    The @past and @pres macros add tense info.
+  -->
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+</morph>

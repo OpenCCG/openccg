@@ -1,0 +1,19 @@
+#!/bin/sh
+#
+# $Id: ccg-grammardoc,v 1.2 2006/12/03 17:14:23 mwhite14850 Exp $
+# Script to run grammardoc from the command line.
+# Author: Scott Martin (http://www.ling.osu.edu/~scott/)
+#
+# Usage: ccg-grammardoc [-s|--source sourceDir] [-d|--dest destDir]
+#
+. ccg-env
+ANT_HOME="$OPENCCG_HOME/lib"
+case `uname` in
+  CYGWIN* ) CP="$CP;$ANT_HOME/ant.jar"
+  ;;
+  * ) CP="$CP:$ANT_HOME/ant.jar"
+  ;;
+esac
+JAVA_ARGS="-Xmx128m -classpath $CP"
+"$JAVA" $JAVA_ARGS opennlp.ccg.grammardoc.GrammarDoc $@
+

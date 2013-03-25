@@ -1,0 +1,11 @@
+
+## A prior probability model that estimates p(pos | word)
+## with smoothed back-off (a "soft tagging dictionary" if you will).
+
+1
+ 
+## POS tag (P) given word (W) with a back-off to the prior on the POS itself.
+
+P : 1 W(0) p_w0.count p_w0.lm 2
+  W0 W0 wbdiscount gtmin 1 
+  0 0 wbdiscount gtmin 1 

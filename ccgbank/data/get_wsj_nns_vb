@@ -1,0 +1,1 @@
+cat /home/corpora/EN/penn_treebank_3/ims-cwb/wsj/wsj.cqp | egrep "NNS|VB" | sort | uniq > wsj-nns-vb

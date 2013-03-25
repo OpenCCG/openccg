@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003-4 University of Edinburgh (Michael White) 
+$Revision: 1.9 $, $Date: 2004/10/05 11:01:40 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Elements and types for categories and feature structures.
+
+    By and large, there are no constraints on the names used in defining categories, 
+    with just a few exceptions:
+    
+      - '[*DEFAULT*]' proposition or feature value: this reserved value is replaced with 
+        the predicate associated with a lexical item (defaulting to the stem) 
+        when instantiating the lexical categories associated with a word
+        
+      - 'index' feature: this feature receives special treatment in the realizer; see 
+        Mike and Jason's paper on the realizer for details, at  
+        http://www.iccs.informatics.ed.ac.uk/~mwhite/White-Baldridge-ENLG-2003-to-appear.pdf 
+
+      - lists: lists are defined with the 'First' and 'Last' relations, which is 
+        (optionally) converted to just the 'List' relation by simplify-lists.xsl; 
+        elements in the list are represented using nodes with the 'elem' predicate, 
+        together with 'Item' and 'Next' relations to point to the actual list item 
+        and the next element, respectively
+        
+      - tuples: pairs (for argument clusters and gapping) are represented using 
+        nodes with the 'tup' (for tuple) predicate, together with 'Item1' and 'Item2' 
+        relations to point to the paired items (in principle, further 'ItemN' 
+        relations could be used for tuples of length greater than 2); 
+        paired items receive special treatment in the realizer
+        
+      - 'BoundVar' relation: this relation indicates that the subordinate nominal is 
+        a bound var; as a result, feature-based instantiation is disabled in the realizer
+        
+      - 'mark' feature: this semantic attribute indicates that the realizer should label 
+        the phrase in the XML output headed by the index associated with this feature
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="tokens.xsd"/>
+  <xsd:include schemaLocation="hlds.xsd"/>
+  
+  
+  <!-- categories -->
+  
+  <xsd:element name="category" abstract="true">
+    <xsd:annotation>
+    <xsd:documentation>
+      A category, either atomic or complex.
+    </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  
+  <xsd:element name="atomcat" substitutionGroup="category">
+    <xsd:annotation>
+    <xsd:documentation>
+      An atomic category.
+      Atomic categories must have a type, and may contain 
+      a feature structure and LF.
+      The possible LF predications are given by the "hldsPreds" type in hlds.xsd.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="fs" minOccurs="0"/>
+        <xsd:element name="lf" type="hldsPreds" minOccurs="0"/>
+      </xsd:sequence>
+      <xsd:attribute name="type" type="xsd:NMTOKEN" use="required">
+        <xsd:annotation>
+        <xsd:documentation>
+          The type of the category, e.g. "np".
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  
+  <xsd:element name="complexcat" substitutionGroup="category">
+    <xsd:annotation>
+    <xsd:documentation>
+      A complex category, consisting of a target category, 
+      an argument stack, and an optional LF.
+      Since a complex cat is not curried, the target category will 
+      always be atomic.
+      An argument stack is one or more basic args, dollar args or set args.
+    </xsd:documentation>
+    </xsd:annotation>
+    
+    <xsd:complexType>
+      <xsd:sequence>
+        <!-- target cat -->
+        <xsd:element ref="atomcat"/>
+        
+        <!-- arg stack -->
+        <xsd:choice maxOccurs="unbounded">
+          <!--
+            NB: An arg stack should be one or more basic, dollar or set args, as 
+                shown in this comment below.  Since the slash element is potentially 
+                ambiguous between an element of a basic arg or a dollar arg, the slash 
+                needs to be factored out, as in the actual definition below.
+                
+            <xsd:group ref="basicArg"/>
+            <xsd:group ref="dollarArg"/>
+            <xsd:element ref="setarg"/>
+          -->
+          <xsd:sequence>
+            <xsd:element ref="slash"/>
+            <xsd:choice>
+              <xsd:element ref="category"/>
+              <xsd:element ref="dollar"/>
+            </xsd:choice>
+          </xsd:sequence>
+          <xsd:element ref="dollar"/>
+          <xsd:element ref="setarg"/>
+        </xsd:choice>
+        
+        <!-- lf -->
+        <xsd:element name="lf" type="hldsPreds" minOccurs="0"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  
+  
+  <!-- feature structures -->
+  
+  <xsd:element name="fs">
+    <xsd:annotation>
+    <xsd:documentation>
+      A simple, non-recursive feature structure, consisting of a set 
+      of features, i.e. attribute-value pairs.
+      If there is only a single, string-valued feature, it can be 
+      specified using the "attr" and "val" attributes on this element.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="feat" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="id" type="xsd:integer">
+        <xsd:annotation>
+        <xsd:documentation>
+          An integer id for the feature structure.
+          The id is used for coindexation, "inheritsFrom" feature propagation, 
+          and macro access.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="inheritsFrom" type="xsd:integer">
+        <xsd:annotation>
+        <xsd:documentation>
+          This attribute is used to specify feature propagation with exceptions 
+					(i.e., default unification).
+          At run time, feature equations are added in order to propagate feature values.
+          In particular, a feature variable is added to this feature structure and 
+          a corresponding one is added to the referenced feature structure, 
+          for all appropriate attributes except those with explicit values already 
+          on this feature structure.
+          The appropriate attributes are determined by the type of the atomic category, 
+          and consist of all the attributes seen with this category type in the lexicon 
+          file.  NB: Attributes appearing in macros in the morph file are not included, 
+          since their association with category types is not available statically.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="attr" type="xsd:NMTOKEN">
+        <xsd:annotation>
+        <xsd:documentation>
+          The name of the single, string-valued feature (when appropriate).
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="val" type="token">
+        <xsd:annotation>
+        <xsd:documentation>
+          The value of the feature.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="feat">
+    <xsd:annotation>
+    <xsd:documentation>
+      A feature, i.e. an attribute-value pair.
+      Features can be either syntactic or semantic (LF-valued).
+      Syntactic features can be either ground or variable. 
+      If ground, they must be string-valued, and specified via the "val" attribute; 
+      if variable, the value is a variable named by a "featvar" element.
+      Semantic features can also be either ground or variable; 
+      their possible values are given by the "hldsFeatVals" type in hlds.xsd.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice minOccurs="0">
+        <xsd:element ref="featvar"/>
+        <xsd:element name="lf" type="hldsFeatVals"/>
+      </xsd:choice>
+      <xsd:attribute name="attr" type="xsd:NMTOKEN" use="required">
+        <xsd:annotation>
+        <xsd:documentation>
+          The name of the feature.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="val" type="token">
+        <xsd:annotation>
+        <xsd:documentation>
+          The value of the feature, when string-valued.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="featvar">
+    <xsd:annotation>
+    <xsd:documentation>
+      A variable over syntactic feature values.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="name" type="typedFeature" use="required">
+        <xsd:annotation>
+        <xsd:documentation>
+          The name of the feature variable.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  
+  <!-- args: basic, dollar and set -->
+  
+  <xsd:group name="basicArg">  
+    <xsd:annotation>
+    <xsd:documentation>
+      A basic arg pairs a slash and a category.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element ref="slash"/>
+      <xsd:element ref="category"/>
+    </xsd:sequence>
+  </xsd:group>
+  
+  <xsd:group name="dollarArg">  
+    <xsd:annotation>
+    <xsd:documentation>
+      A dollar arg pairs an optional slash and a dollar variable.
+      The slash defaults to the most general slash.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element ref="slash" minOccurs="0"/>
+      <xsd:element ref="dollar"/>
+    </xsd:sequence>
+  </xsd:group>
+  
+  <xsd:element name="dollar">
+    <xsd:annotation>
+    <xsd:documentation>
+      A dollar variable in the definition of a complex category, 
+      i.e. a variable over any sublist of args in an arg stack.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="name" type="xsd:NMTOKEN">
+        <xsd:annotation>
+        <xsd:documentation>
+          The name of the dollar variable, for coindexation purposes.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="setarg">
+    <xsd:annotation>
+    <xsd:documentation>
+      A set arg, i.e. an unordered set of basic args.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:group ref="basicArg" minOccurs="2" maxOccurs="unbounded"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  
+  <!-- slash -->
+  
+  <xsd:element name="slash">
+    <xsd:annotation>
+    <xsd:documentation>
+      A slash in the definition of a complex category.
+      A slash has a direction, a mode and an ability; 
+      a variable can also be given for the mode, using the 
+      "varmodality" attribute.
+      For discussion, see Jason's dissertation, esp. Ch. 8 on 
+      the implementation; the dissertation is downloadable from 
+      http://www.iccs.inf.ed.ac.uk/~jmb/dissertation
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="dir">
+        <xsd:annotation>
+        <xsd:documentation>
+          The direction of the slash.
+          The direction can be forward (/), backward (\) or both (|).
+          Defaults to both.
+        </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="/"/>
+            <xsd:enumeration value="\"/>
+            <xsd:enumeration value="|"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="mode">
+        <xsd:annotation>
+        <xsd:documentation>
+          The mode of the slash.
+          The possible values are: 
+            all (.), application only (*), 
+            associative (^), permutative (x), 
+            permutative right (x&gt;), permutative left (&lt;x), 
+            associative permutative right (&gt;), and associative permutative left (&lt;).
+          Defaults to all.
+          See Jason's dissertation for details.
+        </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="."/>
+            <xsd:enumeration value="*"/>
+            <xsd:enumeration value="^"/>
+            <xsd:enumeration value="x"/>
+            <xsd:enumeration value="x&gt;"/>
+            <xsd:enumeration value="&lt;x"/>
+            <xsd:enumeration value="&gt;"/>
+            <xsd:enumeration value="&lt;"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+      <xsd:attribute name="varmodality" type="xsd:NMTOKEN">
+        <xsd:annotation>
+        <xsd:documentation>
+          A variable over modalities.
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+      <xsd:attribute name="ability">
+        <xsd:annotation>
+        <xsd:documentation>
+          The ability of the slash, either inert or active.
+          Defaults to either.
+          This is used to implement antecedent government; 
+          see Jason's dissertation for details.
+        </xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="inert"/>
+            <xsd:enumeration value="active"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+</xsd:schema>
+

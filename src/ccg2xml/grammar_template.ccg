@@ -1,0 +1,27 @@
+############ [name of the grammar] ####################
+#
+## [a brief description of your grammar]
+## [your name, Month Year]
+#
+#
+# For help on how to create grammars with VisCCG, see the tutorial:
+#   http://comp.ling.utexas.edu/wiki/doku.php/openccg/ccggui_tut
+
+####################### Features #######################
+
+feature {
+}
+
+######################### Words #########################
+
+
+######################### Rules #########################
+
+
+################## Lexicon/Categories ####################
+
+
+####################### Testbed #########################
+
+testbed {
+}

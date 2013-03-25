@@ -1,0 +1,1051 @@
+<?xml version="1.0" encoding="UTF-8"?><morph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="protogrammar" xsi:noNamespaceSchemaLocation="../morph.xsd">
+  <entry pos=":" word="--"/>
+  <entry pos="," word=","/>
+  <!-- <entry pos=":" word=":"/> -->
+  <entry pos="IN" word=":"/>
+  <!-- <entry pos="." word="?"/> -->
+  <entry pos="." word="."/>
+  <entry pos="POS" word="'s"/>
+  <entry pos="VBZ" word="'s" stem="be"/>
+  <entry pos="CD" word="1"/>
+  <entry pos="CD" word="1.3"/>
+  <entry pos="CD" word="10%"/>
+  <entry pos="CD" word="100"/>
+  <entry pos="JJ" word="107-year-old"/>
+  <entry pos="CD" word="11"/>
+  <entry pos="CD" word="11,500"/>
+  <entry pos="JJ" word="11th"/>
+  <entry pos="CD" word="14"/>
+  <entry pos="CD" word="150"/>
+  <entry pos="CD" word="175"/>
+  <entry pos="CD" word="18,000"/>
+  <entry pos="CD" word="18%"/>
+  <entry pos="CD" word="19"/>
+  <entry pos="CD" word="1975"/>
+  <entry pos="CD" word="1997"/>
+  <entry pos="CD" word="1998"/>
+  <entry pos="CD" word="2"/>
+  <entry pos="CD" word="20,000"/>
+  <entry pos="CD" word="2000"/>
+  <entry pos="CD" word="21"/>
+  <entry pos="CD" word="245"/>
+  <entry pos="CD" word="248"/>
+  <entry pos="CD" word="26"/>
+  <entry pos="CD" word="260"/>
+  <entry pos="CD" word="3"/>
+  <entry pos="CD" word="30"/>
+  <entry pos="CD" word="30%"/>
+  <entry pos="CD" word="35.9%"/>
+  <entry pos="CD" word="4.5"/>
+  <entry pos="CD" word="4.5%"/>
+  <entry pos="CD" word="40"/>
+  <entry pos="CD" word="5,100"/>
+  <entry pos="CD" word="50"/>
+  <entry pos="CD" word="50-70"/>
+  <entry pos="CD" word="53,810,000"/>
+  <entry pos="CD" word="65%"/>
+  <entry pos="CD" word="70"/>
+  <entry pos="JJ" word="75-year-old"/>
+  <entry pos="JJ" word="7th"/>
+  <entry pos="NNS" word="80s" stem="80"/>
+  <entry pos="CD" word="9"/>
+  <entry pos="DT" word="a"/>
+  <entry pos="IN" word="about"/>
+  <entry pos="RB" word="about"/>
+  <entry pos="JJ" word="above"/>
+  <entry pos="NN" word="above"/>
+  <entry pos="RB" word="abroad"/>
+  <entry pos="VB" word="accept" stem="accept"/>
+  <entry pos="VBN" word="accepted" stem="accept"/>
+  <entry pos="VBD" word="accompanied" stem="accompany"/>
+  <entry pos="VBG" word="according" stem="accord"/>
+  <entry pos="VBZ" word="accounts" stem="account"/>
+  <entry pos="NNS" word="actions" stem="action"/>
+  <entry pos="NNS" word="activities" stem="activity"/>
+  <entry pos="NN" word="activity"/>
+  <entry pos="RB" word="actually"/>
+  <entry pos="NN" word="addition"/>
+  <entry pos="NN" word="address"/>
+  <entry pos="VBP" word="administrate"/>
+  <entry pos="NN" word="administration"/>
+  <entry pos="JJ" word="administrative"/>
+  <entry pos="VBZ" word="admits" stem="admit"/>
+  <entry pos="NNS" word="affairs" stem="affair"/>
+  <entry pos="VB" word="affect" stem="affect"/>
+  <entry pos="VBG" word="affecting" stem="affect"/>
+  <entry pos="JJ" word="afp"/>
+  <entry pos="JJ" word="afraid"/>
+  <entry pos="IN" word="after"/>
+  <entry pos="RB" word="again"/>
+  <entry pos="IN" word="against"/>
+  <entry pos="VBD" word="agreed" stem="agree"/>
+  <entry pos="NN" word="agreement"/>
+  <entry pos="JJ" word="agricultural"/>
+  <entry pos="NN" word="aid"/>
+  <entry pos="NN" word="air"/>
+  <entry pos="NN" word="airport,"/>
+  <entry pos="DT" word="all"/>
+  <entry pos="RB" word="all"/>
+  <entry pos="VB" word="allow" stem="allow"/>
+  <entry pos="IN" word="along"/>
+  <entry pos="RB" word="already"/>
+  <entry pos="RB" word="also"/>
+  <entry pos="VBP" word="am" stem="be"/>
+  <entry pos="NN" word="ambassador"/>
+  <entry pos="NNS" word="ambassadors" stem="ambassador"/>
+  <entry pos="NN" word="america"/>
+  <entry pos="JJ" word="american"/>
+  <entry pos="NN" word="amount"/>
+  <entry pos="DT" word="an"/>
+  <entry pos="NNS" word="analysts" stem="analyst"/>
+  <entry pos="CC" word="and"/>
+  <entry pos="VBD" word="announced" stem="announce"/>
+  <entry pos="RB" word="anwar"/>
+  <entry pos="DT" word="any"/>
+  <entry pos="NNS" word="appearances" stem="appearance"/>
+  <entry pos="NN" word="april"/>
+  <entry pos="NN" word="arafat"/>
+  <entry pos="VBP" word="are" stem="be"/>
+  <entry pos="NN" word="area"/>
+  <entry pos="IN" word="around"/>
+  <entry pos="NN" word="article"/>
+  <entry pos="IN" word="as"/>
+  <entry pos="RB" word="as"/>
+  <entry pos="NN" word="asean"/>
+  <entry pos="NN" word="asia"/>
+  <entry pos="JJ" word="asian"/>
+  <entry pos="VBN" word="asked" stem="ask"/>
+  <entry pos="NNS" word="assets" stem="asset"/>
+  <entry pos="NN" word="assistance"/>
+  <entry pos="VBN" word="associated" stem="associate"/>
+  <entry pos="IN" word="at"/>
+  <entry pos="NN" word="attack"/>
+  <entry pos="VBG" word="attending" stem="attend"/>
+  <entry pos="NN" word="attention"/>
+  <entry pos="NN" word="attitude"/>
+  <entry pos="NN" word="august"/>
+  <entry pos="NN" word="australia"/>
+  <entry pos="JJ" word="australian"/>
+  <entry pos="NNS" word="authorities" stem="authority"/>
+  <entry pos="RP" word="away"/>
+  <entry pos="RB" word="back"/>
+  <entry pos="RP" word="back"/>
+  <entry pos="NN" word="balawang"/>
+  <entry pos="NN" word="bangkok"/>
+  <entry pos="NN" word="bank"/>
+  <entry pos="NN" word="bankruptcy"/>
+  <entry pos="VBN" word="based" stem="base"/>
+  <entry pos="VB" word="be" stem="be"/>
+  <entry pos="NN" word="beach"/>
+  <entry pos="VBD" word="became" stem="become"/>
+  <entry pos="IN" word="because"/>
+  <entry pos="VB" word="become" stem="become"/>
+  <entry pos="VBP" word="become" stem="become"/>
+  <entry pos="VBZ" word="becomes" stem="become"/>
+  <entry pos="VBN" word="been" stem="be"/>
+  <entry pos="IN" word="before"/>
+  <entry pos="RB" word="before"/>
+  <entry pos="NN" word="beginning"/>
+  <entry pos="VBG" word="beginning" stem="begin"/>
+  <entry pos="VBG" word="beijing"/>
+  <entry pos="VBP" word="believe" stem="believe"/>
+  <entry pos="VBZ" word="believes" stem="believe"/>
+  <entry pos="VBN" word="belonged"/>
+  <entry pos="VBZ" word="belongs" stem="belong"/>
+  <entry pos="NNS" word="benefits" stem="benefit"/>
+  <entry pos="JJS" word="best"/>
+  <entry pos="NN" word="beverage"/>
+  <entry pos="JJS" word="biggest"/>
+  <entry pos="CD" word="billion"/>
+  <entry pos="VBN" word="blackened" stem="blacken"/>
+  <entry pos="VBN" word="bombed" stem="bomb"/>
+  <entry pos="NN" word="bond"/>
+  <entry pos="DT" word="both"/>
+  <entry pos="VB" word="bring" stem="bring"/>
+  <entry pos="NNS" word="britons"/>
+  <entry pos="VBD" word="brought" stem="bring"/>
+  <entry pos="NN" word="building"/>
+  <entry pos="NN" word="bureau"/>
+  <entry pos="NN" word="burning"/>
+  <entry pos="JJ" word="burnt"/>
+  <entry pos="NN" word="business"/>
+  <entry pos="CC" word="but"/>
+  <entry pos="IN" word="by"/>
+  <entry pos="VBD" word="called" stem="call"/>
+  <entry pos="NN" word="cambodia"/>
+  <entry pos="JJ" word="cambodian"/>
+  <entry pos="MD" word="can"/>
+  <entry pos="NN" word="canada"/>
+  <entry pos="JJ" word="canadian"/>
+  <entry pos="NN" word="capital"/>
+  <entry pos="NNS" word="cases" stem="case"/>
+  <entry pos="NN" word="catering"/>
+  <entry pos="VB" word="cause" stem="cause"/>
+  <entry pos="JJ" word="certain"/>
+  <entry pos="NNS" word="changes" stem="change"/>
+  <entry pos="JJ" word="changfei"/>
+  <entry pos="NN" word="charge"/>
+  <entry pos="NN" word="chea"/>
+  <entry pos="NN" word="chee-hwa"/>
+  <entry pos="NN" word="chernomyrdin"/>
+  <entry pos="JJ" word="chief"/>
+  <entry pos="NN" word="chief"/>
+  <entry pos="NNS" word="children" stem="child"/>
+  <entry pos="NN" word="china"/>
+  <entry pos="NNP" word="china"/>
+  <entry pos="NN" word="chinatown"/>
+  <entry pos="JJ" word="chinese"/>
+  <entry pos="NN" word="chinese"/>
+  <entry pos="NN" word="choice"/>
+  <entry pos="VB" word="choose" stem="choose"/>
+  <entry pos="VBP" word="choose" stem="choose"/>
+  <entry pos="JJ" word="chuan"/>
+  <entry pos="NN" word="citizen"/>
+  <entry pos="NNS" word="citizens" stem="citizen"/>
+  <entry pos="NN" word="class"/>
+  <entry pos="JJ" word="climatic"/>
+  <entry pos="JJ" word="close"/>
+  <entry pos="VB" word="close" stem="close"/>
+  <entry pos="NN" word="cloth"/>
+  <entry pos="NNS" word="co."/>
+  <entry pos="NN" word="coastline"/>
+  <entry pos="NN" word="college"/>
+  <entry pos="NN" word="committee"/>
+  <entry pos="NNS" word="committees" stem="committee"/>
+  <entry pos="JJ" word="common"/>
+  <entry pos="JJ" word="communist"/>
+  <entry pos="NNS" word="companies" stem="company"/>
+  <entry pos="NN" word="company"/>
+  <entry pos="VBN" word="compared" stem="compare"/>
+  <entry pos="NN" word="comparison"/>
+  <entry pos="JJ" word="complementary"/>
+  <entry pos="JJ" word="complete"/>
+  <entry pos="NN" word="computer"/>
+  <entry pos="NN" word="concern"/>
+  <entry pos="NNS" word="conditions" stem="condition"/>
+  <entry pos="NN" word="conference"/>
+  <entry pos="JJ" word="congratulatory"/>
+  <entry pos="NN" word="congress"/>
+  <entry pos="JJ" word="consecutive"/>
+  <entry pos="VBZ" word="considers" stem="consider"/>
+  <entry pos="VB" word="construct" stem="construct"/>
+  <entry pos="NN" word="construction"/>
+  <entry pos="VB" word="continue" stem="continue"/>
+  <entry pos="NN" word="contrary"/>
+  <entry pos="NN" word="contribution"/>
+  <entry pos="VBN" word="controlled" stem="control"/>
+  <entry pos="VBN" word="cooperated" stem="cooperate"/>
+  <entry pos="JJ" word="co-operational"/>
+  <entry pos="NN" word="corporation"/>
+  <entry pos="NN" word="correspondent"/>
+  <entry pos="NN" word="council"/>
+  <entry pos="NNS" word="countries" stem="country"/>
+  <entry pos="NN" word="country"/>
+  <entry pos="VBG" word="covering" stem="cover"/>
+  <entry pos="NN" word="creativity"/>
+  <entry pos="NN" word="creditor"/>
+  <entry pos="NNS" word="creditors" stem="creditor"/>
+  <entry pos="NN" word="cresson"/>
+  <entry pos="JJ" word="criminal"/>
+  <entry pos="NN" word="crisis"/>
+  <entry pos="NN" word="crowd"/>
+  <entry pos="JJ" word="current"/>
+  <entry pos="RB" word="currently"/>
+  <entry pos="NNP" word="dai"/>
+  <entry pos="NN" word="damage"/>
+  <entry pos="NN" word="day"/>
+  <entry pos="NNS" word="days" stem="day"/>
+  <entry pos="NN" word="death"/>
+  <entry pos="NN" word="december"/>
+  <entry pos="NNS" word="decisions" stem="decision"/>
+  <entry pos="VBN" word="deed"/>
+  <entry pos="JJ" word="deep"/>
+  <entry pos="VBG" word="defaming"/>
+  <entry pos="NN" word="defense"/>
+  <entry pos="VBZ" word="delegates"/>
+  <entry pos="NN" word="democracy"/>
+  <entry pos="NNS" word="demonstrators" stem="demonstrator"/>
+  <entry pos="NN" word="desert"/>
+  <entry pos="VBN" word="determined" stem="determine"/>
+  <entry pos="NN" word="detroit"/>
+  <entry pos="VBG" word="developing" stem="develop"/>
+  <entry pos="NN" word="development"/>
+  <entry pos="VBD" word="did" stem="do"/>
+  <entry pos="JJ" word="different"/>
+  <entry pos="NN" word="ding"/>
+  <entry pos="JJ" word="direct"/>
+  <entry pos="RB" word="directly"/>
+  <entry pos="NN" word="disability"/>
+  <entry pos="NN" word="disabled"/>
+  <entry pos="JJ" word="disappointing"/>
+  <entry pos="VB" word="disclose" stem="disclose"/>
+  <entry pos="VBD" word="disclosed" stem="disclose"/>
+  <entry pos="VB" word="discuss" stem="discuss"/>
+  <entry pos="NN" word="discussion"/>
+  <entry pos="NNS" word="discussions" stem="discussion"/>
+  <entry pos="VB" word="do" stem="do"/>
+  <entry pos="NN" word="doctor"/>
+  <entry pos="NN" word="document"/>
+  <entry pos="NN" word="dole"/>
+  <entry pos="NNS" word="dollars" stem="dollar"/>
+  <entry pos="JJ" word="dong"/>
+  <entry pos="RB" word="down"/>
+  <entry pos="NN" word="draft"/>
+  <entry pos="VBG" word="drafting" stem="draft"/>
+  <entry pos="VBN" word="dropped" stem="drop"/>
+  <entry pos="IN" word="during"/>
+  <entry pos="NN" word="dust"/>
+  <entry pos="JJ" word="dutch"/>
+  <entry pos="RB" word="earlier"/>
+  <entry pos="RB" word="early"/>
+  <entry pos="JJ" word="east"/>
+  <entry pos="VBG" word="eating" stem="eat"/>
+  <entry pos="JJ" word="economic"/>
+  <entry pos="NN" word="economy"/>
+  <entry pos="NN" word="effect"/>
+  <entry pos="JJ" word="el"/>
+  <entry pos="NN" word="el"/>
+  <entry pos="VBN" word="eleven"/>
+  <entry pos="NNS" word="embassies" stem="embassy"/>
+  <entry pos="VBD" word="emphasized" stem="emphasize"/>
+  <entry pos="NN" word="end"/>
+  <entry pos="JJ" word="enlarged"/>
+  <entry pos="NN" word="entanglement"/>
+  <entry pos="VBG" word="entering" stem="enter"/>
+  <entry pos="NN" word="enterprise"/>
+  <entry pos="NNS" word="enterprises" stem="enterprise"/>
+  <entry pos="JJ" word="entire"/>
+  <entry pos="VBD" word="erected" stem="erect"/>
+  <entry pos="VBD" word="established" stem="establish"/>
+  <entry pos="VBN" word="established" stem="establish"/>
+  <entry pos="VBZ" word="establishes" stem="establish"/>
+  <entry pos="NN" word="estate"/>
+  <entry pos="VBN" word="estimated" stem="estimate"/>
+  <entry pos="FW" word="etc."/>
+  <entry pos="NN" word="europe"/>
+  <entry pos="RB" word="even"/>
+  <entry pos="DT" word="everyone"/>
+  <entry pos="VBZ" word="exceeds" stem="exceed"/>
+  <entry pos="NN" word="exchange"/>
+  <entry pos="VBG" word="exchanging" stem="exchange"/>
+  <entry pos="NN" word="executive"/>
+  <entry pos="VBG" word="experiencing" stem="experience"/>
+  <entry pos="NNS" word="experts" stem="expert"/>
+  <entry pos="NN" word="export"/>
+  <entry pos="NNS" word="exports" stem="export"/>
+  <entry pos="VB" word="express" stem="express"/>
+  <entry pos="VBD" word="expressed" stem="express"/>
+  <entry pos="VBN" word="expressed" stem="express"/>
+  <entry pos="JJ" word="external"/>
+  <entry pos="VB" word="extradite"/>
+  <entry pos="NN" word="extradition"/>
+  <entry pos="NN" word="factor"/>
+  <entry pos="VBN" word="fallen" stem="fall"/>
+  <entry pos="JJ" word="february"/>
+  <entry pos="NN" word="february"/>
+  <entry pos="VBP" word="feel" stem="feel"/>
+  <entry pos="NNS" word="feet" stem="foot"/>
+  <entry pos="VBD" word="fell" stem="fall"/>
+  <entry pos="JJ" word="fenglingdu"/>
+  <entry pos="JJ" word="few"/>
+  <entry pos="JJ" word="fiber-cable"/>
+  <entry pos="JJ" word="fiber-optical"/>
+  <entry pos="VB" word="fight" stem="fight"/>
+  <entry pos="NN" word="figure"/>
+  <entry pos="NN" word="finance"/>
+  <entry pos="JJ" word="financial"/>
+  <entry pos="RB" word="financially"/>
+  <entry pos="JJ" word="first"/>
+  <entry pos="CD" word="five"/>
+  <entry pos="JJ" word="fixed"/>
+  <entry pos="NN" word="flag"/>
+  <entry pos="VBN" word="followed" stem="follow"/>
+  <entry pos="NN" word="food"/>
+  <entry pos="NN" word="foot"/>
+  <entry pos="IN" word="for"/>
+  <entry pos="VBZ" word="forbids" stem="forbid"/>
+  <entry pos="NNS" word="forces" stem="force"/>
+  <entry pos="JJ" word="foreign"/>
+  <entry pos="JJ" word="former"/>
+  <entry pos="VB" word="formulate" stem="formulate"/>
+  <entry pos="JJ" word="fourth"/>
+  <entry pos="NN" word="fox"/>
+  <entry pos="NNS" word="freedoms" stem="freedom"/>
+  <entry pos="JJ" word="french"/>
+  <entry pos="NN" word="friday"/>
+  <entry pos="IN" word="from"/>
+  <entry pos="NN" word="front"/>
+  <entry pos="RB" word="fully"/>
+  <entry pos="NNS" word="functions" stem="function"/>
+  <entry pos="JJ" word="further"/>
+  <entry pos="JJ" word="g-7"/>
+  <entry pos="NNP" word="gansu"/>
+  <entry pos="VBN" word="garrisoned"/>
+  <entry pos="VBN" word="gathered" stem="gather"/>
+  <entry pos="JJ" word="general"/>
+  <entry pos="JJ" word="german"/>
+  <entry pos="NN" word="germany"/>
+  <entry pos="VB" word="get" stem="get"/>
+  <entry pos="VB" word="give" stem="give"/>
+  <entry pos="JJ" word="glorious"/>
+  <entry pos="NN" word="go"/>
+  <entry pos="VB" word="go" stem="go"/>
+  <entry pos="VBG" word="going" stem="go"/>
+  <entry pos="JJ" word="good"/>
+  <entry pos="NN" word="government"/>
+  <entry pos="JJ" word="governmental"/>
+  <entry pos="JJS" word="greatest"/>
+  <entry pos="JJ" word="gross"/>
+  <entry pos="NN" word="group"/>
+  <entry pos="NNS" word="groups" stem="group"/>
+  <entry pos="NN" word="growth"/>
+  <entry pos="NN" word="guangxi"/>
+  <entry pos="NN" word="guard"/>
+  <entry pos="NN" word="guidance"/>
+  <entry pos="JJ" word="guilty"/>
+  <entry pos="NNP" word="gusa"/>
+  <entry pos="NN" word="habibie"/>
+  <entry pos="VBD" word="had" stem="have"/>
+  <entry pos="PDT" word="half"/>
+  <entry pos="NN" word="hand"/>
+  <entry pos="VB" word="hand" stem="hand"/>
+  <entry pos="NN" word="hao"/>
+  <entry pos="VBZ" word="has" stem="have"/>
+  <entry pos="VB" word="have" stem="have"/>
+  <entry pos="VBP" word="have" stem="have"/>
+  <entry pos="PRP" word="he"/>
+  <entry pos="NN" word="head"/>
+  <entry pos="NN" word="health"/>
+  <entry pos="NN" word="heap"/>
+  <entry pos="VBN" word="heard" stem="hear"/>
+  <entry pos="NNS" word="hectares"/>
+  <entry pos="VBD" word="held" stem="hold"/>
+  <entry pos="VBN" word="held" stem="hold"/>
+  <entry pos="NN" word="help"/>
+  <entry pos="VB" word="help" stem="help"/>
+  <entry pos="VBD" word="helped" stem="help"/>
+  <entry pos="VBZ" word="helps" stem="help"/>
+  <entry pos="RB" word="here"/>
+  <entry pos="JJ" word="high"/>
+  <entry pos="JJR" word="higher"/>
+  <entry pos="PRP" word="him"/>
+  <entry pos="PRP$" word="his"/>
+  <entry pos="NN" word="hoe"/>
+  <entry pos="NN" word="holland"/>
+  <entry pos="NN" word="home"/>
+  <entry pos="NNS" word="homes" stem="home"/>
+  <entry pos="JJ" word="hong"/>
+  <entry pos="NN" word="hong"/>
+  <entry pos="VBG" word="hong"/>
+  <entry pos="NN" word="hongkongnese"/>
+  <entry pos="NN" word="hope"/>
+  <entry pos="VBZ" word="hopes" stem="hope"/>
+  <entry pos="VBG" word="hoping" stem="hope"/>
+  <entry pos="RB" word="however"/>
+  <entry pos="JJ" word="huang"/>
+  <entry pos="NN" word="hudson"/>
+  <entry pos="JJ" word="human"/>
+  <entry pos="JJ" word="hun"/>
+  <entry pos="CD" word="hundred"/>
+  <entry pos="NNS" word="hundreds" stem="hundred"/>
+  <entry pos="PRP" word="i"/>
+  <entry pos="NNS" word="i" stem="i"/>
+  <entry pos="NNP" word="i.e."/>
+  <entry pos="NN" word="idea"/>
+  <entry pos="NNS" word="immigrants" stem="immigrant"/>
+  <entry pos="NN" word="immigration"/>
+  <entry pos="VBG" word="implementing" stem="implement"/>
+  <entry pos="NN" word="import"/>
+  <entry pos="JJ" word="important"/>
+  <entry pos="NNS" word="imports" stem="import"/>
+  <entry pos="VB" word="improve" stem="improve"/>
+  <entry pos="JJ" word="improved"/>
+  <entry pos="IN" word="in"/>
+  <entry pos="RB" word="in"/>
+  <entry pos="JJ" word="incapable"/>
+  <entry pos="VBN" word="included" stem="include"/>
+  <entry pos="NN" word="increase"/>
+  <entry pos="VBN" word="increased" stem="increase"/>
+  <entry pos="JJ" word="independent"/>
+  <entry pos="NN" word="index"/>
+  <entry pos="VBD" word="indicated" stem="indicate"/>
+  <entry pos="NN" word="indonesia"/>
+  <entry pos="JJ" word="indonesian"/>
+  <entry pos="JJ" word="industrial"/>
+  <entry pos="NNS" word="industries" stem="industry"/>
+  <entry pos="NN" word="industry"/>
+  <entry pos="NN" word="inflation"/>
+  <entry pos="NN" word="influence"/>
+  <entry pos="NN" word="information"/>
+  <entry pos="VBN" word="informed" stem="inform"/>
+  <entry pos="NN" word="infrastructure"/>
+  <entry pos="VB" word="inhabit"/>
+  <entry pos="JJ" word="initial"/>
+  <entry pos="NN" word="initiative"/>
+  <entry pos="JJ" word="inland"/>
+  <entry pos="NN" word="inland"/>
+  <entry pos="IN" word="instead"/>
+  <entry pos="NN" word="institute"/>
+  <entry pos="NN" word="insurance"/>
+  <entry pos="JJ" word="integral"/>
+  <entry pos="VB" word="integrate" stem="integrate"/>
+  <entry pos="JJ" word="intellectual"/>
+  <entry pos="IN" word="into"/>
+  <entry pos="NN" word="investigation"/>
+  <entry pos="NN" word="investment"/>
+  <entry pos="NNS" word="investors" stem="investor"/>
+  <entry pos="JJ" word="iraqi"/>
+  <entry pos="VBZ" word="is" stem="be"/>
+  <entry pos="NN" word="island"/>
+  <entry pos="NNP" word="israel"/>
+  <entry pos="JJ" word="israeli"/>
+  <entry pos="NN" word="issue"/>
+  <entry pos="NNS" word="issues" stem="issue"/>
+  <entry pos="PRP" word="it"/>
+  <entry pos="PRP$" word="its"/>
+  <entry pos="NN" word="japan"/>
+  <entry pos="NN" word="japanese"/>
+  <entry pos="NNP" word="jiangsu"/>
+  <entry pos="NN" word="jianhua"/>
+  <entry pos="NN" word="jiaxuan"/>
+  <entry pos="VB" word="join" stem="join"/>
+  <entry pos="VBG" word="joining" stem="join"/>
+  <entry pos="JJ" word="joint"/>
+  <entry pos="NN" word="jordan"/>
+  <entry pos="NNS" word="journalists" stem="journalist"/>
+  <entry pos="JJ" word="july"/>
+  <entry pos="RB" word="just"/>
+  <entry pos="NN" word="khieu"/>
+  <entry pos="NN" word="khmer"/>
+  <entry pos="VBD" word="killed" stem="kill"/>
+  <entry pos="NNS" word="kilometers" stem="kilometer"/>
+  <entry pos="NN" word="kind"/>
+  <entry pos="NN" word="kingdom"/>
+  <entry pos="DT" word="kong"/>
+  <entry pos="JJ" word="kong"/>
+  <entry pos="NN" word="kong"/>
+  <entry pos="NN" word="korea"/>
+  <entry pos="JJ" word="korean"/>
+  <entry pos="NN" word="kremlin"/>
+  <entry pos="NN" word="kuala"/>
+  <entry pos="DT" word="la"/>
+  <entry pos="NN" word="land"/>
+  <entry pos="JJ" word="large"/>
+  <entry pos="JJR" word="larger"/>
+  <entry pos="JJ" word="last"/>
+  <entry pos="RB" word="later"/>
+  <entry pos="NNS" word="leaders" stem="leader"/>
+  <entry pos="NN" word="league"/>
+  <entry pos="VB" word="leave" stem="leave"/>
+  <entry pos="VBZ" word="leaves" stem="leave"/>
+  <entry pos="NN" word="lee"/>
+  <entry pos="JJ" word="legal"/>
+  <entry pos="VB" word="let" stem="let"/>
+  <entry pos="NN" word="level"/>
+  <entry pos="NN" word="lien"/>
+  <entry pos="IN" word="like"/>
+  <entry pos="NN" word="list"/>
+  <entry pos="VB" word="list" stem="list"/>
+  <entry pos="NN" word="loan"/>
+  <entry pos="NNS" word="loans" stem="loan"/>
+  <entry pos="JJ" word="local"/>
+  <entry pos="VBN" word="located" stem="locate"/>
+  <entry pos="NN" word="location"/>
+  <entry pos="NN" word="look"/>
+  <entry pos="NNS" word="looters"/>
+  <entry pos="NN" word="loss"/>
+  <entry pos="NN" word="lot"/>
+  <entry pos="JJ" word="low"/>
+  <entry pos="DT" word="lrb"/>
+  <entry pos="FW" word="ltd."/>
+  <entry pos="NN" word="lumpur"/>
+  <entry pos="NN" word="macao"/>
+  <entry pos="VBD" word="made" stem="make"/>
+  <entry pos="VBN" word="made" stem="make"/>
+  <entry pos="VBG" word="maintaining" stem="maintain"/>
+  <entry pos="VB" word="make" stem="make"/>
+  <entry pos="VBG" word="making" stem="make"/>
+  <entry pos="NN" word="malay"/>
+  <entry pos="NN" word="malaysia"/>
+  <entry pos="JJ" word="malaysian"/>
+  <entry pos="NN" word="management"/>
+  <entry pos="JJ" word="many"/>
+  <entry pos="NN" word="many"/>
+  <entry pos="NN" word="marge"/>
+  <entry pos="NN" word="market"/>
+  <entry pos="VB" word="market" stem="market"/>
+  <entry pos="DT" word="marshall"/>
+  <entry pos="NN" word="marshall"/>
+  <entry pos="NN" word="material"/>
+  <entry pos="NNS" word="materials" stem="material"/>
+  <entry pos="MD" word="may"/>
+  <entry pos="VBZ" word="means" stem="mean"/>
+  <entry pos="VBD" word="meant" stem="mean"/>
+  <entry pos="NN" word="meeting"/>
+  <entry pos="NNS" word="meetings" stem="meeting"/>
+  <entry pos="NNS" word="members" stem="member"/>
+  <entry pos="NNS" word="men" stem="man"/>
+  <entry pos="NN" word="merger"/>
+  <entry pos="MD" word="might"/>
+  <entry pos="JJ" word="military"/>
+  <entry pos="NNS" word="militiamen"/>
+  <entry pos="CD" word="million"/>
+  <entry pos="NNS" word="millions" stem="million"/>
+  <entry pos="NNP" word="min"/>
+  <entry pos="NN" word="minister"/>
+  <entry pos="NN" word="ministry"/>
+  <entry pos="VBD" word="missed" stem="miss"/>
+  <entry pos="VBG" word="missing" stem="miss"/>
+  <entry pos="NN" word="miyazawa"/>
+  <entry pos="VB" word="mobilize" stem="mobilize"/>
+  <entry pos="NN" word="model"/>
+  <entry pos="VBN" word="mohamed"/>
+  <entry pos="NN" word="money"/>
+  <entry pos="NN" word="month"/>
+  <entry pos="NN" word="moore"/>
+  <entry pos="JJR" word="more"/>
+  <entry pos="RBR" word="more"/>
+  <entry pos="NN" word="moscow"/>
+  <entry pos="JJS" word="most"/>
+  <entry pos="RBS" word="most"/>
+  <entry pos="NN" word="movement"/>
+  <entry pos="NNP" word="mr."/>
+  <entry pos="JJ" word="multinational"/>
+  <entry pos="NN" word="muslim"/>
+  <entry pos="MD" word="must"/>
+  <entry pos="RB" word="n't"/>
+  <entry pos="NN" word="nanyang"/>
+  <entry pos="JJ" word="national"/>
+  <entry pos="NNS" word="nations" stem="nation"/>
+  <entry pos="JJ" word="nationwide"/>
+  <entry pos="IN" word="near"/>
+  <entry pos="RB" word="nearly"/>
+  <entry pos="VB" word="need" stem="need"/>
+  <entry pos="NN" word="neighbor"/>
+  <entry pos="NNS" word="neighbors" stem="neighbor"/>
+  <entry pos="RB" word="never"/>
+  <entry pos="JJ" word="new"/>
+  <entry pos="JJ" word="next"/>
+  <entry pos="NN" word="nicaragua"/>
+  <entry pos="NN" word="night"/>
+  <entry pos="NN" word="nin"/>
+  <entry pos="NN" word="nina"/>
+  <entry pos="NN" word="nino"/>
+  <entry pos="DT" word="no"/>
+  <entry pos="JJ" word="normal"/>
+  <entry pos="RB" word="not"/>
+  <entry pos="NN" word="note"/>
+  <entry pos="RB" word="now"/>
+  <entry pos="NN" word="number"/>
+  <entry pos="JJ" word="numerous"/>
+  <entry pos="NN" word="nuon"/>
+  <entry pos="RB" word="obviously"/>
+  <entry pos="NNP" word="october"/>
+  <entry pos="IN" word="of"/>
+  <entry pos="NNS" word="of."/>
+  <entry pos="RP" word="off"/>
+  <entry pos="NN" word="office"/>
+  <entry pos="NNS" word="officers" stem="officer"/>
+  <entry pos="RB" word="officially"/>
+  <entry pos="NNS" word="officials" stem="official"/>
+  <entry pos="JJ" word="old"/>
+  <entry pos="IN" word="on"/>
+  <entry pos="RB" word="once"/>
+  <entry pos="CD" word="one"/>
+  <entry pos="JJ" word="only"/>
+  <entry pos="RB" word="only"/>
+  <entry pos="JJ" word="open"/>
+  <entry pos="NN" word="opening"/>
+  <entry pos="VBG" word="opening" stem="open"/>
+  <entry pos="NN" word="operation"/>
+  <entry pos="NNS" word="options" stem="option"/>
+  <entry pos="CC" word="or"/>
+  <entry pos="NNS" word="organs" stem="organ"/>
+  <entry pos="NN" word="orphan"/>
+  <entry pos="NN" word="orphanage"/>
+  <entry pos="JJ" word="other"/>
+  <entry pos="PRP$" word="our"/>
+  <entry pos="RP" word="out"/>
+  <entry pos="IN" word="outside"/>
+  <entry pos="JJ" word="outside"/>
+  <entry pos="IN" word="over"/>
+  <entry pos="RP" word="over"/>
+  <entry pos="JJ" word="overhead"/>
+  <entry pos="VB" word="overlook" stem="overlook"/>
+  <entry pos="VB" word="overthrow" stem="overthrow"/>
+  <entry pos="JJ" word="own"/>
+  <entry pos="NN" word="package"/>
+  <entry pos="NNS" word="pai"/>
+  <entry pos="NN" word="palace"/>
+  <entry pos="NNS" word="palestinians"/>
+  <entry pos="NN" word="paris"/>
+  <entry pos="NN" word="part"/>
+  <entry pos="NN" word="partner"/>
+  <entry pos="NN" word="party"/>
+  <entry pos="NN" word="passageway"/>
+  <entry pos="NN" word="past"/>
+  <entry pos="VB" word="pay" stem="pay"/>
+  <entry pos="NN" word="penh"/>
+  <entry pos="NNS" word="people" stem="people"/>
+  <entry pos="NN" word="percent"/>
+  <entry pos="NNS" word="performers" stem="performer"/>
+  <entry pos="NN" word="period"/>
+  <entry pos="JJ" word="permanent"/>
+  <entry pos="NN" word="person"/>
+  <entry pos="NN" word="pfizer"/>
+  <entry pos="NN" word="phase"/>
+  <entry pos="NN" word="phenomenon"/>
+  <entry pos="NNS" word="philippines"/>
+  <entry pos="VBZ" word="philips"/>
+  <entry pos="NN" word="phnom"/>
+  <entry pos="VBD" word="picked" stem="pick"/>
+  <entry pos="NNS" word="places" stem="place"/>
+  <entry pos="NN" word="plan"/>
+  <entry pos="NN" word="plane"/>
+  <entry pos="VB" word="play" stem="play"/>
+  <entry pos="NN" word="policy"/>
+  <entry pos="NN" word="poll"/>
+  <entry pos="JJ" word="portugal"/>
+  <entry pos="NN" word="position"/>
+  <entry pos="JJ" word="positive"/>
+  <entry pos="RB" word="possibly"/>
+  <entry pos="VBN" word="postponed" stem="postpone"/>
+  <entry pos="JJ" word="premier"/>
+  <entry pos="JJ" word="prepared"/>
+  <entry pos="NN" word="press"/>
+  <entry pos="VB" word="prevent" stem="prevent"/>
+  <entry pos="NN" word="price"/>
+  <entry pos="RB" word="privately"/>
+  <entry pos="NN" word="problem"/>
+  <entry pos="NN" word="process"/>
+  <entry pos="NN" word="processing"/>
+  <entry pos="VBG" word="producing" stem="produce"/>
+  <entry pos="NN" word="product"/>
+  <entry pos="NN" word="progress"/>
+  <entry pos="NN" word="project"/>
+  <entry pos="NNS" word="projects" stem="project"/>
+  <entry pos="VB" word="prolong" stem="prolong"/>
+  <entry pos="VB" word="promote" stem="promote"/>
+  <entry pos="NN" word="promotion"/>
+  <entry pos="NN" word="property"/>
+  <entry pos="NN" word="protection"/>
+  <entry pos="NN" word="protest"/>
+  <entry pos="JJ" word="proud"/>
+  <entry pos="NN" word="province"/>
+  <entry pos="JJ" word="public"/>
+  <entry pos="JJ" word="pudong"/>
+  <entry pos="NN" word="puppet"/>
+  <entry pos="NN" word="pursuant"/>
+  <entry pos="RB" word="quite"/>
+  <entry pos="NN" word="rahmat"/>
+  <entry pos="NN" word="railway"/>
+  <entry pos="NN" word="rain"/>
+  <entry pos="RB" word="rapidly"/>
+  <entry pos="NN" word="rate"/>
+  <entry pos="VBN" word="rated" stem="rate"/>
+  <entry pos="VBD" word="reached" stem="reach"/>
+  <entry pos="VBG" word="reaching" stem="reach"/>
+  <entry pos="JJ" word="real"/>
+  <entry pos="VB" word="rebuild" stem="rebuild"/>
+  <entry pos="JJ" word="recent"/>
+  <entry pos="RB" word="recently"/>
+  <entry pos="VB" word="reclaim" stem="reclaim"/>
+  <entry pos="NN" word="reclamation"/>
+  <entry pos="VBP" word="recognize" stem="recognize"/>
+  <entry pos="NN" word="reconciliation"/>
+  <entry pos="NN" word="reconstruction"/>
+  <entry pos="VB" word="recover" stem="recover"/>
+  <entry pos="NN" word="recovery"/>
+  <entry pos="VB" word="redeem" stem="redeem"/>
+  <entry pos="NN" word="reef"/>
+  <entry pos="NN" word="reform"/>
+  <entry pos="VBD" word="refused" stem="refuse"/>
+  <entry pos="NN" word="region"/>
+  <entry pos="NN" word="regulation"/>
+  <entry pos="NNS" word="regulations" stem="regulation"/>
+  <entry pos="VBD" word="reiterated" stem="reiterate"/>
+  <entry pos="NNS" word="relations" stem="relation"/>
+  <entry pos="VBN" word="released" stem="release"/>
+  <entry pos="JJ" word="religious"/>
+  <entry pos="VBG" word="remaining" stem="remain"/>
+  <entry pos="VBZ" word="remains" stem="remain"/>
+  <entry pos="NN" word="remark"/>
+  <entry pos="NNS" word="renminbi"/>
+  <entry pos="NN" word="reorganization"/>
+  <entry pos="JJ" word="rep"/>
+  <entry pos="VBD" word="repeated" stem="repeat"/>
+  <entry pos="RB" word="repeatedly"/>
+  <entry pos="NN" word="report"/>
+  <entry pos="VBN" word="reported" stem="report"/>
+  <entry pos="NN" word="reporter"/>
+  <entry pos="NNS" word="reporters" stem="reporter"/>
+  <entry pos="NN" word="request"/>
+  <entry pos="VBZ" word="requires" stem="require"/>
+  <entry pos="NN" word="rescue"/>
+  <entry pos="JJ" word="reserved"/>
+  <entry pos="JJ" word="resident"/>
+  <entry pos="VB" word="re-start"/>
+  <entry pos="NN" word="return"/>
+  <entry pos="JJ" word="rid"/>
+  <entry pos="JJ" word="right"/>
+  <entry pos="NNS" word="rights" stem="rights"/>
+  <entry pos="NN" word="ringgit"/>
+  <entry pos="NN" word="riot"/>
+  <entry pos="NN" word="road"/>
+  <entry pos="VBG" word="robbing" stem="rob"/>
+  <entry pos="NN" word="role"/>
+  <entry pos="NN" word="rouge"/>
+  <entry pos="JJ" word="round"/>
+  <entry pos="IN" word="rrb"/>
+  <entry pos="NNS" word="ruins" stem="ruin"/>
+  <entry pos="NN" word="runway"/>
+  <entry pos="JJ" word="rural"/>
+  <entry pos="VBN" word="rushed" stem="rush"/>
+  <entry pos="NN" word="russia"/>
+  <entry pos="NN" word="sacasa"/>
+  <entry pos="VBD" word="said" stem="say"/>
+  <entry pos="JJ" word="same"/>
+  <entry pos="NN" word="samphan"/>
+  <entry pos="NN" word="sarawak"/>
+  <entry pos="VBD" word="saw" stem="see"/>
+  <entry pos="VBZ" word="says" stem="say"/>
+  <entry pos="NN" word="scheme"/>
+  <entry pos="NN" word="school"/>
+  <entry pos="NN" word="science"/>
+  <entry pos="NN" word="scope"/>
+  <entry pos="NN" word="sea"/>
+  <entry pos="JJ" word="second"/>
+  <entry pos="NNS" word="seconds" stem="seconds"/>
+  <entry pos="NN" word="security"/>
+  <entry pos="JJ" word="sen"/>
+  <entry pos="NN" word="service"/>
+  <entry pos="NNS" word="services" stem="service"/>
+  <entry pos="NN" word="session"/>
+  <entry pos="VB" word="set" stem="set"/>
+  <entry pos="NN" word="settlement"/>
+  <entry pos="JJ" word="seventh"/>
+  <entry pos="NN" word="sex"/>
+  <entry pos="NN" word="shanxi"/>
+  <entry pos="NN" word="sherman"/>
+  <entry pos="NN" word="shine"/>
+  <entry pos="MD" word="should"/>
+  <entry pos="NN" word="siazon"/>
+  <entry pos="NNS" word="sides" stem="side"/>
+  <entry pos="VBD" word="signed" stem="sign"/>
+  <entry pos="NN" word="sihua"/>
+  <entry pos="JJ" word="similar"/>
+  <entry pos="IN" word="since"/>
+  <entry pos="JJ" word="singapore"/>
+  <entry pos="NN" word="site"/>
+  <entry pos="JJ" word="skilled"/>
+  <entry pos="JJ" word="small"/>
+  <entry pos="RB" word="so"/>
+  <entry pos="JJ" word="social"/>
+  <entry pos="NN" word="sodomy"/>
+  <entry pos="NN" word="soeharto"/>
+  <entry pos="NNS" word="soldiers" stem="soldier"/>
+  <entry pos="VB" word="solve" stem="solve"/>
+  <entry pos="DT" word="some"/>
+  <entry pos="DT" word="someone"/>
+  <entry pos="DT" word="something"/>
+  <entry pos="RB" word="soon"/>
+  <entry pos="RB" word="south"/>
+  <entry pos="JJ" word="southeast"/>
+  <entry pos="NN" word="southeast"/>
+  <entry pos="VB" word="speak" stem="speak"/>
+  <entry pos="JJ" word="special"/>
+  <entry pos="NN" word="speech"/>
+  <entry pos="VBD" word="spent" stem="spend"/>
+  <entry pos="JJ" word="square"/>
+  <entry pos="NN" word="stability"/>
+  <entry pos="NN" word="stage"/>
+  <entry pos="VB" word="stand" stem="stand"/>
+  <entry pos="VBD" word="started" stem="start"/>
+  <entry pos="VBZ" word="starts" stem="start"/>
+  <entry pos="NN" word="state"/>
+  <entry pos="VBD" word="stated" stem="state"/>
+  <entry pos="NN" word="statement"/>
+  <entry pos="JJ" word="state-owned"/>
+  <entry pos="NNS" word="states" stem="state"/>
+  <entry pos="NN" word="station"/>
+  <entry pos="NNS" word="statistics" stem="statistics"/>
+  <entry pos="VBN" word="stepped" stem="step"/>
+  <entry pos="RB" word="still"/>
+  <entry pos="NN" word="stipulation"/>
+  <entry pos="NNS" word="stipulations"/>
+  <entry pos="NNS" word="strips" stem="strip"/>
+  <entry pos="JJ" word="structural"/>
+  <entry pos="NN" word="student"/>
+  <entry pos="VB" word="submit" stem="submit"/>
+  <entry pos="NN" word="subsidiary"/>
+  <entry pos="NN" word="subversion"/>
+  <entry pos="PDT" word="such"/>
+  <entry pos="NN" word="supervision"/>
+  <entry pos="NN" word="support"/>
+  <entry pos="VB" word="support" stem="support"/>
+  <entry pos="VBG" word="supporting" stem="support"/>
+  <entry pos="NN" word="surabaya"/>
+  <entry pos="NN" word="surface"/>
+  <entry pos="NN" word="surrender"/>
+  <entry pos="NNS" word="survivors" stem="survivor"/>
+  <entry pos="NN" word="system"/>
+  <entry pos="NN" word="table"/>
+  <entry pos="NN" word="taiwan"/>
+  <entry pos="VBP" word="take" stem="take"/>
+  <entry pos="VBN" word="taken" stem="take"/>
+  <entry pos="VBZ" word="takes" stem="take"/>
+  <entry pos="VBG" word="taking" stem="take"/>
+  <entry pos="NN" word="talent"/>
+  <entry pos="NN" word="talin"/>
+  <entry pos="VBN" word="talked" stem="talk"/>
+  <entry pos="NNS" word="talks" stem="talk"/>
+  <entry pos="NN" word="tang"/>
+  <entry pos="NN" word="target"/>
+  <entry pos="NNS" word="teachers" stem="teacher"/>
+  <entry pos="NN" word="technology"/>
+  <entry pos="NN" word="television"/>
+  <entry pos="NN" word="temperature"/>
+  <entry pos="NNS" word="tens" stem="ten"/>
+  <entry pos="JJ" word="thai"/>
+  <entry pos="NN" word="thailand"/>
+  <entry pos="IN" word="than"/>
+  <entry pos="DT" word="that"/>
+  <entry pos="IN" word="that"/>
+  <entry pos="WDT" word="that"/>
+  <entry pos="DT" word="the"/>
+  <entry pos="PRP$" word="their"/>
+  <entry pos="PRP" word="them"/>
+  <entry pos="PRP" word="themselves"/>
+  <entry pos="RB" word="then"/>
+  <entry pos="EX" word="there"/>
+  <entry pos="RB" word="there"/>
+  <entry pos="DT" word="these"/>
+  <entry pos="PRP" word="they"/>
+  <entry pos="VB" word="think" stem="think"/>
+  <entry pos="VBP" word="think" stem="think"/>
+  <entry pos="JJ" word="third"/>
+  <entry pos="DT" word="this"/>
+  <entry pos="DT" word="those"/>
+  <entry pos="IN" word="though"/>
+  <entry pos="VBD" word="thought" stem="think"/>
+  <entry pos="VBN" word="thought" stem="think"/>
+  <entry pos="IN" word="through"/>
+  <entry pos="NNS" word="thugs" stem="thug"/>
+  <entry pos="NN" word="tie"/>
+  <entry pos="NN" word="time"/>
+  <entry pos="JJ" word="timely"/>
+  <entry pos="NN" word="timetable"/>
+  <entry pos="NN" word="timor"/>
+  <entry pos="NN" word="title"/>
+  <entry pos="TO" word="to"/>
+  <entry pos="JJ" word="toady"/>
+  <entry pos="RB" word="together"/>
+  <entry pos="NN" word="tokyo"/>
+  <entry pos="VBD" word="told" stem="tell"/>
+  <entry pos="NN" word="total"/>
+  <entry pos="IN" word="towards"/>
+  <entry pos="NN" word="town"/>
+  <entry pos="NN" word="township"/>
+  <entry pos="NN" word="trade"/>
+  <entry pos="VBG" word="transforming" stem="transform"/>
+  <entry pos="NN" word="transportation"/>
+  <entry pos="NN" word="travel"/>
+  <entry pos="VBN" word="tried" stem="try"/>
+  <entry pos="NN" word="trustee"/>
+  <entry pos="VB" word="try" stem="try"/>
+  <entry pos="NN" word="tung"/>
+  <entry pos="NN" word="turbulence"/>
+  <entry pos="VBD" word="turned" stem="turn"/>
+  <entry pos="NN" word="tv"/>
+  <entry pos="NN" word="tv."/>
+  <entry pos="CD" word="two"/>
+  <entry pos="JJ" word="u.s."/>
+  <entry pos="NNP" word="u.s."/>
+  <entry pos="NN" word="uk"/>
+  <entry pos="JJ" word="un"/>
+  <entry pos="NN" word="un"/>
+  <entry pos="NNP" word="un."/>
+  <entry pos="VBN" word="understood" stem="understand"/>
+  <entry pos="NN" word="unemployment"/>
+  <entry pos="JJ" word="united"/>
+  <entry pos="NN" word="university"/>
+  <entry pos="IN" word="up"/>
+  <entry pos="RB" word="up"/>
+  <entry pos="RP" word="up"/>
+  <entry pos="JJ" word="upper"/>
+  <entry pos="JJ" word="urban"/>
+  <entry pos="VBD" word="urged" stem="urge"/>
+  <entry pos="PRP" word="us"/>
+  <entry pos="NN" word="us."/>
+  <entry pos="JJ" word="us$"/>
+  <entry pos="NNP" word="us$"/>
+  <entry pos="NN" word="usd"/>
+  <entry pos="VB" word="use" stem="use"/>
+  <entry pos="VBD" word="utilized"/>
+  <entry pos="VBN" word="utilized"/>
+  <entry pos="JJ" word="various"/>
+  <entry pos="JJ" word="vast"/>
+  <entry pos="NN" word="venture"/>
+  <entry pos="RB" word="very"/>
+  <entry pos="NN" word="viagra"/>
+  <entry pos="NN" word="viktor"/>
+  <entry pos="NN" word="violence"/>
+  <entry pos="NN" word="visit"/>
+  <entry pos="NN" word="voa"/>
+  <entry pos="VBP" word="want" stem="want"/>
+  <entry pos="VBN" word="wanted" stem="want"/>
+  <entry pos="VBZ" word="wants" stem="want"/>
+  <entry pos="NN" word="war"/>
+  <entry pos="VBD" word="was" stem="be"/>
+  <entry pos="NNP" word="washington"/>
+  <entry pos="NN" word="water"/>
+  <entry pos="VBD" word="waved" stem="wave"/>
+  <entry pos="NN" word="way"/>
+  <entry pos="PRP" word="we"/>
+  <entry pos="NN" word="wednesday"/>
+  <entry pos="NNS" word="weekends" stem="weekend"/>
+  <entry pos="VBD" word="welcomed" stem="welcome"/>
+  <entry pos="NN" word="welfare"/>
+  <entry pos="RB" word="well"/>
+  <entry pos="VBD" word="went" stem="go"/>
+  <entry pos="VBD" word="were" stem="be"/>
+  <entry pos="JJ" word="west"/>
+  <entry pos="JJ" word="western"/>
+  <entry pos="WRB" word="when"/>
+  <entry pos="WDT" word="which"/>
+  <entry pos="IN" word="while"/>
+  <entry pos="WP" word="who"/>
+  <entry pos="WP" word="whom"/>
+  <entry pos="MD" word="will"/>
+  <entry pos="NN" word="wiranto"/>
+  <entry pos="NN" word="wire"/>
+  <entry pos="NN" word="wiser"/>
+  <entry pos="IN" word="with"/>
+  <entry pos="IN" word="within"/>
+  <entry pos="NN" word="work"/>
+  <entry pos="NN" word="worker"/>
+  <entry pos="NNS" word="workers" stem="worker"/>
+  <entry pos="VBZ" word="works" stem="work"/>
+  <entry pos="NN" word="world"/>
+  <entry pos="VBG" word="worrying" stem="worry"/>
+  <entry pos="MD" word="would"/>
+  <entry pos="JJ" word="wuhan"/>
+  <entry pos="NN" word="wuhan"/>
+  <entry pos="NNP" word="wuhan"/>
+  <entry pos="NNP" word="xianglong"/>
+  <entry pos="NNP" word="xiaoshan"/>
+  <entry pos="NN" word="xin"/>
+  <entry pos="NN" word="xining"/>
+  <entry pos="NN" word="year"/>
+  <entry pos="NNS" word="years" stem="year"/>
+  <entry pos="NN" word="yesterday"/>
+  <entry pos="RB" word="yet"/>
+  <entry pos="PRP" word="you"/>
+  <entry pos="JJ" word="young"/>
+  <entry pos="NN" word="youth"/>
+  <entry pos="NN" word="yuan"/>
+  <entry pos="NN" word="yulang"/>
+  <entry pos="NN" word="zealand"/>
+  <entry pos="VBG" word="zhejiang"/>
+  <entry pos="NN" word="zone"/>
+</morph>

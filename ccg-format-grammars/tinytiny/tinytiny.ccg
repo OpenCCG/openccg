@@ -1,0 +1,142 @@
+# A truly minimal grammar for CCG.
+# Ben Wing, May 2006
+
+################## Features #################
+
+
+
+feature {
+  CASE<2>: nom acc;
+  NUM<2>: sg pl;
+  PERS<2>: non-3rd {1st 2nd} 3rd;
+
+  TENSE<E>: past pres;
+  SEM-NUM<X:NUM>: sg-X pl-X;
+
+# Some alternate code that appeared from somewhere, I'm not sure anymore.
+# Enable the following three statements and disable the statement above
+# beginning `NUM<2>: ...'.  It looks like it tries to implement something to
+# do with number agreement. (Note that number agreement is already taken care
+# of in the normal system.  I'm not sure what the code is trying to do.)
+#  num<2,X:num>: sg pl;
+#  num<1,2>: sg-agr:sg pl-agr:pl;
+#  num<2>: sg-2:sg pl-2:pl;
+
+  ontology: sem-obj {
+              phys-obj {
+                animate-being {
+                  person
+                }
+                thing
+              }
+              situation {
+                change {
+                  action
+                }
+                state
+              }
+            };
+}
+
+################## Words #################
+
+# Example of how to have punctuation and other non-word characters in a
+# lexical item.
+word '.':Punc;
+word ',':Punc;
+word '?':Punc;
+
+word the:Det;
+word a:Det: sg;
+
+word pro1:Pro(animate-being) {
+  I: 1st sg nom sg-X;
+  me: 1st sg acc sg-X;
+  we: 1st pl nom pl-X;
+  us: 1st pl acc pl-X;
+}
+
+def noun(sing, plur, class) {
+  word sing:N(class) {
+    *: sg sg-X;
+    plur: pl pl-X;
+  }
+}
+
+noun(book, books, thing)
+noun(peach, peaches, thing)
+noun(boy, boys, person)
+noun(policeman, policemen, person)
+
+def verb(stem, props, 3sing, pasttense) {
+  word stem:props {
+    *: pres non-3rd sg;
+    3sing: pres 3rd sg;
+    *: pres pl;
+    pasttense: past;
+  }
+}
+
+verb(go, IntransV, goes, went)
+verb(sleep, IntransV, sleeps, slept)
+verb(eat, TransV IntransV, eats, ate)
+verb(see, TransV, sees, saw)
+# This is a test of set arguments.  Not clear it's useful or should be here;
+# maybe move to tiny.ccg?
+verb(setverb, SetargV, setverbs, setverbed)
+
+################## Categories #################
+
+family Punc {
+  entry: punc;
+}
+
+family Det(indexRel=det) {
+  entry: np<2>[X PERS=3rd]/^ n<2>[X]:
+         X:sem-obj(<det>*);
+}
+
+family N {
+  entry: n<2>[X]:
+         X:sem-obj(*);
+}
+
+family Pro {
+  entry: np<2>[X]:
+         X:sem-obj(*);  
+}
+
+family IntransV(V) {
+  entry: s<1>[E] \ np<2>[X nom]:
+         E:action(* <Actor>X:animate-being);
+}
+
+family TransV(V) {
+  entry: s<1>[E] \ np<2>[X nom] / np<3>[Y acc]:
+         E:action(* <Actor>X:animate-being <Patient>Y:sem-obj);
+}
+
+family SetargV(V) {
+  entry: s<1>[E] {\np<2>[X nom], / np<3>[Y acc]}:
+         E:action(* <Actor>X:animate-being <Patient>Y:sem-obj);
+}
+
+################## Test sentences #################
+
+
+testbed {
+	the policemen eat:	2;
+  the boys eat: 2;
+  the boys eat the peaches: 1;
+  the policeman sleeps: 1;
+  the policemen sleeps: 0;
+  the policemen sleep: 1;
+  the policeman sleeps the peach: 0;
+  the policeman saw me: 1;
+  the policeman saw I: 0;
+  I see the book: 1;
+  I sees the book: 0;
+  I see a book: 1;
+  I see a books: 0;
+}
+

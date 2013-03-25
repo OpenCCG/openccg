@@ -1,0 +1,41 @@
+Main Authors:
+     Core Java Code:
+         Jason Baldridge <jmb -at- cogsci.ed.ac.uk>
+         Gann Bierner <gbierner -at- cogsci.ed.ac.uk>
+         Michael White <mwhite -at- inf.ed.ac.uk>
+     CCG-to-XML:
+         Ben Wing <ben -at- 666.com>
+     Hypertagger:
+         Dominic Espinosa <espinosa -at- ling.osu.edu>
+     Supertagger:
+         Dennis Mehay <mehay -at- ling.osu.edu>
+     Disjunctivizer:
+         Scott Martin <scott -at- ling.osu.edu>
+
+Additional Contributors:
+     Jonathan Barker <barker -at- ling.osu.edu>
+       semantic graph visualization tool
+     Cem Bozsahin <cem.bozsahin -at- ed.ac.uk / bozsahin -at- metu.edu.tr>
+       grammars from Bozsahin and Steedman (2003)
+     Gunes Erkan <gunes -at- ceng.metu.edu.tr>
+       handling of type hierachies
+     Dennis Mehay <mehay -at- ling.osu.edu>
+       KenLM interface
+       (in addition to supertagger)
+     Scott Martin <scott -at- ling.osu.edu>
+       GrammarDoc
+       incoporating the SRILM toolkit for scoring
+       build process for CCGbank grammar extraction
+       (in addition to disjunctivizer)
+     Rajakrishnan Rajkumar <raja -at- ling.osu.edu>
+       build files and XSLT transforms for CCGbank grammar extraction
+       English agreement model
+     David Reitter <dreitter -at- inf.ed.ac.uk>
+       command completion and per grammar history
+       "tiny" grammar
+     Alexandros Triantafyllidis <s0345201 -at- sms.ed.ac.uk>
+       visualization of derivations via latex
+     Ben Wing <ben -at- 666.com>
+       wccg and WebCCG code; CCG-format grammars
+       (in addition to ccg2xml)
+

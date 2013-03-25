@@ -1,0 +1,11 @@
+
+The files wsj-nns-vb and wsj-nns-vb-stems contain the plural nouns & verbs and
+their stems, respectively, from the WSJ part of the Penn Treebank, as computed
+by the morpha tool.
+
+Sample commands for creating these files (with directories on the OSU
+Linguistics system) are in get_wsj_nns_vb and stem_wsj_nns_vb.
+
+There are also some made-up sentences for testing the parser and
+realizer in novel/two-sents, and an example CCGbank file with Propbank
+roles and corrections in the sample dir.

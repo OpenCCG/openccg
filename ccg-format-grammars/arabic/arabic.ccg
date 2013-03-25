@@ -1,0 +1,805 @@
+#############################################################
+#                                                           #
+#                         arabic.ccg                        #
+#                                                           #
+#############################################################
+
+# Author: Ben Wing <ben@666.com>
+# Date: April 2006
+
+# This is a grammar for a fragment of Arabic.  It's particularly
+# useful for demonstrating the extended use of macros to handle
+# complicated morphological inflections.
+
+# See the `tiny' grammar (tiny.ccg) for more info about the format
+# of this file.
+
+feature {
+  CASE<2>: nom, acc, gen;
+  NUM<2>: sg, du, pl;
+  GEND<2>: m, f;
+  STATE<2>: cons, non-cons {indef, def};
+  ANIM<2>: hum, nonhum;
+  PERS<2>: 1st, 2nd, 3rd;
+  RESUMPTIVE<2>: nonres, res;
+  SEM-NUM<X:NUM>: sg-X, du-X, pl-X;
+  SEM-PERS<X:PERS>: 1st-X, 2nd-X, 3rd-X;
+  TENSE<E>: past, pres;
+  MOOD<E>: indic, subj, juss;
+
+  # Here's a more complicated hierarchy, from the original tiny grammar.
+  ontology: sem-obj {
+              phys-obj {
+                animate-being {
+                  person
+                },
+                thing
+              },
+              situation {
+                change {
+                  action
+                },
+                state
+              }
+            };
+}
+
+rule {
+  no typeraise;
+  typeraise +: n => s;
+  typeraise - $: n => s;
+  typeraise - $: pp => s;
+  typeraise - $: pp/n => s;
+  typechange: s$1 | n[nom] => s$1 ;
+  typechange: n<~2>[cons] => n<2>[3rd,def] /* n[gen,def] ;
+  typechange: n<~2>[cons] => n<2>[3rd,indef] /* n[gen,indef] ;
+}
+
+##########################################################################
+#                           Morphological entries                        #
+#                                 (morph.xml)                            #
+##########################################################################
+
+word wa:Conj; # "and"
+word anna:Comp; # "that", introducing sentential complements
+word inna:Comp; # same, but only after the verb qaal "say"
+
+word maa:InterrogPro(thing): 3rd; # "what"
+word man:InterrogPro(person): 3rd; # "who"
+
+word li:Prep; # "what"
+word fii:Prep; # "who"
+
+# This word means "this".  
+word haadhaa {
+  *: sg, m;
+  haadhihi: sg, f;
+  ha_ulaahi: pl;
+
+  # Bizarrely, this word declines for case only in the dual.
+  haadhaani: du, m, nom;
+  haadhayni: du, m, acc;
+  haadhayni: du, m, gen;
+
+  haataani: du, f, nom;
+  haatayni: du, f, acc;
+  haatayni: du, f, gen;
+}
+
+# This word means "that".  
+word dhaalik {
+  *: sg, m;
+  tilka: sg, f;
+  ulaa_ika: pl;
+
+  # Bizarrely, this word declines for case only in the dual.
+  dhaanika: du, m, nom;
+  dhaynika: du, m, acc;
+  dhaynika: du, m, gen;
+
+  taanika: du, f, nom;
+  taynika: du, f, acc;
+  taynika: du, f, gen;
+}
+
+# This is the relative pronoun.
+word al-ladhii {
+  *: sg, m;
+  al-latii: sg, f;
+  al-ladhiina: pl, m;
+  al-laati: pl, f;
+
+  # Bizarrely, this word declines for case only in the dual.
+  al-ladhaani: du, m, nom;
+  al-ladhayni: du, m, acc;
+  al-ladhayni: du, m, gen;
+
+  al-lataani: du, f, nom;
+  al-latayni: du, f, acc;
+  al-latayni: du, f, gen;
+}
+
+word pro:Pro {
+  ana: 1st, 1st-X, sg, sg-X;
+  anta: 2nd, 2nd-X, sg, sg-X, m;
+  anti: 2nd, 2nd-X, sg, sg-X, f;
+  huwa: 3rd, 3rd-X, sg, sg-X, m;
+  hiya: 3rd, 3rd-X, sg, sg-X, f;
+  naHnu: 1st, 1st-X, pl, pl-X;
+  antun: 2nd, 2nd-X, pl, pl-X, m;
+  antunna: 2nd, 2nd-X, pl, pl-X, f;
+  hum: 3rd, 3rd-X, pl, pl-X, m;
+  hunna: 3rd, 3rd-X, pl, pl-X, f;
+}
+
+word ii:: 1st, 1st-X, sg, sg-X;
+word nii:: 1st, 1st-X, sg, sg-X;
+word ka:: 2nd, 2nd-X, sg, sg-X, m;
+word ki:: 2nd, 2nd-X, sg, sg-X, f;
+word hu:: 3rd, 3rd-X, sg, sg-X, m;
+word haa:: 3rd, 3rd-X, sg, sg-X, f;
+word naa:: 1st, 1st-X, pl, pl-X;
+word kum:: 2nd, 2nd-X, pl, pl-X, m;
+word kunna:: 2nd, 2nd-X, pl, pl-X, f;
+word hum:: 3rd, 3rd-X, pl, pl-X, m;
+word hunna:: 3rd, 3rd-X, pl, pl-X, f;
+
+#############################################
+#                    Nouns                  #
+#############################################
+
+# This shows how a reasonably complicated morphology can be accommodated.
+# It is certainly possible that some of this may (and probably should)
+# be offloaded into a separate morphology-processing engine.  However,
+# even in that case there is often a good deal more to the lexicon.
+
+# We show a couple examples of complete paradigms, in order to make it
+# easier to understand what's going on below.
+
+# Here is a typical noun (kitaab "book") with a broken plural (kutub "books").
+# For nouns with broken plurals, the plural is typically declined like
+# the singular.  Note that Arabic nouns are conjugated for three numbers
+# (singular, dual, plural), three cases (nominative, accusative, dative),
+# and three states (indefinite, definite, construct). (The construct state
+# is used for nouns that are modified by other nouns -- e.g. "book" in
+# "the book of Mary".)
+
+# Form		Nominative	Accusative	Dative
+# ---------------------------------------------------------------
+# sg.indef	kitaabun	kitaaban	kitaabin
+# sg.def	al-kitaabu	al-kitaaba	al-kitaabi
+# sg.cons	kitaabu		kitaaba		kitaabi
+# 
+# du.indef	kitaabaani	kitaabayni	kitaabayni
+# du.def	al-kitaabaani	al-kitaabayni	al-kitaabayni
+# du.cons	kitaabaa	kitaabay	kitaabay
+# 
+# pl.indef	kutubun		kutuban		kutubin
+# pl.def	al-kutubu	al-kutuba	al-kutubi
+# pl.cons	kutubu		kutuba		kutubi
+
+# Here is a typical noun (mudarris "teacher") with a different kind of
+# plural, a so-called "strong masculine plural", which has its own declension.
+
+# Form		Nominative	Accusative	Dative
+# ---------------------------------------------------------------
+# sg.indef	mudarrisun	mudarrisan	mudarrisin
+# sg.def	al-mudarrisu	al-mudarrisa	al-mudarrisi
+# sg.cons	mudarrisu	mudarrisa	mudarrisi
+#
+# du.indef	mudarrisaani	mudarrisayni	mudarrisayni
+# du.def	al-mudarrisaani	al-mudarrisayni	al-mudarrisayni
+# du.cons	mudarrisaa	mudarrisay	mudarrisay
+#
+# pl.indef	mudarrisuuna	mudarrisiina	mudarrisiina
+# pl.def	al-mudarrisuuna	al-mudarrisiina	al-mudarrisiina
+# pl.cons	mudarrisuu	mudarrisii	mudarrisii
+
+# Here, we make heavy use of macros.
+
+# This macro says: Every time an expression of the form
+# three-form-decl(...) occurs, replace it with the text that comes after.
+# The parameters will be substituted into the text.  The braces that
+# denote the macro's text do *NOT* form part of the text that is substituted.
+# Note that macro substitutions are processed recursively: If the text
+# of a macro substitution contains calls to other macros, they will also
+# be processed.  This makes "inheritance" very easy to implement.
+
+# This macro is used for a particular paradigm corresponding to a
+# particular number of a word.
+
+def three-different-form-decl(indef-form, def-form, cons-form,
+			      indef-nom, indef-acc, indef-gen,
+ 			      def-nom, def-acc, def-gen,
+	  	              cons-nom, cons-acc, cons-gen,
+	 	              morph-num, sem-num, gend) {
+  indef-form.indef-nom: morph-num, sem-num, gend, nom, indef;
+  indef-form.indef-acc: morph-num, sem-num, gend, acc, indef;
+  indef-form.indef-gen: morph-num, sem-num, gend, gen, indef;
+
+  add-al(def-form.def-nom): morph-num, sem-num, gend, nom, def;
+  add-al(def-form.def-acc): morph-num, sem-num, gend, acc, def;
+  add-al(def-form.def-gen): morph-num, sem-num, gend, gen, def;
+
+  cons-form.cons-nom: morph-num, sem-num, gend, nom, cons;
+  cons-form.cons-acc: morph-num, sem-num, gend, acc, cons;
+  cons-form.cons-gen: morph-num, sem-num, gend, gen, cons;
+}
+
+# It's questionable whether we should do this.  This assimilates al-
+# to a following coronal consonant, e.g. ar-rajul, as-sigaara,
+# ath-thalj, an-nuur, aDH-DHuhr, etc.
+def add-al(form) regsub('^al-([std]h|DH|[tdszrnTDSZL])', 'a\1-\1', al-.form)
+
+def three-form-decl(form, indef-nom, indef-acc, indef-gen,
+		    def-nom, def-acc, def-gen,
+		    cons-nom, cons-acc, cons-gen,
+		    morph-num, sem-num, gend) {
+  three-different-form-decl(form, form, form,
+			    indef-nom, indef-acc, indef-gen,
+ 			    def-nom, def-acc, def-gen,
+	  	            cons-nom, cons-acc, cons-gen,
+	 	            morph-num, sem-num, gend)
+}
+
+# Using the above macro, we create two more macros to handle two common
+# paradigm types: Accusative and genitive are the same, and the
+# definite is either the same as the construct (two-form-decl-1) or
+# the same as the indefinite (two-form-decl-2).
+
+def two-form-decl-1(form, non-cons-nom, non-cons-obl,
+		    cons-nom, cons-obl, morph-num, sem-num, gend) {
+  three-form-decl(form, non-cons-nom, non-cons-obl, non-cons-obl,
+		  non-cons-nom, non-cons-obl, non-cons-obl,
+		  cons-nom, cons-obl, cons-obl,
+		  morph-num, sem-num, gend)
+}
+
+def two-form-decl-2(form, indef-nom, indef-obl,
+		    non-indef-nom, non-indef-obl, morph-num, sem-num, gend) {
+  three-form-decl(form, indef-nom, indef-obl, indef-obl,
+		  non-indef-nom, non-indef-obl, non-indef-obl,
+		  non-indef-nom, non-indef-obl, non-indef-obl,
+		  morph-num, sem-num, gend)
+}
+
+# In turn we create macros for particular paradigms: strong masculine ("uun"),
+# strong feminine ("aat"), dual, and basic triptote (the paradigm for
+# "kitaab" above and, in general, most singulars).
+
+# Note that an alternative to using braces is to put the macro text on
+# the same line as the `def' part of the macro (backslashes can be used
+# to join multiple lines together).
+
+def uun-plural(form) two-form-decl-1(form, uuna, iina, uu, ii, pl, pl-X, m)
+def aat-plural(form) \
+  two-form-decl-2(form, aatun, aatin, aatu, aati, pl, pl-X, f)
+def dual(form, gend) \
+  two-form-decl-1(form, aani, ayni, aa, ay, du, du-X, gend)
+def triptote(form, morph-num, sem-num, gend) \
+  three-form-decl(form, un, an, in, u, a, i, u, a, i, morph-num, sem-num, gend)
+
+# Here we define macros for full paradigms for words.  Note how semicolons
+# are not used, because they are supplied by the macro text itself.
+# (Consult the text for three-form-decl() above, and remember that the
+# braces denoting the macro text are not actually part of the text.  This
+# means that if you really want braces as the outermost thing in some
+# macro text, you'll need to supply two levels of braces.)
+
+def thing(sing, plur) {
+  word sing:N(thing) {
+    triptote(sing, sg, sg-X, m)
+    dual(sing, m)
+    triptote(plur, sg, pl-X, f)
+  }
+}
+
+def fem-thing(sing, plur) {
+  word sing:N(thing) {
+    triptote(sing.t, sg, sg-X, f)
+    dual(sing.t, f)
+    triptote(plur, sg, pl-X, f)
+  }
+}
+
+def person(sing, plur, gend) {
+  word sing:N(person) {
+    triptote(sing, sg, sg-X, gend)
+    dual(sing, gend)
+    triptote(plur, pl, pl-X, gend)
+  }
+}
+
+def male(sing, plur) person(sing, plur, m)
+def female(sing, plur) person(sing, plur, f)
+
+def strong-male(sing) {
+  word sing:N(person) {
+    triptote(sing, sg, sg-X, m)
+    dual(sing, m)
+    uun-plural(sing)
+  }
+}
+
+# Here we define the actual words.  Note how short these definitions are,
+# specifying only what's unpredictable.
+
+thing(kitaab, kutub)
+thing(waqt, _awqaat)
+thing(Harf, Huruuf)
+thing(dars, duruus)
+thing(waqt, _awqaat)
+fem-thing(sigaara, sagaayir)
+fem-thing(madiina, mudun)
+male(rajul, rijaal)
+male(walad, _awlaad)
+male(Taalib, Tullaab)
+female(bint, _abnaat)
+strong-male(mudarris)
+
+word imra_a:N(person) {
+  three-different-form-decl(imra_at, mar_at, imra_at,
+			    un, an, in, u, a, i, u, a, i,
+                            sg, sg-X, f)
+  three-different-form-decl(imra_at, mar_at, imra_at,
+			    aani, ayni, ayni, aani, ayni, ayni, aa, ay, ay,
+                            du, du-X, f)
+  triptote(nisaa_, pl, pl-X, f)
+}
+
+def extended_construct_word(stem, plur) {
+  word stem:N(person) {
+    three-form-decl(stem, un, an, in, u, a, i, uu, aa, ii, sg, sg-X, m)
+    dual(stem, m)
+    triptote(plur, pl, pl-X, m)
+  }
+}
+
+extended_construct_word(_ax, _ixwaan)
+extended_construct_word(_ab, _abnaa_)
+
+# Typical paradigms:
+
+# 1sg    'aktaa      'aktaa    'akta    |
+# 2sg.m  taktaa      taktaa    takta    |
+# 2sg.f  taktayna    taktay    taktay   |
+# 3sg.m  yaktaa      yaktaa    yakta    |
+# 3sg.f  taktaa      taktaa    takta    |
+# 2du    taktayaani  taktayaa  taktayaa |
+# 3du.m  yaktayaani  yaktayaa  yaktayaa |
+# 3du.f  taktayaani  taktayaa  taktayaa |
+# 1pl    naktaa      naktaa    nakta    |
+# 2pl.m  taktawna    taktaw    taktaw   |
+# 2pl.f  taktayna    taktayna  taktayna |
+# 3pl.m  yaktawna    yaktaw    yaktaw   |
+# 3pl.f  yaktayna    yaktayna  yaktayna |
+# 
+# 1sg    'aktuu      'aktuwa   'aktu    | 'aktii      'aktiya   'akti    
+# 2sg.m  taktuu      taktuwa   taktu    | taktii      taktiya   takti    
+# 2sg.f  taktiina    taktii    taktii   | taktiina    taktii    taktii   
+# 3sg.m  yaktuu      yaktuwa   yaktu    | yaktii      yaktiya   yakti    
+# 3sg.f  taktuu      taktuwa   taktu    | taktii      taktiya   takti    
+# 2du    taktuwaani  taktuwaa  taktuwaa | taktiyaani  taktiyaa  taktiyaa 
+# 3du.m  yaktuwaani  yaktuwaa  yaktuwaa | yaktiyaani  yaktiyaa  yaktiyaa 
+# 3du.f  taktuwaani  taktuwaa  taktuwaa | taktiyaani  taktiyaa  taktiyaa 
+# 1pl    naktuu      naktuwa   naktu    | naktii      naktiya   nakti    
+# 2pl.m  taktuuna    taktuu    taktuu   | taktuuna    taktuu    taktuu   
+# 2pl.f  taktuuna    taktuuna  taktuuna | taktiina    taktiina  taktiina 
+# 3pl.m  yaktuuna    yaktuu    yaktuu   | yaktuuna    yaktuu    yaktuu   
+# 3pl.f  yaktuuna    yaktuuna  yaktuuna | yaktiina    yaktiina  yaktiina 
+
+
+def two-form-past(formv, formc) {
+  formc.tu: past, 1st, sg;
+  formc.ta: past, 2nd, m, sg;
+  formc.ti: past, 2nd, f, sg;
+  formv.a: past, 3rd, m, sg;
+  formv.at: past, 3rd, f, sg;
+
+  formc.tumaa: past, 2nd, du;
+  formv.aa: past, 3rd, m, du;
+  formv.ataa: past, 3rd, f, du;
+
+  formc.naa: past, 1st, pl;
+  formc.tum: past, 2nd, m, pl;
+  formc.tunna: past, 2nd, f, pl;
+  formv.uu: past, 3rd, m, pl;
+  formc.na: past, 3rd, f, pl;
+}
+
+def 3rd-weak-past-ay(form) {
+  form.ay.tu: past, 1st, sg;
+  form.ay.ta: past, 2nd, m, sg;
+  form.ay.ti: past, 2nd, f, sg;
+  form.aa: past, 3rd, m, sg;
+  form.at: past, 3rd, f, sg;
+
+  form.ay.tumaa: past, 2nd, du;
+  form.ay.aa: past, 3rd, m, du;
+  form.ataa: past, 3rd, f, du;
+
+  form.ay.naa: past, 1st, pl;
+  form.ay.tum: past, 2nd, m, pl;
+  form.ay.tunna: past, 2nd, f, pl;
+  form.aw: past, 3rd, m, pl;
+  form.ay.na: past, 3rd, f, pl;
+}
+
+def 3rd-weak-past-aw(form) {
+  form.aw.tu: past, 1st, sg;
+  form.aw.ta: past, 2nd, m, sg;
+  form.aw.ti: past, 2nd, f, sg;
+  form.aa: past, 3rd, m, sg;
+  form.at: past, 3rd, f, sg;
+
+  form.aw.tumaa: past, 2nd, du;
+  form.aw.aa: past, 3rd, m, du;
+  form.ataa: past, 3rd, f, du;
+
+  form.aw.naa: past, 1st, pl;
+  form.aw.tum: past, 2nd, m, pl;
+  form.aw.tunna: past, 2nd, f, pl;
+  form.aw: past, 3rd, m, pl;
+  form.aw.na: past, 3rd, f, pl;
+}
+
+def 3rd-weak-past-ii(form) {
+  form.ii.tu: past, 1st, sg;
+  form.ii.ta: past, 2nd, m, sg;
+  form.ii.ti: past, 2nd, f, sg;
+  form.iya: past, 3rd, m, sg;
+  form.iyat: past, 3rd, f, sg;
+
+  form.ii.tumaa: past, 2nd, du;
+  form.iy.aa: past, 3rd, m, du;
+  form.iy.ataa: past, 3rd, f, du;
+
+  form.ii.naa: past, 1st, pl;
+  form.ii.tum: past, 2nd, m, pl;
+  form.ii.tunna: past, 2nd, f, pl;
+  form.uu: past, 3rd, m, pl;
+  form.ii.na: past, 3rd, f, pl;
+}
+
+def strong-past(form) two-form-past(form, form)
+
+# In general, almost all Arabic present-tense verbs of a particular mood
+# can be defined using five forms.  Verbs with a hamza in the first radical
+# have a problem in the first-singular; ideally this should be handled
+# automatically using a regexp or something of that sort, but we don't have
+# such support currently, so we use an optional param.
+
+def gen-pres(mood, fsing, fsing-fem, fdual, fplur-masc, fplur-fem) {
+  # This shows how you can use regular expressions if need be.
+  # regsub(string, regex, repl) is a special built-in that does regular-
+  # expression substitution on STRING, replacing all occurrences of
+  # REGEX with REPL. Regular-expression syntax is as in Python.
+  # In this case, Arabic verbs have a phonetic rule that eliminates
+  # two glottal stops occurring near each other at the beginning of a
+  # word.  For example, _a_kulu -> _aakulu, and _u_kalu -> _uukalu.
+  # (That is, the vowel is lengthened.)
+  # _ . regsub(foo, bar, fsing): pres, mood, 1st, sg;
+  _ . regsub('^([aiu])_', '\1\1', fsing): pres, mood, 1st, sg;
+  # _.fsing: pres, mood, 1st, sg;
+  t.fsing: pres, mood, 2nd, m, sg;
+  t.fsing-fem: pres, mood, 2nd, f, sg;
+  y.fsing: pres, mood, 3rd, m, sg;
+  t.fsing: pres, mood, 3rd, f, sg;
+
+  t.fdual: pres, mood, 2nd, du;
+  y.fdual: pres, mood, 3rd, m, du;
+  t.fdual: pres, mood, 3rd, f, du;
+
+  n.fsing: pres, mood, 1st, pl;
+  t.fplur-masc: pres, mood, 2nd, m, pl;
+  t.fplur-fem: pres, mood, 2nd, f, pl;
+  y.fplur-masc: pres, mood, 3rd, m, pl;
+  y.fplur-fem: pres, mood, 3rd, f, pl;
+}
+
+# The "two-form" present uses normal (non-3rd-weak) endings but may
+# have two forms of the root, one form vocalic endings (almost all of them)
+# and one for consonant endings (only the feminine plural).  This
+# encompasses 2nd-weak verbs and doubled verbs, and (trivially) strong verbs.
+
+def two-form-pres-indic(formv, formc) {
+  gen-pres(indic, formv.u, formv.iina, formv.aani, formv.uuna, formc.na)
+}
+
+def two-form-pres-subj(formv, formc) {
+  gen-pres(subj, formv.a, formv.ii, formv.aa, formv.uu, formc.na)
+}
+
+# The jussive is different because the base form (fsing) has no ending.
+# This means that it may assume the consonant form instead of the vowel
+# form, or may have a number of variants (in particular, for doubled
+# verbs).  So the base form needs to be given explicitly.
+
+def two-form-pres-juss(base, formv, formc) {
+  gen-pres(juss, base, formv.ii, formv.aa, formv.uu, formc.na)
+}
+
+def strong-pres(form) {
+  two-form-pres-indic(form, form)
+  two-form-pres-subj(form, form)
+  two-form-pres-juss(form, form, form)
+}
+
+def 2nd-weak-pres(formv, formc) {
+  two-form-pres-indic(formv, formc)
+  two-form-pres-subj(formv, formc)
+  two-form-pres-juss(formc, formv, formc)
+}
+
+def doubled-pres(formv, formc) {
+  two-form-pres-indic(formv, formc)
+  two-form-pres-subj(formv, formc)
+  two-form-pres-juss(formc, formv, formc)
+  two-form-pres-juss(formv.a, formv, formc)
+  two-form-pres-juss(formv.i, formv, formc)
+}
+
+# Verbs whose third radical is a /w/ or a /y/ have all manner of exceptional
+# forms; easiest just to list them.  In general, there are three types,
+# depending on whether the base singular forms end in -aa, -ii, or -uu.
+
+def 3rd-weak-pres-aa(form) {
+  gen-pres(indic, form.aa, form.ayna, form.ayaani, form.awna, form.ayna)
+  gen-pres(subj, form.aa, form.ay, form.ayaa, form.aw, form.ayna)
+  # Note the shortened vowel here.
+  gen-pres(juss, form.a, form.ay, form.ayaa, form.aw, form.ayna)
+}
+
+def 3rd-weak-pres-ii(form) {
+  gen-pres(indic, form.ii, form.iina, form.iyaani, form.uuna, form.iina)
+  gen-pres(subj, form.iya, form.ii, form.iyaa, form.uu, form.iina)
+  # Note the shortened vowel here.
+  gen-pres(juss, form.i, form.ii, form.iyaa, form.uu, form.iina)
+}
+
+def 3rd-weak-pres-uu(form) {
+  gen-pres(indic, form.uu, form.iina, form.uwaani, form.uuna, form.uuna)
+  gen-pres(subj, form.uwa, form.ii, form.uwaa, form.uu, form.uuna)
+  # Note the shortened vowel here.
+  gen-pres(juss, form.u, form.ii, form.uwaa, form.uu, form.uuna)
+}
+
+def 2nd-weak-verb(pastv, props, pastc, presv, presc) {
+  word pastv: props {
+    two-form-past(pastv, pastc)
+    2nd-weak-pres(presv, presc)
+  }
+}
+
+# Note the way that macro calls can be constructed as well.  Here, the
+# value of PAST_TYPE is the suffix at the end of the macro name.
+
+def 3rd-weak-verb(past_stem, props, past_type, pres_stem, pres_type) {
+  word past_stem . past_type: props {
+    3rd-weak-past- . past_type(past_stem)
+    3rd-weak-pres- . pres_type(pres_stem)
+  }
+}
+
+def strong-verb(past, props, pres) {
+  word past: props {
+    strong-past(past)
+    strong-pres(pres)
+  }
+}
+
+2nd-weak-verb(kaan, TransV(pred=be), kun, akuun, akun)
+2nd-weak-verb(naam, IntransV(pred=sleep), nim, anaam, anam)
+2nd-weak-verb(qaal, SayV(pred=say), qul, aquul, aqul)
+strong-verb(katab, TransV(pred=write), aktub)
+strong-verb(dhahab, IntransV(pred=go), adhhab)
+# Note that the following verb, which begins with a glottal stop,
+# will have a modification made to it in the first-person singular present.
+# (See above.)
+strong-verb(_akal, IntransV TransV (pred=eat), a_kul)
+3rd-weak-verb(ra_, TransV(pred=see), ay, ar, aa)
+3rd-weak-verb(_a9T, DitransV(pred=give), ay, u9T, ii)
+3rd-weak-verb(laq, TransV(pred=find), ii, alq, aa)
+strong-verb(9araf, ThinkV(pred=know), a9rif) # see also 9alam
+strong-verb(tafakkar, ThinkV(pred=think), atafakkar)
+strong-verb(ta9allam, ThinkV(pred=learn), ata9allam)
+
+family N {
+  entry: n<2>[X, 3rd, nonres]: X:sem-obj(*);
+}
+
+family InterrogPro(Pro) {
+  entry: s/*(s/n<2>[res]);
+  entry: s/*(s|n<2>[nonres,nom]);
+  entry: s/*(s/n<2>[nonres,acc]);
+  member: maa, man;
+}
+
+family Pro {
+  entry: n<2>[X, nom, def, nonres]: X:sem-obj(*);
+  member: pro;
+}
+
+family Rel {
+  entry: (n<~2>[CASE,nonres]\n<~2>[nonres])/*(s/n<2>[res]);
+  entry: (n<~2>[CASE,nonres]\n<~2>[nonres])/*(s|n<2>[nonres,nom]);
+  entry: (n<~2>[CASE,nonres]\n<~2>[nonres])/*(s/n<2>[nonres,acc]);
+  member: al-ladhii;
+}
+
+family AndConj(Conj) {
+  entry: n[pl, CASE, STATE] \* n[CASE, STATE] /* n[CASE, STATE];
+  entry: s$1 \* s$1 /* s$1;
+  member: wa;
+}
+
+family Det(indexRel=det) {
+  entry: n<2>[X, def, nonres] /^ n<2>[X]: X:sem-obj(<det>*);
+  member: haadhaa, dhaalik;
+}
+
+# good luck on this one! construct even more complicated ones!  
+#
+#ar-rajulu al-ladhii kataba al-kutuba ra_aa wa _a9Taa li binti hu al-kilaaba al-latii akalat sagaayira mudarrisii al-waladi
+
+#"the man that wrote the books saw and gave to his daughter the dogs that ate the cigarettes of the boy's teachers."
+
+# Works, correctly:
+
+#ar-rajulu al-ladhii kataba al-kutuba ra_aa wa _a9Taa li binti hu as-sagaayira al-latii qultu inna al-waladu tafakkara anna al-mar_atu _a9Tat haa li ha_ulaahi al-mudarrisiina
+
+#Bad
+
+#ar-rajula al-ladhii katabat al-kutuba ra_aa wa _a9Taa li binti hu as-sagaayira al-latii qultu inna al-waladu tafakkara anna al-mar_atu _a9Tat haa li ha_ulaahi al-mudarrisiina
+
+#"the man that wrote the books saw and gave to his daughter the cigarettes that I said that the boy thought that the woman gave them to those teachers"
+
+# Fails, correctly:
+
+#ar-rajulu al-ladhii kataba al-kutuba ra_aa wa _a9Taa li binti hu as-sagaayira al-latii qultu inna al-waladu tafakkara anna al-mar_atu _a9Tat hu li ha-ulaahi al-mudarrisiina
+
+# Works:
+
+# ar-rajulu al-ladhii al-waladu _a9Taa as-sagaayira li binti hu dhahaba
+# ar-rajulu _a9Taa li binti hu as-sagaayira
+# ar-rajulu al-ladhii waladu hu _a9Taa as-sagaayira li al-binti dhahaba
+
+# Won't work:
+
+# ar-rajulu al-ladhii al-waladu _a9Taa li binti hu as-sagaayira dhahaba
+# ar-rajulu al-ladhii waladu hu _a9Taa li al-binti as-sagaayira dhahaba
+
+
+
+family PossClitic(Cli, indexRel=poss) {
+  entry: n<~1>[X, def, nonres] \* n<1>[X, cons]: X:sem-obj(<poss>*);
+  entry: (n<~1>[X, def, nonres] / n<2>[res]) \* n<1>[X, cons]: X:sem-obj(<poss>*);
+  member: ii, ka, ki, hu, haa, naa, kum, kunna, hum, hunna;
+}
+
+family ObjClitic(Cli, indexRel=poss) {
+  entry: (s$1 | n<3>[nonres]) \ (s$1 / n<2>[nonres] | n<3>[nom,nonres]);
+  entry: (s$1 / n<~2>[res] | n<3>[nonres]) \ (s$1 / n<2>[nonres] | n<3>[nom,nonres]);
+  member: nii, ka, ki, hu, haa, naa, kum, kunna, hum, hunna;
+}
+
+family Adj(indexRel=adj) {
+  entry: n<2>[X, NUM, GEND, CASE, STATE] \ n<2>[X]:
+         X:sem-obj(<adj>*);
+}
+
+family Prep-Nom(Prep, indexRel="*NoSem*") {
+  # The pp<~3> notation generates an 'inheritsFrom' tag rather than
+  # an 'id' tag for the feature structure.
+  entry: pp<~3>[lex=*] /< n<3>[gen,nonres];
+  member: li, fii;
+}
+
+family Comp(indexRel="*NoSem*") {
+  entry: sbar<~1>[lex=*] / s<1>;
+  member: anna, inna;
+}
+
+family IntransV(V) {
+  entry: s[E] | n<2>[X,NUM,PERS,GEND,non-cons,nonres,nom]:
+	E:action(* ^ <Actor>X:animate-being);
+}
+
+family SayV(V) {
+  entry: s[E] / sbar[Z, lex=inna] | n<2>[X,NUM,PERS,GEND,non-cons,nonres,nom]:
+        E:action(* ^ <Actor>X:animate-being ^ <Situation>Z);
+}
+
+family ThinkV(V) {
+  entry: s[E] / sbar[Z, lex=anna] | n<2>[X,NUM,PERS,GEND,non-cons,nonres,nom]:
+        E:action(* ^ <Actor>X:animate-being ^ <Situation>Z);
+}
+
+family TransV(V) {
+  entry: s[E] / n[Y,acc,nonres] | n<2>[X,NUM,PERS,GEND,non-cons,nonres,nom]:
+        E:action(* ^ <Actor>X:animate-being ^ <Patient>Y:sem-obj);
+}
+
+family DitransV(V) {
+  # The first slash (on the pp) is marked with a mode allowing backward xcomp.
+  entry: s[E] /< pp[Z,lex=li] / n[Y,acc,nonres] | n<2>[X,NUM,PERS,GEND,non-cons,nonres,nom]:
+        E:action(* ^ <Actor>X:animate-being ^ <Patient>Y:sem-obj ^
+	         <Recipient>Z:animate-being) ;
+}
+
+testbed {
+  # different states of subject
+  rajulun dhahaba: 1;
+  ar-rajulu dhahaba: 1;
+  rajulu dhahaba: 0;
+
+  # subject-verb agreement
+  rajulun dhahabuu: 0;
+  ar-rajulu dhahabuu: 0;
+  rajulu dhahabuu: 0;
+
+  # gender agreement
+  ar-rajulu dhahaba: 1;
+  ar-rajulu dhahabat: 0;
+  al-bintu dhahaba: 0;
+  al-bintu dhahabat: 1;
+
+  # possession
+  rajulun hu dhahaba: 0;
+  ar-rajulu hu dhahaba: 0;
+  rajulu hu dhahaba: 1;
+
+  # subject case
+  ar-rajula dhahaba: 0;
+  ar-rajuli dhahaba: 0;
+
+  # case in construct phrase
+  _axuu ar-rajuli dhahaba: 1;
+  _axuu ar-rajula dhahaba: 0;
+  _axuu ar-rajulu dhahaba: 0;
+
+  # construct state in construct phrase
+  _axun ar-rajuli dhahaba: 0;
+  al-_axu ar-rajuli dhahaba: 0;
+
+  # object case
+  ar-rajulu ra_aa al-kitaaba: 1;
+  ar-rajulu ra_aa al-kitaabi: 0;
+  ar-rajulu ra_aa al-kitaabu: 0;
+
+  # preposition case
+  ar-rajulu _a9Taa al-kitaaba li al-waladi: 1;
+  ar-rajulu _a9Taa al-kitaaba li al-waladu: 0;
+  ar-rajulu _a9Taa al-kitaaba li al-walada: 0;
+
+  # subcategorization
+  ar-rajulu ra_aa al-kitaaba li al-waladi: 0;
+
+  # backward xcomp
+  ar-rajulu _a9Taa li al-waladi al-kitaaba: 1;
+  _a9Taa ar-rajulu li al-waladi al-kitaaba: 1;
+
+  # object clitics
+  ana ra_aytu hu: 1;
+  ra_aytu hu ana: 1;
+  ra_aytu ana hu: 0;
+  hu ra_aytu ana: 0;
+  hu ana ra_aytu: 0;
+
+  huwa ra_aa nii: 1;
+  huwa ra_aa ii: 0;
+  huwa ra_aa ana: 0;
+
+  ar-rajulu _a9Taa haa li al-waladi: 1;
+  _a9Taa haa ar-rajulu li al-waladi: 1;
+
+  # relative clauses
+  # "I gave it to the man that the girl saw him"
+  _a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at hu: 3;
+  # "I gave it to the man that the girl saw her"
+  _a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at haa: 0;
+  # "I gave it to the man that the girl saw"
+  _a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at: 0;
+  # "I gave it to the man that the girl saw the boy"
+  _a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at al-walada: 0;
+}

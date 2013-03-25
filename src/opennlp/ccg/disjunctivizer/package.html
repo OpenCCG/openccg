@@ -1,0 +1,21 @@
+<body>
+	
+<p>Package for the disjunctivizer, which creates a disjunctive LF XML structure based on
+an {@link opennlp.ccg.disjunctivizer.LFGraphDifference}. An LF graph difference is a
+characterization of the difference
+between two {@link opennlp.ccg.hylo.graph.LFGraph graphs} and an
+{@link opennlp.ccg.alignment.Alignment} between them in terms of
+the edits needed to make one into the other: inserts, deletes, and substitutions.</p>
+
+<p>The {@link opennlp.ccg.disjunctivizer.FilteredLFEdgeSet} class extends
+{@link opennlp.ccg.util.FilteredSet} to also provide
+views of its edges by {@linkplain opennlp.ccg.hylo.graph.LFEdge#getSource() source},
+{@linkplain opennlp.ccg.hylo.graph.LFEdge#getTarget() target}, or
+{@linkplain opennlp.ccg.hylo.graph.LFEdge#getLabel() label}. The various filters in this
+package provide a lot of flexibility in terms of how to filter edges: whether their source,
+target, or label matches a given edge's (or just their predicates), whether their source or
+target is aligned, etc. These filters, and the {@link opennlp.ccg.disjunctivizer.FilteredLFEdgeSet} class,
+are used internally by the {@link opennlp.ccg.disjunctivizer.Disjunctivizer} for generating
+disjunctive LFs.</p>
+
+</body>

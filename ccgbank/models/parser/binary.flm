@@ -1,0 +1,66 @@
+
+## binary step of Hockenmaier's HWDep generative syntactic model
+## with added pos tags
+
+6
+ 
+## expansion (E) given parent cat (P), lexcat parent (CP), head postag parent (T) and headword parent (W)
+
+E : 4 P(0) CP(0) T(0) W(0) e_p0cp0t0w0.count e_p0cp0t0w0.lm 5
+  P0,CP0,T0,W0 W0 wbdiscount gtmin 10
+  P0,CP0,T0 T0 wbdiscount
+  P0,CP0 CP0 wbdiscount
+  P0 P0 wbdiscount
+  0 0 wbdiscount
+
+## head (H) given expansion (E), parent cat (P) and lexcat parent (CP)
+
+H : 3 E(0) P(0) CP(0) h_e0p0cp0.count h_e0p0cp0.lm 4
+  E0,P0,CP0 CP0 wbdiscount
+  E0,P0 P0 wbdiscount
+  E0 E0 wbdiscount
+  0 0 wbdiscount
+
+## sibling (S) given expansion (E), parent cat (P), head cat (H), lexcat parent (CP), head postag parent and headword parent (W)
+
+S : 6 E(0) P(0) H(0) CP(0) T(0) W(0) s_e0p0h0cp0t0w0.count s_e0p0h0cp0t0w0.lm 7
+  E0,P0,H0,CP0,T0,W0 W0 wbdiscount gtmin 10
+  E0,P0,H0,CP0,T0 T0 wbdiscount
+  E0,P0,H0,CP0 CP0 wbdiscount
+  E0,P0,H0 H0 wbdiscount
+  E0,P0 P0 wbdiscount
+  E0 E0 wbdiscount
+  0 0 wbdiscount
+
+## lexcat sibling (CS) given expansion (E), sibling (S), parent cat (P) and head cat (H)
+
+CS : 4 E(0) S(0) P(0) H(0) cs_e0s0p0h0.count cs_e0s0p0h0.lm 5
+  E0,S0,P0,H0 H0 wbdiscount
+  E0,S0,P0 P0 wbdiscount
+  E0,S0 S0 wbdiscount
+  E0 E0 wbdiscount
+  0 0 wbdiscount
+
+## head postag sibling (TS) given lexcat sibling (CS), sibling (S), parent cat (P), head cat (H), head postag parent (T) and headword parent (W)
+
+TS : 6 CS(0) S(0) P(0) H(0) T(0) W(0) ts_cs0s0p0h0t0w0.count ts_cs0s0p0h0t0w0.lm 7
+  CS0,S0,P0,H0,T0,W0 W0 wbdiscount gtmin 10
+  CS0,S0,P0,H0,T0 T0 wbdiscount
+  CS0,S0,P0,H0 H0 wbdiscount
+  CS0,S0,P0 P0 wbdiscount
+  CS0,S0 S0 wbdiscount
+  CS0 CS0 wbdiscount
+  0 0 wbdiscount
+
+## headword sibling (WS) given lexcat sibling (CS), sibling (S), parent cat (P), head cat (H), head postag parent (T), headword parent (W) and head postag sibling (TS) 
+
+WS : 7 CS(0) S(0) P(0) H(0) T(0) W(0) TS(0) ws_cs0s0p0h0t0w0ts0.count ws_cs0s0p0h0t0w0ts0.lm 8
+  CS0,S0,P0,H0,T0,W0,TS0 TS0 wbdiscount gtmin 5
+  CS0,S0,P0,H0,T0,W0 W0 wbdiscount gtmin 10
+  CS0,S0,P0,H0,T0 T0 wbdiscount gtmin 5
+  CS0,S0,P0,H0 H0 wbdiscount
+  CS0,S0,P0 P0 wbdiscount
+  CS0,S0 S0 wbdiscount
+  CS0 CS0 wbdiscount
+  0 0 wbdiscount
+

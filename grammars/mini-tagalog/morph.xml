@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd" name="Tagalog">
+  <entry pos="Conj" word="at"/>
+  <entry pos="N" word="pagkain"/>
+  <entry pos="N" word="mgapinggan" stem="pinggan" macros="@pl"/>
+  <entry pos="N" word="mgabata" stem="bata" macros="@pl"/>
+  <entry pos="N" word="Juan"/>
+  <entry pos="N" word="Josie"/>
+  <entry pos="N" word="Lorna"/>
+  <entry pos="N" word="Maria"/>
+  <entry pos="N" word="tindahan"/>
+  <entry pos="N" word="bigas"/>
+  <entry pos="N" word="kapatid"/>
+  <entry pos="N" word="ama"/>
+  <entry pos="N" word="ina"/>
+  <entry pos="N" word="regalo"/>
+  <entry pos="N" word="liham"/>
+  <entry pos="N" word="isda"/>
+  <entry pos="N" word="pera"/>
+  <entry pos="N" word="babae"/>
+  <entry pos="N" word="bangko"/>
+  <entry pos="N" word="baro"/>
+  <entry pos="PN" word="mo" macros="@2nd @gen0"/>
+  <entry pos="PN" word="ko" macros="@1st @gen0"/>
+  <entry pos="PN" word="siya" macros="@3rd @nom0"/>
+  <entry pos="V" word="iniwasan" stem="iwas" macros="@gen1 @nom2"/>
+  <entry pos="V" word="nagatubili" stem="atubili" macros="@nom1 @dat2"/>
+  <entry pos="V" word="binawalan" stem="awal" macros="@gen1 @nom2"/>
+  <entry pos="V" word="tumingin" stem="ingin" macros="@nom1 @dat2"/>
+  <entry pos="V" word="bumili" stem="ili" macros="@nom1 @gen2"/>
+  <entry pos="V" word="binili" stem="ili" macros="@gen1 @nom2"/>
+  <entry pos="V" word="awitin" stem="awit" macros="@gen1 @nom2"/>
+  <entry pos="V" word="humiram" stem="iram" macros="@nom1 @gen2 @dat3"/>
+  <entry pos="V" word="hiramin" stem="iram" macros="@gen1 @nom2 @dat3"/>
+  <entry pos="V" word="hiraman" stem="iram" macros="@gen1 @gen2 @nom3"/>
+  <entry pos="V" word="nagbigay" macros="@nom1 @gen2 @dat3"/>
+  <entry pos="V" word="nagpadala" macros="@nom1 @gen2 @dat3"/>
+  <entry pos="V" word="pupunasan" stem="nasan" macros="@gen1 @nom2"/>
+  <entry pos="V" word="niluto" stem="luto" macros="@gen1 @nom2"/>
+  <entry pos="V" word="pumunta" macros="@nom1 @dat2"/>
+  <entry pos="V" word="nanghuhuli" macros="@nom1 @gen2"/>
+  <entry pos="V" word="nagtitinda" stem="nantitinda" macros="@nom1 @gen2"/>
+  <entry pos="V" word="huhugasan" stem="gasan" macros="@gen1 @nom2"/>
+  <entry pos="V" word="hinugasan" stem="gasan" macros="@gen1 @nom2"/>
+  <entry pos="Case" word="kay" macros="@dat1"/>
+  <entry pos="Case" word="si" macros="@nom1"/>
+  <entry pos="Case" word="sa" macros="@dat1"/>
+  <entry pos="Case" word="ang" macros="@nom1"/>
+  <entry pos="Case" word="ni" macros="@gen1"/>
+  <entry pos="Case" word="ng" macros="@gen1"/>
+  <entry pos="Comp" word="ng"/>
+  <entry pos="Rel" word="ng"/>
+  <macro name="@agr1">
+    <fs id="1" attr="agr" val="true"/>
+  </macro>
+  <macro name="@gen0">
+    <fs id="10" attr="case" val="a-case"/>
+  </macro>
+  <macro name="@gen1">
+    <fs id="1" attr="case" val="a-case"/>
+  </macro>
+  <macro name="@gen2">
+    <fs id="2" attr="case" val="a-case"/>
+  </macro>
+  <macro name="@acc0">
+    <fs id="10" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@acc1">
+    <fs id="1" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@acc2">
+    <fs id="2" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@acc3">
+    <fs id="3" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@def0">
+    <fs id="10" attr="def" val="true"/>
+  </macro>
+  <macro name="@nom0">
+    <fs id="10" attr="case" val="s-case"/>
+  </macro>
+  <macro name="@nom1">
+    <fs id="1" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@nom2">
+    <fs id="2" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@nom3">
+    <fs id="3" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@dat0">
+    <fs id="10" attr="case" val="dat"/>
+  </macro>
+  <macro name="@dat1">
+    <fs id="1" attr="case" val="dat"/>
+  </macro>
+  <macro name="@dat2">
+    <fs id="2" attr="case" val="dat"/>
+  </macro>
+  <macro name="@dat3">
+    <fs id="3" attr="case" val="dat"/>
+  </macro>
+  <macro name="@pl">
+    <fs id="10" attr="num" val="plu"/>
+  </macro>
+  <macro name="@sg">
+    <fs id="10" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg1">
+    <fs id="1" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg2">
+    <fs id="2" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg3">
+    <fs id="3" attr="num" val="sing"/>
+  </macro>
+  <macro name="@3rd">
+    <fs id="10" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd1">
+    <fs id="1" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd2">
+    <fs id="2" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd3">
+    <fs id="3" attr="person" val="3"/>
+  </macro>
+  <macro name="@1st">
+    <fs id="10" attr="person" val="1"/>
+  </macro>
+  <macro name="@1st1">
+    <fs id="1" attr="person" val="1"/>
+  </macro>
+  <macro name="@1st2">
+    <fs id="2" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd">
+    <fs id="10" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd1">
+    <fs id="1" attr="person" val="2"/>
+  </macro>
+  <macro name="@2nd2">
+    <fs id="2" attr="person" val="1"/>
+  </macro>
+  <macro name="@non-fin">
+    <fs id="10" attr="vform" val="non-fin"/>
+  </macro>
+  <macro name="@past">
+    <fs id="10" attr="vform" val="finite"/>
+  </macro>
+</morph>

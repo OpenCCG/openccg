@@ -1,0 +1,20 @@
+
+## Supertags FLM
+
+## Supertag (T) based on POS tags (P), plus POS trigram
+
+2
+
+## POS trigram
+P : 2 P(-1) P(-2) p_p1p2.count p_p1p2.lm 3
+  P1,P2 P2 kndiscount
+  P1 P1 kndiscount
+  0 0 ndiscount
+
+## 3gram with prev two POSs
+T : 3 P(0) P(-1) P(-2) t_p0p1p2.count t_p0p1p2.lm 4
+  P0,P1,P2 P2 kndiscount
+  P0,P1 P1 kndiscount
+  P0 P0 kndiscount
+  0 0 kndiscount
+

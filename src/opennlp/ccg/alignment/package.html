@@ -1,0 +1,39 @@
+<body>
+	
+<p>This package provides classes for modeling alignments between two
+phrases.</p>
+
+<p>
+The {@link opennlp.ccg.alignment.Phrase} class models a phrase as simply
+a list of words. A single alignment between an index in one phrase and an index
+in another is captured by the {@link opennlp.ccg.alignment.Mapping} class. The
+{@link opennlp.ccg.alignment.Alignment} class is build on top of Phrase and
+Mapping, encapsulating an &quot;A&quot; phrase and a &quot;B&quot; phrase
+along with a set of mappings between them (see
+{@link opennlp.ccg.alignment.PhrasePosition}).
+</p>
+
+<p>
+Since there are multiple different encoding schemes for representing alignments,
+a goal of this package is to make the conceptual representation of aligned phrases
+as independent of encoding as possible. The interface
+{@link opennlp.ccg.alignment.EncodingScheme} gives a way to represent
+encoding schemes, and two popular encoding schemes (Moses and NAACL) are provided by this
+package. Different encoding schemes use different
+numbering bases: some start numbering indices at 0 and some at 1. To reconcile this
+difference, the class {@link opennlp.ccg.alignment.IndexBase} provides a way to translate
+different numbering bases into a common index base. The {@link opennlp.ccg.alignment.MappingFormat}
+class extends {@link java.text.Format} to give encoding-independent formatting and parsing
+for mappings.
+</p>
+
+<p>
+The classes {@link opennlp.ccg.alignment.PhraseReader} and {@link opennlp.ccg.alignment.PhraseWriter}
+(and their descendants), {@link opennlp.ccg.alignment.MappingReader} and
+{@link opennlp.ccg.alignment.MappingWriter} provide convenient ways to read and write phrases
+and mappings. Lastly, the non-instantiable class {@link opennlp.ccg.alignment.Alignments} provides some
+convenience methods for reading phrases, mappings and alignments.
+</p>
+
+
+</body>

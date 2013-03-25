@@ -1,0 +1,1 @@
+cat wsj-nns-vb | tr [:blank:] _ | ./morpha.ix86_linux > wsj-nns-vb-stems

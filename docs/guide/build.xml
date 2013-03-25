@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<project name="OpenCCG Guide" basedir="." default="compile">
+
+	<uptodate property="rough-guide.upToDate"
+	    srcfile="./guide.tex"
+	    targetfile="../grammars-rough-guide.pdf"/>
+		
+	  <!-- =================================================================== -->
+	  <!-- Compiles Grammar Rough Guide                                        -->
+	  <!-- =================================================================== -->
+	  <target name="compile" unless="rough-guide.upToDate">
+	    <echo message="Compiling grammar rough guide"/>
+	    
+	    <available file="./gb4e.sty" property="gb4e.sty.present"/>
+	    <fail unless="gb4e.sty.present" message="gb4e.sty is not present"/>
+
+	  	<available file="./cgloss4e.sty" property="cgloss4e.sty.present"/>
+	    <fail unless="cgloss4e.sty.present" message="cgloss4e.sty is not present"/>
+
+	    <available file="./openccg.sty" property="openccg.sty.present"/>
+	    <fail unless="openccg.sty.present" message="openccg.sty is not present"/>
+		    
+	    <available file="./openccg.bib" property="openccg.bib.present"/>
+	    <fail unless="openccg.bib.present" message="openccg.bib is not present"/>
+		    
+	    <!-- branch on cygwin, then finish -->
+	    <antcall target="compile.default"/>
+	    <antcall target="compile.cygwin"/>
+	    <antcall target="compile.finish"/>
+	  </target>
+
+	  <target name="compile.default" unless="cygwin">
+	    <echo message="(default compile)"/>
+	    <exec executable="pdflatex" dir="." failonerror="true">
+	      <arg value="guide.tex"/>
+	    </exec>
+	    <exec executable="bibtex" dir="." failonerror="true">
+	      <arg value="guide"/>
+	    </exec>
+	    <exec executable="pdflatex" dir="." failonerror="true">
+	      <arg value="guide.tex"/>
+	    </exec>
+	    <exec executable="pdflatex" dir="." failonerror="true">
+	      <arg value="guide.tex"/>
+	    </exec>
+	  </target>
+		  
+	  <target name="compile.cygwin" if="cygwin">
+	    <echo message="(cygwin compile)"/>
+	    <exec executable="bash" dir="." failonerror="true">
+	      <arg value="-c"/> <arg value="pdflatex guide.tex"/>
+	    </exec>
+	    <exec executable="bash" dir="." failonerror="true">
+	      <arg value="-c"/> <arg value="bibtex guide"/>
+	    </exec>
+	    <exec executable="bash" dir="." failonerror="true">
+	      <arg value="-c"/> <arg value="pdflatex guide.tex"/>
+	    </exec>
+	    <exec executable="bash" dir="." failonerror="true">
+	      <arg value="-c"/> <arg value="pdflatex guide.tex"/>
+	    </exec>
+	  </target>
+		  
+	  <target name="compile.finish">
+	    <copy file="./guide.pdf" tofile="../grammars-rough-guide.pdf" overwrite="true" />
+	  </target>
+		
+	  <target name="clean">
+	    <delete>
+	      <fileset dir="." includes="guide.*" excludes="guide.tex"/>
+	    </delete>
+	  </target>
+
+</project>

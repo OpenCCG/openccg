@@ -1,0 +1,12 @@
+--- /home/dnm/maxent/maxent-20061005/src/maxent.cpp	2009-05-08 23:57:52.000000000 -0400
++++ /home/dnm/maxentfixes/maxentpatched.cpp	2009-05-08 23:57:47.000000000 -0400
+@@ -154,6 +154,9 @@
+             const char* q = it->second;
+             while (p < q && *p != ':')
+                 ++p;
++	    // fixes the case where ':' is in the feature string (D.N. Mehay)
++	    if((p+1) < q && *++p != ':')
++	      --p;
+             if (p == q)
+                 return false;
+             context.push_back(make_pair(string(it->first, p - it->first), 

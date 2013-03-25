@@ -1,0 +1,12 @@
+
+## A prior probability model that estimates p(supertag | word, pos)
+## with smoothed back-off (a "soft tagging dictionary" if you will).
+
+1
+ 
+## lexical category ("supertag") (T) given POS tag (P) and word (W).
+
+T : 2 P(0) W(0) t_p0w0.count t_p0w0.lm 3
+  P0,W0 W0 wbdiscount gtmin 15 
+  P0 P0 wbdiscount
+  0 0 wbdiscount

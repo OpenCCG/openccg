@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+      Cem Bozsahin (adapted from Mike White's xsd definitions)
+  -->
+
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+    <xsd:documentation>
+   
+    Schema for the parameters.xml file.
+
+    The parameters file contains definitions of language type, its basic 
+    word order and category for basic intransitive verbs, and the word order
+    skeleton for the basic transitive verbs. 
+
+    iv and tv are pre-CCG categories. They refer to grammatical roles S,A,P,
+    described by XML tags s-argument, a-argument and p-argument.
+    They are mapped to CCG categories by parametric-lexicon.xsl.
+
+    Word order can be specified as ordered/unordered list of arguments. 
+    Curried arguments can be described by enclosing them in arg tag, 
+    and set of arguments as setarg tag (the latter is also a valid category 
+    in openCCG, cf. categories.xsd and lexicon.xsd. But arg is not).
+
+    For further information and how to start up lexicon design from a skeletal
+    lexicon, see Bozsahin and Steedman (2003) (draft), and the comments
+    generated in the file preset-families.xml by paramatric-lexicon.xsl.
+
+    As usual, the best way to learn is to look at an example file. Parameter
+    files are provided for Basque, Dyirbal, English, Inuit, Tagalog and 
+    Turkish (in their respective directories). 
+
+   </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:complexType name="ArgType">
+    <xsd:annotation>
+      <xsd:documentation>
+     p-argument and a-argument must not carry case; they are set from iv 
+     specs. 
+   </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="syn-type" type="xsd:string" use="required"/>
+    <xsd:attribute name="dir" use="required" type="DirType"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="SArgType">
+    <xsd:annotation>
+      <xsd:documentation>
+     s-argument must  carry case; tv category and its grammatical relations
+     are set up from this case and language type.
+   </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="syn-type" type="xsd:string" use="required"/>
+    <xsd:attribute name="dir" use="required" type="DirType"/>
+    <xsd:attribute name="case" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="predType">
+    <xsd:attribute name="syn-type" type="xsd:string" use="required"/>
+  </xsd:complexType>
+
+  <xsd:simpleType name="DirType">
+    <xsd:annotation>
+      <xsd:documentation>
+    The direction of the slash.
+    The direction can be forward (/), backward (\) or both (|).
+   </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="/"/>
+      <xsd:enumeration value="\"/>
+      <xsd:enumeration value="|"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="SubjType">
+    <xsd:annotation>
+      <xsd:documentation>
+    What kind of subject is missing from the infinitive (parameter)
+   </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="none"/>
+      <xsd:enumeration value="semantic"/>
+      <xsd:enumeration value="syntactic"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+
+  <xsd:complexType name="parameter-types">
+    <xsd:annotation>
+      <xsd:documentation>
+        The parameters must include infinitival, iv and tv specifications. The latter
+		two must
+        have a predicate specification. iv has s-argument,
+        tv has a-argument and p-argument, wrapped around either arg or setarg
+        tags. They can appear in any order (both iv and tv specs, and argument
+        and predicate specs).
+		Controllee must specify subject type as semantic or syntactic.
+    </xsd:documentation>
+    </xsd:annotation>
+
+    <xsd:all>
+	
+      <xsd:element name="infinitive" minOccurs="1" maxOccurs="1">
+        <xsd:complexType>
+          <xsd:attribute name="subject-type" type="SubjType" use="required"/>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="iv" minOccurs="1" maxOccurs="1">
+        <xsd:complexType>
+          <xsd:all>
+            <xsd:element name="predicate" minOccurs="1" maxOccurs="1" type="predType"/>
+            <xsd:element name="arg" minOccurs="0" maxOccurs="1">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="s-argument" minOccurs="1" maxOccurs="1" type="SArgType"/>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="setarg" minOccurs="0" maxOccurs="1">
+              <xsd:complexType>
+                <xsd:sequence>
+                  <xsd:element name="s-argument" minOccurs="1" maxOccurs="1" type="SArgType"/>
+                </xsd:sequence>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:all>
+        </xsd:complexType>
+      </xsd:element>
+
+      <xsd:element name="tv" minOccurs="1" maxOccurs="1">
+        <xsd:complexType>
+          <xsd:all>
+            <xsd:element name="predicate" minOccurs="1" maxOccurs="1" type="predType"/>
+            <xsd:element name="arg" minOccurs="0" maxOccurs="1">
+              <xsd:complexType>
+                <xsd:all>
+                  <xsd:element name="a-argument" minOccurs="1" maxOccurs="1" type="ArgType"/>
+                  <xsd:element name="p-argument" minOccurs="1" maxOccurs="1" type="ArgType"/>
+                </xsd:all>
+              </xsd:complexType>
+            </xsd:element>
+            <xsd:element name="setarg" minOccurs="0" maxOccurs="1">
+              <xsd:complexType>
+                <xsd:all>
+                  <xsd:element name="a-argument" minOccurs="1" maxOccurs="1" type="ArgType"/>
+                  <xsd:element name="p-argument" minOccurs="1" maxOccurs="1" type="ArgType"/>
+                </xsd:all>
+              </xsd:complexType>
+            </xsd:element>
+          </xsd:all>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:all>
+  </xsd:complexType>
+
+<!-- *** Beginning of The schema contents -->
+
+  <xsd:element name="language">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="parameters" type="parameter-types"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string" use="required"/>
+      <xsd:attribute name="type" use="required">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="acc"/>
+            <xsd:enumeration value="erg"/>
+            <xsd:enumeration value="unaligned"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

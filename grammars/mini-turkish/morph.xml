@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd" name="Turkish">
+  <!-- Conj  -->
+  <entry pos="Conj" word="ve"/>
+  <entry pos="Conj" word="ama"/>
+  <entry pos="Conj" word="de" stem="da"/>
+  <entry pos="Conj" word="da"/>
+  <!-- Noun -->
+  <entry pos="N" word="adam" macros="@sg @3rd"/>
+  <entry pos="N" word="kadin" macros="@sg @3rd"/>
+  <entry pos="N" word="cocuk" macros="@sg @3rd"/>
+  <entry pos="N" word="cocug" stem="cocuk" macros="@sg @3rd"/>
+  <entry pos="N" word="kitap" macros="@sg @3rd"/>
+  <entry pos="N" word="kitab" stem="kitap" macros="@sg @3rd"/>
+  <entry pos="N" word="dergi" macros="@sg @3rd"/>
+  <entry pos="N" word="kiz" macros="@sg @3rd"/>
+  <!-- Intransitive -->
+  <entry pos="V" word="dustu" stem="dus" macros="@past"/>
+  <entry pos="V" word="dus" macros="@past @non-fin"/>
+  <entry pos="V" word="uyudu" stem="uyu" macros="@past"/>
+  <entry pos="V" word="uyu" macros="@past @non-fin"/>
+  <!-- Transitive -->
+  <entry pos="V" word="gor" macros="@acc2 @non-fin"/>
+  <entry pos="V" word="gordu" stem="gor" macros="@acc2 @past"/>
+  <entry pos="V" word="bakti" stem="bak" macros="@dat2 @past"/>
+  <entry pos="V" word="bak" macros="@dat2 @non-fin"/>
+  <entry pos="V" word="al" macros="@acc2 @non-fin"/>
+  <entry pos="V" word="almisti" stem="al" macros="@acc2 @past"/>
+  <entry pos="V" word="okudu" stem="oku" macros="@acc2 @past"/>
+  <entry pos="V" word="oku" macros="@acc2 @non-fin"/>
+  <entry pos="V" word="carpti" stem="carp" macros="@dat2 @past"/>
+  <entry pos="V" word="carp" macros="@dat2 @non-fin"/>
+  <!-- Transitive + control-->
+  <entry pos="V" word="istedi" stem="iste" macros="@acc3 @past"/>
+  <entry pos="V" word="iste" macros="@acc3 @non-fin"/>
+  <entry pos="V" word="calisti" stem="calis" macros="@dat3 @past"/>
+  <entry pos="V" word="calis" macros="@dat3 @non-fin"/>
+  <entry pos="V" word="sozverdi" stem="sozver" macros="@dat3 @past"/>
+  <entry pos="V" word="sozver" macros="@dat3 @non-fin"/>
+  <entry pos="V" word="zorladi" stem="zorla" macros="@dat3 @past"/>
+  <entry pos="V" word="zorla" macros="@dat3 @non-fin"/>
+  <!-- Ditransitive -->
+  <entry pos="V" word="verdi" stem="ver" macros="@past"/>
+  <entry pos="V" word="ver" macros="@non-fin"/>
+  <!-- Affix -->
+  <entry pos="Affix" word="me" stem="mek"/>
+  <entry pos="Affix" word="ma" stem="mek"/>
+  <entry pos="Affix" word="mek"/>
+  <entry pos="Affix" word="mak" stem="mek"/>
+  <entry pos="Affix" word="yu" stem="yi" macros="@acc0 @def0"/>
+  <entry pos="Affix" word="yi" macros="@acc0 @def0"/>
+  <entry pos="Affix" word="i" stem="yi" macros="@acc0 @def0"/>
+  <entry pos="Affix" word="u" stem="yi" macros="@acc0 @def0"/>
+  <entry pos="Affix" word="in"/>
+  <entry pos="Affix" word="un" stem="in"/>
+  <entry pos="Affix" word="n" stem="in"/>
+  <entry pos="Affix" word="ya" macros="@dat0 @def0"/>
+  <entry pos="Affix" word="ye" stem="ya" macros="@dat0 @def0"/>
+  <entry pos="Affix" word="a" stem="ya" macros="@dat0 @def0"/>
+  <entry pos="Affix" word="e" stem="ya" macros="@dat0 @def0"/>
+  <entry pos="Affix" word="yan" macros="@nom2"/>
+  <entry pos="Affix" word="yen" stem="yan" macros="@nom2"/>
+  <entry pos="Affix" word="en" stem="yan" macros="@nom2"/>
+  <entry pos="Affix" word="an" stem="yan" macros="@nom2"/>
+  <entry pos="Affix" word="digi" stem="dik" macros="@agr1"/>
+  <!--embedded IV must be IVagr,cf an-->
+  <entry pos="Affix" word="dugu" stem="dik" macros="@agr1"/>
+  <entry pos="Affix" word="tigi" stem="dik" macros="@agr1"/>
+  <entry pos="Affix" word="tugu" stem="dik" macros="@agr1"/>
+  <macro name="@agr1">
+    <fs id="1" attr="agr" val="true"/>
+  </macro>
+  <macro name="@gen1">
+    <fs id="1" attr="case" val="gen"/>
+  </macro>
+  <macro name="@gen2">
+    <fs id="2" attr="case" val="gen"/>
+  </macro>
+  <macro name="@acc0">
+    <fs id="0" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@acc1">
+    <fs id="1" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@acc2">
+    <fs id="2" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@acc3">
+    <fs id="3" attr="case" val="p-case"/>
+  </macro>
+  <macro name="@def0">
+    <fs id="0" attr="def" val="true"/>
+  </macro>
+  <macro name="@nom0">
+    <fs id="0" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@nom1">
+    <fs id="1" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@nom2">
+    <fs id="2" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@dat0">
+    <fs id="0" attr="case" val="dat"/>
+  </macro>
+  <macro name="@dat2">
+    <fs id="2" attr="case" val="dat"/>
+  </macro>
+  <macro name="@dat3">
+    <fs id="3" attr="case" val="dat"/>
+  </macro>
+  <macro name="@sg">
+    <fs id="0" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg1">
+    <fs id="1" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg2">
+    <fs id="2" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg3">
+    <fs id="3" attr="num" val="sing"/>
+  </macro>
+  <macro name="@3rd">
+    <fs id="0" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd1">
+    <fs id="1" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd2">
+    <fs id="2" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd3">
+    <fs id="3" attr="person" val="3"/>
+  </macro>
+  <macro name="@1st">
+    <fs id="0" attr="person" val="1"/>
+  </macro>
+  <macro name="@1st1">
+    <fs id="1" attr="person" val="1"/>
+  </macro>
+  <macro name="@1st2">
+    <fs id="2" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd">
+    <fs id="0" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd1">
+    <fs id="1" attr="person" val="2"/>
+  </macro>
+  <macro name="@2nd2">
+    <fs id="2" attr="person" val="1"/>
+  </macro>
+  <macro name="@non-fin">
+    <fs id="0" attr="vform" val="non-fin"/>
+  </macro>
+  <macro name="@past">
+    <fs id="0" attr="vform" val="finite"/>
+  </macro>
+</morph>

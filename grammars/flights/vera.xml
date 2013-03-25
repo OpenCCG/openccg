@@ -1,0 +1,1229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression>
+
+  <!-- nb: "with availability in business class" should perhaps be a theme phrase; 
+           however, that would require changing the syntax or boundary tones -->
+  <item numOfParses="1" string="I found 4_H* flights with availability in business_class_H* LL% .">
+    <lf>
+      <node id="f1:proposition" pred="find" info="rh" mood="dcl" tense="past">
+        <rel name="Perceiver">
+          <node id="p1:animate-being" pred="pro1" num="sg"/>
+        </rel>
+        <rel name="Sought">
+          <node id="f2:phys-obj" pred="flight" det="nil" num="pl">
+            <rel name="Card">
+              <node id="n1:num" pred="4" kon="+"/>
+            </rel>
+            <rel name="Poss">
+              <node id="a1:abstraction" pred="availability" det="nil">
+                <rel name="Category">
+                  <node id="b1:fareclass" pred="business_class" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="I found 4_H* flights with availability in business_class_H* LL% , but none_H* are on KLM_H* LL% .">
+    <lf>
+      <node id="b1:situation" pred="but" info="rh" mood="dcl">
+        <rel name="Arg1">
+          <node id="f1:proposition" pred="find" tense="past">
+            <rel name="Perceiver">
+              <node id="p1:animate-being" pred="pro1" num="sg"/>
+            </rel>
+            <rel name="Sought">
+              <node id="f2:phys-obj" pred="flight" det="nil" num="pl">
+                <rel name="Card">
+                  <node id="n1:num" pred="4" kon="+"/>
+                </rel>
+                <rel name="Poss">
+                  <node id="a1:abstraction" pred="availability" det="nil">
+                    <rel name="Category">
+                      <node id="b2:fareclass" pred="business_class" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="n2:quantification" pred="none" kon="+">
+            <rel name="Restr">
+              <node idref="x1:sem-obj"/>
+            </rel>
+            <rel name="Body">
+              <node id="b3:state" pred="be" tense="pres">
+                <rel name="Arg">
+                  <node idref="x1:sem-obj"/>
+                </rel>
+                <rel name="Prop">
+                  <node id="h1:proposition" pred="has-rel">
+                    <rel name="Of">
+                      <node idref="x1:sem-obj"/>
+                    </rel>
+                    <rel name="Airline">
+                      <node id="k1:airline" pred="KLM" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+
+  <!-- tbd: "which is later than you requested" -->
+  <item numOfParses="1" string="the only direct_L+H* flight LH% arrives at 20:30_H* LL% .">
+    <lf>
+      <node id="a1:motion" pred="arrive" info="rh" mood="dcl" tense="pres">
+        <rel name="Theme">
+          <node id="f1:phys-obj" pred="flight" det="the" info="th" num="sg">
+            <rel name="HasProp">
+              <node id="o1:proposition" pred="only"/>
+            </rel>
+            <rel name="HasProp">
+              <node id="d1:proposition" pred="direct" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Time">
+          <node id="n1:time" pred="20:30" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <!-- tbd: "have to" instead of "need to" -->
+  <item numOfParses="1" string="to arrive earlier_L+H* LH% you would need to make a connection_H* LL% .">
+    <lf>
+      <node id="p1:proposition" pred="purpose-rel" info="th" mood="dcl">
+        <rel name="Core">
+          <node id="w1:state" pred="would" info="rh" owner="s">
+            <rel name="Body">
+              <node id="n1:action" pred="need-to">
+                <rel name="Agent">
+                  <node id="p2:person" pred="pro2"/>
+                </rel>
+                <rel name="Duty">
+                  <node id="m1:situation" pred="make">
+                    <rel name="Agent">
+                      <node idref="p2:person"/>
+                    </rel>
+                    <rel name="Effect">
+                      <node id="c1:action" pred="connection" det="a" kon="+" num="sg"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Trib">
+          <node id="a1:motion" pred="arrive">
+            <rel name="Theme">
+              <node idref="x1:phys-obj"/>
+            </rel>
+            <rel name="TimeRel">
+              <node id="e1:proposition" pred="earlier" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <!-- nb: Simplified sentence, by leaving "or a KLM flight" for a separate one. -->
+  <item numOfParses="4" string="if you 're willing to travel economy_L+H* LH% , there is a direct_L+H* flight LH% on BMI_H* LL% , arriving at 16:10_H* LL% .">
+    <lf>
+      <node id="i1:situation" pred="if" info="th" mood="dcl">
+        <rel name="Arg1">
+          <node id="b1:state" pred="be" tense="pres">
+            <rel name="Arg">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Prop">
+              <node id="w1:proposition" pred="willing">
+                <rel name="Experiencer">
+                  <node idref="p1:animate-being"/>
+                </rel>
+                <rel name="Situation">
+                  <node id="t1:motion" pred="travel">
+                    <rel name="Traveler">
+                      <node idref="p1:animate-being"/>
+                    </rel>
+                    <rel name="Category">
+                      <node id="e1:fareclass" pred="economy" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="e2:proposition" pred="elab-rel" info="rh" owner="s">
+            <rel name="Core">
+              <node id="t2:state" pred="there-be" info="th" owner="h" tense="pres">
+                <rel name="Arg">
+                  <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+                    <rel name="HasProp">
+                      <node id="d1:proposition" pred="direct" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+                <rel name="Prop">
+                  <node id="h1:proposition" pred="has-rel" info="rh" owner="s">
+                    <rel name="Of">
+                      <node idref="f1:phys-obj"/>
+                    </rel>
+                    <rel name="Airline">
+                      <node id="b2:airline" pred="BMI" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Trib">
+              <node id="a1:motion" pred="arrive">
+                <rel name="Theme">
+                  <node idref="x1:phys-obj"/>
+                </rel>
+                <rel name="Time">
+                  <node id="n1:time" pred="16:10" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="there is also_H* a KLM_H* flight LL%  arriving at 16:50_H* LL% , but it requires a connection_H* in Amsterdam_H* LL% .">
+    <lf>
+      <node id="b1:situation" pred="but" info="rh" mood="dcl">
+        <rel name="Arg1">
+          <node id="t1:state" pred="there-be" tense="pres">
+            <rel name="Arg">
+              <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+                <rel name="Airline">
+                  <node id="k1:airline" pred="KLM" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Prop">
+              <node id="a1:motion" pred="arrive">
+                <rel name="Theme">
+                  <node idref="f1:phys-obj"/>
+                </rel>
+                <rel name="Time">
+                  <node id="n1:time" pred="16:50" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="HasProp">
+              <node id="a2:proposition" pred="also" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="r1:action" pred="require" tense="pres">
+            <rel name="Agent">
+              <node id="p1:causal-agent" pred="pro3n" num="sg"/>
+            </rel>
+            <rel name="Duty">
+              <node id="c1:action" pred="connection" det="a" kon="+" num="sg">
+                <rel name="Path">
+                  <node id="a3:city" pred="Amsterdam" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <!-- the following should work as before:
+         There's a KLM flight arriving Brussels at four fifty pm, 
+           but business class is not available and you'd need to connect in Amsterdam. 
+         If you want to fly direct, there's a BMI flight that arrives at four ten pm, 
+           but it has no availability in business class either. -->
+  <item numOfParses="1" string="I also found_L+H* LH% 4_H* flights LL% that do_H* have availability in business_class_H* LL% .">
+    <lf>
+      <node id="e1:proposition" pred="elab-rel" info="rh" mood="dcl">
+        <rel name="Core">
+          <node id="f1:proposition" pred="find" info="th" kon="+" tense="past">
+            <rel name="Perceiver">
+              <node id="p1:animate-being" pred="pro1" num="sg"/>
+            </rel>
+            <rel name="Sought">
+              <node id="f2:phys-obj" pred="flight" det="nil" info="rh" num="pl" owner="s">
+                <rel name="Card">
+                  <node id="n1:num" pred="4" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="HasProp">
+              <node id="a1:proposition" pred="also"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Trib">
+          <node id="d1:state" pred="do" kon="+" tense="pres">
+            <rel name="Body">
+              <node id="h1:situation" pred="have">
+                <rel name="Owner">
+                  <node idref="x1:sem-obj"/>
+                </rel>
+                <rel name="Poss">
+                  <node id="a2:abstraction" pred="availability" det="nil">
+                    <rel name="Category">
+                      <node id="b1:fareclass" pred="business_class" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="would you like to hear about these_H* LH% ?">
+    <lf>
+      <node id="w1:state" pred="would" info="rh" mood="int">
+        <rel name="Body">
+          <node id="l1:experience" pred="like">
+            <rel name="Experiencer">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Content">
+              <node id="h1:experience" pred="hear">
+                <rel name="Perceiver">
+                  <node idref="p1:animate-being"/>
+                </rel>
+                <rel name="Phenomenon">
+                  <node id="t1:sem-obj" pred="this" kon="+" num="pl"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <!-- nb: changed "the following" to "several", which should be more appropriate for spoken output -->
+  <item numOfParses="1" string="I found several_H* flights with availability in business_class_H* LL% .">
+    <lf>
+      <node id="f1:proposition" pred="find" info="rh" mood="dcl" tense="past">
+        <rel name="Perceiver">
+          <node id="p1:animate-being" pred="pro1" num="sg"/>
+        </rel>
+        <rel name="Sought">
+          <node id="f2:phys-obj" pred="flight" det="nil" num="pl">
+            <rel name="Card">
+              <node id="s1:num" pred="several" kon="+"/>
+            </rel>
+            <rel name="Poss">
+              <node id="a1:abstraction" pred="availability" det="nil">
+                <rel name="Category">
+                  <node id="b1:fareclass" pred="business_class" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- this should work: There is a direct flight on BMI, but it arrives at 20:30. -->
+  <item numOfParses="2" string="if you want to arrive earlier_L+H* LH% , there is a British_Airways_H* flight LL% arriving at 16:20_H* LL% .">
+    <lf>
+      <node id="i1:situation" pred="if" info="th" mood="dcl">
+        <rel name="Arg1">
+          <node id="w1:experience" pred="want" tense="pres">
+            <rel name="Experiencer">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Situation">
+              <node id="a1:motion" pred="arrive">
+                <rel name="Theme">
+                  <node idref="p1:animate-being"/>
+                </rel>
+                <rel name="TimeRel">
+                  <node id="e1:proposition" pred="earlier" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="t1:state" pred="there-be" info="rh" owner="s" tense="pres">
+            <rel name="Arg">
+              <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+                <rel name="Airline">
+                  <node id="b1:airline" pred="British_Airways" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Prop">
+              <node id="a2:motion" pred="arrive">
+                <rel name="Theme">
+                  <node idref="f1:phys-obj"/>
+                </rel>
+                <rel name="Time">
+                  <node id="n1:time" pred="16:20" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="there 's a cheaper_L+H* flight LH% on Lufthansa_H* LL% .">
+    <lf>
+      <node id="t1:state" pred="there-be" info="th" mood="dcl" tense="pres">
+        <rel name="Arg">
+          <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+            <rel name="HasProp">
+              <node id="c1:proposition" pred="cheaper" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Prop">
+          <node id="h1:proposition" pred="has-rel" info="rh" owner="s">
+            <rel name="Of">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Airline">
+              <node id="l1:airline" pred="Lufthansa" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- this should work: It costs 114 GBP and arrives at 16:40, but you'd need to connect in London/Heathrow.  -->
+  
+  <item numOfParses="1" string="the Lufthansa_L+H* flight LH% arrives at 18:10 LH% and costs only 114GBP LL% .">
+    <lf>
+      <node id="a1:situation" pred="and" mood="dcl">
+        <rel name="List">
+          <node id="a2:motion" pred="arrive" tense="pres">
+            <rel name="Theme">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Time">
+              <node id="n1:time" pred="18:10"/>
+            </rel>
+          </node>
+          <node id="c1:proposition" pred="cost" tense="pres">
+            <rel name="Goods">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Asset">
+              <node id="n2:amt" pred="114GBP">
+                <rel name="HasProp">
+                  <node id="j1:proposition" pred="only"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <node id="f1:phys-obj" pred="flight" det="the" info="th" num="sg">
+          <rel name="Airline">
+            <node id="l1:airline" pred="Lufthansa" kon="+"/>
+          </rel>
+        </node>
+      </node>
+    </lf>
+  </item>
+  <!-- this should work with 'need to': You would have to connect in Frankfurt. -->
+  <!-- nb: simplified considerably! (removed 'or'; perhaps better for spoken output) -->
+  <item numOfParses="2" string="alternatively_L+H* LH% , there are two_H* flights LL% on British_Airways_H* LL% .">
+    <lf>
+      <node id="t1:state" pred="there-be" info="rh" mood="dcl" tense="pres">
+        <rel name="Arg">
+          <node id="f1:phys-obj" pred="flight" det="nil" num="pl">
+            <rel name="Card">
+              <node id="t2:num" pred="two" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Prop">
+          <node id="h1:proposition" pred="has-rel">
+            <rel name="Of">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Airline">
+              <node id="b1:airline" pred="British_Airways" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="HasProp">
+          <node id="a1:proposition" pred="alternatively" info="th" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="both cost 220GBP_H* LL% .">
+    <lf>
+      <node id="b1:quantification" pred="both" info="rh" mood="dcl">
+        <rel name="Restr">
+          <node idref="x1:phys-obj"/>
+        </rel>
+        <rel name="Body">
+          <node id="c1:proposition" pred="cost" tense="pres">
+            <rel name="Goods">
+              <node idref="x1:phys-obj"/>
+            </rel>
+            <rel name="Asset">
+              <node id="n1:amt" pred="220GBP" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="one_L+H* flight LH% arrives at 16:20_H* LH% and connects in Manchester_H* LL% .">
+    <lf>
+      <node id="a1:situation" pred="and" info="rh" mood="dcl">
+        <rel name="List">
+          <node id="a2:motion" pred="arrive" tense="pres">
+            <rel name="Theme">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Time">
+              <node id="n1:time" pred="16:20" kon="+"/>
+            </rel>
+          </node>
+          <node id="c1:motion" pred="connect" tense="pres">
+            <rel name="Traveler">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Path">
+              <node id="m1:city" pred="Manchester" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <node id="f1:phys-obj" pred="flight" det="nil" info="th" num="sg">
+          <rel name="Card">
+            <node id="o1:num" pred="one" kon="+"/>
+          </rel>
+        </node>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="the other_L+H* one LH% arrives at 18:30_H* LH% and requires a connection_H* in Bristol_H* LL% .">
+    <lf>
+      <node id="a1:situation" pred="and" info="rh" mood="dcl">
+        <rel name="List">
+          <node id="a2:motion" pred="arrive" tense="pres">
+            <rel name="Theme">
+              <node idref="p1:person"/>
+            </rel>
+            <rel name="Time">
+              <node id="n1:time" pred="18:30" kon="+"/>
+            </rel>
+          </node>
+          <node id="r1:action" pred="require" tense="pres">
+            <rel name="Agent">
+              <node idref="p1:person"/>
+            </rel>
+            <rel name="Duty">
+              <node id="c1:action" pred="connection" det="a" kon="+" num="sg">
+                <rel name="Path">
+                  <node id="b1:city" pred="Bristol" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <node id="p1:person" pred="pro_one" det="the" info="th" num="sg">
+          <rel name="HasProp">
+            <node id="o1:proposition" pred="other" kon="+"/>
+          </rel>
+        </node>
+      </node>
+    </lf>
+  </item>
+  
+  <item numOfParses="1" string="the best_L+H* Lufthansa_L+H* flight I found LH% does_H* have availability_H* in business_class_H* LH% and costs just 114GBP_H* LL% .">
+    <lf>
+      <node id="a1:situation" pred="and" info="rh" mood="dcl">
+        <rel name="List">
+          <node id="d1:state" pred="do" kon="+" tense="pres">
+            <rel name="Body">
+              <node id="h1:situation" pred="have">
+                <rel name="Owner">
+                  <node idref="f1:phys-obj"/>
+                </rel>
+                <rel name="Poss">
+                  <node id="a2:abstraction" pred="availability" det="nil" kon="+">
+                    <rel name="Category">
+                      <node id="b2:fareclass" pred="business_class" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+          <node id="c1:proposition" pred="cost" tense="pres">
+            <rel name="Goods">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Asset">
+              <node id="n1:amt" pred="114GBP" kon="+">
+                <rel name="HasProp">
+                  <node id="j1:proposition" pred="just"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <node id="f1:phys-obj" pred="flight" det="the" info="th" num="sg">
+          <rel name="Airline">
+            <node id="l1:airline" pred="Lufthansa" kon="+"/>
+          </rel>
+          <rel name="HasProp">
+            <node id="b1:scalar" pred="best" kon="+"/>
+          </rel>
+          <rel name="GenRel">
+            <node id="f2:proposition" pred="find" tense="past">
+              <rel name="Perceiver">
+                <node id="p1:animate-being" pred="pro1" num="sg"/>
+              </rel>
+              <rel name="Sought">
+                <node idref="f1:phys-obj"/>
+              </rel>
+            </node>
+          </rel>
+        </node>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="4" string="but it only_H* arrives at 12:45_H* LH% and you 'd need to connect_H* in Manchester_H* LL% .">
+    <lf>
+      <node id="b1:situation" pred="but" info="rh" mood="dcl">
+        <rel name="Arg2">
+          <node id="a1:situation" pred="and">
+            <rel name="List">
+              <node id="a2:motion" pred="arrive" tense="pres">
+                <rel name="Theme">
+                  <node id="p1:phys-obj" pred="pro3n" num="sg"/>
+                </rel>
+                <rel name="Time">
+                  <node id="n1:time" pred="12:45" kon="+"/>
+                </rel>
+                <rel name="HasProp">
+                  <node id="o1:proposition" pred="only" kon="+"/>
+                </rel>
+              </node>
+              <node id="w1:state" pred="would">
+                <rel name="Body">
+                  <node id="n2:action" pred="need-to">
+                    <rel name="Agent">
+                      <node id="p2:person" pred="pro2"/>
+                    </rel>
+                    <rel name="Duty">
+                      <node id="c1:motion" pred="connect" kon="+">
+                        <rel name="Traveler">
+                          <node idref="p2:person"/>
+                        </rel>
+                        <rel name="Path">
+                          <node id="m1:city" pred="Manchester" kon="+"/>
+                        </rel>
+                      </node>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- tbd: 'for 111GBP' option -->
+  <item numOfParses="2" string="if you want to fly direct_L+H* LH% , there is a BMI_L+H* flight LH% that arrives at 11:05_H* LH% and costs 111GBP_H* LL% .">
+    <lf>
+      <node id="i1:situation" pred="if" info="th" mood="dcl">
+        <rel name="Arg1">
+          <node id="w1:experience" pred="want" tense="pres">
+            <rel name="Experiencer">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Situation">
+              <node id="f1:motion" pred="fly">
+                <rel name="Traveler">
+                  <node idref="p1:animate-being"/>
+                </rel>
+                <rel name="Prop">
+                  <node id="d1:proposition" pred="direct" kon="+">
+                    <rel name="Of">
+                      <node idref="x1:sem-obj"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="e1:proposition" pred="elab-rel" info="rh" owner="s">
+            <rel name="Core">
+              <node id="t1:state" pred="there-be" info="th" owner="h" tense="pres">
+                <rel name="Arg">
+                  <node id="f2:phys-obj" pred="flight" det="a" num="sg">
+                    <rel name="Airline">
+                      <node id="b1:airline" pred="BMI" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Trib">
+              <node id="a1:situation" pred="and">
+                <rel name="List">
+                  <node id="a2:motion" pred="arrive" tense="pres">
+                    <rel name="Theme">
+                      <node idref="x2:phys-obj"/>
+                    </rel>
+                    <rel name="Time">
+                      <node id="n1:time" pred="11:05" kon="+"/>
+                    </rel>
+                  </node>
+                  <node id="c1:proposition" pred="cost" tense="pres">
+                    <rel name="Goods">
+                      <node idref="x2:phys-obj"/>
+                    </rel>
+                    <rel name="Asset">
+                      <node id="n2:amt" pred="111GBP" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <!-- nb: would be nicer if 'do' pred not required with 'not' -->
+  <item numOfParses="3" string="there 's a Lufthansa_H* flight with availability in business_class_H* LL% , but it does n't arrive until 16:10_H* LL% .">
+    <lf>
+      <node id="b1:situation" pred="but" info="rh" mood="dcl">
+        <rel name="Arg1">
+          <node id="t1:state" pred="there-be" tense="pres">
+            <rel name="Arg">
+              <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+                <rel name="Poss">
+                  <node id="a1:abstraction" pred="availability" det="nil">
+                    <rel name="Category">
+                      <node id="b2:fareclass" pred="business_class" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+                <rel name="Airline">
+                  <node id="l1:airline" pred="Lufthansa" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="d1:state" pred="do" tense="pres">
+            <rel name="Body">
+              <node id="n1:state" pred="not">
+                <rel name="Body">
+                  <node id="a2:motion" pred="arrive">
+                    <rel name="Theme">
+                      <node id="p1:phys-obj" pred="pro3n" num="sg"/>
+                    </rel>
+                  </node>
+                </rel>
+                <rel name="TimeRel">
+                  <node id="u1:proposition" pred="until">
+                    <rel name="Time">
+                      <node id="n2:time" pred="16:10" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- this should work (w/o comma before arriving): If you want to arrive earlier, there is a Lufthansa flight, arriving 13:05, but there is no availability in business class. -->
+  <item numOfParses="3" string="if you want to arrive between 12:00_L+H* and 14:00_L+H* LH% and fly business_class_L+H* LH% , you would need to choose another_H* airline LL% .">
+    <lf>
+      <node id="i1:situation" pred="if" info="th" mood="dcl">
+        <rel name="Arg1">
+          <node id="w1:experience" pred="want" tense="pres">
+            <rel name="Experiencer">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Situation">
+              <node id="a1:situation" pred="and">
+                <rel name="List">
+                  <node id="a2:motion" pred="arrive">
+                    <rel name="Theme">
+                      <node idref="p1:animate-being"/>
+                    </rel>
+                    <rel name="TimeRel">
+                      <node id="b1:proposition" pred="between">
+                        <rel name="Time1">
+                          <node id="n1:time" pred="12:00" kon="+"/>
+                        </rel>
+                        <rel name="Time2">
+                          <node id="n2:time" pred="14:00" kon="+"/>
+                        </rel>
+                      </node>
+                    </rel>
+                  </node>
+                  <node id="f1:motion" pred="fly">
+                    <rel name="Traveler">
+                      <node idref="p1:animate-being"/>
+                    </rel>
+                    <rel name="Category">
+                      <node id="b2:fareclass" pred="business_class" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="w2:state" pred="would" info="rh" owner="s">
+            <rel name="Body">
+              <node id="n3:action" pred="need-to">
+                <rel name="Agent">
+                  <node id="p2:person" pred="pro2"/>
+                </rel>
+                <rel name="Duty">
+                  <node id="c1:action" pred="choose">
+                    <rel name="Chosen">
+                      <node id="a3:airline" pred="airline" num="sg">
+                        <rel name="Det">
+                          <node id="a4:proposition" pred="another" kon="+"/>
+                        </rel>
+                      </node>
+                    </rel>
+                    <rel name="Cognizer">
+                      <node idref="p2:person"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <!-- nb: rather than
+             There is a direct flight on BMI that arrives at 13:35 and costs 221 pounds, 
+             and a RyanAir flight arriving at 12:05. 
+           I suggest starting a second sentence with "there 's also_H* a Ryanair_H* flight LL% ...", 
+           to avoid this somewhat problematic coordination -->
+           
+  <!-- nb: "on Lufthansa" is a theme phrase here, supposing it to be preferred; 
+           otherwise, it could also be part of the rheme -->
+  <item numOfParses="2" string="there are 2_H* flights LL% on Lufthansa_L+H* LH% .">
+    <lf>
+      <node id="t1:state" pred="there-be" info="rh" mood="dcl" tense="pres">
+        <rel name="Arg">
+          <node id="f1:phys-obj" pred="flight" det="nil" num="pl">
+            <rel name="Card">
+              <node id="n1:num" pred="2" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Prop">
+          <node id="h1:proposition" pred="has-rel" info="th">
+            <rel name="Of">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Airline">
+              <node id="l1:airline" pred="Lufthansa" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- nb: For technical reasons, I suggest changing
+             A direct flight arriving at 15:00, and another arriving at 13:55 that requires a connection.
+           to the following two sentences, as the proposed example would require substantial 
+           changes to the grammar. -->
+  <item numOfParses="1" string="there is a direct_H* flight LL% arriving at 15:00_H* LL% .">
+    <lf>
+      <node id="t1:state" pred="there-be" info="rh" mood="dcl" tense="pres">
+        <rel name="Arg">
+          <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+            <rel name="HasProp">
+              <node id="d1:proposition" pred="direct" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Prop">
+          <node id="a1:motion" pred="arrive">
+            <rel name="Theme">
+              <node idref="f1:phys-obj"/>
+            </rel>
+            <rel name="Time">
+              <node id="n1:time" pred="15:00" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="and L there is another_H* one LL% arriving at 13:55_H* LL% that requires a connection_H* LL% .">
+    <lf>
+      <node id="a1:situation" pred="and" mood="dcl">
+        <rel name="Arg2">
+          <node id="e1:proposition" pred="elab-rel" info="rh">
+            <rel name="Core">
+              <node id="t1:state" pred="there-be" tense="pres">
+                <rel name="Arg">
+                  <node id="p1:phys-obj" pred="pro_one" num="sg">
+                    <rel name="Det">
+                      <node id="a2:proposition" pred="another" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+                <rel name="Prop">
+                  <node id="a3:motion" pred="arrive">
+                    <rel name="Theme">
+                      <node idref="p1:phys-obj"/>
+                    </rel>
+                    <rel name="Time">
+                      <node id="n1:time" pred="13:55" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Trib">
+              <node id="r1:action" pred="require" tense="pres">
+                <rel name="Agent">
+                  <node idref="x1:causal-agent"/>
+                </rel>
+                <rel name="Duty">
+                  <node id="c1:action" pred="connection" det="a" kon="+" num="sg"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="neither_L+H* LH% has availability in business_class_H* LL% .">
+    <lf>
+      <node id="n1:quantification" pred="neither" info="th" kon="+" mood="dcl">
+        <rel name="Restr">
+          <node idref="x1:sem-obj"/>
+        </rel>
+        <rel name="Body">
+          <node id="h1:situation" pred="have" info="rh" owner="s" tense="pres">
+            <rel name="Owner">
+              <node idref="x1:sem-obj"/>
+            </rel>
+            <rel name="Poss">
+              <node id="a1:abstraction" pred="availability" det="nil">
+                <rel name="Category">
+                  <node id="b1:fareclass" pred="business_class" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- nb: should be possible to add "and arrive between 12:00 and 14:00" at the end -->
+  <item numOfParses="4" string="however_L+H* LH% , there are several_H* flights LL% on other_H* airlines LL% that do_H* have availability in business_class LL% .">
+    <lf>
+      <node id="e1:proposition" pred="elab-rel" info="rh" mood="dcl">
+        <rel name="Core">
+          <node id="t1:state" pred="there-be" tense="pres">
+            <rel name="Arg">
+              <node id="f1:phys-obj" pred="flight" det="nil" num="pl">
+                <rel name="Card">
+                  <node id="s1:num" pred="several" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Prop">
+              <node id="h1:proposition" pred="has-rel">
+                <rel name="Of">
+                  <node idref="f1:phys-obj"/>
+                </rel>
+                <rel name="Airline">
+                  <node id="a1:airline" pred="airline" det="nil" num="pl">
+                    <rel name="HasProp">
+                      <node id="o1:proposition" pred="other" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Trib">
+          <node id="d1:state" pred="do" kon="+" tense="pres">
+            <rel name="Body">
+              <node id="h2:situation" pred="have">
+                <rel name="Owner">
+                  <node idref="x1:sem-obj"/>
+                </rel>
+                <rel name="Poss">
+                  <node id="a2:abstraction" pred="availability" det="nil">
+                    <rel name="Category">
+                      <node id="b1:fareclass" pred="business_class"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="HasProp">
+          <node id="h3:proposition" pred="however" info="th" kon="+"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  
+  <item numOfParses="1" string="Ryanair_H* L offers the cheapest_L+H* flights to Brussels LH% .">
+    <lf>
+      <node id="o1:action" pred="offer" info="th" mood="dcl" tense="pres">
+        <rel name="Agent">
+          <node id="r1:airline" pred="Ryanair" info="rh" kon="+" owner="s"/>
+        </rel>
+        <rel name="Goods">
+          <node id="f1:phys-obj" pred="flight" det="the" num="pl">
+            <rel name="Goal">
+              <node id="b1:city" pred="Brussels"/>
+            </rel>
+            <rel name="HasProp">
+              <node id="c1:proposition" pred="cheapest" kon="+"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="they cost just 49GBP_H* LL% , but you would need to connect in Dublin_H* LL% .">
+    <lf>
+      <node id="b1:situation" pred="but" info="rh" mood="dcl">
+        <rel name="Arg1">
+          <node id="c1:proposition" pred="cost" tense="pres">
+            <rel name="Goods">
+              <node id="p1:phys-obj" pred="pro3n" num="pl"/>
+            </rel>
+            <rel name="Asset">
+              <node id="n1:amt" pred="49GBP" kon="+">
+                <rel name="HasProp">
+                  <node id="j1:proposition" pred="just"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="w1:state" pred="would">
+            <rel name="Body">
+              <node id="n2:action" pred="need-to">
+                <rel name="Agent">
+                  <node id="p2:person" pred="pro2"/>
+                </rel>
+                <rel name="Duty">
+                  <node id="c2:motion" pred="connect">
+                    <rel name="Traveler">
+                      <node idref="p2:person"/>
+                    </rel>
+                    <rel name="Path">
+                      <node id="d1:city" pred="Dublin" kon="+"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- tbd: simpler version with 'to choose from' -->
+  <item numOfParses="1" string="there are 2_H* flights LL% that you can choose_H* from LL% .">
+    <lf>
+      <node id="e1:proposition" pred="elab-rel" info="rh" mood="dcl">
+        <rel name="Core">
+          <node id="t1:state" pred="there-be" tense="pres">
+            <rel name="Arg">
+              <node id="f1:phys-obj" pred="flight" det="nil" num="pl">
+                <rel name="Card">
+                  <node id="n1:num" pred="2" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Trib">
+          <node id="c1:state" pred="can">
+            <rel name="Body">
+              <node id="c2:action" pred="choose" kon="+">
+                <rel name="Cognizer">
+                  <node id="p1:person" pred="pro2"/>
+                </rel>
+                <rel name="Possib">
+                  <node idref="x1:sem-obj"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="if you prefer to arrive at 17:30_L+H* LH% , your total travel_time_L+H* LH% would be PT6H30M_H* LL% .">
+    <lf>
+      <node id="i1:situation" pred="if" info="th" mood="dcl">
+        <rel name="Arg1">
+          <node id="p1:experience" pred="prefer" tense="pres">
+            <rel name="Experiencer">
+              <node id="p2:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Content">
+              <node id="a1:motion" pred="arrive">
+                <rel name="Theme">
+                  <node idref="p2:animate-being"/>
+                </rel>
+                <rel name="Time">
+                  <node id="n1:time" pred="17:30" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Arg2">
+          <node id="w1:state" pred="would" info="rh" owner="s">
+            <rel name="Body">
+              <node id="b1:state" pred="be">
+                <rel name="Arg">
+                  <node id="t1:abstraction" pred="travel_time" info="th" owner="h" kon="+" num="sg">
+                    <rel name="HasProp">
+                      <node id="t2:proposition" pred="total"/>
+                    </rel>
+                    <rel name="GenOwner">
+                      <node id="p3:animate-being" pred="pro2"/>
+                    </rel>
+                  </node>
+                </rel>
+                <rel name="Pred">
+                  <node id="p4:dur" pred="PT6H30M" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="there 's an earlier_L+H* flight LH% arriving at 12:45_H* LL% that has a travel_time of only PT4H30M_H* LL% .">
+    <lf>
+      <node id="e1:proposition" pred="elab-rel" info="rh" mood="dcl">
+        <rel name="Core">
+          <node id="t1:state" pred="there-be" info="th" tense="pres">
+            <rel name="Arg">
+              <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+                <rel name="HasProp">
+                  <node id="e2:proposition" pred="earlier" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Prop">
+              <node id="a1:motion" pred="arrive" info="rh" owner="s">
+                <rel name="Theme">
+                  <node idref="f1:phys-obj"/>
+                </rel>
+                <rel name="Time">
+                  <node id="n1:time" pred="12:45" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Trib">
+          <node id="h1:situation" pred="have" tense="pres">
+            <rel name="Owner">
+              <node idref="x1:sem-obj"/>
+            </rel>
+            <rel name="Poss">
+              <node id="t2:abstraction" pred="travel_time" det="a" num="sg">
+                <rel name="Duration">
+                  <node id="p1:dur" pred="PT4H30M" kon="+">
+                    <rel name="HasProp">
+                      <node id="o1:proposition" pred="only"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="BMI_L+H* LH% has a direct_L+H* flight LH% that takes just PT2H35M_H* LL% .">
+    <lf>
+      <node id="e1:proposition" pred="elab-rel" info="rh" mood="dcl">
+        <rel name="Core">
+          <node id="h1:situation" pred="have" info="th" tense="pres">
+            <rel name="Owner">
+              <node id="b1:airline" pred="BMI" kon="+"/>
+            </rel>
+            <rel name="Poss">
+              <node id="f1:phys-obj" pred="flight" det="a" num="sg">
+                <rel name="HasProp">
+                  <node id="d1:proposition" pred="direct" kon="+"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Trib">
+          <node id="t1:situation" pred="take" tense="pres">
+            <rel name="Activity">
+              <node idref="x1:situation"/>
+            </rel>
+            <rel name="Duration">
+              <node id="p1:dur" pred="PT2H35M" kon="+">
+                <rel name="HasProp">
+                  <node id="j1:proposition" pred="just"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <!-- this should work: "It arrives at 13:35 and costs 112 pounds." -->
+</regression>

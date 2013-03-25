@@ -1,0 +1,7 @@
+6
+genlogprob 1
+$ngram0 1
+$ngram1 1
+$ngram2 1
+$ngram3 1
+$deplen 1

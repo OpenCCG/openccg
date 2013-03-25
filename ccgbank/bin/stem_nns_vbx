@@ -1,0 +1,18 @@
+#/bin/bash
+#
+# produces a file <novelfile>.dir/morph from <novelfile>.dir/pairs
+# that lists the words, pos tags and, for plural nouns and verbs, 
+# also stems, derived using morpha
+#
+# write plural nouns and verbs to <novelfile>.dir/nns-vbx
+cat $1.dir/pairs | sort | uniq | grep -E "NNS|VB." > $1.dir/nns-vbx
+# get rest
+cat $1.dir/pairs | sort | uniq | grep -E -v "NNS|VB." | grep -E -v "s>" > $1.dir/non-nns-vbx
+# get stems
+cat $1.dir/nns-vbx | tr [:blank:] _ | morpha > $1.dir/nns-vbx.stems
+# merge stems
+paste $1.dir/nns-vbx $1.dir/nns-vbx.stems > $1.dir/nns-vbx-stems
+# merge files
+cat $1.dir/non-nns-vbx $1.dir/nns-vbx-stems | sort | uniq > $1.dir/morph
+# cleanup
+rm -f $1.dir/nns-vbx* $1.dir/non-nns-vbx

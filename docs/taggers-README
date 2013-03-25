@@ -1,0 +1,123 @@
+
+The OpenCCG POS- and supertaggers can be used off-the-shelf, as well
+as with the OpenCCG parser.  This README describes how to train and
+use the taggers off-the-shelf; for their use with the OpenCCG parser,
+see ccgbank-README.
+
+The training process has been implemented in an ant build file, so
+it's a bit easier now.  Before you get started, you'll need to
+configure your environment variables as described in the main README
+(ie, $OPENCCG_HOME/README).  After that, you'll need to install SRILM and Zhang
+Le's maxent toolkit, as described below.  Note that this should be
+relatively straightforward on linux, but potentially difficult on
+other platforms.
+
+Once you've taken care of these prerequisites, simply cd into
+$OPENCCG_HOME/ccgbank, and then you can simply train the POS- and
+supertagger as follows:
+
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build -f build-original.xml &> logs/log.original &
+
+Note that ccg-build is simply a front-end to ant that sets some
+environment variables, so you can pass through ant flags such as -f,
+which indicates that the build file to use is build-original.xml
+(rather than the default, build.xml).
+
+The training will take a while; you can check the progess by peeking
+at the log file (logs/log.original), as well as the log files for
+individual steps in the process, which you can see by looking in the
+build-original.xml file.
+
+Once training is done, you can try it out as follows:
+
+$ ccg-build -f build-original.xml test &> logs/log.original.test &
+
+This task will test the POS- and supertaggers on the dev section, and
+should only take a matter of minutes. Note that you will likely have
+to increase the Java memory limit, if you haven't already done so;
+this can be done by choosing a higher value for JAVA_MEM at the end of
+the script $OPENCCG_HOME/bin/ccg-env, which is invoked by all the
+other OpenCCG scripts (including ccg-build).
+
+The supertagger output file will be in the following format (with each
+sentence bracketed by <s>...</s>):
+
+<s>
+<word1>[tab]<numOfPOS>[tab]<pos1>...[tab]...<posK>[tab]<numOfSupertags>[tab]<st1>...[tab]...<stL>
+...
+<wordN>[tab]<numOfPOS>[tab]<pos1>...[tab]...<posM>[tab]<numOfSupertags>[tab]<st1>...[tab]...<stU>
+</s>
+
+Adjust the '-beta' option in the build file's test-st-model target to
+tag at greater tagging ambiguity levels.
+
+Have fun, and do let us know if anything in these instructions
+is flawed. 
+
+
+----------------- REQUIRED SOFTWARE -----------------
+
+To train the models, you'll need to have SRILM command-line
+tools (or some in-house stand-in) and Zhang Le's maxent
+toolkit working.
+
+Install SRILM as per the directions, and do the following
+to install the patched version of Zhang Le's toolkit:
+
+$ cd
+$ wget http://homepages.inf.ed.ac.uk/lzhang10/software/maxent/maxent-20061005.tar.bz2
+
+Unpack and patch the maxent.cpp file (it doesn't
+cover the case where ':' can be part of the feature
+symbol itself, and not just a delimiter that separates
+string repr's of features from their real-valued
+activations).
+
+$ bunzip2 maxent-20061005.tar.bz2
+$ tar xf maxent-20061005.tar
+$ cd maxent-20061005/src
+$ patch maxent.cpp $OPENCCG_HOME/docs/maxent.cpp.patched
+
+Now compile the maxent code.
+
+$ cd 
+$ cd maxent-20061005
+$ make clean all unittest
+
+Test to make sure it (more or less) works (I always only
+pass 7 of the 8 tests, but the training seems to work):
+
+$ cd test
+$ ./runall.py
+
+Finally, add the 'maxent' binary (under 'maxent-20061005/src/opt')
+to your PATH environment variable.
+
+Good. Now we're ready to train some taggers!
+
+
+---------------- NOTES ------------------------
+
+All the taggers in OpenCCG perform forward-backward tagging.  To
+simplify the implementation (and to take advantage of arbitrarily long
+n-gram histories of tags) we take a hybrid approach, simply
+multiplying the non-sequence-aware maxent tagging model with a
+SRILM-trained (i.e., ARPA-formatted) model of tag sequences.  This was
+the alternative to the orthodox MEMM (Maximum Entropy Markov Model)
+approach suggested in (McCallum, et al., 2000, section 2.6).
+Otherwise, the approach closely follows that of Curran, Clark and
+Vadas (2006), including the use of beta-best POS tags as features.
+
+The POS- and supertaggers can make use of a prior model instead of a
+tag dictionary.  The idea is to train a prior model to give
+probabilistic features to a downstream maxent model and let it sort it
+out, rather than using tagging dictionaries (which use crude frequency
+cut-offs to determine which tags a word may be assigned).
+Unfortunately, empirical testing of this idea has been inconclusive,
+so it's been put on the back burner (by default, a prior model is used
+with the POS tagger but not the supertagger); it remains for future
+work to better test the idea, and in particular, whether the prior
+model feature approach can take better advantage of self-trained data
+by just re-training the prior model on such data.
+

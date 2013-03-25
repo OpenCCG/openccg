@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003-4 University of Edinburgh (Michael White) 
+$Revision: 1.11 $, $Date: 2007/03/19 21:57:43 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for lexicon file.
+    
+    The lexicon file contains the definitions of the lexical categories, 
+    whose entries are grouped into families (inspired by XTAG tree families).
+    
+    Families may be open or closed.  With open families, all words listed 
+    in the morph file with the same part of speech are mapped to all entries 
+    in the family.  With closed families, the members of the family must 
+    be explicitly listed.
+    
+    The lexicon may specify that certain features should 
+    be treated specially, either for licensing and instantiating 
+		semantically null or "marked" categories in the realizer, 
+		or for implementing "distributive" behavior.
+    See below for further details.
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="categories.xsd"/>
+  
+  
+  <xsd:element name="ccg-lexicon">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element, which includes the list of category families and 
+      the declarations of the licensing and distributive attributes.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="distributive-features" minOccurs="0"/>
+        <xsd:element ref="licensing-features" minOccurs="0"/>
+        <xsd:element ref="relation-sorting" minOccurs="0"/>
+        <xsd:element ref="family" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:unique name="familyNameUniqueness">
+      <xsd:selector xpath="family"/>
+      <xsd:field    xpath="@name"/>
+      <xsd:field    xpath="@pos"/>
+    </xsd:unique>
+  </xsd:element>
+
+  
+  <xsd:element name="distributive-features">
+    <xsd:annotation>
+    <xsd:documentation>
+			Lists the names of the attributes with "distributive" behavior, i.e. 
+			ones where the feature value is supposed to show up on 
+			every atomic category.  Attributes that are distributive in 
+			this sense can be used to prevent phrasal combinations across 
+			theme/rheme boundaries, following Steedman's '00 LI paper.
+			
+			Distributive attributes receive two kinds of special processing. 
+			First, after instantiating a lexical category for a word, 
+			if a distributive attribute has a unique value, it is automatically 
+			spread to all of the atomic categories, thereby alleviating the 
+			need to ensure this happens in the definition of the lexical 
+			categories and macros.
+			Second, as a stopgap measure, following rule combinations, the 
+			value of any distributive attribute appearing on the result 
+			category is propagated to all argument categories, overwriting 
+			any values that may already be there.  This processing allows 
+			categories such as s[eme=phr]$\s[eme=th]$ to be used for boundary 
+			tones, where the value of the distributive 'eme' feature is changed 
+			on the target 's' category (in the lexicon), but the value of this 
+			attribute on the $-matched categories remain unchanged until the 
+			special processing kicks in.  This stopgap measure would not be necessary 
+			if the 'inheritsFrom' and $ capabilities could be combined, which would 
+			require a more dynamic treatment of 'inheritsFrom' (i.e. exceptive feature 
+			propagation, or default unification).
+    </xsd:documentation>
+		</xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="attrs" type="xsd:NMTOKENS" use="required">
+        <xsd:annotation>
+        <xsd:documentation>
+				  A space-separated list of attribute names. 
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	
+  <xsd:element name="licensing-features">
+    <xsd:annotation>
+    <xsd:documentation>
+    	Lists the features to use to license and/or instantiate  
+			semantically null or "marked" categories in the realizer, 
+      in priority order.
+			Examples of semantically empty categories may include 
+			case-marking prepositions or particles, infinitival 'to', 
+			or complementizers such as 'that'.
+			Examples of categories which may be considered "marked" 
+			include inverting categories for auxiliaries which are 
+			used in questions, but not ordinary declaratives.
+			
+			Note that by default, the 'lex' feature is included as 
+			one used to license and instantiate semantically empty 
+			categories, for all values, in all locations.
+			Thus, if (say) a semantically null, case marking preposition 
+			category has a 'lex' attribute which is instantiated with the stem 
+			(via the '[*DEFAULT*]' mechanism), then this category will be activated 
+			in the realizer iff any of the categories instantiated for the input 
+			logical form have the same value for the 'lex' feature, thereby 
+			indicating its relevance.
+			If an alternative specification for the 'lex' feature 
+			is listed, the default specification is not included.
+    </xsd:documentation>
+		</xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="feat" minOccurs="1" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="attr" type="xsd:NMTOKEN" use="required">
+							<xsd:annotation>
+							<xsd:documentation>
+								The name of the licensing feature, i.e. the attribute.
+							</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+            <xsd:attribute name="val" type="token">
+							<xsd:annotation>
+							<xsd:documentation>
+							  The value of the feature.  If not specified, all attribute values 
+								are treated the same for licensing and instantiation purposes.
+							</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+            <xsd:attribute name="also-licensed-by" type="listOfTokens">
+							<xsd:annotation>
+							<xsd:documentation>
+							  A list of other values of this feature whose presence may also license 
+                categories with this feature value.
+							</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="license-empty-cats" type="xsd:boolean">
+							<xsd:annotation>
+							<xsd:documentation>
+								A flag indicating whether semantically null categories with the 
+								licensing feature need to be licensed.
+								Defaults to true.
+							</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="license-marked-cats" type="xsd:boolean">
+							<xsd:annotation>
+							<xsd:documentation>
+							  A flag indicating whether initial categories with the 
+							  licensing feature are marked and need to be licensed.
+								Defaults to false.
+								If set to true, the defaults for the license-empty-cats and instantiate flags  
+								change to false, and the default for the location changes to 
+								target-only.
+							</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="instantiate" type="xsd:boolean">
+							<xsd:annotation>
+							<xsd:documentation>
+							  A flag indicating whether semantically empty categories with the 
+							  licensing feature should be instantiated.
+                Defaults to true.
+							</xsd:documentation>
+							</xsd:annotation>
+						</xsd:attribute>
+						<xsd:attribute name="location">
+							<xsd:annotation>
+							<xsd:documentation>
+								The location of the licensing feature on the category to be licensed.
+								If target-only, then the value must appear only on the target category. 
+								If args-only, then the value must appear only on the argument categories.
+								Defaults to both.
+							</xsd:documentation>
+							</xsd:annotation>
+							<xsd:simpleType>
+								<xsd:restriction base="xsd:string">
+									<xsd:enumeration value="target-only"/>
+									<xsd:enumeration value="args-only"/>
+									<xsd:enumeration value="both"/>
+								</xsd:restriction>
+							</xsd:simpleType>
+						</xsd:attribute>
+          </xsd:complexType>
+				</xsd:element>
+      </xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+
+	
+  <xsd:element name="relation-sorting">
+    <xsd:annotation>
+    <xsd:documentation>
+    	Optionally specifies the order in which to sort relations in 
+      the logical forms.
+      
+      The default sort order is as follows, where "*" indicates all 
+      other relations (sorted alphabetically):
+        
+        "BoundVar", "PairedWith", 
+        "Restr", "Body", "Scope", 
+        "*", 
+        "GenRel", "Coord", "Append"
+
+      The default order may be overridden using the 'order' attribute, 
+      which should contain a space-separated list of relation names, 
+      with "*" indicating all other relations.
+    </xsd:documentation>
+		</xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="order" type="listOfTokens" use="required">
+        <xsd:annotation>
+        <xsd:documentation>
+				  A space-separated list of relation names. 
+        </xsd:documentation>
+        </xsd:annotation>
+      </xsd:attribute>
+		</xsd:complexType>
+	</xsd:element>
+
+	
+  <xsd:element name="family">
+    <xsd:annotation>
+    <xsd:documentation>
+      A category family, which groups lexical category entries, and optionally 
+      includes a list of the family members, if the family is closed.
+      
+      Family members are listed by their stems.  A 'member' element may also have a
+      predicate ('pred') explicitly specified, if it differs from the stem.
+      The predicate is used to fill in any propositions in the semantics with 
+      the reserved name '[*DEFAULT*]'.
+      
+      The name of the family must be unique.
+      
+      The part of speech ('pos') is used in the mapping between morphological 
+      items and families, as described earlier.
+      
+      A family may also declare a relation used for indexing purposes (the 'indexRel') 
+      in the realizer, i.e. a relation used to lookup words based on relational 
+      or featural elementary predications in the input logical form;
+      see Mike and Jason's paper on the realizer for discussion, at 
+      http://www.iccs.informatics.ed.ac.uk/~mwhite/White-Baldridge-ENLG-2003-to-appear.pdf.
+      Families with semantically null entries are indicated using the reserved value '*NoSem*'.
+      Relations may also be declared at the level of entries.
+      
+      NB: It would be nicer if the system could figure out which entries were semantically null; 
+      what makes this non-trivial is that macros can introduce additional semantic 
+      semantic predications.  At present, this is only discovered when lexical 
+      categories are instantiated for specific words.
+      
+      As an alternative to the indexRel, a family may declare a relation (semantic feature) 
+      to use to signal a coarticulation, via the 'coartRel' attribute.  For example, the 
+      coart rel "kon" may be used to signal a contrast feature that triggers the addition 
+      of a pitch accent.  Coarticulation are handled as lexical modifiers, and as such 
+      should be given modifier categories of the form X|X.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="entry" maxOccurs="unbounded"/>
+        <xsd:element name="member" minOccurs="0" maxOccurs="unbounded">
+          <xsd:complexType>
+            <xsd:attribute name="stem" type="token" use="required"/>
+            <xsd:attribute name="pred" type="token"/>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="token" use="required"/>
+      <xsd:attribute name="pos" type="token" use="required"/>
+      <xsd:attribute name="closed" type="xsd:boolean"/>
+      <xsd:attribute name="indexRel" type="token"/>
+      <xsd:attribute name="coartRel" type="token"/>
+    </xsd:complexType>
+    <xsd:unique name="entryNameUniqueness">
+      <xsd:selector xpath="entry"/>
+      <xsd:field    xpath="@name"/>
+    </xsd:unique>
+  </xsd:element>
+
+  
+  <xsd:element name="entry">
+    <xsd:annotation>
+    <xsd:documentation>
+      An entry for a family, which contains the definition of a lexical category, 
+      and must have a name which is unique within the family.
+      
+      If there is only stem that is applicable to this entry, it may be specified 
+      on this element.
+      
+      A relation to use for indexing purposes in realization may be given 
+      for this entry (if different from other entries in the family).
+      
+      It is possible to temporarily disable an entry by setting the 'active' 
+      attribute to false (defaults to true).
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="category"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="token" use="required"/>
+      <xsd:attribute name="stem" type="token"/>
+      <xsd:attribute name="indexRel" type="token"/>
+      <xsd:attribute name="active" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>
+

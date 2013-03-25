@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 Jason Baldridge and University of Edinburgh (Michael White) 
+$Revision: 1.3 $, $Date: 2004/10/05 11:01:48 $ 
+-->
+<rules name="worldcup"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../rules.xsd"
+>
+  <application dir="forward"/>
+  <application dir="backward"/>
+  <composition dir="forward" harmonic="true"/>
+  <composition dir="forward" harmonic="false"/>
+  <composition dir="backward" harmonic="true"/>
+  <composition dir="backward" harmonic="false"/>
+  <typeraising dir="forward" useDollar="false"/>
+  <typeraising dir="backward" useDollar="true"/>
+  <substitution dir="forward" harmonic="true"/>
+  <substitution dir="forward" harmonic="false"/>
+  <substitution dir="backward" harmonic="true"/>
+  <substitution dir="backward" harmonic="false"/>
+</rules>

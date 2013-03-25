@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!-- 
+Copyright (C) 2003-4 University of Edinburgh (Michael White) 
+$Revision: 1.31 $, $Date: 2004/11/20 16:34:44 $ 
+-->
+<regression>
+
+  <!-- case agreement -->
+  <item numOfParses="1" string="I booked you the flight LL% ."/>
+  <item numOfParses="0" string="me booked you the flight LL% ."/>
+  <item numOfParses="0" string="I booked we the flight LL% ."/>
+
+  <!-- num agreement -->
+  <item numOfParses="1" string="the flights are_H* available LL% ."/>
+  <item numOfParses="0" string="the flights is_H* available LL% ."/>
+
+  <!-- subj-v theme, obj rheme: boundary tones required -->
+  <item numOfParses="1" string="Bob_L+H* booked LH% the flight_H* LL% ."/>
+  <item numOfParses="0" string="Bob_L+H* booked the flight_H* LL% ."/>
+  <item numOfParses="0" string="Bob_L+H* booked LH% the flight_H* ."/>
+  
+  <!-- rheme subject, copula, pred adj -->
+  <item numOfParses="1" string="the nonstop_H* flight L is available_L+H* LH% ."/>
+  
+  <!-- discontinuous theme -->
+  <!-- context: I know that Gil booked Ted a hotel, but who did Bob book a flight? -->
+  <item numOfParses="1" string="Bob_L+H* booked LH% me_H* LL% the flight_L+H* LH% ."/>
+  
+  <!-- topicalization: theme, h owner required -->
+  <item numOfParses="1" string="the flight_L+H* LH% Bob_H* booked LL% ."/>
+  <item numOfParses="1" string="the nonstop_L+H* flight LH% Bob_H* booked LL% ."/>
+  <item numOfParses="0" string="the flight L Bob_H* booked LL% ."/>
+  <item numOfParses="0" string="the flight_H* LH% Bob_H* booked LL% ."/>
+  
+  <!-- y/n questions: 'do' pred, for polarity, required with pitch accent, otherwise optional -->
+  <!-- nb: 'do .. be' is a known overgeneration -->
+  <item numOfParses="2" string="did Bob book the nonstop_H* flight HH% ?"/>
+  <item numOfParses="1" string="did_H* Bob book the nonstop_H* flight HH% ?"/>
+  <item numOfParses="1" string="is the flight_H* available HH% ?"/>  
+  <item numOfParses="0" string="does the flight_H* be available HH% ?" known="true"/>  
+
+  <!-- subj-v agreement with 'do' in questions (requires propagation through s) -->
+  <item numOfParses="2" string="does Bob book flights_H* HH% ?"/>
+  <item numOfParses="0" string="do Bob book flights_H* HH% ?"/>
+  <item numOfParses="0" string="does they book flights_H* HH% ?"/>
+  <item numOfParses="2" string="do they book flights_H* HH% ?"/>
+  
+  <!-- wh questions -->
+  <item numOfParses="2" string="which_L+H* flight LH% did Bob book LL% ?"/>
+  <item numOfParses="1" string="which_L+H* airline LH% booked the flight LL% ?"/>
+  <item numOfParses="1" string="who_L+H* LH% booked the flight LL% ?"/>
+  <item numOfParses="2" string="which_L+H* flight LH% did Bob_H* book LL% ?"/>
+  <item numOfParses="0" string="which_L+H* flight LH% are available LL% ?"/>
+  
+  <!-- quantifiers (every gets correct scope!) -->
+  <item numOfParses="1" string="Bob booked everyone_H* the flight LL% ."/>
+  <item numOfParses="1" string="Bob booked every available_H* flight LL% ."/>
+  <item numOfParses="1" string="all_H* flights are available LL% ."/>
+  <item numOfParses="0" string="every_H* flights are available LL% ."/>
+  <item numOfParses="1" string="both_L+H* LH% require a connection in Birmingham_H* LL% ."/>
+  
+  <!-- there existentials -->
+  <item numOfParses="1" string="there is a nonstop_H* flight available LL% ."/>
+  <item numOfParses="1" string="is there a nonstop_H* flight available HH% ?"/>
+  <item numOfParses="0" string="is there two_H* flights_H* available HH% ?"/>
+  <item numOfParses="0" string="there are one_H* flight_H* available LL% ."/>
+  
+  <!-- relative clauses (with number but not case agreement) -->
+  <!-- nb: appositive rel clauses don't enforce agreement at present -->
+  <item numOfParses="2" string="there are two_H* flights_H* that match your requirements LL% ."/>
+  <item numOfParses="2" string="there is one_H* flight_H* that matches your requirements LL% ."/>
+  <item numOfParses="0" string="there is one_H* flight_H* that match your requirements LL% ." known="true"/>
+  <item numOfParses="0" string="there are two_H* flights_H* that matches your requirements LL% ." known="true"/>
+  <item numOfParses="2" string="there are two_H* flights_H* that Bob books LL% ."/>
+
+  <!-- modals -->  
+  <item numOfParses="2" string="the cheapest_L+H* flight LH% may_H* get you to Boston today LH% ."/>
+  <item numOfParses="2" string="the United_L+H* flight LH% will_H* get you to Boston on_time LL% ."/>
+  
+  <!-- np coordination: 'and' has collective/distributive readings; 'or' just distributive 
+       (also case and some number agreement, but not person agreement) -->
+  <item numOfParses="2" string="Bob_H* LH% , Ted_H* LH% and I_H* L booked the flight_L+H* LH% ."/>
+  <item numOfParses="1" string="Bob_H* LH% , Ted_H* LH% or I_H* L booked it LH% ."/>
+  <item numOfParses="0" string="Bob_H* LH% and me_H* L booked it LH% ."/>
+  <item numOfParses="2" string="Bob_H* LH% and I_H* L book flights LH% ."/>
+  <item numOfParses="0" string="Bob_H* LH% and I_H* L books flights LH% ."/>
+  <item numOfParses="1" string="Bob_L+H* booked LH% the United_H* flight LH% or the Delta_H* flight LL% ."/>
+  
+  <!-- sentential coordination -->
+  <item numOfParses="1" string="the flight LH% leaves London_H* LH% , arrives Boston_H* at 15:00_H* LH% and is_H* available LL% ."/>
+  <item numOfParses="1" string="the flights_L+H* LH% leave London_H* LH% or are not cheap_H* LL% ."/>
+  
+  <!-- 'but' -->
+  <item numOfParses="1" string="the United_L+H* flight LH% is_H* available LH% but is not_H* cheap LL% ."/>
+  <item numOfParses="1" string="the United_L+H* flight LH% is available_H* LH% , but it is not cheap_H* LL% ."/>
+  <item numOfParses="1" string="but_H* it requires a connection_H* in Amsterdam_H* LL% ."/>
+  
+  <!-- initial 'and' -->
+  <item numOfParses="11" string="and_H* there is a Flybe_H* flight that arrives at 17:00_H* LL% ."/>
+  
+  <!-- unmarked theme, 'arrives at' -->
+  <item numOfParses="1" string="the KLM flight arrives in Brussels LH% at 11:00_H* LL% ."/>
+  
+  <!-- accent on destination, split theme -->
+  <item numOfParses="1" string="the KLM_L+H* flight arrives in LH% Brussels_H* L at 11:00 LH% ."/>
+  
+  <!-- 'no availability' -->
+  <item numOfParses="1" string="it has no_H* availability in first_class_H* LH% and requires a connection_H* at London_Heathrow_H* LL% ."/>
+  
+  <!-- accent on 'has' -->
+  <item numOfParses="1" string="it L has_H* availability in business_class_H* LL% but requires a connection_H* in Amsterdam LL% ."/>
+  <item numOfParses="1" string="the VLM_L+H* flight LH% leaves at 14:00_H* LH% and has_H* availability_H* in economy_H* LL% ."/>
+  
+  <!-- tbd: more test cases for copula, coord with relative clauses, various lex items ... -->
+  
+</regression>

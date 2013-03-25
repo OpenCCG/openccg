@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!-- 
+This file lists regression test items.
+
+Copyright (C) 2005 David Reitter and University of Edinburgh (Michael White) 
+$Revision: 1.3 $, $Date: 2010/09/13 04:37:19 $ 
+-->
+<regression>
+  <item numOfParses="1" string="the teacher buys the policeman a book"/>
+  <item numOfParses="1" string="the teacher buys the policemen some flowers"/>
+  <item numOfParses="3" string="the teachers buy a book"/>
+  <item numOfParses="3" string="she buys it"/>
+  <item numOfParses="0" string="she buy it"/>
+  <item numOfParses="0" string="they buys it"/>
+  <item numOfParses="1" string="she buys the flower for him"/>
+  <item numOfParses="0" string="she buys the flower for he"/>
+  <item numOfParses="0" string="her buys the flower for him"/>
+  <item numOfParses="1" string="he rented her a DVD"/>
+  <item numOfParses="1" string="he rented a DVD for her"/>
+  <item numOfParses="0" string="he rented a DVD her"/>
+  <item numOfParses="1" string="she buys him a very blue book"/>
+</regression>
+

@@ -1,0 +1,91 @@
+<!--
+ Copyright (C) 2010-11 Michael White
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- This build file is for parsing and realization models using the converted CCGbank. -->
+
+<!-- $Id: build-models.xml,v 1.36 2011/04/25 15:43:29 mwhite14850 Exp $ -->
+<project name="CCGbankModels" default="all" basedir=".">
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <property file="build.properties"/>
+  <property file="build-models.properties"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Plugins                                                             -->
+  <!-- =================================================================== -->
+
+  <target name="compile-plugins" depends="init">
+    <javac srcdir="${plugins.dir}" includeAntRuntime="true"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Chaining build files                                                -->
+  <!-- =================================================================== -->
+
+  <target name="st-all" depends="init">
+    <echo>Invoking supertagger all</echo>
+    <subant antfile="build-st.xml" buildpath="${basedir}">
+      <target name="all"/>
+    </subant>
+    <echo>Done</echo>
+  </target>
+
+  <target name="ps-all" depends="init">
+    <echo>Invoking parser all</echo>
+    <subant antfile="build-ps.xml" buildpath="${basedir}">
+      <target name="all"/>
+    </subant>
+    <echo>Done</echo>
+  </target>
+
+  <target name="ht-all" depends="init">
+    <echo>Invoking hypertagger all</echo>
+    <subant antfile="build-ht.xml" buildpath="${basedir}">
+      <target name="all"/>
+    </subant>
+    <echo>Done</echo>
+  </target>
+
+  <target name="rz-all" depends="init">
+    <echo>Invoking realizer all</echo>
+    <subant antfile="build-rz.xml" buildpath="${basedir}">
+      <target name="all"/>
+    </subant>
+    <echo>Done</echo>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Top-level                                                           -->
+  <!-- 1st: run all                                                        -->
+  <!-- 2nd: train parser and realizer perceptron models (see build files)  -->
+  <!-- =================================================================== -->
+
+  <target name="all" depends="compile-plugins,st-all,ps-all,ht-all,rz-all"/>
+
+</project>

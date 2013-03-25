@@ -1,0 +1,91 @@
+<?xml version="1.0"?>
+
+<project name="OpenCCG ccg2xml" basedir="." default="compile-ccg2xml">
+  
+	<property name="src.dir" value="../../src"/>
+	<property name="bin.dir" value="../../bin"/>
+	<property name="ccg2xml.dir" value="${src.dir}/ccg2xml"/>
+	
+	<uptodate property="ccg2xml.upToDate" srcfile="${ccg2xml.dir}/ccg.ply"
+	      targetfile="${bin.dir}/ccg2xml.py"/>
+	
+	<!-- =================================================================== -->
+  <!-- Compiles ccg2xml                                                    -->
+  <!-- =================================================================== -->
+  <target name="compile-ccg2xml">
+    <antcall target="compile-ccg2xml.1"/>
+    <antcall target="compile-ccg2xml.finish"/>
+    <antcall target="copy-ccg-edit"/>
+  </target>
+
+  <target name="compile-ccg2xml.1" unless="ccg2xml.upToDate">
+    <echo message="Compiling ccg2xml"/>
+    
+    <available file="${ccg2xml.dir}/convert-ply.py"
+      property="convert-ply.py.present"/>
+    <fail unless="convert-ply.py.present"
+      message="convert-ply.py is not present"/>
+
+    <available file="${ccg2xml.dir}/ccg.ply" property="ccg.ply.present"/>
+    <fail unless="ccg.ply.present" message="ccg.ply is not present"/>
+    
+    <available file="${ccg2xml.dir}/lex.py" property="lex.py.present"/>
+    <fail unless="lex.py.present" message="lex.py is not present"/>
+    
+    <available file="${ccg2xml.dir}/yacc.py" property="yacc.py.present"/>
+    <fail unless="yacc.py.present" message="yacc.py is not present"/>
+      
+    <!-- branch on cygwin -->
+    <antcall target="compile-ccg2xml.default"/>
+    <antcall target="compile-ccg2xml.cygwin"/>
+  </target>
+
+  <target name="compile-ccg2xml.default" unless="cygwin">
+    <echo message="(default compile)"/>
+    <exec executable="python" dir="${ccg2xml.dir}" failonerror="true">
+      <arg line="convert-ply.py -o ccg2xml.py ccg.ply"/>
+    </exec>
+  </target>
+  
+  <target name="compile-ccg2xml.cygwin" if="cygwin">
+    <echo message="(cygwin compile)"/>
+    <exec executable="bash" dir="${ccg2xml.dir}" failonerror="true">
+      <arg value="-c"/>
+      <arg value="python convert-ply.py -o ccg2xml.py ccg.ply"/>
+    </exec>
+  </target>
+  
+  <target name="compile-ccg2xml.finish">
+    <copy todir="${bin.dir}">
+      <fileset dir="${ccg2xml.dir}">
+        <include name="ccg2xml.py"/>
+        <include name="lex.py"/>
+        <include name="yacc.py"/>
+      </fileset>
+    </copy>
+  </target>
+
+  <target name="copy-ccg-edit">
+    <copy todir="${bin.dir}">
+      <fileset dir="${ccg2xml.dir}">
+        <include name="ccg_editor.py"/>
+	<include name="Tree.py"/>
+      </fileset>
+    </copy>
+  </target>
+	
+  <target name="clean">
+    <delete>
+      <fileset dir="${ccg2xml.dir}">
+        <include name="ccg2xml.py"/>
+      </fileset>
+      <fileset dir="${bin.dir}">
+        <include name="ccg2xml.py"/>
+        <include name="lex.py"/>
+        <include name="yacc.py"/>
+      </fileset>
+    </delete>
+  </target>
+
+</project>
+

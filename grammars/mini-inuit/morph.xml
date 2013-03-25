@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd" name="Inuit">
+  <entry pos="V" word="qitissallutik" stem="qiti"/>
+  <entry pos="V" word="kamat"/>
+  <entry pos="V" word="niriursuipput" stem="niriursui"/>
+  <entry pos="V" word="tugu"/>
+  <entry pos="V" word="ikiussallugu" stem="ikiu"/>
+  <entry pos="NP" word="miiqqat"/>
+  <entry pos="NP" word="miiraq"/>
+  <entry pos="NP" word="Juuna"/>
+  <entry pos="NP" word="Piita"/>
+  <entry pos="NP" word="nanuq"/>
+  <entry pos="Affix" word="p" macros="@erg"/>
+  <entry pos="Affix" word="taa" stem="ta"/>
+  <entry pos="Affix" word="tuq" stem="ta"/>
+  <macro name="@erg">
+    <fs id="0" attr="case" val="a-case"/>
+  </macro>
+</morph>

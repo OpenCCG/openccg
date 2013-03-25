@@ -1,0 +1,305 @@
+/*
+ * $Id: grammardoc.css,v 1.8 2007/04/18 22:54:13 coffeeblack Exp $
+ * Author: Scott Martin (http://www.ling.osu.edu/~scott/)
+ */
+body
+{
+	margin: 0 0 2em 0;
+	padding: 0;
+	background-color: rgb(250,250,250);
+	color: rgb(25,25,25);
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: small;
+}
+
+a:hover
+{
+	text-decoration: none;
+}
+
+acronym
+{
+	border-bottom: 1px dotted;
+	cursor: help;	
+}
+
+div.back
+{
+	text-align: right;
+}
+
+div#container {
+	margin: 0 20px;
+	clear: left;
+}
+
+h1, h2, h3, h4, h5
+{
+	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
+}
+
+h1
+{
+	margin: 0 0 1em 0;
+	border-bottom: 1px dotted rgb(150,150,150);
+	padding: 2em 0 .5em 20px;
+	background-color: rgb(153,0,0);
+	color: rgb(250,250,250);
+	font-size: 1.8em;
+}
+
+h2
+{
+	margin: 2em 0 1em 0;
+	border-bottom: 1px dotted rgb(160,160,160);
+	padding-bottom: .25em;
+	color: rgb(153,0,0);
+	font-size: 1.6em;
+}
+
+h3
+{
+	color: rgb(80,0,0);
+	font-size: 1.4em;
+}
+
+h4
+{
+	font-size: 1.2em;
+}
+
+h5
+{
+	font-size: 1.1em;
+}
+
+ul
+{
+	padding-left: 40px;
+}
+
+dl.box
+{
+	border: 1px solid rgb(150,150,150);
+	background-color: rgb(235,235,235);
+	padding: 10px;
+}
+
+dl.box dt
+{
+	color: rgb(153,51,0);
+	font-family: Trebuchet MS, Arial, Helvetica, sans-serif;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+dl.box dd, dl.attributes dd
+{
+	margin-left: 0;
+}
+
+dl.box dd li, ul.members li
+{
+	color: rgb(153,51,0);
+}
+
+ol.categories li
+{
+	/*font-size: 1.2em;*/
+}
+
+dl.category dt {
+	font-size: 1.1em;
+}
+
+dl.category, dl.category dt, dl.category dd, dl.category dd dl
+{
+	display: inline;
+}
+
+dl.attributes dt
+{
+	float: left;
+	margin-right: .25em;
+	color: rgb(153,51,0);
+	font-weight: bold;
+}
+
+dl.attributes dd
+{
+	color: rgb(153,85,50);
+}
+
+dl.category dt
+{
+	color: rgb(80,0,0);	
+}
+
+dl.feature-structure {
+	font-size: .85em;
+}
+
+dl.category dd, dl.feature-structure dt, span.ruleLabel
+{ 
+	color: rgb(153,85,50);
+	font-family: Georgia, "Times New Roman", serif;
+}
+
+dl.feature-structure dt
+{
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: normal;
+}
+
+dl.feature-structure dt, dl.feature-structure dd
+{
+	display: none;
+}
+
+span.enclosure, span.divider {
+	font-size: 1.1em;
+	font-weight: bold;
+}
+
+dl.feature-structure dd span.enclosure
+{
+	font-style: normal;
+}
+
+ol.categories li a
+{
+	margin-right: 10px;
+	/*font-size: .85em;*/
+	text-decoration: none;
+}
+
+.expanded dl.feature-structure dt, .expanded dl.feature-structure dd
+{
+	display: inline;
+}
+
+dl.category dd, span.ruleLabel {
+	vertical-align: sub;
+}
+
+dl.category dd.category-container
+{
+	vertical-align: baseline;	
+}
+
+dd.category-container dl.category
+{
+	/*font-size: 1.1em;*/
+}
+
+dl.category dd.feat
+{
+	font-style: italic;
+}
+
+dt.slash span.mode
+{
+	/*font-size: .7em;*/
+}
+
+dl.category dt.redundant {
+	display: none;
+}
+
+dl.lf {
+	display: inline;
+}
+
+dl.lf dd.nomvar, dl.lf span.prop {
+	font-weight: normal;
+}
+
+dl.lf dd.nomvar {
+	font-style: italic;
+}
+
+dl.category span.prop {
+	font-weight: bold;
+}
+
+dl.lf span.diamond, dl.lf span.prop {
+	color: rgb(153,85,50);
+}
+
+dl.entries dl dt {
+	margin-top: 1em;
+}
+
+dl.entries dl dd {
+	margin-left: 20px;	
+}
+
+ul.rules {
+	padding-left: 20px;
+	list-style-type: none;
+}
+
+ul.rules li {
+	padding-top: .5em;	
+}
+
+ul#navigation {
+	margin-left: 20px;
+	padding-bottom: 2em;
+	padding-left: 0;
+	list-style-type: none;
+}
+
+ul#navigation li a {
+	float: left;
+	margin-right: 10px;
+	border: 1px solid rgb(150,150,150);
+	background-color: rgb(235,235,235);
+	color: rgb(153,0,0);
+	padding: 5px;
+	text-decoration: none;
+	font-weight: bold;
+}
+
+ul#navigation li a.current, ul#navigation li a:hover,
+	ul#navigation li a:active {
+	background-color: rgb(153,0,0);
+	border: 1px dotted rgb(150,150,150);
+	color: rgb(255,255,255);
+}
+
+a.unaryRuleExpander {
+	float: left;
+	margin-right: 5px;
+	text-decoration: none;
+}
+
+dd.unaryResult {
+	display: inline;
+}
+
+dl.unaryRule {
+	/*font-size: 1.1em !important;*/
+	color: rgb(153,51,0);
+}
+
+dl.unaryRule span.arrow {
+	color: rgb(153,85,50);
+	font-weight: bold;
+}
+
+ul.short {
+	list-style-type: none;
+}
+
+ul.short li {
+	display: inline;
+}
+
+dl.shortcuts ul.short li {
+	color: rgb(25,25,25);
+}
+
+ul.short li + li:before {
+	content: ",";
+}

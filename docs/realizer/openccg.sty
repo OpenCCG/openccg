@@ -1,0 +1,115 @@
+
+%%
+%% This style file contains a minimal set of commands for 
+%% OpenCCG categories and logical forms, plus derivations. 
+%% It borrows from earlier style files by Gann, Jason and Geert-Jan, 
+%% and from Beryl and Mark for the derivations.
+%%
+
+\newcommand{\bs}{\backslash}        % backslash, to save typing
+
+\newcommand{\gf}[1]{\textsf{\textsl{#1}}}       % gloss font, for words
+\newcommand{\cf}[1]{\ensuremath{\mathsf{#1}}}   % category font
+
+\newcommand{\fb}[1]{\ensuremath{_{\mathit{#1}}}}                    % features, subscripted
+\newcommand{\fsb}[2]{\ensuremath{_{\langle#1\rangle\mathit{#2}}}}   % fs index and features, subscripted
+
+\newcommand{\C}[1]{\textbf{#1}}                 % concept font
+\newcommand{\con}[1]{\ensuremath{\mathrm{#1}}}  % constant font, for sem feature values or sem sorts
+
+\newcommand{\modp}[1]{\ensuremath{\langle}\textsc{#1}\ensuremath{\rangle}}  % sem relation/feature
+
+
+
+
+% CCG derivations
+% arguments: #1 = no. of words, #2 = body
+% Carsten suggests removing @{}, in order to eliminate a gap on the 
+% left end of lines in the derivation 
+\newcommand{\deriv}[2]
+{ 
+  \renewcommand{\arraystretch}{.5}
+  $\begin{array}[t]{*{#1}{c}}
+     #2
+   \end{array}$ 
+}
+
+% centered multicolumn (NB: changed \mc to \cmc to avoid conflict with kluwer.cls) 
+\newcommand{\cmc}[2]{\multicolumn{#1}{c}{#2}}
+
+% Rules, argument #1 gives the number of columns to cover.
+\newcommand{\uline}[1]
+{\cmc{#1}{\hrulefill} }
+\newcommand{\fapply}[1]
+{ \cmc{#1}{\hrulefill_{>}} }
+\newcommand{\bapply}[1]
+{ \cmc{#1}{\hrulefill_{<}} }
+\newcommand{\fcomp}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}}}}
+\newcommand{\fxcomp}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}_{\times}}}}
+\newcommand{\fxcompN}[2]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}^{#2}_{\times}}}}
+\newcommand{\fcomptwo}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}^2}}}
+\newcommand{\fxcomptwo}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}_{\times}^2}}}
+\newcommand{\fcompthree}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}^3}}}
+\newcommand{\fxcompthree}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{B}_{\times}^3}}}
+\newcommand{\bcomp}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}}}}
+\newcommand{\bxcomp}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}_{\times}}}}
+\newcommand{\bxcompN}[2]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}^{#2}_{\times}}}}
+\newcommand{\bcomptwo}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}^2}}}
+\newcommand{\bxcomptwo}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}_{\times}^2}}}
+\newcommand{\bcompthree}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}^3}}}
+\newcommand{\bxcompthree}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{B}_{\times}^3}}}
+\newcommand{\fsubst}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{S}}}}
+\newcommand{\bsubst}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{S}}}}
+\newcommand{\fxsubst}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{S}_{\times}}}}
+\newcommand{\bxsubst}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{S}_{\times}}}}
+\newcommand{\ftype}[1]
+{ \cmc{#1}{\hrulefill_{{>}\mathbf{T}}}}
+\newcommand{\btype}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{T}}}}
+\newcommand{\conj}[1]
+{ \cmc{#1}{\hrulefill_{{<}\Phi{>}}}}
+\newcommand{\boundary}[1]
+{ \cmc{#1}{\hrulefill_{{<}\mathbf{\%}}}}
+\newcommand{\asterisk}[1]
+{ \cmc{#1}{\hrulefill_{\mathbf{*}}}}
+\newcommand{\comb}[2] % an arbitrary combinator
+{ \cmc{#1}{\hrulefill_{#2}}}
+\newcommand{\badcomb}[2] % an inappropriate use of a combinator
+{ \cmc{#1}{\hrulefill_{\mbox{ *** }}\hrulefill_{#2}}}
+\newcommand{\dcomp}[2] % an arbitrary dcomposition
+{ \cmc{#1}{\dotfill_{#2}}}
+\newcommand{\unfreeze}[1]
+{\cmc{#1}{\hrulefill_{\mathbf{@}}}  }
+
+\newcommand{\ul}{\uline{1}}
+
+\newcounter{CCG@counter}
+\newcommand{\CCG@amp}{&}
+
+\newcommand{\ulines}[1]{
+  \uline{1}
+  \setcounter{CCG@counter}{1} 
+  \whiledo{\value{CCG@counter} < #1} { 
+    \CCG@amp \uline{1}
+    \stepcounter{CCG@counter} 
+  }
+}
+

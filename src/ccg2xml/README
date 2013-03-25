@@ -1,0 +1,211 @@
+README for ccg2xml
+Ben Wing
+October 8, 2006
+
+ccg2xml is a front-end for more conveniently specifying OpenCCG grammars.
+The native XML format is not human-friendly and contains much repetition of
+information, often involving long-distance dependencies, which are
+difficult to keep track of.  The .ccg format that is accepted by ccg2xml is
+designed to be expressive, concise and human-friendly, with as little
+required duplication as possible.
+
+ccg2xml is run on a .ccg file and produces (by default) the following files
+in the current directory:
+
+-	lexicon.xml: Categories, lexical insertion rules
+-	morph.xml: Morphological forms of words, feature macros
+-	types.xml: Feature type hierarchies
+-	rules.xml: Allowable combinatory, type-raising and type-changing rules
+-	grammar.xml: File giving the names and locations of the previous four
+                     files
+-	testbed.xml: File containing test sentences and expected number of
+                     parses
+
+The standard OpenCCG tools, such as tccg, can then be run, as if the
+grammar had been developed directly in XML.  ccg2xml will output error
+messages if it encounters syntax errors, and in such a case will not
+generate any XML files. (There are also warnings that it may generate,
+which are non-fatal in that they do not prevent generation.) ccg2xml has a
+few options:
+
+  -o controls which XML files are generated; this can be useful for using
+     ccg2xml in conjunction with an existing grammar.
+
+  -t outputs the file to stdout after all macro substitutions have been
+     applied; this can help in debugging complicated macros that aren't
+     working as expected.
+
+  -d controls which directory the XML files are output to (by default, the
+     current directory).
+
+   -y, -m, and --super-macro-debug are debug options useful mostly for
+       developers of ccg2xml.
+
+For more information, run `ccg2xml -h' to get the "usage" message.
+
+ccg2xml is written in Python, and itself a piece of generated code.
+ccg2xml makes use of PLY, a Python system for development of non-ambiguous
+context-free grammar parsers, similar to lex and yacc.  PLY is written by
+David Beazley (dave@dabeaz.com), available at http://www.dabeaz.com/ply/;
+PLY 1.6 is included as part of the ccg2cml source (the files lex.py and
+yacc.py). PLY uses a clever trick of introspecting on the source file to
+determine the rules, which are stored in documentation strings.  However,
+this ends up requiring a certain amount of redundancy in the source file.
+This gets awkward for large projects, so I created a front-end format that
+closely emulates yacc's format, while adding support for regular-expression
+operators on the right-hand side (RHS) of a rule (*, +, and ?); it consists
+of mixed CFG specifications and Python code.  The file `convert-ply.py'
+converts from my local .ply format into standard .py files, and is used
+(see `Makefile') to generate the ccg2xml script.
+
+ (It also attempts to work
+around a serious bug in PLY .) The source
+file ccg.ply is currently 1,727 lines in length (of mixed CFG
+specifications and Python code), and the auto-generated ccg2xml file is
+2,370 lines.
+
+ccg2xml is written in Python.  It uses PLY, which is a Python
+implementation of the standard `yacc' tool.  
+
+NOTE: ccg2xml was written using PLY 1.6, which is included as part of
+ccg2xml (lex.py and yacc.py).  PLY 1.6 contains a serious bug involving
+empty RHS productions, which convert-cgi.py attempts to work around and
+which ccg.ply also works around.  I was never able to figure out the exact
+rule format that triggers this bug, so I simply had to use trial and error
+in rewriting rules to get a working ccg2xml.  It is strongly recommended to
+upgrade to the most recent version of PLY (currently 2.1), which is likely
+to fix this problem, and make it possible to deterministically modify
+ccg.ply.
+
+--------------------------------------------------
+                 The .ccg format
+--------------------------------------------------
+
+The general feel of the syntax is like C, Java or Perl.  Indentation and
+whitespace is unimportant (The only exception is in macro definitions,
+where the text of a macro must either be on the same line as the definition 
+-- possibly extended with backslash line-continuation markers -- or be
+enclosed in braces). This is critical for macros, where having to worry
+about precisely controlling the indentation or whitespace at the beginning
+or end of a macro definition (such as would be required in Python or shell
+scripts) would be a major hassle and impediment.
+
+The file consists of a number of declarations, which specify features
+(feature {}), word stems and inflected formats (word {}), lexical insertion
+rules (family {}), test sentences (testbed {}), and other information
+relevant to the grammar.  It can also contain macro definitions (def {})
+along with corresponding macro calls, such as the calls to noun() and
+verb() in the sample grammar above.  The macro mechanism is essentially
+just a way of doing parameterized text substitution, and is discussed in
+detail in sections 2.4 and 3.2.
+
+In general, declarations can be in any order; any dependencies that must be
+computed are done after the entire file has been parsed.  Furthermore, any
+declaration containing multiple parts (for example, a feature declaration
+encompassing multiple features, a word declaration with multiple
+inflections, or a family declaration with multiple insertion rules) can be
+split up into separate declarations.  In addition, the syntax tries to be
+very forgiving of the usage of commas, semicolons, and other terminators
+and separators. (In most lists, in fact, commas are optional, duplicated
+commas are no problem, and extra commas at the end of a list are
+allowed. The main exception where commas matter is in macro calls.  You can
+still put an extra comma at the end of a macro call, but otherwise you must
+have exactly one comma (no more, no less) between arguments.  The reason is
+that macro arguments can contain pretty much any text whatsoever (including
+no text at all), so commas are needed to indicate where one argument stops
+and the next one starts.) This simplifies, in a number of ways, the
+creation of lists using macros.
+
+The exceptions to these syntactic allowances are all related to macros.
+For example, macros must be defined before they can be used. (That is,
+before they are used in a macro call in the main text of the grammar; this
+does not apply to macro calls inside of another macro definition.)  Also,
+the syntax of commas in argument lists of macro calls is much stricter than
+in lists occurring elsewhere in the grammar (see above).
+
+Note that, in general, there is no need to put quotes around literal text,
+such as the inflected forms of words.  There is also no concept of
+"reserved words" in this format.  Words like feature, word, and entry that
+have a special significance as "declarators" when in the right place in the
+syntax can otherwise be freely used as word stems and inflections, macro
+variable names, part of speech tags, etc.  At the same time, however, it is
+possible to put quotes (single or double) around text.  This allows special
+characters, spaces, etc. to be used in word inflections, feature values,
+and the like; otherwise, only letters, numbers, '_', '-', '+', '%' and
+non-ASCII characters can be used.  Quotes can also be used to protect
+against the accidental interpretation of a word as a declarator, in the
+rare case that this is needed.
+ 
+The overall syntactic laxity of the language is part of a general
+philosophy of making the grammar language as tolerant and as expressive as
+possible.  This is in keeping with the purpose of the language.  Although
+it looks similar to a traditional programming language, its semantics is on
+a much higher level, where expressiveness is much more important and
+precision relatively less important.  Furthermore, the language is intended
+for use by non-programmers as well as programmers, and non-programmers are
+is likely to have difficulty with rigid syntax rules, especially in the
+presence of macros.
+
+
+--------------------------------------------------
+                         Macros
+--------------------------------------------------
+
+The mechanism I chose to use to eliminate repetition is parameterized
+macros, which work like macro functions in C.  Their definition includes a
+series of formal parameters and a section of literal text intermixed with
+the names of the macro's parameters.  When a call to the macro occurs, the
+macro's text replaces the call, with the actual arguments to the call
+substituted for the occurrences of the corresponding formal parameters in
+the text.  Any macro calls occurring in this text are then recursively
+expanded.
+
+The macro expansion mechanism generally happens at the level of tokens,
+where a token is a single word, a single non-alphanumeric character, or a
+single piece of quoted text.  However, it is possible to construct a token
+by pasting two tokens together, using the dot operator; this is similar to
+the ## operator in C.  This is useful for constructing inflected forms of
+words, as shown in the tiny.ccg and arabic.ccg sample files.  It is also
+possible to compositionally construct the name of a macro and then call
+this constructed name; this is used in arabic.ccg, in the macro
+3rd-weak-verb().
+
+The parser pays attention to matched pairs of parens, brackets, and braces
+in the text of a macro call argument, and will not get confused by commas
+inside of such matched delimiters.  Thus, a macro call foo(a, bar(b, c)) is
+correctly interpreted as a call to foo() with two arguments, a and bar(b,
+c), and not a call to foo() with three arguments, where the first argument
+is a, second argument is bar(b, and third argument is c).
+
+The text of both macro definitions and arguments to macro calls can
+optionally be surrounded by braces, to clearly delimit the text boundaries.
+The braces do not form part of the text itself (to specify text surrounded
+by braces, a second set would have to be added around the text).  It is
+conventional to surround macro definitions with braces, except sometimes
+for very short definitions that fit on one line.  However, braces are not
+normally used around macro call arguments unless necessary for correct
+parsing (for example, a macro argument containing a comma in it that is not
+surrounded by matching delimiters).
+
+
+--------------------------------
+         Sample Files
+--------------------------------
+
+Three sample .ccg-format files are currently included in the directory
+`ccg-format-grammars' off of the top-level OpenCCG
+directory:
+
+- `tinytiny.ccg' is a simple file that parses a basic chunk of
+  English (including nouns, personal pronouns, articles, and transitive and
+  intransitive verbs) and demonstrates the basic features of the .ccg format.
+
+- `tiny.ccg' is a conversion of the original OpenCCG "tiny" sample grammar
+  to .ccg format.  `tiny.ccg' is no longer as small as its name
+  implies, especially since it contains a large number of comments describing
+  the CCG format in depth, as well as a number of example declarations to
+  demonstrate the various features of the CCG format.
+
+- `arabic.ccg' is an Arabic grammar fragment, which demonstrates how to
+  effectively use macros in order to efficiently generate the morphology of
+  a complex, highly-inflected language.

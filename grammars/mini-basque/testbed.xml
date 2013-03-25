@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<!-- Copyright (C) 2003 Jason Baldridge and Michael White -->
+<regression>
+  <item numOfParses="1" string="joan"/>
+  <item numOfParses="1" string="ikusi"/>
+  <item numOfParses="1" string="zuen"/>
+  <item numOfParses="1" string="zen"/>
+  <item numOfParses="1" string="klase ra"/>
+  <item numOfParses="1" string="eskola n"/>
+  <item numOfParses="1" string="ama aitak ikusi zuen"/>
+  <item numOfParses="1" string="ama joan"/>
+  <item numOfParses="0" string="ama k joan"/>
+  <item numOfParses="0" string="ama k joan du"/>
+  <item numOfParses="1" string="ama k seme a ikusi du"/>
+  <item numOfParses="1" string="seme a ama k ikusi du"/>
+  <item numOfParses="1" string="nik liburu a emakume ari eman nahi dut"/>
+  <item numOfParses="0" string="nik liburu a aita k eman nahi dut"/>
+  <item numOfParses="0" string="nik aita k liburu a eman nahi dut"/>
+  <item numOfParses="1" string="ama k seme a emakume ari eman dio"/>
+  <item numOfParses="1" string="seme a ama k emakume ari eman dio"/>
+  <item numOfParses="1" string="emakume ari seme a ama k eman dio"/>
+  <item numOfParses="1" string="nik joan nahi dut"/>
+  <item numOfParses="1" string="nik kafe a egin nahi dut"/>
+  <item numOfParses="0" string="nik kafe a egin nahi du"/>
+  <item numOfParses="1" string="nik kafe a egin nahi"/>
+  <item numOfParses="0" string="nik aita k ikusi nahi dut"/>
+  <item numOfParses="1" string="nik ikusi nahi dud an gizon a joan da"/>
+  <item numOfParses="1" string="gizon a ikusi nahi dud an seme a joan da"/>
+  <item numOfParses="1" 
+string="emakume ari liburu a eman dio n gizon a joan du"/>
+  <item numOfParses="1" 
+string="emakume ari liburu a eman dio n gizon a nik ikusi dut"/>
+  <item numOfParses="0" 
+string="emakume ari liburu a eman dio n gizon ak ni ikusi dut"/>
+  <item numOfParses="1" 
+string="emakume ari liburu a eman dio n gizon ak ni ikusi"/>
+  <item numOfParses="1" 
+string="gizon ak emakume ari eman dio n liburu a aita k ikusi du"/>
+<item numOfParses="1" 
+string="gizon ak liburu a eman dio n emakume a"/>
+<item numOfParses="1" 
+string="gizon ak liburu a eman dio n emakume a joan du"/>
+  <item numOfParses="1" 
+string="aita k seme a eskola n utzi zuen eta klase ra joan zen"/>
+  <item numOfParses="1" 
+string="seme a eskola n utzi zuen eta klase ra joan zen"/>
+  <item numOfParses="1" string="seme a eskola n utzi eta klase ra joan zen"/>
+  <item numOfParses="0" string="seme a eskola n utzi eta klase ra joan zuen"/>
+  <item numOfParses="1" string="ama joan zen eta aita k ikusi zuen"/>
+  <item numOfParses="1" string="aita k ikusi zuen eta klase ra joan zen"/>
+  <item numOfParses="0" string="ama k joan eta aita ikusi zuen"/>
+  <item numOfParses="1" 
+string="aitak ama ikusi zuen eta joan zen"/>
+  <item numOfParses="1" 
+string="ama aitak ikusi zuen eta joan zen"/>
+  <item numOfParses="1" 
+string="joan zen eta ama ikusi zuen"/>
+  <item numOfParses="1" 
+string="joan zen eta aitak ikusi zuen"/>
+<item numOfParses="1" 
+string="sagarrak emakume ak egosten ditu eta gizonak jaten ditu"/>
+<item numOfParses="1" 
+string="sagarrak emakume ak egosten ditu eta usteltzen dira"/>
+<item numOfParses="1" 
+string="sagarrak usteltzen dira eta emakume ak egosten ditu"/>
+</regression>

@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!-- 
+Copyright (C) 2003 Jason Baldridge and University of Edinburgh (Michael White) 
+$Revision: 1.5 $, $Date: 2004/10/05 11:01:48 $ 
+-->
+<regression>
+  <item numOfParses="1" string="Brazil defeated Germany ."/>
+  <item numOfParses="0" string="defeated Brazil Germany ."/>
+  <item numOfParses="1" string="did Brazil defeat Germany ?"/>
+  <item numOfParses="1" string="Brazil played and defeated Germany ."/>
+  <item numOfParses="0" string="Brazil played Germany and defeated ."/>
+  <item numOfParses="1" string="Brazil defeated Germany and won the cup ."/>
+  <item numOfParses="1" string="John bought and gave his family the tickets ."/>
+  <item numOfParses="2" string="Brazil defeated Turkey and Germany ."/>
+  <item numOfParses="1" string="team that defeated Germany"/>
+  <item numOfParses="1" string="team that Brazil defeated"/>
+  <item numOfParses="1" string="team that I thought that Brazil defeated"/>
+  <item numOfParses="1" string="team that I thought that you said that Brazil defeated"/>
+  <item numOfParses="1" string="team that I thought that you said that John knew that Brazil defeated"/>
+  <item numOfParses="1" string="team that Brazil defeated yesterday"/>
+  <item numOfParses="1" string="Marcos picked the ball up ."/>
+  <item numOfParses="1" string="Marcos picked up the ball ."/>
+  <item numOfParses="1" string="Brazil will meet and should defeat China ."/>
+  <item numOfParses="1" string="I offered and may give my friend a ticket ."/>
+  <item numOfParses="1" string="Marcos threw and Ronaldo kicked the ball ."/>
+  <item numOfParses="2" string="the referee gave Unsal a card and Rivaldo the ball ."/>
+  <item numOfParses="1" string="Unsal threw the card and Rivaldo the ball ."/>
+  <item numOfParses="1" string="Kahn blocked skillfully a powerful shot by Rivaldo ."/>
+  <item numOfParses="1" string="shot that Kahn blocked skillfully"/>
+  <item numOfParses="1" string="John watched the game without enjoying it ."/>
+  <item numOfParses="6" string="John watched without enjoying the game between Germany and Paraguay ."/>
+  <item numOfParses="1" string="game that John watched without enjoying"/>
+  <item numOfParses="1" string="I persuaded every detractor of Brazil to support the team ."/>
+  <item numOfParses="1" string="I persuaded every detractor of to support the team that won the cup final ."/>
+  <item numOfParses="1" string="team that I persuaded every detractor of to support"/>
+  <item numOfParses="2" string="John knew that Brazil would defeat and Bill predicted that China would tie with Turkey ."/>
+  <item numOfParses="0" string="China not won ."/>
+  <item numOfParses="1" string="China did not win ."/>
+  <item numOfParses="1" string="China Brazil defeated ."/>
+  <item numOfParses="0" string="team that Brazil to defeat"/>
+  <item numOfParses="0" string="team that to defeat China"/>
+  <item numOfParses="2" string="Brazil defeated yesterday the team that it beat previously ."/>
+  <item numOfParses="0" string="player that shoots and he misses"/>
+  <item numOfParses="1" string="Rivaldo skillfully kicked the ball ."/>
+  <item numOfParses="1" string="ball that Rivaldo kicked"/>
+  <item numOfParses="1" string="powerful shot by Rivaldo"/>
+  <item numOfParses="0" string="powerful by Rivaldo shot"/>
+  <item numOfParses="1" string="the players that came from Spain angrily left ."/>
+  <item numOfParses="0" string="the players angrily that came from Spain left ."/>
+  <item numOfParses="0" string="goals that I saw the players that scored"/>
+  <item numOfParses="0" string="player that I saw the red card that the referee gave"/>
+  <item numOfParses="0" string="the fan in the field left and in the stadium stayed ."/>
+  <item numOfParses="1" string="the fan in the field left and the fan in the stadium stayed ."/>
+  <item numOfParses="2" string="player that the referee gave a yellow card"/>
+  <item numOfParses="1" string="the referee gave a yellow card the aggressive player ."/>
+  <item numOfParses="1" string="team that John knew that Brazil would defeat"/>
+  <item numOfParses="0" string="team that John knew that would defeat China"/>
+  <item numOfParses="0" string="John Brazil knew that would defeat China ."/>
+  <item numOfParses="1" string="team that John knew would defeat China"/>
+  <item numOfParses="1" string="the referee gave the player today a well-deserved red card ."/>
+  <item numOfParses="0" string="the referee gave today the aggressive player a well-deserved red card ."/>
+  <item numOfParses="1" string="Joao traveled to the country that hosted the cup final ."/>
+  <item numOfParses="2" string="which country did Joao travel to skeptically and return from joyfully ?"/>
+  <item numOfParses="0" string="Joao traveled to skeptically the country that hosted the cup final ."/>
+  <item numOfParses="1" string="Joao traveled to and Maria returned from the country that hosted the cup final ."/>
+  <item numOfParses="1" string="player that I read a book about"/>
+  <item numOfParses="1" string="player that I read a book about yesterday"/>
+  <item numOfParses="0" string="player that a book about astonished me" known="true"/>
+</regression>

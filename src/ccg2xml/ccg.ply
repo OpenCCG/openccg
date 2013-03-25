@@ -1,0 +1,2879 @@
+
+# Author: Ben Wing <ben@666.com>
+# Date: November 2006
+
+#############################################################################
+#                                                                           #
+#                                 ccg.ply                                   #
+#                                                                           #
+#   Convert a .ccg file, specifying a CCG grammar, into files lexicon.xml,  #
+#   rules.xml, morph.xml, types.xml and grammar.xml.  You can't actually    #
+#   run this file itself; you have to use convert-ply.py to convert it      #
+#   into a Python file (ccg2xml), which you then run to generate the XML    #
+#   files from the .ccg input.  For a description of the format of this     #
+#   file, see the comments in convert-ply.py.                               #
+#                                                                           #
+#############################################################################
+
+
+import sys
+import re
+import optparse
+import copy
+import os
+import cStringIO
+
+# Local imports
+import lex, yacc
+
+from Tkinter import *
+from tkMessageBox import *
+import tkFont
+
+## Get options
+
+usage = """%prog [OPTIONS] FILE ...
+
+Generate appropriate XML files for input to OpenCCG.
+"""
+
+parser = optparse.OptionParser(usage=usage)
+parser.add_option("-o", "--omit-output",
+                  help="""Omit the specified files from the output.
+Value should be a list separated by commas or spaces.  The allowed values are grammar, morph, lexicon, rules, types, and testbed.  If you put a + sign before the list, it means output *only* the specified files."""
+                  )
+parser.add_option("-p", "--prefix",
+                  help="""Optional prefix to attach to each of the generated files, so that output from different files can occur in the same directory.  Defaults to the base name of the input file, minus any extension, plus a hyphen.  If you want such a hyphen or similar char, add it yourself.""",
+                  metavar="DIR"
+                  )
+parser.add_option("-d", "--dir",
+                  help="""Directory to store files in (defaults to current directory).""",
+                  metavar="DIR"
+                  )
+parser.add_option("-q", "--quiet",
+                  action="store_true",
+                  help="Don't output explanatory messages, but only warnings and errors.")
+parser.add_option("-t", "--transformed-input",
+                  action="store_true",
+                  help="Output transformed input after macro substitutions have been applied.")
+parser.add_option("-y", "--yacc-debug",
+                  action="store_true",
+                  help="Show more output about the YACC parser generation.  Also probably generate some extra files, e.g. parser.out, containing info about the generated parser.")
+parser.add_option("-m", "--macro-debug",
+                  action="store_true",
+                  help="Dump macro definitions at end of file.")
+parser.add_option("--super-macro-debug",
+                  action="store_true",
+                  help="Show copious output about macro expansions.")
+
+def parse_arguments(argv):
+    global options, global_args
+    (options, global_args) = parser.parse_args(argv)
+
+    # Global variables used for debugging; we may move them into the
+    # global-state variable
+    global lex_debug
+    global xml_debug
+    global yacc_debug
+    global macro_debug
+    global super_macro_debug
+
+    lex_debug = 0
+    xml_debug = 0
+    yacc_debug = options.yacc_debug
+    macro_debug = options.macro_debug
+    super_macro_debug = options.super_macro_debug
+
+########################################################################
+#                           Utility functions                          #
+########################################################################
+
+
+# CONVENTIONS:
+#
+# --------- XML ----------
+#
+# Thankfully, the structure of XML is extremely simple.  We represent
+# a single XML statement of the form
+#
+# <biteme foo="1" blorp="baz">
+#   <bitemetoo ...>
+#     ...
+#   gurgle
+# </biteme>
+#
+# as a list
+#
+# ['biteme', [('foo', '1'), ('blorp', 'baz')],
+#    ['bitemetoo', ...],
+#    'gurgle'
+# ]
+#
+# i.e. an XML statement corresponds to a list where the first element
+# is the statement name, the second element lists any properties, and
+# the remaining elements list items inside the statement.
+#
+# ----------- Property lists -------------
+#
+# The second element of an XML statement in list form is a "property list",
+# a list of two-element tuples (property and value).  Some functions below
+# (e.g. `getprop', `putprop') manipulate property lists.
+#
+# FIXME: Just use a hash table.
+#
+# ---------- Abstract syntax trees -----------
+#
+# We use classes to represent statements and blocks.  Below this level, it's
+# simpler to just use the XML that we ultimately have to generate anyway.
+# The conventions for using XML are either to use property lists or lists of
+# XML statements in the list form outlined above.
+
+
+#############################
+#        Handling XML       #
+#############################
+
+def xml_sub(crap):
+    if type(crap) is not str:
+        crap = str(crap)
+    crap = crap.replace('<', '&lt;')
+    crap = crap.replace('>', '&gt;')
+    return crap
+
+def print_xml_1(file, xml, indent=0):
+    if xml_debug > 1:
+        errout("%sPrinting: %s\n" % (' ' * indent, str(xml)))
+    if type(xml) is not list:
+        file.write('%s%s\n' % (' ' * indent, xml_sub(xml)))
+    else:
+        check_arg_type("XML statement", xml[0], str)
+        file.write(' ' * indent)
+        file.write('<%s' % xml_sub(xml[0]))
+        for x in xml[1]:
+            check_arg_type("XML statement", x, tuple)
+            if len(x) != 2:
+                raise TypeError("Bad tuple pair: " + str(x))
+            file.write(' %s="%s"' % (xml_sub(x[0]), xml_sub(x[1])))
+        subargs = xml[2:]
+        if not subargs:
+            file.write('/>\n')
+        else:
+            file.write('>\n')
+            for x in subargs:
+                print_xml_1(file, x, indent + 2)
+            file.write(' ' * indent)
+            file.write('</%s>\n' % xml_sub(xml[0]))
+
+# Pretty-print a section of XML, in the format above, to FILE.
+# Start at indent INDENT.
+
+def print_xml(file, xml):
+    if xml_debug == 1:
+        errout("Printing: %s\n" % str(xml))
+    print_xml_1(file, xml)
+
+# Return True if PROP is seen as a property in PROPLIST, a list of tuples
+# of (prop, value)
+def property_specified(prop, proplist):
+    return not not ['foo' for (x,y) in proplist if x == prop]
+
+# Return value of property PROP in PROPLIST; signal an error if not found.
+def getprop(prop, proplist):
+    for (x,y) in proplist:
+        if x == prop:
+            return y
+    raise ValueError("Property %s not found in %s" % (prop, proplist))
+
+# Return value of property PROP in PROPLIST, or DEFAULT.
+def getoptprop(prop, proplist, default=None):
+    for (x,y) in proplist:
+        if x == prop:
+            return y
+    return default
+
+# Replace value of property PROP with VALUE in PROPLIST.
+def putprop(prop, value, proplist):
+    for i in xrange(len(proplist)):
+        if proplist[i][0] == prop:
+            proplist[i] = (prop, value)
+            return
+    else:
+        proplist += [(prop, value)]
+    
+
+# Replace property named PROP with NEW in PROPLIST.  Often this is called with
+# with PROP equal to None; the None occurs when a PROP=VALUE clause is expected
+# but a bare value is supplied.  The context will supply a particular default
+# property (e.g. 'name') to be used when the property name is omitted, but the
+# generic code to handle property-value clauses doesn't know what this is.
+# The surrounding code calls property_name_replace() to fill in the proper name.
+
+def property_name_replace(prop, new, proplist):
+    for i in xrange(len(proplist)):
+        if proplist[i][0] == prop:
+            proplist[i] = (new, proplist[i][1])
+
+#############################
+#      Error-handling       #
+#############################
+
+def init_errors(errors_to_string):
+    # Count of number of errors seen so far.
+    global error_count
+    error_count = 0
+
+    global write_errors_to_string
+    write_errors_to_string = errors_to_string
+
+    global stdout_file, stderr_file
+    if errors_to_string:
+        stdout_file = cStringIO.StringIO()
+        stderr_file = cStringIO.StringIO()
+    else:
+        stdout_file = sys.stdout
+        stderr_file = sys.stderr
+
+    global message_log
+    message_log = []
+
+def save_errors(cur):
+    cur.error_count = error_count
+    cur.write_errors_to_string = write_errors_to_string
+    cur.stdout_file = stdout_file
+    cur.stderr_file = stderr_file
+
+class InternalError(StandardError):
+    pass
+
+def argformat(format, arg):
+    if type(format) is str:
+        return format % arg
+    else:
+        return str(format)
+
+# Throw an error, like fprintf(stderr, ...)
+def synerr(format, *arg):
+    raise SyntaxError(argformat(format, arg))
+
+# Output to stderr, maybe.  But output to stdout if our input is being
+# output at the same time, so the two will stay in sync.
+def maybe_errout(str):
+    # Force display of error
+    # FIXME: Maybe we could dump all errors into a single 
+    # window display and show the messages together
+    #showerror('Message', str)
+
+    if options.transformed_input:
+        stdout_file.write(str)
+    else:
+        stderr_file.write(str)
+
+def error_or_warning(title, lineno, format, *arg):
+    formatted_arg = argformat(format, arg)
+    if lineno:
+        maybe_errout("%s, line %s: %s\n" % (title, lineno,
+                                            formatted_arg))
+    else:
+        maybe_errout("%s: %s\n" % (title, formatted_arg))
+    # Add the message as a tuple, for easy recall in the editor
+    # Note: lineno being put in irrespective of the fact
+    # of whether it exists or not
+    # FIXME!! The purpose of errors_to_string and message_log duplicate
+    # each other somewhat.  Clean up.
+    global message_log
+    message_log += [(title, lineno, formatted_arg)]
+
+# Write formatted arguments to stderr, with Error: printed.
+def error(lineno, format, *arg):
+    global error_count
+    error_count += 1
+    error_or_warning('Error', lineno, format, *arg)
+
+# Write formatted arguments to stderr, with Warning: printed.
+def warning(lineno, format, *arg):
+    global warning_count
+    warning_count += 1
+    error_or_warning('Warning', lineno, format, *arg)
+
+# Write formatted arguments to stdout.
+def outout(format, *arg):
+    stdout_file.write(argformat(format, arg))
+
+# Write formatted arguments to stderr.
+def errout(format, *arg):
+    stderr_file.write(argformat(format, arg))
+
+# Debugging output: Always to sys.stderr.
+def debug(format, *arg):
+    sys.stderr.write(argformat(format, arg))
+
+def check_arg_type(errtype, arg, ty):
+    if type(arg) is not ty:
+        raise TypeError("%s: Type is not %s: %s" % (errtype, ty, arg))
+
+#############################
+#   Abstract Syntax Trees   #
+#############################
+
+# Classes beginning with CS (= CCG Syntax) are used for constructing the
+# abstract syntax tree corresponding to a CCG source file. (An abstract
+# syntax tree, or AST, is a hierarchical representation of the syntax of a
+# piece of source code text, in this case a CCG-format file.) The source
+# file is made up out of blocks, each of which begins with an identifier
+# and is followed by one or more statements.
+
+# A CSNode corresponds to any unified section of source code -- a single
+# block or statement, a particular part of a statement (e.g. an
+# attribute-value list or a single attribute-value clause), or even the
+# whole file.  The basic restriction is that it must correspond to a single
+# YACC production; hence it logically belongs in a unit and is the maximum
+# extent of text that belongs in the unit or possibly statement in a single
+# block.  It has some corresponding source text with starting and ending
+# line numbers, a function to generate the XML, and a function to draw the
+# node.  If the node is large enough to represent at least one XML
+# statement, it should be a list of XML statements in the XML-statement
+# form described above (a list [TAG, PROPLIST, CHILD ...]); otherwise, the
+# format is undefined, but most likely will be a property list.  The CSNode
+# is initialized from the YaccProduction object (stored in variable `p',
+# usually, but accessed as $@) associated with a particular production,
+# which supplies the extent of source code associated with the production.
+
+class CSNode(object):
+    def __init__(self, prod):
+        self.prod = prod
+    def xml(self):
+        # In many cases, it's easiest just to build up the XML at creation time
+        # and store it, rather than constructing it dynamically.  Note that we
+        # intentionally don't initialize self.static_xml, so we get an error
+        # if it's not set.
+        return self.static_xml
+    # draw(self, parent, cfile, vars): Draw the node by returning a new widget
+    # containing the drawn representation: Should be defined if node is
+    # drawable.  It should return a widget that is a child of PARENT,
+    # also a widget.  It is up to the caller to call pack() or grid()
+    # so that the widget's geometry will be set; but the draw() function
+    # should appropriately configure any child widgets that it creates.
+    # VARS is an object containing Tkinter variables that may control the
+    # way that the node is drawn.
+
+# A CSStatement corresponds to a single statement in a single block.  Note
+# that, in the interests of simplicity, we don't currently create objects
+# for pieces of CCG code that are smaller than a statement; instead, we
+# just use the XML representation.  We usually follow the convention that
+# if we have to make changes to the XML that make it not be in a one-to-one
+# correspondence with the original code, we do this at the level of the
+# statement or block.
+
+class CSStatement(CSNode):
+    def __init__(self, prod):
+        super(CSStatement, self).__init__(prod)
+
+# A CSBlock is a single block.
+
+class CSBlock(CSNode):
+    def __init__(self, prod):
+        super(CSBlock, self).__init__(prod)
+
+#############################
+#             Misc          #
+#############################
+
+# Is it identifier material?  Input should be a character.
+def isalnumund(str):
+    return str.isalnum() or str in '_+-'
+
+# Prior to Python 2.4, no sorted()
+def my_sorted(lyst):
+    lystcopy = list(lyst)
+    lystcopy.sort()
+    return lystcopy
+
+########################################################################
+#                               Tokenizing                             #
+########################################################################
+
+# The following IDs have a special meaning to the OpenCCG tokenizer if a
+# token has the form [*ID*].
+#magic_names = ('AMT', 'DATE', 'DUR', 'NUM', 'TIME')
+
+# It seems that the tokenizer does not require an [*ID*] token to be a known
+# magic thing (i.e. [*FOO*] is a legal surface form), so line 402 is commented
+# out.
+# If someone decides that [*ID*] tokens should be restricted to the ones
+# listed above, uncomment lines 397 and 503.
+
+# Directives -- These are particular words that are specially handled in
+# an appropriate position and hence need to be tokens for use in the
+# parser.  However, they can also be part of a generic "word" -- in
+# other words, we have no "reserved words".
+
+directives = (
+    'FAMILY', 'ENTRY', 'MEMBER', 'FEATURE', 'PROP', 'RULE',
+    'NO', 'APP', 'COMP', 'XCOMP', 'SUB', 'XSUB', 'TYPERAISE', 'TYPECHANGE',
+    'DEF', 'WORD', 'TESTBED', 'RELATION_SORTING'
+    )
+
+# Additional tokens that can form part of a word.  A bare 'x' can form
+# part of a word as well, except for in a few circumstances.
+basic_word_no_x_tokens = ('ID', 'QUOTEDID') + directives
+word_no_x_tokens = ('NUMBER',) + basic_word_no_x_tokens
+word_no_number_tokens = ('X',) + basic_word_no_x_tokens
+word_tokens = ('NUMBER',) + word_no_number_tokens + ('MAGIC_ID',)
+bracket_tokens = ('LPAREN', 'RPAREN', 'LBRACKET', 'RBRACKET',
+                  'LBRACE', 'RBRACE')
+other_tokens = (
+    # String tokens
+    'SLASH', 'BACKSLASH',
+    'LESS', 'GREATER',
+    'CARET', 'STAR', 'DOT', 'AT', 'EQUALS', 'GOESTO', 'PIPE',
+    'COMMA', 'SEMI', 'DOLLAR', 'COLON', 'BANG', 'TILDE',
+    # Handled through t_ID
+    'PLUS', 'MINUS', 'PLUSMINUS',
+    # Only in a def()
+    'NEWLINE',
+    'BOGUS_VALUE' # Kludge kludge kludge, fuck me harder
+    )
+
+tokens = word_tokens + bracket_tokens + other_tokens
+
+t_LPAREN     = r'\('
+t_RPAREN     = r'\)'
+t_LBRACKET   = r'\['
+t_RBRACKET   = r'\]'
+t_LBRACE     = r'\{'
+t_RBRACE     = r'\}'
+
+t_SLASH      = r'/'
+t_BACKSLASH  = r'\\'
+t_LESS       = r'<'
+t_GREATER    = r'>'
+t_CARET      = r'\^'
+t_STAR       = r'\*'
+t_DOT        = r'\.'
+t_AT         = r'@'
+t_EQUALS     = r'='
+t_GOESTO     = r'=>'
+t_PIPE       = r'\|'
+t_COMMA      = r','
+t_SEMI       = r';'
+t_DOLLAR     = r'\$'
+t_COLON      = r':'
+t_BANG       = r'!'
+t_TILDE      = r'~'
+
+# Identifiers and directives
+
+directives_map = { }
+for r in directives:
+    directives_map[r.lower().replace('_', '-')] = r
+directives_map['x'] = 'X';
+# We handle +, -, and +- here because + and - can, in general, form part
+# of a token.
+directives_map['+'] = 'PLUS';
+directives_map['-'] = 'MINUS';
+directives_map['+-'] = 'PLUSMINUS';
+
+def t_ID(t):
+    r'''(([\-+%a-zA-Z_0-9]|[^\000-\177])+|"[^"\n]+"|\'[^'\n]+')'''
+    # convert to directive, maybe
+    if re.match(r'^\d+$', t.value):
+        t.type = 'NUMBER'
+        try:
+            t.value = int(t.value)
+        except ValueError:
+            error(t.lineno, "Integer value too large: %s", t.value)
+            t.value = 0
+    elif t.value in directives_map:
+        t.type = directives_map[t.value]
+    else:
+        t.type = 'ID'
+        # remove quotes if they're there
+        if t.value[0] == '"' or t.value[0] == "'":
+            t.type = 'QUOTEDID'
+            t.value = t.value[1:-1]
+    return t
+
+# The distinction from ordinary IDs is currently not really needed, i.e. t_ID
+# could to the job, too. However, it leaves open the possibility to handle
+# magic IDs differently from ordinary ones.
+def t_MAGIC_ID(t):
+    r'''(\[\*[^*]+\*\])'''
+    t.type = 'MAGIC_ID'
+    return t
+#t_MAGIC_WORD.func_doc = '(\[\*(' + '|'.join(magic_names) + ')\*\])'
+
+t_ignore = " \t\r"
+
+#bracketmap = {'(': 'LPAREN', ')': 'RPAREN',
+#              '[': 'LBRACKET', ']': 'RBRACKET',
+#              '{': 'LBRACE', '}': 'RBRACE'}
+#
+#def t_LBRACKET(t):
+#    r'[\[\(\{]'
+#    global parendepth
+#    parendepth += 1
+#    t.type = bracketmap[t.value]
+#    return t
+#
+#def t_RBRACKET(t):
+#    r'[\]\)\}]'
+#    global parendepth
+#    parendepth -= 1
+#    t.type = bracketmap[t.value]
+#    return t
+
+def t_backslash_newline(t):
+    r'\\\r?\n'
+    t.lineno += 1
+    # If it's not a line continuation, it's just a normal backslash
+    if not lexer_track_newlines:
+        t.type = 'BACKSLASH'
+        return t
+
+def t_newline(t):
+    r'\n'
+    t.lineno += 1
+    if lexer_track_newlines:
+        t.type = 'NEWLINE'
+        return t
+
+# Comments
+def t_comment(t):
+    r'\#[^\n]*\n'
+    t.lineno += 1
+
+def t_error(t):
+    error(t.lineno, "Illegal character '%s'", t.value[0])
+    t.skip(1)
+    
+def init_lexer():
+    # This is a signal to us to go into "line mode", where we return a
+    # newline as a token and treat backslash at the end of a line as a line
+    # continuation device.
+    global lexer_track_newlines
+    lexer_track_newlines = 0
+
+    # Build the lexer.  This does introspection, on all the t_*() functions.
+    global globallexer
+
+    globallexer = lex.lex(debug=lex_debug)
+
+def save_lexer(cur):
+    cur.lexer_track_newlines = lexer_track_newlines
+    cur.globallexer = globallexer
+
+########################################################################
+#                                Parsing                               #
+########################################################################
+
+def p_word(p):
+    'FILLED IN BELOW'
+    p[0] = p[1]
+# fill in the documentation (i.e. the cfg rule)
+p_word.func_doc = 'word : ' + '\n| '.join(word_tokens)
+
+# hack, to deal with a reduce/reduce conflict
+def p_word_except_x(p):
+    'FILLED IN BELOW'
+    p[0] = p[1]
+# fill in the documentation (i.e. the cfg rule)
+p_word_except_x.func_doc = 'word_except_x : ' + '\n| '.join(word_no_x_tokens)
+
+def p_word_no_numbers(p):
+    'FILLED IN BELOW'
+    p[0] = p[1]
+# fill in the documentation (i.e. the cfg rule)
+p_word_no_numbers.func_doc = (
+    'word_no_numbers : ' + '\n| '.join(word_no_number_tokens))
+
+%y
+#############################
+#  Begin Yacc Declarations  #
+#############################
+
+#############################
+#      Word lists, etc      #
+#############################
+
+empty: : $$ = []
+
+commas: COMMA
+      : commas COMMA
+
+typed_word : word
+           : word COLON word : $$ = '%s:%s' % ($1, $3)
+
+# Possibly empty list of words
+
+word_0: word
+      : word commas
+
+word_list: word_0 *
+
+# Possibly empty list of words or *
+
+word_or_star: word | STAR
+
+word_or_star_0: word_or_star
+              : word_or_star commas
+
+# Non-empty list of words
+
+#nonempty_word_list: word_0 : $$ = [$1]
+#                  : nonempty_word_list word_0 : $$ = $1 + [$2]
+
+# Attribute lists contain specifications of the form ATTR=VALUE.  The
+# return value is a list of (attribute, value) tupes.
+
+attr : word EQUALS word : $$ = ($1, $3)
+
+attr_0: attr
+      : attr commas
+
+attr_list: attr_0*
+
+opt_paren_attr_list: empty
+                   : LPAREN attr_list RPAREN : $$ = $2
+
+# Extended attribute lists contain either VALUE or ATTR=VALUE.  The return
+# value is a list of (attribute, value) tupes; when a bare value is given,
+# the attribute is None.
+
+ext_attr : word : $$ = (None, $1)
+         : word EQUALS word : $$ = ($1, $3)
+
+ext_attr_0: ext_attr
+          : ext_attr commas
+
+ext_attr_list: ext_attr_0*
+
+opt_paren_ext_attr_list: empty
+                       : LPAREN ext_attr_list RPAREN : $$ = $2
+
+#############################
+#         Statements        #
+#############################
+
+top : statement*
+
+statement : family_block | feature_block | rule_block | macro_def | word_block
+            | testbed_block | relation_sorting_block
+          : SEMI
+
+#############################
+#           Macros          #
+#############################
+
+%p
+
+def init_macros():
+    # Used to turn off macro substitution while processing a macro definition.
+    global no_macro_sub
+    no_macro_sub = 0
+
+    # Needed to handle issue where macro def is immediately followed by
+    # macro call.
+    global return_bogus_value
+    return_bogus_value = 0
+
+    # Mapping of macro definitions to parameter list and text.
+    global macro_defs
+    macro_defs = {}
+
+    # It doesn't really matter what the parameter names are for built-ins.
+    # There just have to be the right number of them.
+    macro_defs['regsub'] = MacroDef(['fromre', 'totext', 'str'], regsub)
+    macro_defs['ifmatch'] = MacroDef(['regex', 'string', 'doif', 'doelse'],
+                                     ifmatch)
+    macro_defs['ifmatch-nocase'] = MacroDef(['regex', 'string', 'doif',
+                                             'doelse'],
+                                            ifmatch_nocase)
+
+def save_macros(cur):
+    cur.no_macro_sub = no_macro_sub
+    cur.return_bogus_value = return_bogus_value
+    cur.macro_defs = macro_defs
+
+class MacroDef:
+    def __init__(self, args, text):
+        self.args = args
+        self.text = text
+
+class CCGToken(lex.LexToken):
+    def __init__(self, type, value):
+        self.type = type
+        self.value = value
+
+def arg_to_text(arg):
+    return ''.join([str(x.value) for x in arg])
+
+# Implementation of built-in 'regsub()': Concatenate the tokens into
+# text, then do regex substitution.
+def regsub(fromre, totext, string):
+    return re.sub(arg_to_text(fromre), arg_to_text(totext),
+                  arg_to_text(string))
+
+# If REGEX matches the beginning of STRING, return DOIF, else return DOELSE.
+def ifmatch(regex, string, doif, doelse):
+    if re.match(arg_to_text(regex), arg_to_text(string)):
+        return doif
+    else:
+        return doelse
+
+# Same as ifmatch() but case-insensitive.
+def ifmatch_nocase(regex, string, doif, doelse):
+    if re.match(arg_to_text(regex), arg_to_text(string), re.IGNORECASE):
+        return doif
+    else:
+        return doelse
+
+def print_macros():
+    for (key, value) in macro_defs.iteritems():
+        print "Macro: %s(%s): %s" % (key, value.args, value.text)
+
+# Given some text, expand the macros in it, recursively (i.e. apply
+# any macros, then apply macros to the resulting text, etc.).  After
+# that, combine text that has the . operator applied to it.
+def macroexpand_text(text):
+    if super_macro_debug:
+        print "Text before expanding: %s" % arg_to_text(text)
+    # Now recursively expand macros.  The code to actually check for
+    # macros is in MacroLexer.
+    lexer = MacroLexer(None)
+    lexer.pushstack(text)
+    newtext = []
+    while True:
+        tok = lexer.token()
+        #print "Reading token: %s" % tok
+        if not tok:
+            break
+        newtext.append(tok)
+    text = newtext
+    l = len(text)
+    if super_macro_debug:
+        print "Text after expanding: %s" % arg_to_text(text)
+    # Now directly handle instances with the '.' operator, so that
+    # the operator can be used to create new macro calls
+    x = 1
+    while x < l - 1:
+        if (text[x].type == 'DOT' and text[x-1].type in ['ID', 'QUOTEDID']
+            and text[x+1].type in ['ID', 'QUOTEDID']):
+            tok = CCGToken(text[x-1].type,
+                           text[x-1].value + text[x+1].value)
+            tok.lineno = text[x].lineno
+            # If either is quoted, the result should be quoted.
+            if text[x+1].type == 'QUOTEDID':
+                tok.type = 'QUOTEDID'
+            text[x-1] = tok
+            text[x:x+2] = []
+            x -= 2
+            l -= 2
+        x += 1
+    return text
+
+# Return text of macro, with ARGS substituted for formal parameters of
+# the macro.
+def macrosub(macdef, args, lineno):
+    text = macdef.text
+    # If the text definition is a function (for builtins),
+    # macro-expand the arguments, then call the function.
+    if callable(text):
+        args = [macroexpand_text(x) for x in args]
+        text = text(*args)
+        if type(text) is str:
+            text = [CCGToken('QUOTEDID', text)]
+            text[0].lineno = lineno
+            return text
+        else:
+            return macroexpand_text(text)
+    else:
+        # Otherwise, make a copy of the text and substitute the arguments
+        # into it.
+        text = text[:]
+        args = dict(zip(macdef.args, args))
+        l = len(text)
+        x = 0
+        while x < l:
+            if (text[x].type == 'ID' or text[x].type in directives) \
+                   and text[x].value in args:
+                newtext = args[text[x].value]
+                text[x:x+1] = newtext
+                l += len(newtext) - 1
+                x += len(newtext) - 1
+            x += 1
+        return macroexpand_text(text)
+
+%y
+
+# We need to do some hackery with BOGUS_VALUE in order to avoid problems
+# when a macro definition is immediately followed by a call to that same
+# macro.  The problem is that generally the parser wants to read one token
+# ahead.  As a result, by the time it's processed the token that ends a
+# macro definition, it's already read the following token -- and if that
+# token begins a macro call, we're screwed.  To avoid this, we ensure that
+# there is an extra BOGUS_VALUE token returned after every macro definition.
+# To make this happen, we set a flag return_bogus_value just before the
+# parser processes the token ending the macro definition.  At this point,
+# the parser has already read that token from the lexer, and before it
+# reduces that token, it reads the next token from the lexer -- which
+# returns a bogus token, as we instructed it.
+
+macro_def : macro_def_1 BOGUS_VALUE
+
+turn_off_macro_sub: :
+    global no_macro_sub
+    no_macro_sub = 1
+
+return_bogus_value: :
+    global return_bogus_value
+    return_bogus_value = 1
+    global no_macro_sub
+    no_macro_sub = 0
+
+macro_def_1 : turn_off_macro_sub DEF word LPAREN macro_param_list turn_on_linetrack RPAREN macro_text :
+    macdef = MacroDef($5, $8)
+    macdef.args = $5
+    macdef.text = $8
+    if $3 in macro_defs:
+        error($@.lineno(0), "Redefining macro %s" % $3)
+    macro_defs[$3] = macdef
+    #print_macros()
+
+macro_param_list : word_list
+
+macro_text: bracemacro_text | linemacro_text
+
+bracemacro_text: turn_off_linetrack LBRACE bracemacro_text_list return_bogus_value RBRACE: $$ = $3
+
+bracemacro_text_list: empty : $$ = []
+                    : bracemacro_text_list bracemacro_text_entry : $$ = $1 + $2
+
+# The key thing about these is that they must be invoked BEFORE the
+# token that tells you whether to turn the mode on or off.  If you
+# try to set the global variable after (even directly after) the
+# RPAREN or NEWLINE or whatever has been processed by a rule, it's too
+# late: The parser has already looked ahead, and any newline directly
+# following the token in question already processed the wrong way.
+turn_on_linetrack: :
+    global lexer_track_newlines
+    lexer_track_newlines = 1
+
+turn_off_linetrack: :
+    global lexer_track_newlines
+    lexer_track_newlines = 0
+
+%p
+
+def p_bracemacro_text_entry(p):
+    '''bracemacro_text_entry : LPAREN bracemacro_text_list RPAREN
+                     | LBRACKET bracemacro_text_list RBRACKET
+                     | LBRACE bracemacro_text_list RBRACE'''
+    p[0] = [p.slice[1]] + p[2] + [p.slice[3]]
+
+def p_bracemacro_text_entry_other(p):
+    'FILLED IN BELOW'
+    p[0] = [p.slice[1]]
+# fill in the documentation (i.e. the cfg rule)
+p_bracemacro_text_entry_other.func_doc = (
+    'bracemacro_text_entry : ' + '\n| '.join(other_tokens + word_tokens)
+    )
+
+%y
+
+linemacro_text: turn_off_linetrack return_bogus_value NEWLINE:
+    $$ = []
+
+linemacro_text: linemacro_begin linemacro_next* turn_off_linetrack return_bogus_value NEWLINE:
+    $$ = [$1] + $2
+
+%p
+
+def p_linemacro_begin(p):
+    p[0] = p.slice[1]
+
+def p_linemacro_next(p):
+    p[0] = p.slice[1]
+
+linemacro_begin_tokens = [x for x in tokens
+                          if x != 'NEWLINE' and x != 'LBRACE']
+linemacro_next_tokens = [x for x in tokens if x != 'NEWLINE']
+
+
+# fill in the documentation (i.e. the cfg rule)
+p_linemacro_begin.func_doc = (
+    'linemacro_begin : ' + '\n| '.join(linemacro_begin_tokens)
+    )
+p_linemacro_next.func_doc = (
+    'linemacro_next : ' + '\n| '.join(linemacro_next_tokens)
+    )
+
+%y
+
+#############################
+#       Feature blocks      #
+#############################
+
+%p
+
+def init_features():
+    # For each feature value, map its name to a CCGFeatval structure
+    # describing it.
+    global feature_values
+    feature_values = {}
+    # List of values for a particular feature; each value is a CCGFeatval,
+    # listing a value, its parents, licensing info, macro info, and its
+    # feature.
+    global feature_to_values
+    feature_to_values = {}
+    # List of distributive features
+    global distributive_features
+    distributive_features = []
+    # List of XML for licensing features
+    global licensing_feature_xml
+    licensing_feature_xml = []
+    # Mapping of the names of feature values to the value inserted into the
+    # XML 'val' attribute; usually the same as the name. (YUCK YUCK YUCK)
+    global fv_names_to_values
+    fv_names_to_values = {}
+
+def save_features(cur):
+    cur.feature_values = feature_values
+    cur.feature_to_values = feature_to_values
+    cur.distributive_features = distributive_features
+    cur.licensing_feature_xml = licensing_feature_xml
+    cur.fv_names_to_values = fv_names_to_values
+
+# A feature value: The "name" of the feature value (corresponding to a
+# feature macro), the parents of this value, and any licensing info.  Also
+# may include a .feature, which is the "feature" that this value is a value
+# for.
+class CCGFeatval:
+    def __init__(self, name, parents, licensing):
+        self.name = name
+        self.parents = parents
+        self.licensing = licensing
+    def __str__(self):
+        return "CCGFeatval(%s, parents=%s, licensing=%s)" % (
+            (self.name, self.parents, self.licensing))
+    def __repr__(self):
+        return str(self)
+
+# Encapsulates directly obtained values and values obtained recursively,
+# so we can avoid needlessly adding parents to the latter kind.
+# Used temporarily when building the hierarchy.  Both direct and recursive
+# are lists of CCGFeatvals.
+class CCGFeatvalList:
+    def __init__(self, direct, recursive=None):
+        recursive = recursive or [] # fuckme!
+        self.direct = direct
+        self.recursive = recursive
+    def __str__(self):
+        return "CCGFeatvalList(direct=%s,recursive=%s)" % (self.direct,self.recursive)
+    def __repr__(self):
+        return str(self)
+
+# For the given feature, and list of CCGFeatvals, convert the parents in
+# each CCGFeatval to a list of CCGFeatvals rather just strings, and clean
+# any excess parents.  Basically, if a value has multiple parents and one
+# is reachable by following a path starting from another, it needs to be
+# removed.
+
+# FIXME!! Also output warnings when a featvar and featval have the same name.
+
+def install_feature(feature, lis, lineno):
+    # Add names to reverse-feature list and check for duplicates.
+    for x in lis:
+        if x.name in feature_values:
+            warning(lineno, "Duplicate feature value `%s' (feature `%s', previously in feature `%s')",
+                    x.name, feature, feature_values[x.name].feature)
+        else:
+            feature_values[x.name] = x
+            x.feature = feature
+    # Change the parents list of each value to point to actual featval objects
+    # rather than just strings; check for unrecognized and duplicate values.
+    for x in lis:
+        newpar = []
+        for y in x.parents:
+            if y in feature_values:
+                if feature_values[y] in newpar:
+                    synerr("Duplicate feature value %s as parent of %s, feature %s",
+                           y, x.name, feature)
+                else:
+                    newpar.append(feature_values[y])
+            else:
+                synerr("Unrecognized feature value %s as parent of %s, feature %s",
+                       y, x.name, feature)
+        x.parents = newpar
+
+    # Check NODE and its parents to make sure it hasn't been seen before in
+    # LIST, adding NODE to LIST as soon as it's seen.
+    def check_cycles(node, list):
+        if node in list:
+            synerr("Cycle seen involving feature value %s", node.name)
+        for x in node.parents:
+            check_cycles(x, list + [node])
+    
+    # Check for cycles.
+    for x in lis:
+        check_cycles(x, [])
+
+    # Check NODE and its parents to make sure that ORIGNODE is not reachable.
+    def check_reachable(node, orignode):
+        if node == orignode:
+            return True
+        for x in node.parents:
+            if check_reachable(x, orignode):
+                return True
+        return False
+    
+    # Clean excess parents.
+    for x in lis:
+        newpar = []
+        for y in x.parents:
+            for z in x.parents:
+                if z != y and check_reachable(z, y):
+                    break
+            else:
+                newpar.append(y)
+        x.parents = newpar
+
+    # Finally: Add to feature list.
+    feature_to_values[feature] = lis
+
+# Return XML to go in types.xml.
+def make_feature_types_xml():
+    xml = []
+    for (x, featvals) in feature_to_values.iteritems():
+        # FIXME! Figure out what's going wrong here.
+#        typename = x
+#        print "fv_names_to_values: %s" % fv_names_to_values
+#        if x in fv_names_to_values:
+#            typename = fv_names_to_values[x]
+#        xml += [['type', [('name', typename)]]]
+        xml += [['type', [('name', x)]]]
+        for y in featvals:
+            if y.parents:
+                xml += [['type',
+                         [('name', y.name),
+                          ('parents', ' '.join([z.name for z in y.parents]))]]]
+            else:
+                xml += [['type', [('name', y.name), ('parents', x)]]]
+    return xml
+
+# Return XML to go in morph.xml.
+def make_feature_morph_xml():
+    xml = []
+    for x in my_sorted(feature_values):
+        featval = feature_values[x]
+        if featval.macrotie:
+            entry = ['macro', [('name', '@%s' % x)]]
+            for y in featval.macrotie:
+                if type(y) is int:
+                    entry += [['fs', [('id', y)],
+                               ['feat',
+                                [('attr', featval.feature),
+                                 ('val', fv_names_to_values[x])]]]]
+                else:
+                    (wordtie, typename) = y
+                    entry += [['lf', [],
+                               ['satop', [('nomvar', wordtie)],
+                                ['diamond', [('mode', typename)],
+                                 ['prop',
+                                  [('name', fv_names_to_values[x])]]]]]]
+            xml += [entry]
+    return xml
+
+# Return XML to go in lexicon.xml.
+def make_feature_lexicon_xml():
+    xml = []
+    if distributive_features:
+        xml.append(['distributive-features',
+                    [('attrs', ' '.join(distributive_features))]])
+    if licensing_feature_xml:
+        xml.append(['licensing-features', []] + licensing_feature_xml)
+    return xml
+
+%y
+
+# Allow you to override the value inserted by a feature macro, if you
+# really want to (requested by Fred).
+
+featval_2: word: $$ = ($1, $1)
+         : word COLON word: $$ = ($1, $3)
+
+featval_1: featval_2 : $$ = $1 + ([], [])
+         : featval_2 LBRACKET word_list RBRACKET : $$ = $1 + ($3, [])
+         : featval_2 LPAREN attr_list RPAREN : $$ = $1 + ([], $3)
+         : featval_2 LBRACKET word_list RBRACKET LPAREN attr_list RPAREN :
+    $$ = $1 + ($3, $6)
+
+featval: featval_1:
+    (name, value, parents, licensing) = $1
+    fv_names_to_values[name] = value
+    $$ = CCGFeatval(name, parents, licensing)
+
+set_featval: featval: $$ = CCGFeatvalList([$1])
+           : featval LBRACE set_featval_list RBRACE:
+    # The set_featval_list returns a CCGFeatvalList, where the direct entries
+    # are those actually in the list itself, and the recursive entries
+    # are descendants of them.  First add ourself as parent to the direct
+    # entries.  Then move direct into recursive and put ourself as the only
+    # direct entry.
+    for x in $3.direct:
+        x.parents += [$1.name]
+    $$ = CCGFeatvalList([$1], $3.direct + $3.recursive)
+
+set_featval_0: set_featval
+             : set_featval commas
+
+set_featval_list: set_featval_0
+                : set_featval_list set_featval_0:
+    $1.direct += $2.direct; $1.recursive += $2.recursive; $$ = $1
+
+featvar: NUMBER: $$ = int($1)
+       : word_no_numbers: $$ = ($1, $1)
+       : word_no_numbers COLON word: $$ = ($1, $3)
+
+featvar_0 : featvar
+          : featvar commas
+
+opt_featspec: empty               : $$ = (None, None)
+            : LESS featvar_0+ GREATER : $$ = ($2, None)
+            : LPAREN attr_list RPAREN : $$ = (None, $2)
+            : LESS featvar_0+ GREATER LPAREN attr_list RPAREN: $$ = ($2, $5)
+
+opt_feature_bang: empty | BANG
+
+# We declare this in a slightly strange way to work around the awful bug
+# involving non-recognition of empty RHS rules.
+feature_decl_tail: SEMI: $$ = []
+                 : COLON set_featval_list SEMI: $$ = $2
+
+feature_decl : opt_feature_bang word opt_featspec feature_decl_tail:
+    if $1:
+        global distributive_features
+        distributive_features.append($2)
+    if $4:
+        feature_values = $4.direct + $4.recursive
+    else:
+        feature_values = []
+    install_feature($2, feature_values, $@.lineno(0))
+    (macrotie, licensing) = $3
+    # Add macro-tie info to each feature
+    for x in feature_values:
+        x.macrotie = macrotie
+    # Handle licensing attributes on the feature values
+    global licensing_feature_xml
+    for x in feature_values:
+        if x.licensing:
+            licensing_feature_xml.append(
+                ['feat',
+                 [('attr', $2), ('val', fv_names_to_values[x.name])]
+                 + x.licensing])
+    # Handle licensing attributes on the feature itself rather than
+    # on a feature value
+    if licensing:
+        licensing_feature_xml.append(['feat', [('attr', $2)] + licensing])
+
+feature_block : FEATURE LBRACE feature_decl* RBRACE
+
+#############################
+#     Atomic categories     #
+#############################
+
+unification_id: NUMBER: $$ = ('id', $1)
+              : TILDE NUMBER: $$ = ('inheritsFrom', $2)
+
+unification_id_0: unification_id
+                : unification_id commas
+
+unification_id_spec: LESS unification_id_0* GREATER: $$ = $2
+
+atomcat_bracket_entry : word EQUALS word :
+    $$ = ['feat', [('attr', $1), ('val', $3)]]
+
+atomcat_bracket_entry : word EQUALS STAR :
+    $$ = ['feat', [('attr', $1), ('val', '[*DEFAULT*]')]]
+
+# FIXME!!!! Be more intelligent in determining how to separate nomvars
+# and featvars, instead of just using some isupper() hacks.  We should
+# check to see if the nomvars are represented in the corresponding
+# hylo spec.  We should also output warnings if a bare word occurs and
+# it is not identified anywhere as either a nomvar (should appear in hylo),
+# a featvar (should appear in feature {}), or a featval (likewise).
+
+atomcat_bracket_entry : word :
+    if $1[0].isupper() and (len($1) == 1 or not $1[1].isupper()):
+        $$ = ['feat', [('attr', 'index')],
+              ['lf', [], ['nomvar', [('name', $1)]]]]
+    elif $1 in feature_values:
+        $$ = ['feat', [('attr', feature_values[$1].feature), ('val', $1)]]
+    else:
+        $$ = ['feat', [('attr', $1)],
+              ['featvar', [('name', "%s" % $1.upper())]]]
+
+atomcat_bracket_entry : word COLON word:
+    $$ = ['feat', [('attr', $1)],
+          ['featvar', [('name', "%s:%s" % ($1.upper(), $3))]]]
+
+atomcat_bracket_entry_0: atomcat_bracket_entry
+                       : atomcat_bracket_entry commas
+
+atomcat_bracket : LBRACKET atomcat_bracket_entry_0* RBRACKET : $$ = $2
+
+# The use of word_except_x here is a hack to avoid a reduce/reduce conflict
+# due to the use of x as an operator as well as a word.  Without it, the
+# parser doesn't know, e.g., how to disambiguate something beginning
+# FOO/x(... -- is x an operator or a category?  The parser only looks one
+# character ahead, so it can't figure this out.  With this hack, you cannot
+# use a single lowercase x as a category name without putting it in quotes,
+# e.g. 'x'.
+
+atomcat : word_except_x unification_id_spec? atomcat_bracket? :
+    $$ = ['atomcat', [('type', $1)], ['fs', $2] + $3]
+
+#############################
+#           Slashes         #
+#############################
+
+%p
+#  Temporary switch to Python mode to insert the needed function
+slash_to_default_mode = {'/':'>', '\\':'<', '|':'.'}
+ability_to_ability_value = {'@': 'active', '!': 'inert', None:None}
+ability_value_to_ability = {'active': '@', 'inert': '!', None:None}
+def makeslash(direc, mode, ability):
+    if not mode:
+        mode = slash_to_default_mode[direc]
+    if direc == '|':
+        direc = None
+    ability = ability_to_ability_value[ability]
+    return ['slash'] + [(direc and [('dir', direc)] or []) +
+                        (ability and [('ability', ability)] or []) +
+                        (mode and [('mode', mode)] or [])]
+%y
+
+bareslash : SLASH | BACKSLASH | PIPE
+
+slash_ability : AT | BANG
+
+slash_mode : X GREATER : $$ = 'x>'
+           : LESS X    : $$ = '<x'
+           : GREATER | LESS | X | DOT | STAR | CARET
+
+slash : bareslash : $$ = makeslash($1, None, None)
+      : bareslash slash_mode : $$ = makeslash($1, $2, None)
+      : bareslash slash_ability: $$ = makeslash($1, None, $2)
+      : bareslash slash_mode slash_ability: $$ = makeslash($1, $2, $3)
+      : bareslash slash_ability slash_mode: $$ = makeslash($1, $3, $2)
+
+#############################
+#     Complex categories    #
+#############################
+
+# Example:
+# 
+# Source:
+# 
+# s<1>[E] \ np<2>[X nom] / np<3>[Y acc]
+#
+#
+# XML output:
+# 
+# <complexcat>
+#   <atomcat type="s">
+#     <fs id="1">
+#       <feat attr="index">
+#         <lf>
+#           <nomvar name="E"/>
+#         </lf>
+#       </feat>
+#     </fs>
+#   </atomcat>
+#   <slash dir="\" mode="&lt;"/>
+#   <atomcat type="np">
+#     <fs id="2">
+#       <feat attr="index">
+#         <lf>
+#           <nomvar name="X"/>
+#         </lf>
+#       </feat>
+#       <feat attr="case" val="nom"/>
+#     </fs>
+#   </atomcat>
+#   <slash dir="/" mode="&gt;"/>
+#   <atomcat type="np">
+#     <fs id="3">
+#       <feat attr="index">
+#         <lf>
+#           <nomvar name="Y"/>
+#         </lf>
+#       </feat>
+#       <feat attr="case" val="acc"/>
+#     </fs>
+#   </atomcat>
+# </complexcat>
+
+######################
+
+# This is a basic attempt to create a compact (BNF-style) syntax for
+# representing legal XML for categories.  The idea is that this could be
+# parsed and used to verify the XML, or perhaps to convert it to some other
+# form.  It's not clear this is worth it -- there is already an XML schema
+# notation for describing legal XML (albeit it's extremely obnoxious and
+# verbose), and verifiers for verifying XML given a schema and a piece of
+# XML, and XSLT (again, obnoxiously verbose) for transforming XML.
+
+# category = ( atomcat | complexcat )
+
+# complexcat {
+#   atomcat
+#   (slash (category | dollar) | dollar | setarg)+
+#   lf?
+# }
+
+# basicArg = ( slash | category )
+# dollarArg = ( slash | dollar )
+# dollar(name)
+# setarg { basicArg basicArg+ }
+
+# atomcat(!type=[NMTOKEN]) {
+#   fs?
+#   lf?
+# }
+    
+#   fs(id) {
+#     (feat(attr='index') {
+#        lf { nomvar(name) } }
+#      | feat(attr, val)
+#      )+
+#   }
+
+# slash(dir=('/', '\\', '|'), mode=('.', '*', '^', 'x', 'x<', '<x', '<', '>'),
+#       varmodality, ability=('inert', 'active'))
+      
+# fs(id): 
+#   ...
+
+%p
+
+##################
+# Initialization #
+##################
+
+# This maps face names to actual properties.  A face is the complete
+# description for how a particular piece of text is to be displayed.  The
+# properties can specify the font family, size, bold or not, italic or not,
+# subscript or not, "scale" (modify the size by the specified value), and
+# "inherit" to inherit from a specified face.  If not otherwise given,
+# all faces inherit from the default.
+
+face_mapping_init = {
+    # The default mapping should contain a value for all parameters
+    'default':{'family':'times', 'size':16, 'bold':False, 'italic':False,
+               'subscript':False, 'superscript':False, 'scale':100,
+               'foreground':None, 'background':None},
+    'subscript':{'family':'helvetica', 'subscript':True, 'scale':70,
+                 },
+    'category':{'bold':True, 'family':'helvetica'},
+    'dollar':{},
+    'slash':{},
+    'slash mode':{'subscript':True, 'scale':65},
+    'paren':{},
+    'brace':{},
+    'family name':{'foreground':'blue', 'scale':130, 'bold':True},
+    'lexical item':{'italic':True},
+    'numeric index':{'inherit':'subscript'},
+    'subscript comma':{'inherit':'subscript'},
+    'nomvar':{'inherit':'subscript', 'foreground':'forest green'},
+    'feature':{'inherit':'subscript', 'bold':True, 'foreground':'red'},
+    # Ideally the following should be in small caps
+    'caret':{'scale':115},
+    'semname':{'scale':115},
+    'semrole':{'scale':85, 'bold':True},
+    'member heading':{},
+    'member comma':{},
+    'member':{'bold':True},
+    }
+
+# Offset to be applied to the baseline to handle subscripts and superscripts,
+# relative to the size of the font of the subscripted/superscripted text.
+# FIXME: Maybe should be relative to the larger size of the base (non-offset)
+# text.  This would require that the 'scale' option not be handled in
+# fixup_face_properties() but dealt with at the time that the offset is
+# computed, so that the original text size is still available.
+subscript_offset = -0.5
+superscript_offset = 1
+
+# Factor to scale all: FIXME, not currently working
+zoom_factor = 100
+
+# Merged and fixed up equivalent of the above.  This will also have a
+# 'font' property containing the Tk font item corresponding to the
+# family, size, bold, and italic properties.
+face_mapping = {}
+
+# Fix up a derived table of properties.  Currently this only handles 'scale'.
+# This destructively modifies the property table.
+def fixup_face_properties(props):
+    if 'scale' in props:
+        scale=props['scale']
+        del props['scale']
+        assert 'size' in props
+        # Consider the size to its scaling factor
+        props['size'] = int(props['size'] * scale / 100.0 + 0.5)
+    family = props['family']
+    size = props['size']
+    weight = props['bold'] and 'bold' or 'normal'
+    slant = props['italic'] and 'italic' or 'roman'
+    props['font'] = tkFont.Font(family=family, size=size, weight=weight,
+                                slant=slant)
+    return props
+
+# Merge two tables of properties, with P2 overriding P1.  Remove the
+# 'inherit' property in the process.  Creates a new table, and does not
+# modify P1 or P2.
+def merge_face_properties(p1, p2):
+    props = {}
+    for x in p1:
+        if x != 'inherit':
+            props[x] = p1[x]
+    for x in p2:
+        if x != 'inherit':
+            props[x] = p2[x]
+    return props
+
+# Derive the complete list of properties associated with a face name.
+def face_properties(name):
+    props = face_mapping_init[name]
+    # If name is default, return properties directly
+    if name == 'default':
+        return merge_face_properties(props, {})
+    # Else, determine where to inherit from and merge properties with
+    # recursively computed value
+    if 'inherit' in props:
+        inherit = props['inherit']
+    else:
+        inherit = 'default'
+    return merge_face_properties(face_properties(inherit), props)
+
+# Compute the merged properties for all faces.
+def compute_face_properties():
+    for x in face_mapping_init:
+        props = fixup_face_properties(face_properties(x))
+        face_mapping[x] = props
+
+def late_init_draw_once():
+    compute_face_properties()
+
+#################################
+#   Drawing a section of text   #
+#################################
+
+# Create tags in a text widget corresponding to the faces and their
+# properties. FIXME: Maybe we should do this only when needed, for each
+# text widget.
+def create_tags(text):
+    for x in face_mapping:
+        props = face_mapping[x]
+        offs = 0
+        if props['subscript']:
+            offs = subscript_offset
+        elif props['superscript']:
+            offs = superscript_offset
+        offs = offs*props['size']
+        offs = '%sp' % offs # Dimension in points
+        text.tag_config(x, font=props['font'], offset=offs)
+        fg = props['foreground']
+        bg = props['background']
+        if fg:
+            text.tag_config(x, foreground=fg)
+        if bg:
+            text.tag_config(x, background=bg)
+        
+
+# A "draw-into" object, used for incrementally building up some text
+# in various fonts.  Initialized with a parent widget and some initial text.
+# Drawing into it is done by calls to text().  When done, call finish()
+# to return a widget containing the text (which can then be packed, gridded,
+# etc.).
+class draw_into(object):
+    def __init__(self, master, width=120):
+        self.wid = Text(master, height=3, width=width,
+                        borderwidth=0, relief=FLAT,
+                        background='white')
+        self.curface = None
+	self.wid.slash_image = []
+        self.curtext = ''
+        create_tags(self.wid)
+
+	# Self.alltext maintains the length of the text printed 
+	# for the current widget
+	self.alltext = 0
+
+	# FIXME: the tirgger for bigger height of the Text
+	# widget is arbitrarily set to 95. This should be 
+	# driven by width of individual fonts and chars
+	self.expandTrigger = 95
+
+    def finish_run(self):
+        if self.curtext:
+            self.wid.insert(INSERT, self.curtext, (self.curface,))
+            #props = face_mapping[self.curface]
+            #Label(self.wid, text=self.curtext,
+            #      font=props['font']).pack(side=LEFT)
+            self.curtext = ''
+    def text(self, tex, face='default'):
+        if self.curface == face:
+            self.curtext += tex
+        else:
+            self.finish_run()
+            self.curtext = tex
+            self.curface = face
+
+	# Increase recorded length of text
+	self.alltext += len(tex)
+
+	# Increase height if necessary
+	if (self.alltext > self.expandTrigger):
+		heightval = 3* (self.alltext/self.expandTrigger +1)
+	    	self.wid.config(height= heightval)
+
+
+    def finish(self):
+        self.finish_run()
+        self.wid.config(state=DISABLED)
+        return self.wid
+    def image(self, img):
+	# When there is an image to be embedded
+	self.finish_run()
+	# Access the OPENCCG_HOME environment variable
+	# to determine the correct path for the images
+	openccg_home = os.environ['OPENCCG_HOME']
+	gifdir = openccg_home+"/images/slashes/"
+	image = PhotoImage(file=gifdir+img)
+	# We are creating an instantiated variable here
+	# for the image, because the actual photo object is destroyed once
+	# the execution leaves the __init__ code. Without building it this way, 
+	# the display was showing only a space for the image but not the image itself
+	self.wid.slash_image += [image]
+	self.wid.image_create(INSERT, image=image)
+
+    def onHilite(self):
+    	self.wid.config(bg = '#E9FFE3')
+
+    def offHilite(self):
+    	self.wid.config(bg = 'white')
+
+def category_draw_children(into, chils, depth, vars, need_initial_comma=False,
+                           sep='', sepface='default'):
+    for x in chils:
+        if sep and need_initial_comma:
+            into.text(sep, sepface)
+        need_initial_comma = True
+        category_draw(into, x, depth=depth + 1, vars=vars)
+
+# Given the XML for a category, draw a graphical representation into the
+# widget INTO.  The drawing is done by calling into.text(TEXT, FACE)
+def category_draw(into, xml, depth, vars):
+    ty = xml[0]
+    props = xml[1]
+    chils = xml[2:]
+    if ty == 'complexcat':
+        if depth > 0:
+            into.text('(', 'paren')
+        category_draw_children(into, chils, depth, vars)
+        if depth > 0:
+            into.text(')', 'paren')
+    elif ty == 'atomcat':
+        into.text(getprop('type', props), 'category')
+        category_draw_children(into, chils, depth, vars)
+    elif ty == 'setarg':
+        into.text('{', 'brace')
+        category_draw_children(into, chils, depth, vars)
+        into.text('}', 'brace')
+    elif ty == 'fs':
+        needcomma = False
+        if vars.show_feat_id.get():
+            idval = getoptprop('id', props)
+            if idval:
+                #into.text('<%s>' % idval, 'numeric index')
+                into.text('%s' % idval, 'numeric index')
+                needcomma = True
+        if vars.show_feat_struct.get():
+            category_draw_children(into, chils, depth, vars,
+                                   need_initial_comma=needcomma, sep=',',
+                                   sepface='subscript comma')
+    elif ty == 'feat':
+        attr = getprop('attr', props)
+        if attr == 'index':
+            assert len(chils) == 1
+            assert chils[0][0] == 'lf'
+            chils = chils[0][2:]
+            assert len(chils) == 1
+            assert chils[0][0] == 'nomvar'
+            into.text(getprop('name', chils[0][1]), 'nomvar')
+        else:
+            val = getoptprop('val', props, None)
+            if val:
+                if vars.show_full_features.get():
+                    into.text("%s=%s" % (attr, getprop('val', props)),
+                              'feature')
+                else:
+                    into.text("%s" % getprop('val', props), 'feature')
+            else:
+                into.text("%s" % attr, 'feature')
+    elif ty == 'slash':
+        dir = getoptprop('dir', props, '|')
+        mode = getoptprop('mode', props)
+        ability = getoptprop('ability', props)
+#        into.text('%s' % dir, 'slash')
+#        into.text('%s%s' % (mode or '',
+#                            ability_to_ability_value[ability] or ''),
+#                  'slash mode')
+ 	
+	# We create the file name here
+	# By interpreting various parameters
+	# and joiing them together as a string
+	
+	if dir == '\\':
+		slash_string = 'bk'
+	elif dir == '/':
+		slash_string = 'fd'
+	else:
+		slash_string = 'str'
+
+	#slash_mode : X GREATER : $$ = 'x>'
+	#           : LESS X    : $$ = '<x'
+	#           : GREATER | LESS | X | DOT | STAR | CARET
+           
+	modelist = {'x>':'cross_greater',
+		    '<x':'lesser_cross',
+		    '>':'greater',
+		    '<':'lesser',
+		    'x':'cross',
+		    '.':'dot',
+		    '*':'star',
+		    '^':'box'}
+	if mode == None:
+		image_string = slash_string + '.GIF'
+	else:
+		image_string = slash_string+ '_' + modelist[mode] + '.GIF'
+		
+	into.image(image_string)
+
+    elif ty == 'dollar':
+        name = getoptprop('name', props)
+        into.text('$', 'dollar')
+        into.text('%s' % name, 'numeric index')
+    else:
+	# Have commented the following assert Statement
+	# and the debug statement
+	# Because of validation errors
+        #debug('ty??? %s\n' % ty)
+        #assert False
+	dummy = 1
+
+%y
+
+complexcat_entry : atomcat
+                 : LPAREN complexcat RPAREN    : $$ = $2
+
+complexcat_postmod : DOLLAR NUMBER :
+    $$ = [['slash', []], ['dollar', [('name', $2)]]]
+
+complexcat_postmod : slash complexcat_entry : $$ = [$1, $2]
+
+#complexcat_postmod : slash DOLLAR NUMBER :
+#    $$ = [$1, ['dollar', [('name', $3)]]]
+
+complexcat : complexcat_entry
+           : complexcat complexcat_postmod :
+    if $1[0] != 'complexcat':
+        $1 = ['complexcat', []] + [$1]
+    $$ = $1 + $2
+
+cat_set_entry : slash complexcat_entry : $$ = [$1, $2]
+
+cat_set_entry_0: cat_set_entry
+               : cat_set_entry commas
+
+complexcat : complexcat LBRACE cat_set_entry_0+ RBRACE :
+    # $3 comes as a list of lists of the form [slash, cat]; we need to
+    # flatten the list, which is what reduce() does
+    if $1[0] != 'complexcat':
+        $1 = ['complexcat', []] + [$1]
+    $$ = $1 + [['setarg', []] + reduce(lambda x,y:x+y, $3)]
+
+#############################
+#       Hybrid logic        #
+#############################
+
+# Example:
+# 
+# Source:
+# 
+# E:action(* <Actor>X:animate-being <Patient>Y:sem-obj)
+# 
+# XML output:
+# 
+# <lf>
+#   <satop nomvar="E:action">
+#     <prop name="[*DEFAULT*]"/>
+#     <diamond mode="Actor">
+#       <nomvar name="X:animate-being"/>
+#     </diamond>
+#     <diamond mode="Patient">
+#       <nomvar name="Y:sem-obj"/>
+#     </diamond>
+#   </satop>
+# </lf>
+
+%p
+
+def hylo_draw_children(into, chils, need_initial_comma=False,
+                       sep='', sepface='caret'):
+    for x in chils:
+        if sep and need_initial_comma:
+            into.text(sep, sepface)
+        need_initial_comma = True
+        hylo_draw(into, x)
+
+# Given the XML for a hylo, draw a graphical representation into the
+# widget INTO.  The drawing is done by calling into.text(TEXT, FACE)
+def hylo_draw(into, xml):
+    ty = xml[0]
+    props = xml[1]
+    chils = xml[2:]
+    if ty == 'satop':
+        into.text('@')
+        into.text(getprop('nomvar', props), 'nomvar')
+        into.text('(')
+        hylo_draw_children(into, chils, sep=' ^ ')
+        into.text(')')
+    elif ty == 'prop':
+        name = getprop('name', props)
+        if name == '[*DEFAULT*]':
+            into.text('*', 'semname')
+        else:
+            into.text(name, 'semname')
+    elif ty == 'diamond':
+        mode = getprop('mode', props)
+        # FIXME: Instead of uppercasing, we really want small caps
+        into.text('<%s>' % mode.upper(), 'semrole')
+        assert len(chils) > 0
+        if len(chils) == 1:
+            hylo_draw(into, chils[0])
+        else:
+            into.text('(')
+            hylo_draw_children(into, chils, sep='^')
+            into.text(')')
+    elif ty == 'nomvar':
+        into.text(getprop('name', props), 'nomvar')
+    else:
+        assert False
+%y
+
+hylo_entry : STAR : $$ = ['prop', [('name', '[*DEFAULT*]')]]
+           : typed_word :
+    if $1[0].isupper():
+        $$ = ['nomvar', [('name', $1)]]
+    else:
+        $$ = ['prop', [('name', $1)]]
+
+hylo_entry : LESS word GREATER hylo_entry :
+    $$ = ['diamond', [('mode', $2)], $4]
+
+hylo_entry : LESS word GREATER LPAREN hylo_list RPAREN :
+    $$ = ['diamond', [('mode', $2)]] + $5
+
+carets : CARET
+       : carets CARET
+
+hylo_entry_0: hylo_entry
+            : hylo_entry carets
+
+hylo_list : empty
+          : hylo_list hylo_entry_0   : $$ = $1 + [$2]
+
+hylo_list_0 : hylo_list
+            : carets: $$ = []
+            : carets hylo_list: $$ = $2
+
+hylo_spec : typed_word LPAREN hylo_list_0 RPAREN :
+    $$ = ['satop', [('nomvar', $1)]] + $3
+
+hybrid_logic : hylo_spec*
+             : AT hylo_spec*: $$ = $2
+
+#############################
+#            Words          #
+#############################
+
+%p
+
+def init_morphology():
+    global morph_xml
+    morph_xml = []
+
+    # List families/parts-of-speech of a word.  This comes from the
+    # families/parts-of-speech specified in a word {} declaration; hence we
+    # can't really tell families from POS's.  This also comes from any
+    # member declarations inside of a family.
+    global word_to_family_pos
+    word_to_family_pos = {}
+    # List word members of a family/part-of-speech; more or less the
+    # inverse of the previous hash. (Not a perfect inverse because it
+    # doesn't currently list any members that come from a member
+    # declaration inside of a family, but only from word {} declarations.)
+    global family_pos_to_word
+    family_pos_to_word = {}
+    # word->predicate mapping; this comes from pred=foo declarations in the
+    # properties of a word.  This is needed because this info must be added
+    # to <member> tags in a family.
+    global word_to_predicate
+    word_to_predicate = {}
+    # Mapping of families to parts-of-speech; comes from family {}
+    # declarations.
+    global family_to_pos
+    family_to_pos = {}
+    # Contains a key for each part-of-speech seen in a family {}
+    # declaration.
+    global pos_hash
+    pos_hash = {}
+    # (XML for) list of word members explicitly specified using a member
+    # statement.
+    global family_members
+    family_members = {}
+
+def save_morphology(cur):
+    cur.morph_xml = morph_xml
+    cur.word_to_family_pos = word_to_family_pos
+    cur.family_pos_to_word = family_pos_to_word
+    cur.word_to_predicate = word_to_predicate
+    cur.family_to_pos = family_to_pos
+    cur.pos_hash = pos_hash
+    cur.family_members = family_members
+
+# Assume that hash[key] is a list, add VALUE to the list if not already there.
+def add_uniquely_to_hash_entry_list(hash, key, value):
+    if key not in hash:
+        hash[key] = []
+    if value not in hash[key]:
+        hash[key] += [value]
+
+def note_family_member(word, families):
+    for x in families:
+        add_uniquely_to_hash_entry_list(word_to_family_pos, word, x)
+        add_uniquely_to_hash_entry_list(family_pos_to_word, x, word)
+
+def make_word_morph_xml():
+    xml = []
+    for x in morph_xml:
+        word_pos_list = []
+        word = getprop('stem', x[1])
+        # Each word needs to be listed as many times as it has parts of
+        # speech.  We collect together all families and POS's associated
+        # with a word, either from word {} or member declarations,
+        # and determine all POS's from them.
+        for y in word_to_family_pos.get(word, []):
+            if y in family_to_pos:
+                pos = family_to_pos[y]
+            elif y in pos_hash:
+                pos = y
+            else:
+                error(None, 'Family/part-of-speech %s not found (word declaration %s)',
+                      y, word)
+            if pos not in word_pos_list:
+                word_pos_list += [pos]
+        for y in word_pos_list:
+            # Make a copy of the word's XML and set the POS appropriately.
+            entry = x[:]
+            putprop('pos', y, entry[1])
+            xml += [entry]
+    return xml
+
+%y
+
+word_param: word_list: $$ = ($1, [])
+          : word_list LPAREN ext_attr_list RPAREN:
+    # WORD(VALUE) is equivalent to WORD(class=VALUE).
+    property_name_replace(None, 'class', $3)
+    $$ = ($1, $3)
+
+word_spec_1: WORD word COLON word_param:
+    (families, params) = $4
+    note_family_member($2, families)
+    pred = getoptprop('pred', params)
+    if pred:
+        word_to_predicate[$2] = pred
+    $$ = ($2, [('pos', None), ('stem', $2)] + params)
+
+word_spec_1: WORD word COLON: $$ = ($2, [('pos', None), ('stem', $2)])
+
+word_spec: WORD word: $$ = ($2, [('pos', None), ('stem', $2)])
+         : word_spec_1
+
+word_block: word_spec SEMI:
+    (word, params) = $1
+    morph_xml.append(['entry', [('word', word)] + params])
+
+word_block: word_spec_1 COLON word_macros SEMI:
+    (word, params) = $1
+    morph_xml.append(['entry', [('word', word)] + $3 + params])
+
+word_macros: word_list: $$ = [('macros', ' '.join(['@%s' % x for x in $1]))]
+
+word_form: word_or_star SEMI: $$ = ($1, [])
+
+word_form: word_or_star COLON word_macros SEMI: $$ = ($1, $3)
+
+word_forms: : $$ = []
+          : word_forms word_form : $$ = $1 + [$2]
+
+word_block: word_spec LBRACE word_forms RBRACE:
+    (word, params) = $1
+    for (form, macros) in $3:
+        if form == '*':
+            form = word
+        morph_xml.append(['entry', [('word', form)] + macros + params])
+
+#############################
+#       Family blocks       #
+#############################
+
+%p
+
+def init_lexicon():
+    global lexicon_xml
+    lexicon_xml = []
+
+def save_lexicon(cur):
+    cur.lexicon_xml = lexicon_xml
+
+# lexicon_xml already contains XML for each family and its entries (i.e.
+# lexical insertion rules).  We also need to add to each family the words
+# that are members of the family -- these come from both word {}
+# declarations and member statements.
+def make_family_lexicon_xml():
+    for x in lexicon_xml:
+        # Make sure that open families don't have member entries, or otherwise
+        # [*DATE*], [*NUM*], etc. won't work.
+        closed = getprop('closed', x[1])
+        if closed == 'false':
+            continue
+        name = getprop('name', x[1])
+        words_seen = []
+        # Add each stem explicitly given in a member statement.  The
+        # predicate comes from any predicate given in the member statement
+        # along with the stem, or from the word {} declaration as a backup.
+        for y in family_members[name]:
+            stem = getprop('stem', y[1])
+            words_seen += [stem]
+            pred = getoptprop('pred', y[1])
+            if not pred:
+                pred = word_to_predicate.get(stem, None)
+            x += [['member',
+                   [('stem', stem)] + (pred and [('pred', pred)] or [])]]
+        # Add each stem that specifies that it belongs to this family,
+        # unless we already added it.
+        for y in family_pos_to_word.get(name, []):
+            if y not in words_seen:
+                words_seen += [y]
+                pred = word_to_predicate.get(y, None)
+                x += [['member',
+                       [('stem', y)] + (pred and [('pred', pred)] or [])]]
+    return lexicon_xml
+
+
+# A CSFamily is a `family {}' block.
+class CSFamily(CSBlock):
+    def __init__(self, prod, name, props, statements):
+        super(CSFamily, self).__init__(prod)
+        self.name = name
+        self.props = props
+        self.statements = statements
+	self.text = None
+	self.homeButton = None
+	self.btnFrame = None
+	self.menuHolder = None
+
+	self.childFrame = None
+	self.cfile = None
+	self.cf = None
+	self.vars = None
+	self.canvas = None
+	self.mainFrame = None
+
+    def draw(self, childFrame, cfile, vars, row, canvas, mainFrame):
+        # Draw the family name
+        f = Frame(childFrame, bd=1, relief=SUNKEN, background='white')
+        cf = draw_into(f, width=20)
+        cf.text('%s' % self.name, 'family name')
+
+	child_widget=cf.finish()
+	self.menuHolder = child_widget
+
+        child_widget.pack(fill=BOTH, expand=YES)
+
+	child_widget.bind("<Button-1>", self.editPopup)
+
+	self.childFrame = childFrame
+	self.cfile = cfile
+	self.cf = cf
+	self.vars = vars
+	self.canvas = canvas
+	self.mainFrame = mainFrame
+
+
+        f.grid(row=row, column=0, sticky=NSEW)
+
+        # Draw the various statements
+        f = Frame(childFrame, bd=1, relief=SUNKEN, background='white')
+        for x in self.statements:
+            frame = x.draw(f, cfile, vars)
+            if frame:
+                frame.pack(fill=BOTH, expand=YES)
+        f.grid(row=row, column=1, sticky=NSEW)
+
+        childFrame.rowconfigure(row, weight=1)
+
+    # Define the binding procedure for the right-click for editing an entry
+    def editPopup(self, event):
+	popup = Menu(self.menuHolder, tearoff =0)
+	popup.add_command(label=' Edit ', command = lambda: self.editSection(self.childFrame, 
+				self.cfile, 
+				self.cf, 
+				self.vars, 
+				self.canvas, 
+				self.mainFrame))
+	try:
+		popup.tk_popup(event.x_root+40, event.y_root, 0)
+	finally:
+		popup.grab_release()
+	
+	# Now bind the right-click to the saveSection buttons
+	self.menuHolder.bind("<Button-1>", self.savePopup)
+
+    # Define the right click binding for the save entry
+    def savePopup(self, event):
+    	popup = Menu(self.menuHolder, tearoff = 0)
+	popup.add_command(label = 'Done', command = lambda: self.saveSection(self.childFrame,
+						self.cfile,
+						self.cf,
+						self.vars,
+						self.canvas,
+						self.mainFrame))
+	popup.add_command(label = 'Home', command = lambda: self.editHome(self.cfile))
+
+	fileData = self.cfile.getAllText()
+	popup.add_command(label = 'Undo All', command = lambda: self.undoEdit(fileData, self.cfile))
+
+	try:
+		popup.tk_popup (event.x_root+40, event.y_root, 0)
+	finally:
+		popup.grab_release()
+    
+    # Edit a section, i.e. a family of the grammar individually rather than the entire grammar
+    # Note that this will have very preliminary editing capabilities and the complete grammar
+    # editing should be done through the Edit global view
+    def editSection(self, childFrame, cfile, hiliteText, vars, canvas, mainFrame):
+        editFrame = Frame(mainFrame, bd=1, background='white')
+
+    	self.text = Text(editFrame, padx=5, wrap=None, undo = YES, background='white', height =10)
+	vbar = Scrollbar(editFrame)
+	hbar = Scrollbar(editFrame, orient='horizontal')
+
+	self.text.config(yscrollcommand=vbar.set)    # call vbar.set on text move
+        self.text.config(xscrollcommand=hbar.set)
+        vbar.config(command=self.text.yview)         # call text.yview on scroll move
+        hbar.config(command=self.text.xview)         # or hbar['command']=text.xview
+
+	# Changing the mode of the cfile object here,
+	# so that once the uer clicks done,
+	# the whole object is recompiled and redisplayed
+	cfile.mode= 'Edit'
+
+	# Highlight the row being edited
+	hiliteText.onHilite()
+
+	vbar.pack(side=RIGHT, fill=Y)
+	hbar.pack(side=BOTTOM, fill=X)
+	self.text.pack(fill= BOTH, expand= YES)
+
+	# Set a mark at the beginning of the text
+	self.text.mark_set("START", INSERT)
+	self.text.mark_gravity("START", LEFT)
+
+	# Push in the rest of the file's contents
+	fileData = cfile.getAllText()
+	self.text.insert(INSERT, fileData)
+
+	# Move the insert position to the first occurence of the family name
+	# FIXME: this is poor implementation
+	# The positioning of the insert cursor should be happening by parsing the 
+	# CFG production rules, using CSFamily.prod.lineno and endlineno
+	self.text.config(takefocus=True)
+	idx= self.text.search('family '+ self.name, "START")
+	self.text.mark_set(CURRENT, idx)
+	self.text.see(CURRENT)
+
+        #editFrame.grid(row=row+1, columnspan =3, sticky = NSEW)
+        editFrame.grid(row=2, columnspan =2, sticky = NSEW)
+	childFrame.update_idletasks()
+	canvas.config(scrollregion=canvas.bbox("all"))
+
+    # Finished editing
+    #def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame, homeButton, undoButton):
+    def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame):
+    	# We force the text contents of the cfile object to copy over 
+	# all that is presently in the current text-box
+    	cfile.setAllText(self.text.get(1.0,END))
+
+	# Undo the highlight of the row
+	hiliteText.offHilite()
+
+	# Recompile whatever was edited and redisplay
+	# Note: changes are not saved hereby!!
+	cfile.compile_if_needed()
+	cfile.onLexicon()
+
+	# Restore the right-click binding to the original
+	self.menuHolder.bind("<Button-1>", self.editPopup)
+
+    # Restore view to original place where you wanted to edit
+    def editHome(self, cfile):
+	# Move the insert position to the first occurence of the family name
+	# FIXME: this is poor implementation
+	# The positioning of the insert cursor should be happening by parsing the 
+	# CFG production rules, using CSFamily.prod.lineno and endlineno
+	self.text.config(takefocus=True)
+	idx= self.text.search('family '+ self.name, "START")
+
+	if not idx:
+		showwarning('Error', 'Original entry for '+self.name+ ' not found!')
+	self.text.mark_set(CURRENT, idx)
+	self.text.see(CURRENT)
+
+    # Undo all editing done till now
+    def undoEdit(self, fileData, cfile):
+    	askqn = askokcancel('Warning','Undo all changes till now?')
+	if askqn:
+		self.text.delete("START", END)
+		self.text.insert(CURRENT, fileData)
+		self.editHome(cfile)
+
+    	
+
+# CSFamilyEntry is an `entry' statement inside a `family' block.
+#
+# PROPS is a property list corresponding to the entry's name ('name') and
+# any other properties, deriving from the form
+#
+# entry NAME(PROP=VAL, ...):
+#
+# Either the name or properties, or both, may be omitted.
+#
+# CAT is the XML corresponding to the entry's category, and LF is the XML for
+# the logical form (hybrid logic).
+
+class CSFamilyEntry(CSStatement):
+    def __init__(self, prod, props, cat, lf=None):
+        super(CSFamilyEntry, self).__init__(prod)
+        self.props = props
+        # NOTE: self.cat is a single XML statement, but self.lf is a list
+        # of XML statements.  FIXME.
+        self.cat = cat
+        self.lf = lf
+    def xml(self):
+        if self.lf:
+            lf = [['lf', []] + self.lf]
+        else:
+            lf = []
+        return [['entry', self.props, self.cat + lf]]
+    def draw(self, parent, cfile, vars):
+        name = getoptprop('name', self.props)
+        f = Frame(parent, background='white')
+        cf = draw_into(f)
+        cf.text('      ')
+        if name:
+            cf.text('%s: ' % name)
+        category_draw(cf, self.cat, depth=0, vars=vars)
+        if self.lf and vars.show_semantics.get():
+            cf.text(' : ')
+            hylo_draw_children(cf, self.lf)
+        cf.finish().pack(fill=BOTH, expand=YES, side=LEFT)
+        return f
+
+# CSFamilyMember is a `member' statement inside a `family' block.  ITEMS
+# lists the items given, in property-list form:
+#
+# STEM --> [('stem', STEM)]
+# STEM(PRED) --> [('stem', STEM), ('pred', PRED)]
+
+class CSFamilyMember(CSStatement):
+    def __init__(self, prod, items):
+        super(CSFamilyMember, self).__init__(prod)
+        self.items = items
+    def xml(self):
+        return [['member', x] for x in self.items]
+    def draw(self, parent, cfile, vars):
+        return None
+        f = Frame(parent, background='white', bd=1, relief=SUNKEN)
+        cf = draw_into(f)
+        cf.text('Members: ', 'member heading')
+        first = True
+        for x in self.items:
+            stem = getprop('stem', x)
+            pred = getoptprop('pred', x)
+            if not first:
+                cf.text(', ', 'member comma')
+            cf.text(' %s%s' % (stem, pred and "(pred=%s)" % pred or ''),
+                    'member')
+            first = False
+
+	print len (self.items) 
+        cf.finish().pack(fill=BOTH, expand=YES)
+        return f
+
+%y
+
+# Omitting the colon between entry category and hybrid logic doesn't
+# actually cause parsing problems, but it's probably not a good idea to
+# encourage this, because the syntax might change in the future.
+
+entry_name_1: opt_paren_attr_list
+
+# We shouldn't need the first entry below, but we do, due to the bugginess
+# in PLY in handling empty rules.
+entry_name: word: $$ = [('name', $1)]
+          : word entry_name_1: $$ = [('name', $1)] + $2
+          : entry_name_1
+
+entry : ENTRY entry_name COLON complexcat COLON hybrid_logic SEMI :
+    $$ = CSFamilyEntry($@, props=$2, cat=$4, lf=$6)
+
+entry : ENTRY entry_name COLON complexcat SEMI :
+    $$ = CSFamilyEntry($@, props=$2, cat=$4)
+
+member_entry : word                    : $$ = [('stem', $1)]
+member_entry : word LPAREN word RPAREN :
+    $$ = [('stem', $1), ('pred', $3)]
+
+member_entry_0: member_entry
+              : member_entry commas
+
+member : MEMBER COLON member_entry_0+ SEMI	:
+    $$ = CSFamilyMember($@, items=$3)
+
+family_statement : member | entry
+
+family_statement_list : empty
+		      : family_statement_list family_statement : $$ = $1 + [$2]
+
+family_block : FAMILY word opt_paren_ext_attr_list LBRACE family_statement_list RBRACE :
+    # FAMILY(VALUE) is equivalent to FAMILY(pos=VALUE).
+    property_name_replace(None, 'pos', $3)
+    # Create the AST object -- before adding to $3.
+    $$ = CSFamily($@, name=$2, props=$3, statements=$5)
+    # 'pos' (part of speech) defaults to the family name; they would only
+    # differ when more than one family is used to define a particular part of
+    # speech, to handle related characteristics (family Prep-Nom vs. pos Prep).
+    if not property_specified('pos', $3):
+        $3 += [('pos', $2)]
+
+    # Store mappings related to POS.
+    pos = getprop('pos', $3)
+    family_to_pos[$2] = pos
+    pos_hash[pos] = True
+
+    # Now construct the XML for the family
+    xml = ['family', [('name', $2)] + $3]
+    family_members[$2] = []
+    for x in $5:
+        if type(x) is CSFamilyMember:
+            family_members[$2].extend(x.xml())
+        else:
+            xml.extend(x.xml())
+    # If members have been specified ('member' statements) and there is no
+    # 'closed' property, make the family closed.
+    
+    # if family_members[$2] and not property_specified('closed', xml[1]):
+    #    xml[1] += [('closed', 'true')]
+    
+    # Actually, we *always* need classes closed, due to a bizarreness in
+    # OpenCCG.
+    if not property_specified('closed', xml[1]):
+        xml[1] += [('closed', 'true')]
+    # Add names to entries ('entry' statements) without them.
+    primcount = 0
+    for x in xml[2:]:
+        if not property_specified('name', x[1]):
+            primcount += 1
+            x[1] = [('name', 'Entry-%s' % primcount)] + x[1]
+    # For each specified member, note the family it's in so that its part
+    # of speech can be calculated.
+    for x in family_members[$2]:
+        add_uniquely_to_hash_entry_list(word_to_family_pos,
+                                        getprop('stem', x[1]),
+                                        $2)
+    lexicon_xml.append(xml)
+    $$.static_xml = [xml]
+
+#############################
+#        Rule blocks        #
+#############################
+
+%p
+def init_rules():
+    global rules
+    rules = {
+        ('app', '+') : True,
+        ('app', '-') : True,
+        ('comp', '+') : True,
+        ('comp', '-') : True,
+        ('xcomp', '+') : True,
+        ('xcomp', '-') : True,
+        ('sub', '+') : False,
+        ('sub', '-') : False,
+        ('xsub', '+') : False,
+        ('xsub', '-') : False,
+        ('typeraise', '+') : [(False, True, True)],
+        ('typeraise', '-') : [(True, True, True)],
+        'typechange' : [],
+        }
+
+    global rules_to_xml_mapping
+    rules_to_xml_mapping = {
+        'app' : ['application', []],
+        'comp' : ['composition', [('harmonic', 'true')]],
+        'xcomp' : ['composition', [('harmonic', 'false')]],
+        'sub' : ['substitution', [('harmonic', 'true')]],
+        'xsub' : ['substitution', [('harmonic', 'false')]],
+        }
+
+def save_rules(cur):
+    cur.rules = rules
+    cur.rules_to_xml_mapping = rules_to_xml_mapping
+
+def make_rules_xml():
+    xml = []
+    unique = 0
+    for (key, value) in my_sorted(rules.items()):
+        if type(key) is tuple and key[0] in rules_to_xml_mapping:
+            rx = copy.deepcopy(rules_to_xml_mapping[key[0]])
+            rx[1] += [('dir', key[1] == '+' and 'forward' or 'backward')]
+            xml.append(rx)
+        elif type(key) is tuple and key[0] == 'typeraise':
+            for (dollar, arg, result) in value:
+                xml.append(['typeraising',
+                            [('dir', key[1] == '+' and 'forward'
+                              or 'backward'),
+                             ('useDollar', dollar and 'true' or 'false')]]
+                           + (arg != True and
+                              [['arg', [], arg]]
+                              or [])
+                           + (result != True and
+                              [['result', [], result]]
+                              or []))
+        elif key == 'typechange':
+            for (arg, result, lf) in value:
+                unique += 1
+        	if lf:
+	            lf = [['lf', []] + lf]
+	        else:
+	            lf = []
+                xml.append(['typechanging', [('name', 'typechange-%d' % unique)],
+                            ['arg', [], arg],
+                            ['result', [], result + lf]])
+        else:
+            raise InternalError("Invalid element in rules hash: %s" % str(key))
+    return xml
+
+def dotyperaise(plusminus, dollarp, arg, result):
+    if plusminus == '+' or plusminus == '+-':
+        rules[('typeraise', '+')] += [(dollarp, arg, result)]
+    if plusminus == '-' or plusminus == '+-':
+        rules[('typeraise', '-')] += [(dollarp, arg, result)]
+
+def rulesreinit():
+    rules.clear()
+    rules[('typeraise', '+')] = []
+    rules[('typeraise', '-')] = []
+    rules['typechange'] = []
+%y
+
+ruletype : APP | COMP | XCOMP | SUB | XSUB
+
+opt_dollar : DOLLAR : $$ = True
+           : empty : $$ = False
+
+opt_atomcat : atomcat
+            : empty : $$ = True
+
+opt_complexcat : COLON complexcat : $$ = $2
+               : empty : $$ = True
+
+plusminus_spec : PLUS | MINUS | PLUSMINUS
+
+rule : NO SEMI : rulesreinit()
+     : NO ruletype SEMI | NO ruletype PLUSMINUS SEMI : \
+       del rules[($2, '+')]; del rules[($2, '-')]
+     : NO ruletype PLUS SEMI : del rules[($2, '+')]
+     : NO ruletype MINUS SEMI : del rules[($2, '-')]
+     : NO TYPERAISE SEMI | NO TYPERAISE PLUSMINUS SEMI : \
+       rules[('typeraise', '+')] = []; rules[('typeraise', '-')] = []
+     : NO TYPERAISE PLUS SEMI : rules[('typeraise', '+')] = []
+     : NO TYPERAISE MINUS SEMI : rules[('typeraise', '-')] = []
+     : NO TYPECHANGE SEMI : rules['typechange'] = []
+     : ruletype PLUSMINUS SEMI : \
+       rules[($1, '+')] = True; rules[($1, '-')] = True
+     : ruletype PLUS SEMI : rules[($1, '+')] = True
+     : ruletype MINUS SEMI : rules[($1, '-')] = True
+     : TYPERAISE plusminus_spec opt_dollar
+       opt_complexcat SEMI:  dotyperaise($2, $3, $4, True)
+     : TYPERAISE plusminus_spec opt_dollar
+       COLON complexcat GOESTO opt_atomcat SEMI: dotyperaise($2, $3, $5, $7)
+     : TYPECHANGE COLON complexcat GOESTO complexcat SEMI: \
+       rules['typechange'] += [($3, $5, None)]
+     : TYPECHANGE COLON complexcat GOESTO complexcat COLON hybrid_logic SEMI: \
+       rules['typechange'] += [($3, $5, $7)]
+
+rule_list : rule_list rule
+          : empty
+
+rule_block : RULE LBRACE rule_list RBRACE
+
+#############################
+#           Testbed         #
+#############################
+
+%p
+
+def init_testbed():
+    global testbed_statements
+    testbed_statements = []
+
+def save_testbed(cur):
+    cur.testbed_statements = testbed_statements
+
+def add_testbed_statement(bang, words, number):
+    testbed_statements.append(['item',
+                               [('string', ' '.join(words))] + bang +
+                               number])
+
+def make_testbed_xml():
+    return testbed_statements
+
+%y
+
+opt_testbed_bang: BANG: $$ = [('known', 'true')]
+                : empty
+
+testbed_entry: opt_testbed_bang word_list SEMI: \
+    add_testbed_statement($1, $2, [])
+             : opt_testbed_bang word_list COLON NUMBER SEMI: \
+    add_testbed_statement($1, $2, [('numOfParses', $4)])
+
+testbed_block: TESTBED LBRACE testbed_entry* RBRACE
+
+#############################
+#      Relation-sorting     #
+#############################
+
+%p
+
+def init_relation_sorting():
+    global relation_sorting
+    relation_sorting = []
+
+def save_relation_sorting(cur):
+    cur.relation_sorting = relation_sorting
+
+def make_relation_sorting_lexicon_xml():
+    if relation_sorting:
+        return [['relation-sorting',
+                 [('order', ' '.join(relation_sorting))]]]
+    else:
+        return []
+
+%y
+
+relation_sorting_block: RELATION_SORTING COLON word_or_star_0 * SEMI:
+    global relation_sorting
+    relation_sorting += $3
+
+#############################
+#   End Yacc Declarations   #
+#############################
+%p
+
+def p_error(p):
+    if p:
+        error(p.lineno, "Syntax error at '%s'", p.value)
+    else:
+        error(None, "Unexpected end of file")
+
+#############################
+#       Lexer classes       #
+#############################
+
+# A Lexer that allows for a list of tokens to be pushed onto the front of
+# the list of tokens to be returned.  Any number of such lists can be
+# pushed.
+class StackLexer(object):
+    def __init__(self, lexer):
+        self.lexer = lexer
+        self.tokenstack = []
+        self.tokenstackind = []
+        self.lineno = 1
+
+    def input(self, s):
+        self.lexer.input(s)
+
+    def pushstack(self, stack):
+        self.tokenstack.append(stack)
+        self.tokenstackind.append(0)
+
+    def token(self):
+        global return_bogus_value
+        if return_bogus_value:
+            return_bogus_value = 0
+            tok = CCGToken('BOGUS_VALUE', 'BOGUS_VALUE')
+            tok.lineno = self.lineno
+            return tok
+        while self.tokenstack:
+            try:
+                tok = self.tokenstack[-1][self.tokenstackind[-1]]
+                self.tokenstackind[-1] += 1
+                return tok
+            except IndexError:
+                self.tokenstack.pop()
+                self.tokenstackind.pop()
+        if self.lexer:
+            tok = self.lexer.token()
+            if tok:
+                self.lineno = tok.lineno
+            return tok
+        return None
+
+# A Lexer that checks for macro calls and expands them appropriately.
+class MacroLexer(StackLexer):
+    def __init__(self, lexer):
+        self.last_token = None
+        self.indentlevel = 0
+        super(MacroLexer, self).__init__(lexer)
+
+    def simpletoken(self):
+        return super(MacroLexer, self).token()
+
+    def noeoftoken(self):
+        tok = self.innertoken()
+        if not tok:
+            raise SyntaxError("Unexpected EOF")
+        return tok
+            
+    def innertoken(self):
+        macrotok = self.simpletoken()
+        if not macrotok or no_macro_sub or \
+               not (macrotok.type == 'ID' and macrotok.value in macro_defs):
+            return macrotok
+        else:
+            newtok = self.simpletoken()
+            if not newtok or newtok.type != 'LPAREN':
+                self.pushstack([newtok])
+                return macrotok
+            macrodef = macro_defs[macrotok.value]
+            args = []
+            stop = False
+            while not stop:
+                thisarg = []
+                parencount = 0
+                expect_rbrace = 0
+                newtok = self.noeoftoken()
+                if newtok.type == 'LBRACE':
+                    parencount += 1
+                    expect_rbrace = 1
+                    newtok = self.noeoftoken()
+                while True:
+                    if newtok.type in ['LBRACE', 'LBRACKET', 'LPAREN']:
+                        parencount += 1
+                    if newtok.type in ['RBRACE', 'RBRACKET', 'RPAREN']:
+                        parencount -= 1
+                    if parencount < 0:
+                        if newtok.type == 'RPAREN':
+                            stop = True
+                            break
+                        error(newtok.lineno, "Syntax error at %s",
+                              newtok.value)
+                        parencount = 0
+                    if parencount == 0 and newtok.type == 'RBRACE' and \
+                       expect_rbrace:
+                        expect_rbrace = 0
+                        newtok = self.noeoftoken()
+                        continue
+                    if parencount == 0 and newtok.type == 'COMMA':
+                        break
+                    thisarg.append(newtok)
+                    newtok = self.noeoftoken()
+                args.append(thisarg)
+            # Allow extra trailing comma
+            if len(args) == len(macrodef.args) + 1 and not args[-1]:
+                args.pop()
+            if len(args) != len(macrodef.args):
+                error(macrotok.lineno,
+                      "Invalid number of arguments to macro %s",
+                      macrotok.value)
+            else:
+                if super_macro_debug:
+                    print "Processing macro: %s" % macrotok.value
+                self.pushstack(macrosub(macrodef, args, self.lineno))
+                return self.innertoken()
+
+    def token(self):
+        def pretty_output_transformed(token):
+            def newline(num=1):
+                outout('\n' * num)
+                outout(' ' * 2 * self.indentlevel)
+            
+            if tok.lineno and self.lineno < tok.lineno:
+                if tok.lineno - self.lineno == 1:
+                    newline()
+                else:
+                    newline(2)
+            elif self.last_token and (self.last_token.type == 'RBRACE' or
+                                      self.last_token.type == 'SEMI'):
+                newline()
+            elif tok.type == 'LBRACE':
+                newline(2)
+            value = str(tok.value)
+            lastval = self.last_token and str(self.last_token.value)
+            if value and lastval and ((isalnumund(lastval[0]) and
+                                       isalnumund(value[0]))
+                                      or self.last_token.type
+                                      in ('COLON', 'COMMA')):
+                outout(' ')
+            if tok.type == 'QUOTEDID':
+                outout('"%s"', value)
+            else:
+                outout('%s', value)
+            if tok.type == 'LBRACE':
+                self.indentlevel += 1
+            elif tok.type == 'RBRACE':
+                self.indentlevel -= 1
+            return tok
+
+        # Beginning of actual function
+        tok = self.innertoken()
+        if options.transformed_input and self.lexer and \
+               tok and tok.type != 'BOGUS_VALUE':
+               pretty_output_transformed(tok)
+        self.last_token = tok
+        # print "Saw token: %s" % tok
+        return tok
+
+#############################
+#           Parsing         #
+#############################
+
+def init_parse_once():
+    # Initialize the parser once, at beginning.  This does introspection on
+    # the rules (i.e. p_*() functions) in this file.
+    yacc.yacc(start='top', debug=yacc_debug, method='LALR', write_tables=0)
+
+# Parse a .CCG file whose contents are in STR.
+
+class parse_results:
+    pass
+
+def parse_string(str):
+    retval = parse_results()
+    if str:
+        retval.parse = yacc.parse(str, lexer=MacroLexer(globallexer))
+    else:
+        retval.parse = []
+    save_global_state(retval)
+    return retval
+
+#############################
+#           Graphics        #
+#############################
+
+# Given the return value from parsing (a list of abstract syntax tree-related
+# objects), draw them into the given frame.
+
+def draw_parse(parse, cfile, childFrame, vars, canvas, mainFrame):
+    row = 0
+
+    if parse:
+    	for x in parse:
+        	if hasattr(x, 'draw'):
+            		x.draw(childFrame, cfile, vars, row, canvas, mainFrame)
+            		row += 1
+    	# Make the column containing the lexical entries expand as necessary
+    	childFrame.columnconfigure(1, weight=1)
+    	#frame.grid(column=0)
+
+
+
+#############################
+#       Initialization      #
+#############################
+
+# We encapsulate all global-variable initialization into a function that
+# can be called repeatedly so we can reinitialize our state and parse more
+# than one file.  ARGV is the command-line arguments to parse (normally
+# sys.argv[1:]) and ERRORS_TO_STRING indicates whether to write stdout and
+# stderr output to strings or to the normal output locations.
+
+def init_global_state(errors_to_string=False):
+    init_errors(errors_to_string)
+    init_lexer()
+    init_macros()
+    init_features()
+    init_morphology()
+    init_lexicon()
+    init_testbed()
+    init_rules()
+    init_relation_sorting()
+
+# When we're finished parsing, save the global state to the specified
+# object, so we can track the parse results for more than one file.
+def save_global_state(cur):
+    save_errors(cur)
+    save_lexer(cur)
+    save_macros(cur)
+    save_features(cur)
+    save_morphology(cur)
+    save_lexicon(cur)
+    save_testbed(cur)
+    save_rules(cur)
+    save_relation_sorting(cur)
+
+def init_global_state_once():
+    init_parse_once()
+
+late_init_graphics_done = 0
+# Graphics-related initialization that must be done late, after the first
+# Tk top-level window has been created.
+def late_init_graphics():
+    global late_init_graphics_done
+    if not late_init_graphics_done:
+        late_init_draw_once()
+        late_init_graphics_done = 1
+    
+
+#############################
+#         Main driver       #
+#############################
+
+# Function to output a particular XML file
+def output_xml_file(prefix, grammar_name, filebase, top_level_tag, xml):
+    xml_file = os.path.join(options.dir, '%s%s.xml' % (prefix, filebase))
+    if not options.quiet:
+        errout('Outputting XML file: %s\n' % xml_file)
+    xml = [top_level_tag, [('name', grammar_name),
+                           ('xmlns:xsi',
+                            'http://www.w3.org/2001/XMLSchema-instance'),
+                           ('xsi:noNamespaceSchemaLocation',
+                            '../%s.xsd' % filebase)]] + xml
+    fil = open(xml_file, 'w')
+    fil.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+    print_xml(fil, xml)
+    fil.close()
+
+def make_grammar_xml(prefix):
+    return [['lexicon', [('file', '%slexicon.xml' % prefix)]],
+            ['morphology', [('file', '%smorph.xml' % prefix)]],
+            ['rules', [('file', '%srules.xml' % prefix)]],
+            ['types', [('file', '%stypes.xml' % prefix)]]]
+
+# Map saying how to output the specified XML file
+output_file_map = {
+    'lexicon': ('ccg-lexicon',
+                lambda pref: make_feature_lexicon_xml() +
+                make_relation_sorting_lexicon_xml() +
+                make_family_lexicon_xml()),
+    'rules': ('rules', lambda pref: make_rules_xml()),
+    'morph': ('morph',
+              lambda pref: make_word_morph_xml() + make_feature_morph_xml()),
+    'types': ('types', lambda pref: make_feature_types_xml()),
+    'grammar': ('grammar', make_grammar_xml),
+    'testbed': ('regression', lambda pref: make_testbed_xml()),
+    }
+
+# Process the --omit-output list.
+
+def split_output_files(arg):
+    files = re.split('[,\s]+', arg)
+    for x in files:
+        if x not in output_file_map:
+            parser.error('Unknown file in --omit-output argument')
+    return files
+
+def main():
+    parse_arguments(sys.argv[1:])
+    init_global_state_once()
+    init_global_state()
+
+    if options.omit_output:
+        if options.omit_output[0] == '+':
+            output_files = split_output_files(options.omit_output[1:])
+        else:
+            suppress_output = split_output_files(options.omit_output)
+            output_files = []
+            for x in output_file_map:
+                if x not in suppress_output:
+                    output_files.append(x)
+    else:
+        output_files = [x for x in output_file_map]
+    
+    # Now actually parse the input arguments
+
+    prefix = options.prefix
+    lastfile = '-'
+    args = global_args or ['-']
+    
+    for arg in args:
+        if arg == '-':
+            if not options.quiet:
+                errout("ccg2xml: Processing standard input\n")
+            fil = sys.stdin
+        else:
+            if not options.quiet:
+                errout("ccg2xml: Processing %s\n" % arg)
+            fil = file(arg)
+            lastfile = arg
+            if prefix == None:
+                (phead, ptail) = os.path.split(arg)
+                (pbase, pext) = os.path.splitext(ptail)
+                prefix = '%s-' % pbase
+        retval = parse_string(fil.read())
+        # print "Retval: %s\n" % retval
+    
+    if macro_debug:
+        print_macros()
+    
+    # Make output directory if needed, and output files
+
+    if error_count > 0:
+        if not options.quiet:
+            maybe_errout('Errors during compilation, files not output.\n')
+        sys.exit(1)
+    else:
+        if options.dir:
+            if not os.path.isdir(options.dir):
+                os.makedirs(options.dir)
+        else:
+            options.dir = '.'
+        
+        for x in output_files:
+            file_info = output_file_map[x]
+            output_xml_file(prefix, lastfile, x, file_info[0],
+                            file_info[1](prefix))
+
+if __name__ == '__main__':      # when run as a script
+    main()
+
+# Local Variables:
+# mode: python
+# end:

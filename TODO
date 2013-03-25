@@ -1,0 +1,88 @@
+
+General OpenCCG development:
+----------------------------
+
+- Add check for target LF when adding/writing full words (incl. supertags).
+
+- Look into better handling of optional args.
+
+- Extend feature hierarchy biz to work with category types; 
+  would make sense to also add category vars.
+
+- Add final bits to grammars rough guide (esp. feature licensing).
+  
+- Add option to update testbed.
+
+- Binding theory?
+  
+- Get agreement to work with anaphors in appositives.
+
+- Add more dynamic checks, eg for non-existent indexRel values or licensing attrs.
+
+- Add well-formedness check for unique roles -- ie, that role must occur
+  only once per semantic head -- and associated method for declaring that
+  roles must be unique.
+
+- Interface to morph transducers.
+
+- Make UnifyControl etc thread friendly.  Could try tying global vars to
+  current thread.
+
+- Improve unification efficiency.  Could try indexing, caching across calls
+  to parser or realizer, and structure sharing with delayed copying. 
+
+
+
+Realizer-oriented development:
+------------------------------
+
+- Try using coarticulations with pitch accents.
+
+- Add orthographic post-processing (capitalization, spacing of punctuation).
+
+- Look into instantiating outermost args. 
+
+
+
+
+
+
+
+
+TODO prior to Feb 16:
+---------------------
+
+Tabs for testbed, lexicon, features
+Nice tree graph for features
+Get Arabic to compile
+Issues of colors, fonts, etc. (Alexis help)
+PNG's of the slash modalities
+Option menu for different magnification (50%, 100%, 200% ...)
+Get pretty buttons from Justin
+Make sure all path, etc. issues are working
+Figure out what's the deal with __init__.py -- importing from another dir
+
+Possibly:
+  help-over descriptions of families, provided by Javadoc-style comments in
+  the source
+
+
+Alexis -- help with more specific user-interface issues, overall management
+involving various people
+
+Sudipta --
+  -- PNG's of slash modalities; add to editor
+  -- TeX/Tk font conversion
+  -- find a Tkinter package for displaying tree graphs; use it to add a graph for features to the editor
+  -- figure out what's wrong with arabic?
+
+semantics: RED
+features: BLUE
+categories: BLACK, sans serif font
+background: WHITE
+
+
+Ben TODO!!!!!
+-------------
+
+Create professional-looking web page off of comp.ling.utexas.edu

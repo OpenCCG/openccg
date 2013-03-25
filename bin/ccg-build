@@ -1,0 +1,18 @@
+#!/bin/sh
+. ccg-env
+ANT_HOME="$OPENCCG_LIB"
+PROPS="-Dant.home=$ANT_HOME -Dopenccg.home=$OPENCCG_HOME"
+case `uname` in
+  CYGWIN* ) XALAN_JARS="$OPENCCG_LIB/xalan.jar;$OPENCCG_LIB/xercesImpl.jar;$OPENCCG_LIB/xml-apis.jar;$OPENCCG_LIB/xsltc.jar;$OPENCCG_LIB/serializer.jar"
+            ANT_JARS="$OPENCCG_LIB/ant.jar;$OPENCCG_LIB/ant-launcher.jar;$OPENCCG_LIB/ant-contrib.jar"
+            ANT_JARS="$ANT_JARS;$OPENCCG_LIB/ant-junit.jar;$OPENCCG_LIB/ant-junit4.jar;$OPENCCG_LIB/junit-4.10.jar"
+            CP="$JAVA_HOME/lib/tools.jar;$OPENCCG_JAR;$ANT_JARS;$XALAN_JARS;$DIRLIBS;."
+            PROPS="$PROPS -Dcygwin=true"
+  ;;
+  * ) XALAN_JARS="$OPENCCG_LIB/xalan.jar:$OPENCCG_LIB/xercesImpl.jar:$OPENCCG_LIB/xml-apis.jar:$OPENCCG_LIB/xsltc.jar:$OPENCCG_LIB/serializer.jar"
+      ANT_JARS="$OPENCCG_LIB/ant.jar:$OPENCCG_LIB/ant-launcher.jar:$OPENCCG_LIB/ant-contrib.jar"
+      ANT_JARS="$ANT_JARS:$OPENCCG_LIB/ant-junit.jar:$OPENCCG_LIB/ant-junit4.jar:$OPENCCG_LIB/junit-4.10.jar"
+      CP="$JAVA_HOME/lib/tools.jar:$OPENCCG_JAR:$ANT_JARS:$XALAN_JARS:$DIRLIBS:."
+  ;;
+esac
+"$JAVA" $JAVA_MEM -classpath "$CP" $PROPS org.apache.tools.ant.launch.Launcher $@

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file specifies the available combinatory rules.
+
+Copyright (C) 2006 Michael White 
+$Revision: 1.5 $, $Date: 2006/04/25 05:21:25 $ 
+-->
+<rules
+  name="tiny"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../rules.xsd"
+>
+
+  <!-- Application -->
+  <application dir="forward"/>
+  <application dir="backward"/>
+
+  <!-- Harmonic Composition -->
+  <composition dir="forward" harmonic="true"/>
+  <composition dir="backward" harmonic="true"/>
+
+  <!-- Crossed Composition -->
+  <!-- <composition dir="forward" harmonic="false"/> -->
+  <composition dir="backward" harmonic="false"/>
+
+  <!-- Type-raising -->
+  <typeraising dir="forward" useDollar="false"/>
+  <typeraising dir="backward" useDollar="true"/>
+  <typeraising dir="backward" useDollar="true">
+    <arg><atomcat type="pp"/></arg>
+  </typeraising>
+
+  <!-- Imperative -->
+  <!--
+    The imperative rule promotes a bare vp to an s with the imp 
+    feature, and fills in the NP subject with pro2, for 2nd person:
+    
+      s[bare,E]\np[X] => s[imp,E] : @X(pro2)
+  -->
+  <typechanging name="imp">
+    <arg>
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="form" val="base"/>
+            <feat attr="index"> <lf> <nomvar name="E"/> </lf> </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs>
+            <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </arg>
+    <result>
+      <atomcat type="s">
+        <fs inheritsFrom="1">
+          <feat attr="form" val="imp"/>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="pro2"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </result>
+  </typechanging>
+  
+  <!-- Bare NP -->
+  <!-- 
+    The Bare NP rule promotes a plural (or eventually mass) noun 
+    to an NP with det nil:
+    
+      n[pl,X] => np[pl,3rd,X] : @X(<det>nil)
+  -->  
+  <typechanging name="bnp">
+    <arg>
+      <atomcat type="n">
+        <fs id="2">
+          <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+          <feat attr="num" val="pl"/>
+        </fs>
+      </atomcat>
+    </arg>
+    <result>
+      <atomcat type="np">
+        <fs id="2">
+          <feat attr="pers" val="3rd"/>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="det"> <prop name="nil"/> </diamond>
+          </satop>
+        </lf>
+      </atomcat>
+    </result>
+  </typechanging>
+
+  <!-- Numbered Road -->
+  <!--
+    The Numbered Road rule promotes a number to a road with than name:
+    
+      num[N] => np[X] : @X:road(<Name>N:num)
+  -->
+  <typechanging name="num-road">
+    <arg>
+      <atomcat type="num">
+        <fs>
+          <feat attr="index"> <lf> <nomvar name="N"/> </lf> </feat>
+        </fs>
+      </atomcat>
+    </arg>
+    <result>
+      <atomcat type="np">
+        <fs>
+          <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:road">
+            <diamond mode="Name"> <nomvar name="N:num"/> </diamond>
+          </satop>
+        </lf>
+      </atomcat>
+    </result>
+  </typechanging>
+</rules>

@@ -1,0 +1,16 @@
+
+## leaf step of Hockenmaier's HWDep generative syntactic model
+## with added pos tags
+
+1
+ 
+## expansion (E) given parent cat (P), lexcat parent (CP), head postag parent (T) and headword parent (W)
+
+E : 4 P(0) CP(0) T(0) W(0) e_p0cp0t0w0.count e_p0cp0t0w0.lm 5
+  P0,CP0,T0,W0 W0 wbdiscount gtmin 10
+  P0,CP0,T0 T0 wbdiscount
+  P0,CP0 CP0 wbdiscount
+  P0 P0 wbdiscount
+  0 0 wbdiscount
+
+

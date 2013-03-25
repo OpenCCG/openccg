@@ -1,0 +1,2 @@
+Place your Stanford core NLP jar file here (preferably renaming it to 'stanford-core-nlp.jar') and
+then also place, e.g., NE tagging models under './classifiers'.

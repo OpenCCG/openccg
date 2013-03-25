@@ -1,0 +1,1304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file lists regression test items.
+
+Copyright (C) 2006 Michael White 
+$Revision: 1.9 $, $Date: 2006/05/20 20:34:16 $ 
+-->
+<regression>
+  <item numOfParses="1" string="from mid-Cambridge , take Cambridge_Street toward Harvard_Yard .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="c1:road" pred="Cambridge_Street"/>
+        </rel>
+        <rel name="Path">
+          <node id="f1:path" pred="from">
+            <rel name="Ref">
+              <node id="m1:place" pred="mid-Cambridge"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t2:path" pred="toward">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Yard"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="drive up Cambridge_Street toward Harvard_Yard .">
+    <lf>
+      <node id="d1:action" pred="drive" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Path">
+          <node id="u1:path" pred="up">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="toward">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Yard"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="from mid-Cambridge , drive up Cambridge_Street for about one mile .">
+    <lf>
+      <node id="d1:action" pred="drive" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Dist">
+          <node id="m1:dist" pred="mile" det="about" num="sg">
+            <rel name="Card">
+              <node id="o1:num" pred="one"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="f1:path" pred="from">
+            <rel name="Ref">
+              <node id="m2:place" pred="mid-Cambridge"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="u1:path" pred="up">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="from mid-Cambridge , drive west on Cambridge_Street toward Harvard_Yard for about 1 mile .">
+    <lf>
+      <node id="d1:action" pred="drive" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="w1:direction" pred="west"/>
+        </rel>
+        <rel name="Dist">
+          <node id="m1:dist" pred="mile" det="about" num="sg">
+            <rel name="Card">
+              <node id="n1:num" pred="1"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="f1:path" pred="from">
+            <rel name="Ref">
+              <node id="m2:place" pred="mid-Cambridge"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="toward">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Yard"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="drive west on Cambridge_Street for about 1 mile toward Harvard_Yard .">
+    <lf>
+      <node id="d1:action" pred="drive" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="w1:direction" pred="west"/>
+        </rel>
+        <rel name="Dist">
+          <node id="m1:dist" pred="mile" det="about" num="sg">
+            <rel name="Card">
+              <node id="n1:num" pred="1"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="toward">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Yard"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="3" string="along the way , you 'll go past the Mona_Lisa pizzeria on the right .">
+    <lf>
+      <node id="w1:state" pred="will" mood="dcl">
+        <rel name="Body">
+          <node id="g1:action" pred="go">
+            <rel name="Actor">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Loc">
+              <node id="o1:location" pred="on">
+                <rel name="Ref">
+                  <node id="r1:direction" pred="right" det="the"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Path">
+              <node id="p2:path" pred="past">
+                <rel name="Ref">
+                  <node id="p3:landmark" pred="pizzeria" det="the" num="sg">
+                    <rel name="Name">
+                      <node id="m1:person" pred="Mona_Lisa"/>
+                    </rel>
+                  </node>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="a1:path" pred="along">
+            <rel name="Ref">
+              <node id="w2:road" pred="way" det="the" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="along the way , you 'll pass the Mona_Lisa pizzeria on the right .">
+    <lf>
+      <node id="w1:state" pred="will" mood="dcl">
+        <rel name="Body">
+          <node id="p1:action" pred="pass">
+            <rel name="Actor">
+              <node id="p2:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Loc">
+              <node id="o1:location" pred="on">
+                <rel name="Ref">
+                  <node id="r1:direction" pred="right" det="the"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Loc">
+              <node id="p3:landmark" pred="pizzeria" det="the" num="sg">
+                <rel name="Name">
+                  <node id="m1:person" pred="Mona_Lisa"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="a1:path" pred="along">
+            <rel name="Ref">
+              <node id="w2:road" pred="way" det="the" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take the last right turn onto Sumner_Road .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="t2:action" pred="turn" det="the" num="sg">
+            <rel name="HasProp">
+              <node id="l1:ord" pred="last"/>
+            </rel>
+            <rel name="HasProp">
+              <node id="r1:direction" pred="right"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="s1:road" pred="Sumner_Road"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take the last right before the light onto Sumner_Road .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="r1:action" pred="right" det="the" num="sg">
+            <rel name="HasProp">
+              <node id="l1:ord" pred="last"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Loc">
+          <node id="b1:location" pred="before">
+            <rel name="Ref">
+              <node id="l2:landmark" pred="light" det="the" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="s1:road" pred="Sumner_Road"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take the last right turn before the light onto Sumner_Road .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="t2:action" pred="turn" det="the" num="sg">
+            <rel name="HasProp">
+              <node id="l1:ord" pred="last"/>
+            </rel>
+            <rel name="HasProp">
+              <node id="r1:direction" pred="right"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Loc">
+          <node id="b1:location" pred="before">
+            <rel name="Ref">
+              <node id="l2:landmark" pred="light" det="the" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="s1:road" pred="Sumner_Road"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take an immediate right onto Irving_Terrace .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="r1:action" pred="right" det="a" num="sg">
+            <rel name="HasProp">
+              <node id="i1:dist" pred="immediate"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="i2:road" pred="Irving_Terrace"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take the first right onto Irving_Terrace .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="r1:action" pred="right" det="the" num="sg">
+            <rel name="HasProp">
+              <node id="f1:ord" pred="first"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="i1:road" pred="Irving_Terrace"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="drive up Broadway for 1.5 miles toward Harvard_Square .">
+    <lf>
+      <node id="d1:action" pred="drive" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Dist">
+          <node id="m1:dist" pred="mile" det="nil" num="pl">
+            <rel name="Card">
+              <node id="n1:num" pred="1.5"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="u1:path" pred="up">
+            <rel name="Ref">
+              <node id="b1:road" pred="Broadway"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="toward">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Square"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take Broadway to Prescott_Street .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="b1:road" pred="Broadway"/>
+        </rel>
+        <rel name="Path">
+          <node id="t2:path" pred="to">
+            <rel name="Ref">
+              <node id="p2:road" pred="Prescott_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="turn right onto Cambridge_Street away_from Harvard_Square .">
+    <lf>
+      <node id="t1:action" pred="turn" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="r1:direction" pred="right"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="a1:path" pred="away_from">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Square"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take a right onto Cambridge_Street away_from Harvard_Square .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="r1:turn" pred="right" det="a" num="sg"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="a1:path" pred="away_from">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Square"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take an immediate left onto Sumner_Road .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="l1:action" pred="left" det="a" num="sg">
+            <rel name="HasProp">
+              <node id="i1:dist" pred="immediate"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="s1:road" pred="Sumner_Road"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="get off at the Cambridge exit .">
+    <lf>
+      <node id="g1:action" pred="get-off" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="e1:landmark" pred="exit" det="the" num="sg">
+                <rel name="Name">
+                  <node id="c1:road" pred="Cambridge"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="go across the Charles river .">
+    <lf>
+      <node id="g1:action" pred="go" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Path">
+          <node id="a1:path" pred="across">
+            <rel name="Ref">
+              <node id="r1:landmark" pred="river" det="the" num="sg">
+                <rel name="Name">
+                  <node id="c1:person" pred="Charles"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="go left onto Memorial_Drive .">
+    <lf>
+      <node id="g1:action" pred="go" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="l1:direction" pred="left"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="m1:road" pred="Memorial_Drive"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take a right at the third light onto JFK_Street .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="r1:action" pred="right" det="a" num="sg"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="l1:landmark" pred="light" det="the" num="sg">
+                <rel name="HasProp">
+                  <node id="t2:ord" pred="third"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="j1:road" pred="JFK_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="turn right at the third light onto JFK_Street .">
+    <lf>
+      <node id="t1:action" pred="turn" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="r1:direction" pred="right"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="l1:landmark" pred="light" det="the" num="sg">
+                <rel name="HasProp">
+                  <node id="t2:ord" pred="third"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="j1:road" pred="JFK_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="go straight through four traffic lights .">
+    <lf>
+      <node id="g1:action" pred="go" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="through">
+            <rel name="Ref">
+              <node id="l1:landmark" pred="light" det="nil" num="pl">
+                <rel name="Card">
+                  <node id="f1:num" pred="four"/>
+                </rel>
+                <rel name="HasProp">
+                  <node id="t2:property" pred="traffic"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="bear right under the Harvard_Yard underpass .">
+    <lf>
+      <node id="b1:action" pred="bear" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="r1:direction" pred="right"/>
+        </rel>
+        <rel name="Path">
+          <node id="u1:path" pred="under">
+            <rel name="Ref">
+              <node id="u2:landmark" pred="underpass" det="the" num="sg">
+                <rel name="Name">
+                  <node id="h1:place" pred="Harvard_Yard"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="bear left onto Cambridge_Street .">
+    <lf>
+      <node id="b1:action" pred="bear" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="l1:direction" pred="left"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="c1:road" pred="Cambridge_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take 93 to Storrow_Drive .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="x1:road">
+            <rel name="Name">
+              <node id="n1:num" pred="93"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t2:path" pred="to">
+            <rel name="Ref">
+              <node id="s1:road" pred="Storrow_Drive"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take Storrow_Drive to the Kendall_Square exit .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="s1:road" pred="Storrow_Drive"/>
+        </rel>
+        <rel name="Path">
+          <node id="t2:path" pred="to">
+            <rel name="Ref">
+              <node id="e1:landmark" pred="exit" det="the" num="sg">
+                <rel name="Name">
+                  <node id="k1:place" pred="Kendall_Square"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="cross the river on the Longfellow bridge .">
+    <lf>
+      <node id="c1:action" pred="cross" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Patient">
+          <node id="r1:landmark" pred="river" det="the" num="sg"/>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="b1:landmark" pred="bridge" det="the" num="sg">
+                <rel name="Name">
+                  <node id="l1:person" pred="Longfellow"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="get onto Broadway at Kendall_Square .">
+    <lf>
+      <node id="g1:action" pred="get-on" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="b1:road" pred="Broadway"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="k1:place" pred="Kendall_Square"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="continue straight at Kendall_Square onto Broadway .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="k1:place" pred="Kendall_Square"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="b1:road" pred="Broadway"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="at Kendall_Square , continue straight onto Broadway .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="k1:place" pred="Kendall_Square"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="b1:road" pred="Broadway"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take Mass_Pike to the Alston_tolls exit .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="m1:road" pred="Mass_Pike"/>
+        </rel>
+        <rel name="Path">
+          <node id="t2:path" pred="to">
+            <rel name="Ref">
+              <node id="e1:landmark" pred="exit" det="the" num="sg">
+                <rel name="Name">
+                  <node id="a1:place" pred="Alston_tolls"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="cross the river .">
+    <lf>
+      <node id="c1:action" pred="cross" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Patient">
+          <node id="r1:landmark" pred="river" det="the" num="sg"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="continue on River_Street .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="r1:road" pred="River_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="at Central_Square , continue straight onto Prospect_Street .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="c2:place" pred="Central_Square"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="p2:road" pred="Prospect_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="continue straight at Central_Square onto Prospect_Street .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="c2:place" pred="Central_Square"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="p2:road" pred="Prospect_Street"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="stay on River_Street until Central_Square .">
+    <lf>
+      <node id="s1:action" pred="stay" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="r1:road" pred="River_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="TempRel">
+          <node id="u1:path" pred="until">
+            <rel name="Ref">
+              <node id="c1:place" pred="Central_Square"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="stay on River_Street until you reach Central_Square .">
+    <lf>
+      <node id="s1:action" pred="stay" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="r1:road" pred="River_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="TempRel">
+          <node id="u1:path" pred="until">
+            <rel name="Situation">
+              <node id="r2:action" pred="reach" tense="pres">
+                <rel name="Actor">
+                  <node id="p2:animate-being" pred="pro2"/>
+                </rel>
+                <rel name="Loc">
+                  <node id="c1:place" pred="Central_Square"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="when you get to Central_Square , continue straight onto Prospect_Street .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="p2:road" pred="Prospect_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="TempRel">
+          <node id="w1:path" pred="when">
+            <rel name="Situation">
+              <node id="g1:action" pred="get-to" tense="pres">
+                <rel name="Actor">
+                  <node id="p3:animate-being" pred="pro2"/>
+                </rel>
+                <rel name="Loc">
+                  <node id="c2:place" pred="Central_Square"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="continue straight onto Prospect_Street when you get to Central_Square .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="s1:direction" pred="straight"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="p2:road" pred="Prospect_Street"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="TempRel">
+          <node id="w1:path" pred="when">
+            <rel name="Situation">
+              <node id="g1:action" pred="get-to" tense="pres">
+                <rel name="Actor">
+                  <node id="p3:animate-being" pred="pro2"/>
+                </rel>
+                <rel name="Loc">
+                  <node id="c2:place" pred="Central_Square"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="turn right at the second light onto Broadway .">
+    <lf>
+      <node id="t1:action" pred="turn" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="r1:direction" pred="right"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="l1:landmark" pred="light" det="the" num="sg">
+                <rel name="HasProp">
+                  <node id="s1:ord" pred="second"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="b1:road" pred="Broadway"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="at the second light , turn right onto Broadway .">
+    <lf>
+      <node id="t1:action" pred="turn" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="r1:direction" pred="right"/>
+        </rel>
+        <rel name="Loc">
+          <node id="a1:location" pred="at">
+            <rel name="Ref">
+              <node id="l1:landmark" pred="light" det="the" num="sg">
+                <rel name="HasProp">
+                  <node id="s1:ord" pred="second"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="onto">
+            <rel name="Ref">
+              <node id="b1:road" pred="Broadway"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take Route_2 to Concord_Avenue .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Road">
+          <node id="r1:road" pred="Route_2"/>
+        </rel>
+        <rel name="Path">
+          <node id="t2:path" pred="to">
+            <rel name="Ref">
+              <node id="c1:road" pred="Concord_Avenue"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="continue on Concord_Avenue to Harvard_Square .">
+    <lf>
+      <node id="c1:action" pred="continue" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Loc">
+          <node id="o1:location" pred="on">
+            <rel name="Ref">
+              <node id="c2:road" pred="Concord_Avenue"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="to">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard_Square"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="go under Harvard via the short tunnel .">
+    <lf>
+      <node id="g1:action" pred="go" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Path">
+          <node id="u1:path" pred="under">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="v1:path" pred="via">
+            <rel name="Ref">
+              <node id="t1:landmark" pred="tunnel" det="the" num="sg">
+                <rel name="HasProp">
+                  <node id="s1:property" pred="short"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="drive under Harvard via the short tunnel .">
+    <lf>
+      <node id="d1:action" pred="drive" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Path">
+          <node id="u1:path" pred="under">
+            <rel name="Ref">
+              <node id="h1:place" pred="Harvard"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="v1:path" pred="via">
+            <rel name="Ref">
+              <node id="t1:landmark" pred="tunnel" det="the" num="sg">
+                <rel name="HasProp">
+                  <node id="s1:property" pred="short"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="take the right fork out_of the tunnel .">
+    <lf>
+      <node id="t1:action" pred="take" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Action">
+          <node id="f1:action" pred="fork" det="the" num="sg">
+            <rel name="HasProp">
+              <node id="r1:direction" pred="right"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="out_of">
+            <rel name="Ref">
+              <node id="t2:landmark" pred="tunnel" det="the" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="fork right out_of the tunnel .">
+    <lf>
+      <node id="f1:action" pred="fork" mood="imp">
+        <rel name="Actor">
+          <node id="p1:animate-being" pred="pro2"/>
+        </rel>
+        <rel name="Direction">
+          <node id="r1:direction" pred="right"/>
+        </rel>
+        <rel name="Path">
+          <node id="o1:path" pred="out_of">
+            <rel name="Ref">
+              <node id="t1:landmark" pred="tunnel" det="the" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="my house is on the right .">
+    <lf>
+      <node id="b1:state" pred="be" mood="dcl" tense="pres">
+        <rel name="Arg">
+          <node id="h1:landmark" pred="house" num="sg">
+            <rel name="GenOwner">
+              <node id="p1:animate-being" pred="pro1" num="sg"/>
+            </rel>
+          </node>
+        </rel>
+        <rel name="Prop">
+          <node id="o1:location" pred="on">
+            <rel name="Arg">
+              <node idref="h1:landmark"/>
+            </rel>
+            <rel name="Ref">
+              <node id="r1:direction" pred="right" det="the"/>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="1" string="this is Broadway .">
+    <lf>
+      <node id="b1:state" pred="be" mood="dcl" tense="pres">
+        <rel name="Arg">
+          <node id="t1:sem-obj" pred="this" num="sg"/>
+        </rel>
+        <rel name="Pred">
+          <node id="b2:road" pred="Broadway"/>
+        </rel>
+      </node>
+    </lf>
+  </item>
+  <item numOfParses="2" string="you should soon see your destination on the left .">
+    <lf>
+      <node id="s1:state" pred="should" mood="dcl">
+        <rel name="Body">
+          <node id="s2:action" pred="see">
+            <rel name="HasProp">
+              <node id="s3:property" pred="soon"/>
+            </rel>
+            <rel name="Perceiver">
+              <node id="p1:animate-being" pred="pro2"/>
+            </rel>
+            <rel name="Phenomenon">
+              <node id="d1:landmark" pred="destination" num="sg">
+                <rel name="GenOwner">
+                  <node id="p2:animate-being" pred="pro2"/>
+                </rel>
+              </node>
+            </rel>
+            <rel name="Loc">
+              <node id="o1:location" pred="on">
+                <rel name="Ref">
+                  <node id="l1:direction" pred="left" det="the"/>
+                </rel>
+              </node>
+            </rel>
+          </node>
+        </rel>
+      </node>
+    </lf>
+  </item>
+</regression>

@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+
+<dictionary name="Tagalog">
+ 
+  <entry stem="at" pred="and" pos="Conj">
+    <member-of family="Conj"/>
+    <word form="at" />
+  </entry>
+  <entry stem="pagkain" pred="food" pos="N">
+    <member-of family="Noun"/>
+    <word form="pagkain" />
+  </entry>
+  <entry stem="pinggan" pred="dish" pos="N">
+    <member-of family="Noun"/>
+    <word form="mgapinggan" macros="@pl"/>
+  </entry>
+  <entry stem="bata" pred="child" pos="N">
+    <member-of family="Noun"/>
+    <word form="mgabata" macros="@pl"/>
+  </entry>
+  <entry stem="Juan" pos="N">
+    <member-of family="Noun"/>
+    <word form="Juan" />
+  </entry>
+  <entry stem="Josie" pos="N">
+    <member-of family="Noun"/>
+    <word form="Josie" />
+  </entry>
+  <entry stem="Lorna" pos="N">
+    <member-of family="Noun"/>
+    <word form="Lorna" />
+  </entry>
+  <entry stem="Maria" pos="N">
+    <member-of family="Noun"/>
+    <word form="Maria" />
+  </entry>
+  <entry stem="tindahan" pred="store" pos="N">
+    <member-of family="Noun"/>
+    <word form="tindahan" />
+  </entry>
+  <entry stem="bigas" pred="rice" pos="N">
+    <member-of family="Noun"/>
+    <word form="bigas" />
+  </entry>
+  <entry stem="kapatid" pred="sibling" pos="N">
+    <member-of family="Noun"/>
+    <word form="kapatid" />
+  </entry>
+  <entry stem="ama" pred="father" pos="N">
+    <member-of family="Noun"/>
+    <word form="ama" />
+  </entry>
+  <entry stem="ina" pred="mother" pos="N">
+    <member-of family="Noun"/>
+    <word form="ina" />
+  </entry>
+  <entry stem="regalo" pred="present" pos="N">
+    <member-of family="Noun"/>
+    <word form="regalo" />
+  </entry>
+  <entry stem="liham" pred="letter" pos="N">
+    <member-of family="Noun"/>
+    <word form="liham" />
+  </entry>
+  <entry stem="isda" pred="fish" pos="N">
+    <member-of family="Noun"/>
+    <word form="isda" />
+  </entry>
+  <entry stem="pera" pred="money" pos="N">
+    <member-of family="Noun"/>
+    <word form="pera" />
+  </entry>
+  <entry stem="babae" pred="woman" pos="N">
+    <member-of family="Noun"/>
+    <word form="babae" />
+  </entry>
+  <entry stem="bangko" pred="bank" pos="N">
+    <member-of family="Noun"/>
+    <word form="bangko" />
+  </entry>
+  <entry stem="baro" pred="dress" pos="N">
+    <member-of family="Noun"/>
+    <word form="baro" />
+  </entry>
+  <entry stem="mo" pred="you" pos="PN">
+    <member-of family="Pronoun"/>
+    <word form="mo" macros="@2nd @gen0"/>
+  </entry>
+  <entry stem="ko" pred="i" pos="PN">
+    <member-of family="Pronoun"/>
+    <word form="ko" macros="@1st @gen0"/>
+  </entry>
+  <entry stem="siya" pred="she" pos="PN">
+    <member-of family="Pronoun"/>
+    <word form="siya" macros="@3rd @nom0"/>
+  </entry>
+  <entry stem="iwas" pred="avoid" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="iniwasan" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="atubili" pred="hesitate" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="nagatubili" macros="@nom1 @dat2"/>
+  </entry>
+  <entry stem="awal" pred="forbid" pos="V">
+    <member-of family="TV"/>
+    <member-of family="TV-control2"/>
+    <word form="binawalan" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="ingin" pred="look-at" pos="V">
+    <member-of family="TV"/>
+    <word form="tumingin" macros="@nom1 @dat2"/>
+  </entry>
+  <entry stem="ili" pred="buy" pos="V">
+    <member-of family="TV"/>
+    <word form="bumili" macros="@nom1 @gen2"/>
+    <word form="binili" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="awit" pred="sing" pos="V">
+    <member-of family="TV"/>
+    <word form="awitin" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="iram" pred="borrow" pos="V">
+    <member-of family="DV"/>
+    <word form="humiram" macros="@nom1 @gen2 @dat3"/>
+    <word form="hiramin" macros="@gen1 @nom2 @dat3"/>
+    <word form="hiraman" macros="@gen1 @gen2 @nom3"/>
+  </entry>
+  <entry stem="nagbigay" pred="give" pos="V">
+    <member-of family="DV"/>
+    <word form="nagbigay" macros="@nom1 @gen2 @dat3"/>
+  </entry>
+  <entry stem="nagpadala" pred="send" pos="V">
+    <member-of family="DV"/>
+    <word form="nagpadala" macros="@nom1 @gen2 @dat3"/>
+  </entry>
+  <entry stem="nasan" pred="dry" pos="V">
+    <member-of family="TV"/>
+    <word form="pupunasan" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="luto" pred="cook" pos="V">
+    <member-of family="TV"/>
+    <word form="niluto" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="pumunta" pred="go" pos="V">
+    <member-of family="TV"/>
+    <word form="pumunta" macros="@nom1 @dat2"/>
+  </entry>
+  <entry stem="nanghuhuli" pred="catch" pos="V">
+    <member-of family="TV"/>
+    <word form="nanghuhuli" macros="@nom1 @gen2"/>
+  </entry>
+  <entry stem="nantitinda" pred="sell" pos="V">
+    <member-of family="TV"/>
+    <word form="nagtitinda" macros="@nom1 @gen2"/>
+  </entry>
+  <entry stem="gasan" pred="wash" pos="V">
+    <member-of family="TV"/>
+    <word form="huhugasan" macros="@gen1 @nom2"/>
+    <word form="hinugasan" macros="@gen1 @nom2"/>
+  </entry>
+  <entry stem="kay" pos="Case">
+    <member-of family="Case"/>
+    <word form="kay" macros="@dat1"/>
+  </entry>
+  <entry stem="si" pos="Case">
+    <member-of family="Case"/>
+    <word form="si" macros="@nom1"/>
+  </entry>
+  <entry stem="sa" pos="Case">
+    <member-of family="Case"/>
+    <word form="sa" macros="@dat1"/>
+  </entry>
+  <entry stem="ang" pos="Case">
+    <member-of family="Case"/>
+    <word form="ang" macros="@nom1"/>
+  </entry>
+  <entry stem="ni" pos="Case">
+    <member-of family="Case"/>
+    <word form="ni" macros="@gen1"/>
+  </entry>
+  <entry stem="ng" pos="Case">
+    <member-of family="Case"/>
+    <word form="ng" macros="@gen1"/>
+  </entry>
+  <entry stem="ng" pos="Comp">
+    <member-of family="Comp"/>
+    <word form="ng" />
+  </entry>
+  <entry stem="ng" pos="Rel">
+    <member-of family="rel"/>
+    <word form="ng"/>
+  </entry>
+
+<macro name="@agr1">
+  <fs id="1" attr="agr" val="true"/>
+</macro>
+<macro name="@gen0">
+  <fs id="10" attr="case" val="a-case"/>
+</macro>
+<macro name="@gen1">
+  <fs id="1" attr="case" val="a-case"/>
+</macro>
+<macro name="@gen2">
+  <fs id="2" attr="case" val="a-case"/>
+</macro>
+<macro name="@acc0">
+  <fs id="10" attr="case" val="p-case"/>
+</macro>
+<macro name="@acc1">
+  <fs id="1" attr="case" val="p-case"/>
+</macro>
+<macro name="@acc2">
+  <fs id="2" attr="case" val="p-case"/>
+</macro>
+<macro name="@acc3">
+  <fs id="3" attr="case" val="p-case"/>
+</macro>
+<macro name="@def0">
+  <fs id="10" attr="def" val="true"/>
+</macro>
+<macro name="@nom0">
+  <fs id="10" attr="case" val="s-case"/>
+</macro>
+<macro name="@nom1">
+  <fs id="1" attr="case" val="subject-case"/>
+</macro>
+<macro name="@nom2">
+  <fs id="2" attr="case" val="subject-case"/>
+</macro>
+<macro name="@nom3">
+  <fs id="3" attr="case" val="subject-case"/>
+</macro>
+<macro name="@dat0">
+  <fs id="10" attr="case" val="dat"/>
+</macro>
+<macro name="@dat1">
+  <fs id="1" attr="case" val="dat"/>
+</macro>
+<macro name="@dat2">
+  <fs id="2" attr="case" val="dat"/>
+</macro>
+<macro name="@dat3">
+  <fs id="3" attr="case" val="dat"/>
+</macro>
+<macro name="@pl">
+  <fs id="10" attr="num" val="plu"/>
+</macro>
+<macro name="@sg">
+  <fs id="10" attr="num" val="sing"/>
+</macro>
+<macro name="@sg1">
+  <fs id="1" attr="num" val="sing"/>
+</macro>
+<macro name="@sg2">
+  <fs id="2" attr="num" val="sing"/>
+</macro>
+<macro name="@sg3">
+  <fs id="3" attr="num" val="sing"/>
+</macro>
+<macro name="@3rd">
+  <fs id="10" attr="person" val="3"/>
+</macro>
+<macro name="@3rd1">
+  <fs id="1" attr="person" val="3"/>
+</macro>
+<macro name="@3rd2">
+  <fs id="2" attr="person" val="3"/>
+</macro>
+<macro name="@3rd3">
+  <fs id="3" attr="person" val="3"/>
+</macro>
+<macro name="@1st">
+  <fs id="10" attr="person" val="1"/>
+</macro>
+<macro name="@1st1">
+  <fs id="1" attr="person" val="1"/>
+</macro>
+<macro name="@1st2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@2nd">
+  <fs id="10" attr="person" val="1"/>
+</macro>
+<macro name="@2nd1">
+  <fs id="1" attr="person" val="2"/>
+</macro>
+<macro name="@2nd2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@non-fin">
+  <fs id="10" attr="vform" val="non-fin"/> 
+</macro>
+
+<macro name="@past">
+	  <fs id="10" attr="vform" val="finite"/> 
+</macro>
+</dictionary>

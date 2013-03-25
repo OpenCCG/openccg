@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<grammar name="base"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../grammars/grammar.xsd"
+>
+  <lexicon file="lexicon.xml"/>
+  <morphology file="morph.xml"/>
+  <rules file="rules.xml"/>
+  
+  <LF-from-XML>
+    <transform file="../grammars/convert-to-hlds.xsl"/>
+    <transform file="../grammars/add-chunks.xsl"/>
+  </LF-from-XML>
+  
+</grammar>

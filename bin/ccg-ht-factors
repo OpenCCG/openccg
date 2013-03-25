@@ -1,0 +1,6 @@
+#!/bin/sh
+. ccg-env
+#CP=$CP:$OPENCCG_HOME/lib/jopt-simple.jar
+#echo $JAVA_ARGS
+"$JAVA" $JAVA_ARGS opennlp.ccg.realize.hypertagger.LMFactorExtractor $@
+

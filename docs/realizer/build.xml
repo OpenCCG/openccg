@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+
+<project name="OpenCCG Realizer Manual" basedir="." default="compile">
+
+	<uptodate property="realizer-manual.upToDate"
+    srcfile="./manual.tex"
+    targetfile="../realizer-manual.pdf"/>
+	
+  <!-- =================================================================== -->
+  <!-- Compiles Realizer Manual                                            -->
+  <!-- =================================================================== -->
+  <target name="compile" unless="realizer-manual.upToDate">
+    <echo message="Compiling grammar rough guide"/>
+    
+    <available file="./gb4e.sty" property="gb4e.sty.present"/>
+    <fail unless="gb4e.sty.present" message="gb4e.sty is not present"/>
+
+  	<available file="./cgloss4e.sty" property="cgloss4e.sty.present"/>
+    <fail unless="cgloss4e.sty.present" message="cgloss4e.sty is not present"/>
+
+    <available file="./openccg.sty" property="openccg.sty.present"/>
+    <fail unless="openccg.sty.present" message="openccg.sty is not present"/>
+	    
+    <available file="./refs.bib" property="refs.bib.present"/>
+    <fail unless="refs.bib.present" message="refs.bib is not present"/>
+  	
+  	<available file="./ex1a.pdf" property="ex1a.pdf.present"/>
+    <fail unless="ex1a.pdf.present" message="ex1a.pdf is not present"/>
+  	
+  	<available file="./ex1b.pdf" property="ex1b.pdf.present"/>
+    <fail unless="ex1b.pdf.present" message="ex1b.pdf is not present"/>
+    	
+   	<available file="./ex1c.pdf" property="ex1c.pdf.present"/>
+    <fail unless="ex1c.pdf.present" message="ex1c.pdf is not present"/>
+  	
+  	<available file="./pruner-class.pdf" property="pruner-class.pdf.present"/>
+    <fail unless="pruner-class.pdf.present" message="pruner-class.pdf is not present"/>
+    	
+   	<available file="./realizer-class.pdf" property="realizer-class.pdf.present"/>
+    <fail unless="realizer-class.pdf.present" message="realizer-class.pdf is not present"/>
+    	
+   	<available file="./scorer-class.pdf" property="scorer-class.pdf.present"/>
+    <fail unless="scorer-class.pdf.present" message="scorer-class.pdf is not present"/>
+	    
+    <!-- branch on cygwin, then finish -->
+    <antcall target="compile.default"/>
+    <antcall target="compile.cygwin"/>
+    <antcall target="compile.finish"/>
+  </target>
+
+  <target name="compile.default" unless="cygwin">
+    <echo message="(default compile)"/>
+    <exec executable="pdflatex" dir="." failonerror="true">
+      <arg value="manual.tex"/>
+    </exec>
+    <exec executable="bibtex" dir="." failonerror="true">
+      <arg value="manual"/>
+    </exec>
+    <exec executable="pdflatex" dir="." failonerror="true">
+      <arg value="manual.tex"/>
+    </exec>
+    <exec executable="pdflatex" dir="." failonerror="true">
+      <arg value="manual.tex"/>
+    </exec>
+  </target>
+	  
+  <target name="compile.cygwin" if="cygwin">
+    <echo message="(cygwin compile)"/>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/> <arg value="pdflatex manual.tex"/>
+    </exec>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/> <arg value="bibtex manual"/>
+    </exec>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/> <arg value="pdflatex manual.tex"/>
+    </exec>
+    <exec executable="bash" dir="." failonerror="true">
+      <arg value="-c"/> <arg value="pdflatex manual.tex"/>
+    </exec>
+  </target>
+	  
+  <target name="compile.finish">
+    <copy file="./manual.pdf" tofile="../realizer-manual.pdf" overwrite="true" />
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir="." includes="manual.*" excludes="manual.tex"/>
+    </delete>
+  </target>
+
+</project>

@@ -1,0 +1,377 @@
+<!--
+ Copyright (C) 2010-11 Michael White
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- This build file is for realization models using the converted CCGbank. -->
+
+<!-- $Id: build-rz.xml,v 1.20 2011/12/13 07:46:48 mwhite14850 Exp $ -->
+<project name="CCGbankRealizerModels" default="all" basedir=".">
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <property file="build.properties"/>
+  <property file="build-models.properties"/>
+  <property file="build-rz.properties"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+  </target>
+
+  <target name="init-deps" depends="init">
+    <!-- initial dependencies -->
+    <!-- nb: assumes supertagger already built -->
+    <uptodate targetfile="${words.lm}" srcfile="${vocab.train}" property="words.lm.uptodate"/>
+    <uptodate targetfile="${words.sc.lm}" srcfile="${vocab.train}" property="words.sc.lm.uptodate"/>
+    <uptodate targetfile="${realizer.models.dir}/t_p0p1p2.lm" srcfile="${factors.train}" property="stpos.flm.uptodate"/>
+  </target>
+
+  <target name="copy-train-grammar" depends="init">
+    <echo>Copying train grammar to ${extract.dir}</echo>
+    <copy todir="${extract.dir}" overwrite="true">
+      <fileset dir="${grams.dir}/train" includes="*.xml,*.html"/>
+    </copy>
+  </target>
+
+  <target name="copy-dev-morph" depends="copy-train-grammar">
+    <echo>Copying dev morph to ${extract.dir}</echo>
+    <copy tofile="${extract.dir}/morph.xml" file="${grams.dir}/dev/morph.xml" overwrite="true"/>
+  </target>
+
+  <target name="copy-test-morph" depends="copy-train-grammar">
+    <echo>Copying test morph to ${extract.dir}</echo>
+    <copy tofile="${extract.dir}/morph.xml" file="${grams.dir}/test/morph.xml" overwrite="true"/>
+  </target>
+
+  <target name="load-prefs-train" depends="init">
+    <echo>Loading gen-events.prefs</echo>
+    <exec executable="tccg" dir="${realizer.models.dir}">
+      <arg line="-importprefs gen-events.prefs"/>
+    </exec>
+  </target>
+
+  <target name="load-prefs-test" depends="init">
+    <echo>Loading rz-test.prefs</echo>
+    <java classname="opennlp.ccg.TextCCG">
+      <arg value="-importprefs"/> <arg value="${realizer.models.dir}/rz-test.prefs"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- N-gram models                                                       -->
+  <!-- =================================================================== -->
+
+  <target name="make-words-lm" depends="init-deps" unless="words.lm.uptodate">
+    <echo message="Building trigram language model to ${words.lm}"/>
+    <exec executable="ngram-count">
+      <arg value="-kndiscount"/> <arg value="-unk"/>
+      <arg value="-lm"/> <arg value="${words.lm}"/>
+      <arg value="-order"/> <arg value="3"/>
+      <arg value="-vocab"/> <arg value="${vocab.train}"/>
+      <arg value="-text"/> <arg value="${text.train}"/>
+    </exec>
+  </target>
+
+  <target name="make-words-sc-lm" depends="init-deps" unless="words.sc.lm.uptodate">
+    <echo message="Building trigram language model with semantic class replacement to ${words.sc.lm}"/>
+    <exec executable="ngram-count">
+      <arg value="-kndiscount"/> <arg value="-unk"/>
+      <arg value="-lm"/> <arg value="${words.sc.lm}"/>
+      <arg value="-order"/> <arg value="3"/>
+      <arg value="-vocab"/> <arg value="${vocab.train}"/>
+      <arg value="-text"/> <arg value="${text.sc.train}"/>
+    </exec>
+  </target>
+
+  <target name="make-stpos-flm" depends="init-deps" unless="stpos.flm.uptodate">
+    <echo message="Making super-/pos tag factored language model using ${stpos.flm}"/>
+    <exec executable="fngram-count" dir="${realizer.models.dir}">
+      <arg value="-text"/> <arg value="${basedir}/${factors.train}"/> 
+      <arg value="-vocab"/> <arg value="${basedir}/${vocab.train}"/> 
+      <arg value="-factor-file"/> <arg value="${basedir}/${stpos.flm}"/> 
+      <arg line="-lm -write-counts"/>
+    </exec>
+    <delete>
+      <fileset dir="${realizer.models.dir}" includes="*.count"/>
+    </delete>
+  </target>
+
+  <!-- train word models excluding each section in turn -->
+  <target name="check-lms-excl-sect" depends="init-deps">
+    <uptodate targetfile="${realizer.models.dir}/excl/train.excl02.3bo" 
+	      srcfile="${vocab.train}" property="lms.excl.sect.uptodate"/>
+  </target>
+
+  <target name="make-lms-excl-sect" depends="check-lms-excl-sect" unless="lms.excl.sect.uptodate">
+    <for list="${training.dirs}" param="sect">
+      <sequential>
+	<echo>Concatenating training text excluding sect @{sect} to ${text.train}.excl@{sect}</echo>
+	<concat destfile="${text.train}.excl@{sect}">
+	  <fileset dir="${info.dir}" includes="text-*-all" 
+		   excludes="text-@{sect}-all,text-00-all,text-23-all"/>
+	</concat>
+	<echo>Concatenating sem class replaced training text excluding sect @{sect} to ${text.sc.train}.excl@{sect}</echo>
+	<concat destfile="${text.sc.train}.excl@{sect}">
+	  <fileset dir="${info.dir}" includes="textsc-*-all" 
+		   excludes="textsc-@{sect}-all,textsc-00-all,textsc-23-all"/>
+	</concat>
+	<echo>Building trigram language model to ${realizer.models.dir}/excl/train.excl@{sect}.3bo</echo>
+	<exec executable="ngram-count">
+	  <arg value="-kndiscount"/> <arg value="-unk"/>
+	  <arg value="-lm"/> <arg value="${realizer.models.dir}/excl/train.excl@{sect}.3bo"/>
+	  <arg value="-order"/> <arg value="3"/>
+	  <arg value="-vocab"/> <arg value="${vocab.train}"/>
+	  <arg value="-text"/> <arg value="${text.train}.excl@{sect}"/>
+	</exec>
+	<echo>Building trigram language model to ${realizer.models.dir}/excl/train-sc.excl@{sect}.3bo</echo>
+	<exec executable="ngram-count">
+	  <arg value="-kndiscount"/> <arg value="-unk"/>
+	  <arg value="-lm"/> <arg value="${realizer.models.dir}/excl/train-sc.excl@{sect}.3bo"/>
+	  <arg value="-order"/> <arg value="3"/>
+	  <arg value="-vocab"/> <arg value="${vocab.train}"/>
+	  <arg value="-text"/> <arg value="${text.sc.train}.excl@{sect}"/>
+	</exec>
+	<echo>Deleting concatenated text files</echo>
+	<delete>
+	  <fileset file="${text.train}.excl@{sect}"/>
+	</delete>
+	<delete>
+	  <fileset file="${text.sc.train}.excl@{sect}"/>
+	</delete>
+      </sequential>
+    </for>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Perceptron Model                                                    -->
+  <!-- =================================================================== -->
+
+  <target name="gen-realizer-events-prep" depends="make-lms-excl-sect">
+    <echo>Invoking parser target for generative models excluding each section</echo>
+    <subant antfile="build-ps.xml" buildpath="${basedir}">
+      <target name="make-parser-flms-excl-sect"/>
+    </subant>
+    <echo>Done</echo>
+  </target>
+
+  <!-- generate realizer events for each section -->
+  <macrodef name="gen-realizer-events-for-sect">
+    <attribute name="sect"/>
+    <sequential>
+      <echo>Generating realizer training events for sect @{sect}</echo>
+      <echo>Copying train grammar to ${extract.dir}</echo>
+      <copy todir="${extract.dir}" overwrite="true">
+	<fileset dir="${grams.dir}/train" includes="*.xml,*.html"/>
+      </copy>
+      <echo>Generating events to ${realizer.feats.dir}/events-@{sect}.gz</echo>
+      <exec executable="ccg-test" dir="${basedir}" output="${log.dir}/gen.realizer.events.@{sect}.log">
+	<arg value="-Dgensyn.model.dir=${parser.models.dir}/excl@{sect}"/>
+	<arg value="-Dwords.lm=${realizer.models.dir}/excl/train.excl@{sect}.3bo"/>
+	<arg value="-noparsing"/>
+	<arg value="-g"/> <arg value="${extract.dir}/grammar.xml"/>
+	<arg value="-2events"/> <arg value="${realizer.feats.dir}/events-@{sect}.gz"/>
+	<arg value="-htconfig"/> <arg value="${hypertagger.models.dir}/ht2.train.config"/> 
+	<arg value="-scorer"/> <arg value="plugins.MyNgramGenSynProduct"/>
+<!-- 	<arg value="-extractor"/> <arg value="plugins.MySynAgrFeatureExtractor"/> -->
+	<arg value="-extractor"/> <arg value="plugins.MySynSemAgrFeatureExtractor"/>
+	<arg value="${test.dir}/@{sect}"/>
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <target name="check-realizer-events" depends="init-deps">
+    <uptodate targetfile="${realizer.feats.dir}/events-${sect}.gz" 
+	      srcfile="${realizer.models.dir}/excl/train.excl02.3bo" property="realizer.events.uptodate"/>
+  </target>
+
+  <target name="gen-realizer-events" 
+	  depends="gen-realizer-events-prep,load-prefs-train,check-realizer-events" unless="realizer.events.uptodate">
+    <gen-realizer-events-for-sect sect="${sect}"/>
+  </target>
+
+  <target name="check-realizer-events-train" depends="init-deps">
+    <uptodate targetfile="${realizer.feats.dir}/events-02.gz" 
+	      srcfile="${realizer.models.dir}/excl/train.excl02.3bo" property="realizer.events.train.uptodate"/>
+  </target>
+
+  <!-- see bin/gen_realizer_events_* for scripts to extract events in parallel -->
+  <target name="gen-realizer-events-train" 
+	  depends="gen-realizer-events-prep,load-prefs-train,check-realizer-events-train" unless="realizer.events.train.uptodate">
+    <for list="${training.dirs}" param="sect">
+      <sequential>
+	<gen-realizer-events-for-sect sect="@{sect}"/>
+      </sequential>
+    </for>
+  </target>
+
+  <target name="check-realizer-events-concat" depends="init-deps">
+    <uptodate targetfile="${realizer.feats.dir}/events-train.gz" 
+	      srcfile="${realizer.feats.dir}/events-02.gz" property="realizer.events.concat.uptodate"/>
+  </target>
+
+  <target name="concat-realizer-events" 
+	  depends="gen-realizer-events-train,check-realizer-events-concat" unless="realizer.events.concat.uptodate">
+    <echo>Concatenating event files to ${realizer.feats.dir}/events-train.gz</echo>
+    <for list="${training.dirs}" param="sect">
+      <sequential>
+	<echo>Concatenating ${realizer.feats.dir}/events-@{sect}.gz</echo>
+	<gunzip src="${realizer.feats.dir}/events-@{sect}.gz"/>
+	<concat destfile="${realizer.feats.dir}/events-train" append="true">
+	  <fileset file="${realizer.feats.dir}/events-@{sect}"/>
+	</concat>
+	<delete file="${realizer.feats.dir}/events-@{sect}" quiet="true"/>
+      </sequential>
+    </for>
+    <gzip src="${realizer.feats.dir}/events-train" destfile="${realizer.feats.dir}/events-train.gz"/>
+    <delete file="${realizer.feats.dir}/events-train" quiet="true"/>
+  </target>
+
+  <target name="check-realizer-alphabet" depends="init-deps">
+    <uptodate targetfile="${realizer.feats.dir}/alph.gz" 
+	      srcfile="${realizer.feats.dir}/events-train.gz" property="realizer.alphabet.uptodate"/>
+  </target>
+
+  <target name="calc-realizer-alphabet" 
+	  depends="concat-realizer-events,check-realizer-alphabet" unless="realizer.alphabet.uptodate">
+    <echo>Calculating feature alphabet as ${realizer.feats.dir}/alph.gz</echo>
+    <java classname="opennlp.ccg.perceptron.Alphabet" output="${log.dir}/log.realizer.alphabet">
+      <arg value="${realizer.feats.dir}/events-train.gz"/>
+      <arg value="${realizer.feats.dir}/alph.gz"/>
+      <arg value="-p"/> <arg value="5"/>
+    </java>
+  </target>
+
+  <target name="check-realizer-perceptron-global" depends="init-deps">
+    <uptodate targetfile="${realizer.models.dir}/${realizer.model.global}" 
+	      srcfile="${realizer.feats.dir}/events-train.gz" property="realizer.perceptron.global.uptodate"/>
+  </target>
+
+  <target name="train-realizer-perceptron-global" 
+	  depends="check-realizer-perceptron-global" unless="realizer.perceptron.global.uptodate">
+    <echo>Training perceptron model with global feats to ${realizer.models.dir}/${realizer.model.global}</echo>
+    <java classname="opennlp.ccg.perceptron.Trainer" output="${log.dir}/log.realizer.perceptron.global">
+      <arg value="${realizer.feats.dir}/events-train.gz"/>
+      <arg value="${realizer.models.dir}/${realizer.alph.init}"/>
+      <arg value="2"/>
+      <arg value="${realizer.models.dir}/${realizer.model.global}"/>
+      <arg value="-i"/> <arg value="${realizer.models.dir}/model.init"/>
+      <!-- <arg value="-in_mem"/> -->
+    </java>
+  </target>
+
+  <target name="check-realizer-perceptron" depends="init-deps">
+    <uptodate targetfile="${realizer.models.dir}/${realizer.model.name}" 
+	      srcfile="${realizer.feats.dir}/${realizer.alph.name}" property="realizer.perceptron.uptodate"/>
+  </target>
+
+  <target name="train-realizer-perceptron" 
+	  depends="calc-realizer-alphabet,train-realizer-perceptron-global,check-realizer-perceptron" 
+	  unless="realizer.perceptron.uptodate">
+    <echo>Training perceptron model to ${realizer.models.dir}/${realizer.model.name} </echo>
+    <echo>from ${realizer.feats.dir}/${realizer.alph.name}</echo>
+    <java classname="opennlp.ccg.perceptron.Trainer" output="${log.dir}/log.realizer.perceptron">
+      <arg value="${realizer.feats.dir}/events-train.gz"/>
+      <arg value="${realizer.feats.dir}/${realizer.alph.name}"/>
+      <arg value="5"/>
+      <arg value="${realizer.models.dir}/${realizer.model.name}"/>
+      <arg value="-i"/> <arg value="${realizer.models.dir}/${realizer.model.global}"/>
+      <!-- <arg value="-n"/> <arg value="1"/> -->
+      <!-- <arg value="-in_mem"/> -->
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Testing                                                             -->
+  <!-- =================================================================== -->
+
+  <target name="test-realizer" depends="copy-dev-morph,load-prefs-test">
+    <echo>Realizing dev section to ${log.dir}/realize.dev.log</echo>
+    <exec executable="ccg-test" dir="${basedir}" output="${log.dir}/realize.dev.log">
+      <arg value="-noparsing"/>
+      <arg value="-g"/> <arg value="${extract.dir}/grammar.xml"/>
+      <arg value="-htconfig"/> <arg value="${hypertagger.models.dir}/ht2.config"/>
+      <arg value="-scorer"/> <arg value="plugins.MyNgramGenSynProduct"/>
+      <arg value="${test.dir}/00"/>
+    </exec>
+  </target>
+
+  <target name="test-realizer-perceptron" depends="copy-dev-morph,load-prefs-test">
+    <echo>Realizing dev section to ${log.dir}/realize.perceptron.dev.log</echo>
+    <exec executable="ccg-test" dir="${basedir}" output="${log.dir}/realize.perceptron.dev.log">
+      <arg value="-Drealizer.model.name=${realizer.model.name}"/>
+      <arg value="-noparsing"/>
+      <arg value="-g"/> <arg value="${extract.dir}/grammar.xml"/>
+      <arg value="-htconfig"/> <arg value="${hypertagger.models.dir}/ht2.config"/>
+      <arg value="-scorer"/> <arg value="plugins.MyRealizerPerceptronScorer"/>
+      <arg value="-bleu"/> <arg value="${log.dir}/realize.perceptron.dev.bleu"/>
+      <arg value="-realserdir"/> <arg value="${log.dir}/ser"/>
+      <arg value="${test.dir}/00"/>
+    </exec>
+  </target>
+
+  <target name="test-realizer-perceptron-23" depends="copy-test-morph,load-prefs-test">
+    <echo>Realizing test section to ${log.dir}/realize.perceptron.test.log</echo>
+    <exec executable="ccg-test" dir="${basedir}" output="${log.dir}/realize.perceptron.test.log">
+      <arg value="-Drealizer.model.name=${realizer.model.name}"/>
+      <arg value="-noparsing"/>
+      <arg value="-g"/> <arg value="${extract.dir}/grammar.xml"/>
+      <arg value="-htconfig"/> <arg value="${hypertagger.models.dir}/ht2.config"/>
+      <arg value="-scorer"/> <arg value="plugins.MyRealizerPerceptronScorer"/>
+      <arg value="-bleu"/> <arg value="${log.dir}/realize.perceptron.test.bleu"/>
+      <arg value="-realserdir"/> <arg value="${log.dir}/ser"/>
+      <arg value="${test.dir}/23"/>
+    </exec>
+  </target>
+
+  <!-- nb: this target relies on test-parser-novel having been run first -->
+  <target name="test-realizer-novel" depends="load-prefs-test">
+    <echo>Realizing ${novel.file}.dir/tb.xml to ${novel.file}.dir/realize.nbest</echo>
+    <java classname="opennlp.ccg.test.Regression" output="${novel.file}.dir/realize.log">
+      <arg value="-noparsing"/>
+      <arg value="-g"/> <arg value="${novel.file}.dir/extract/grammar.xml"/>
+      <arg value="-htconfig"/> <arg value="${hypertagger.models.dir}/ht2.config"/>
+      <!-- <arg value="-htgold"/> -->
+      <arg value="-scorer"/> <arg value="plugins.MyRealizerPerceptronScorer"/>
+      <arg value="-nbestrealfile"/> <arg value="${novel.file}.dir/realize.nbest"/>
+      <arg value="${novel.file}.dir/tb.xml"/>
+    </java>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Top-level                                                           -->
+  <!-- 1st: run all                                                        -->
+  <!-- 2nd: run event-gen-prep                                             -->
+  <!-- 3rd: run bin/gen_realizer_events_* to extract events in parallel    -->
+  <!-- 4th: run train-perceptron                                           -->
+  <!-- =================================================================== -->
+
+  <target name="all" depends="make-words-lm,make-words-sc-lm,make-stpos-flm"/>
+  <target name="event-gen-prep" depends="gen-realizer-events-prep"/>
+  <target name="train-perceptron" depends="train-realizer-perceptron"/>
+  <target name="train-perceptron-global" depends="train-realizer-perceptron-global"/>
+  <target name="test" depends="test-realizer"/>
+  <target name="test-perceptron" depends="test-realizer-perceptron"/>
+  <target name="test-perceptron-23" depends="test-realizer-perceptron-23"/>
+  <target name="test-novel" depends="test-realizer-novel"/>
+
+</project>

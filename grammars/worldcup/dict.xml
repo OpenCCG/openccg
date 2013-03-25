@@ -1,0 +1,442 @@
+<?xml version="1.0"?>
+<!-- 
+Copyright (C) 2003-4 Jason Baldridge and University of Edinburgh (Michael White) 
+$Revision: 1.9 $, $Date: 2004/10/05 11:01:48 $ 
+-->
+<dictionary name="worldcup"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:noNamespaceSchemaLocation="../dict.xsd"
+>
+
+  <entry stem="that" pos="Pron">
+    <member-of family="Rel"/>
+    <member-of family="Comp"/>
+  </entry>
+
+  <entry stem="and" pos="Conj">
+    <member-of family="Conj"/>
+    <stem-for family="Conj" entry="NP-Collective"/>
+    <stem-for family="Conj" entry="NP-Distributive-and-Rightward-TR"/>
+    <stem-for family="Conj" entry="NP-Distributive-and-Leftward-TR"/>
+  </entry>
+  <entry stem="or" pos="Conj">
+    <member-of family="Conj"/>
+    <stem-for family="Conj" entry="NP-Distributive-or-Rightward-TR"/>
+    <stem-for family="Conj" entry="NP-Distributive-or-Leftward-TR"/>
+  </entry>
+
+  <entry stem="." pred="declare" pos=".">
+    <member-of family="FullStop"/>
+  </entry>
+  <entry stem="?" pred="ask" pos="?">
+    <member-of family="QuestionMark"/>
+  </entry>
+
+  <entry stem="everyone" pred="every" pos="QNP">
+    <member-of family="QuantNP"/>
+  </entry>
+  <entry stem="who" pos="WhNP">
+    <member-of family="WhNP"/>
+  </entry>
+
+  <entry stem="a" pos="Det">
+    <member-of family="Det"/>
+    <word form="a"/>
+    <word form="an"/>
+  </entry>
+  <entry stem="the" pos="Det">
+    <member-of family="Det"/>
+  </entry>
+  
+  <entry stem="his" pos="Det" class="PPRO">
+    <member-of family="Det"/>
+  </entry>
+  <entry stem="my" pos="Det" class="PPRO">
+    <member-of family="Det"/>
+  </entry>
+  <entry stem="its" pos="Det" class="PPRO">
+    <member-of family="Det"/>
+  </entry>
+  
+  <entry stem="all" pos="QDet">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry stem="every" pos="QDet">
+    <member-of family="QuantDet"/>
+  </entry>
+  <entry stem="no" pos="QDet">
+    <member-of family="QuantDet"/>
+  </entry>
+
+  <entry stem="which" pos="Wh">
+    <member-of family="WhDet"/>
+  </entry>
+
+  <entry stem="up" pos="Prep">
+    <member-of family="Particle"/>
+  </entry>
+  <entry stem="with" pos="Prep">
+    <member-of family="Particle"/>
+  </entry>
+  <entry stem="from" pos="Prep">
+    <member-of family="PrepNom"/>
+  </entry>
+  <entry stem="to" pos="Prep">
+    <member-of family="PrepNom"/>
+    <member-of family="To-Infinitive"/>
+  </entry>
+  <entry stem="without" pos="Prep">
+    <member-of family="PrepAdv"/>
+  </entry>
+  <entry stem="'s" pos="Prep"/>
+  <entry stem="of" pos="Prep"/>
+  <entry stem="about" pos="Prep"/>
+  <entry stem="after" pos="Prep"/>
+  <entry stem="on" pos="Prep"/>
+  <entry stem="for" pos="Prep"/>
+  <entry stem="in" pos="Prep"/>
+  <entry stem="by" pos="Prep"/>
+  <entry stem="between" pos="Prep"/>
+
+  <entry stem="red" pos="Adj" class="COLOR"/>
+  <entry stem="yellow" pos="Adj" class="COLOR"/>
+  <entry stem="aggressive" pos="Adj"/>
+  <entry stem="reckless" pos="Adj"/>
+  <entry stem="quick" pos="Adj"/>
+  <entry stem="powerful" pos="Adj"/>
+  <entry stem="well-deserved" pos="Adj"/>
+  <entry stem="first" pos="Adj"/>
+  <entry stem="cup" pos="Adj"/>
+
+  <entry stem="today" pos="Adv" class="TEMP_ADV"/>
+  <entry stem="yesterday" pos="Adv" class="TEMP_ADV"/>
+  <entry word="previously" stem="previous" pos="Adv"/>
+  <entry word="skeptically" stem="skeptic" pos="Adv" class="ATT_ADV"/>
+  <entry word="joyfully" stem="joyful" pos="Adv" class="ATT_ADV"/>
+  <entry word="easily" stem="easy" pos="Adv" class="MANNER_ADV"/>
+  <entry word="quickly" stem="quick" pos="Adv" class="MANNER_ADV"/>
+  <entry word="skillfully" stem="skillful" pos="Adv" class="MANNER_ADV"/>
+  <entry word="angrily" stem="angry" pos="Adv" class="MANNER_ADV"/>
+
+  <entry stem="may" pos="V">
+    <member-of family="Modal"/>
+  </entry>
+  <entry stem="will" pos="V">
+    <member-of family="Modal"/>
+  </entry>
+  <entry stem="should" pos="V">
+    <member-of family="Modal"/>
+  </entry>
+  <entry stem="would" pos="V">
+    <member-of family="Modal"/>
+  </entry>
+  <entry stem="not" pos="V" macros="@nonfin">
+    <member-of family="Modal"/>
+  </entry>
+  
+  <entry word="did" stem="do" pos="V" macros="@past">
+    <member-of family="Do-Support"/>
+  </entry>
+
+  <entry word="celebrated" stem="celebrate" pos="V" macros="@past">
+    <member-of family="IV"/>
+  </entry>
+  <entry stem="cheer" pos="V">
+    <member-of family="IV"/>
+    <word form="cheer" macros="@nonfin"/>
+    <word form="cheered" macros="@past"/>
+  </entry>
+  <entry stem="come" pos="V">
+    <member-of family="IV"/>
+    <word form="come" macros="@nonfin"/>
+    <word form="came" macros="@past"/>
+  </entry>
+  <entry stem="leave" pos="V">
+    <member-of family="IV"/>
+    <word form="leave" macros="@nonfin"/>
+    <word form="left" macros="@past"/>
+  </entry>
+  <entry word="misses" stem="miss" pos="V" macros="@pres @+3rd-agr @sg-agr">
+    <member-of family="IV"/>
+  </entry>
+  <entry stem="score" pos="V">
+    <member-of family="IV"/>
+    <member-of family="TV"/>
+    <word form="score" macros="@nonfin"/>
+    <word form="scores" macros="@pres @+3rd-agr @sg-agr"/>
+    <word form="scored" macros="@past"/>
+  </entry>
+  <entry stem="shoot" pos="V">
+    <member-of family="IV"/>
+    <member-of family="TV"/>
+    <word form="shoot" macros="@nonfin"/>
+    <word form="shoots" macros="@pres @+3rd-agr @sg-agr"/>
+  </entry>
+  <entry stem="smile" pos="V">
+    <member-of family="IV"/>
+    <word form="smile" macros="@nonfin"/>
+    <word form="smile" macros="@pres @-3rd-agr"/>
+    <word form="smiles" macros="@pres @+3rd-agr @sg-agr"/>
+    <word form="smile" macros="@pres @+3rd-agr @pl-agr"/>
+    <word form="smiled" macros="@past"/>
+  </entry>
+  <entry word="stayed" stem="stay" pos="V" macros="@past">
+    <member-of family="IV"/>
+  </entry>
+  <entry stem="win" pos="V">
+    <member-of family="IV"/>
+    <member-of family="TV"/>
+    <word form="won" macros="@past"/>
+    <word form="win" macros="@nonfin"/>
+  </entry>
+
+  <entry word="astonished" stem="astonish" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry stem="beat" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry word="blocked" stem="block" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry stem="defeat" pos="V">
+    <member-of family="TV"/>
+    <word form="defeat" macros="@nonfin"/>
+    <word form="defeated" macros="@past"/>
+  </entry>
+  <entry word="enjoying" stem="enjoy" pos="V" macros="@gerund">
+    <member-of family="TV"/>
+  </entry>
+  <entry word="hosted" stem="host" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry word="kicked" stem="kick" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry stem="meet" pos="V">
+    <member-of family="TV"/>
+    <word form="meet" macros="@nonfin"/>
+    <word form="met" macros="@past"/>
+  </entry>
+  <entry stem="play" pos="V">
+    <member-of family="TV"/>
+    <word form="play" macros="@nonfin"/>
+    <word form="played" macros="@past"/>
+  </entry>
+  <entry word="read" stem="read" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry word="saw" stem="see" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry stem="support" pos="V" macros="@nonfin">
+    <member-of family="TV"/>
+  </entry>
+  <entry word="threw" stem="throw" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+  <entry word="watched" stem="watch" pos="V" macros="@past">
+    <member-of family="TV"/>
+  </entry>
+
+  <entry stem="return" pos="V" macros="@pp-from">
+    <member-of family="TV-Motion"/>
+    <word form="return" macros="@nonfin"/>
+    <word form="returned" macros="@past"/>
+  </entry>
+  <entry stem="travel" pos="V" macros="@pp-to">
+    <member-of family="TV-Motion"/>
+    <word form="travel" macros="@nonfin"/>
+    <word form="traveled" macros="@past"/>
+  </entry>
+
+  <entry word="knew" stem="know" pos="V" macros="@past">
+    <member-of family="TV-Scomp"/>
+  </entry>
+  <entry word="predicted" stem="predict" pos="V" macros="@past">
+    <member-of family="TV-Scomp"/>
+  </entry>
+  <entry word="said" stem="say" pos="V" macros="@past">
+    <member-of family="TV-Scomp"/>
+  </entry>
+  <entry word="thought" stem="think" pos="V" macros="@past">
+    <member-of family="TV-Scomp"/>
+  </entry>
+
+  <entry word="picked" stem="pick-up" pos="V" macros="@past @prt-up">
+    <member-of family="TV-Phrasal"/>
+  </entry>
+  <entry stem="tie-with" pos="V" macros="@prt-with">
+    <member-of family="TV-PrepComplement"/>
+    <word form="tie" macros="@nonfin "/>
+    <word form="tied" macros="@past"/>
+  </entry>
+  
+  <entry word="bought" stem="buy" pos="V" macros="@past">
+    <member-of family="DTV"/>
+  </entry>
+  <entry stem="give" pos="V">
+    <member-of family="DTV"/>
+    <word form="give" macros="@nonfin"/>
+    <word form="gives" macros="@pres @+3rd-agr @sg-agr"/>
+    <word form="gave" macros="@past"/>
+  </entry>
+  <entry word="offered" stem="offer" pos="V" macros="@past">
+    <member-of family="DTV"/>
+  </entry>
+
+  <entry stem="persuade" pos="V">
+    <member-of family="ObjectControl"/>
+    <word form="persuade" macros="@nonfin"/>
+    <word form="persuades" macros="@pres @+3rd-agr @sg-agr"/>
+    <word form="persuaded" macros="@past"/>
+  </entry>
+
+  <entry stem="shot" pos="N" macros="@sg"/>
+  <entry stem="ball" pos="N" macros="@sg"/>
+  <entry stem="cup" pos="N" macros="@sg"/>
+  <entry stem="friend" pos="N" macros="@sg"/>
+  <entry stem="family" pos="N" macros="@sg"/>
+  <entry stem="victory" pos="N" macros="@sg"/>
+  <entry stem="ticket" pos="N">
+    <word form="ticket" macros="@sg"/>
+    <word form="tickets" macros="@pl"/>
+  </entry>
+  <entry stem="book" pos="N" macros="@sg"/>
+  <entry stem="card" pos="N" macros="@sg"/>
+  <entry stem="goal" pos="N">
+    <word form="goal" macros="@sg"/>
+    <word form="goals" macros="@pl"/>
+  </entry>
+  <entry stem="referee" pos="N" macros="@sg"/>
+  <entry stem="team" pos="N">
+    <word form="team" macros="@sg"/>
+    <word form="teams" macros="@pl"/>
+  </entry>
+  <entry stem="game" pos="N">
+    <word form="game" macros="@sg"/>
+    <word form="games" macros="@pl"/>
+  </entry>
+  <entry stem="fan" pos="N" macros="@sg"/>
+  <entry stem="final" pos="N" macros="@sg"/>
+  <entry stem="field" pos="N" macros="@sg" class="PLACE"/>
+  <entry stem="stadium" pos="N" macros="@sg" class="PLACE"/>
+  <entry stem="country" pos="N" macros="@sg"/>
+  <entry stem="detractor" pos="N" macros="@sg"/>
+  <entry stem="player" pos="N">
+    <word form="player" macros="@sg"/>
+    <word form="players" macros="@pl"/>
+  </entry>
+  
+  <entry stem="I" pos="NNP" macros="@-3rd @sg" class="PRO"/>
+  <entry stem="me" pos="NNP" macros="@-3rd @sg" class="PRO"/>
+  <entry stem="he" pos="NNP" macros="@sg" class="PRO"/>
+  <entry stem="it" pos="NNP" macros="@sg" class="PRO"/>
+  <entry stem="you" pos="NNP" macros="@-3rd" class="PRO"/>
+  <entry stem="Spain" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry stem="Germany" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry stem="Brazil" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry stem="Turkey" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry stem="China" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry stem="Paraguay" pos="NNP" macros="@sg" class="COUNTRY"/>
+  <entry stem="John" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Joao" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Maria" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Bill" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Ronaldo" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Ronaldinho" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Rivaldo" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Marcos" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Kahn" pos="NNP" macros="@sg" class="PERSON"/>
+  <entry stem="Unsal" pos="NNP" macros="@sg" class="PERSON"/>
+
+  <macro name="@+3rd-agr">
+    <fs id="1" attr="3rd" val="+"/>
+    <fs id="2" attr="3rd" val="+"/>
+  </macro>
+
+  <macro name="@-3rd">
+    <fs id="1" attr="3rd" val="-"/>
+    <fs id="2" attr="3rd" val="-"/>
+  </macro>
+
+  <macro name="@-3rd-agr">
+    <fs id="1" attr="3rd" val="-"/>
+    <fs id="2" attr="3rd" val="-"/>
+  </macro>
+
+  <macro name="@sg">
+    <fs id="2" attr="num" val="sg"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num"><prop name="sg"/></diamond>
+      </satop>
+    </lf>
+  </macro>
+
+  <macro name="@sg-agr">
+    <fs id="1" attr="num" val="sg"/>
+    <fs id="2" attr="num" val="sg"/>
+  </macro>
+
+  <macro name="@pl">
+    <fs id="2" attr="num" val="pl"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num"><prop name="pl"/></diamond>
+      </satop>
+    </lf>
+  </macro>
+
+  <macro name="@pl-agr">
+    <fs id="1" attr="num" val="pl"/>
+    <fs id="2" attr="num" val="pl"/>
+  </macro>
+
+  <macro name="@pp-from">
+    <fs id="3" attr="lex" val="from"/>
+  </macro>
+
+  <macro name="@pp-to">
+    <fs id="3" attr="lex" val="to"/>
+  </macro>
+
+  <macro name="@prt-up">
+    <fs id="4" attr="lex" val="up"/>
+  </macro>
+
+  <macro name="@prt-with">
+    <fs id="4" attr="lex" val="with"/>
+  </macro>
+
+  <macro name="@gerund">
+    <fs id="1" attr="vform" val="ger"/>
+  </macro>
+
+  <macro name="@nonfin">
+    <fs id="1" attr="vform" val="non-fin"/>
+  </macro>
+
+  <macro name="@finite">
+    <fs id="1">
+      <feat attr="vform" val="fin"/>
+    </fs>
+  </macro>
+
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense"><prop name="past"/></diamond>
+      </satop>
+    </lf>
+  </macro>
+
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense"><prop name="pres"/></diamond>
+      </satop>
+    </lf>
+  </macro>
+
+</dictionary>

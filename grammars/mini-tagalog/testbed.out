@@ -1,0 +1,17 @@
+Loading grammar from URL: file:/home/bozsahin/openccg/grammars/mini-tagalog/grammar.xml
+
+Parse	Realize	String
+-----	-------	------
+(3)	-	iniwasan ko ng tumingin kay Lorna
+ok	-	nagatubili siya ng humiram ng pera sa bangko
+ok	-	nagatubili siya ng hiramin ang pera sa bangko
+(2)	-	nagatubili siya ng hiraman ng pera ang bangko
+ok	-	binawalan ko si Maria ng awitin ang pera
+(3)	-	ang babae ng bumili ng baro
+(3)	-	ang baro ng binili ng babae
+(2)	-	huhugasan ko at pupunasan mo ang mgapinggan
+(2)	-	niluto ang pagkain at hinugasan ang mgapinggan ni Josie
+(4)	-	nanghuhuli ang ama at nagtitinda ang ina ng isda
+(2)	-	nagbigay ng regalo si Maria at nagpadala ng liham ang mgabat
+		a kay Juan
+(5)	-	pumunta sa tindahan at bumili ang kapatid ng bigas

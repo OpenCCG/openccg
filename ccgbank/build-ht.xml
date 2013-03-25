@@ -1,0 +1,282 @@
+<!--
+ Copyright (C) 2010-11 Dominic Espinosa and Michael White
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- This build file is for hypertagging models using the converted CCGbank. -->
+
+<!-- $Id: build-ht.xml,v 1.10 2011/11/08 19:58:08 mwhite14850 Exp $ -->
+<project name="HtModels" default="all" basedir=".">
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <property file="build.properties"/>
+  <property file="build-models.properties"/>
+  <property file="build-ht.properties"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <!-- initial hypertagger dependencies go here -->
+    <uptodate targetfile="${ht.factors.train}" srcfile="${preds.train}" property="ht.factors.train.uptodate"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- POS tagger and hypertagger                                          -->
+  <!-- =================================================================== -->
+	
+  <target name="get-factors" depends="init" unless="ht.factors.train.uptodate">
+                <echo message="Extracting SRILM factors from LF corpus" />
+                <java classname="opennlp.ccg.realize.hypertagger.LMFactorExtractor" 
+                        output="${ht.factors.train}" error="${log.dir}/ht.factors.train.log">
+                        <arg value="${preds.train}"/>
+                </java>
+                <java classname="opennlp.ccg.realize.hypertagger.LMFactorExtractor"
+                        output="${factors.dev}" error="${log.dir}/ht.factors.dev.log">
+                        <arg value="${preds.dev}"/>
+                </java>
+  </target>
+
+  <target name="check-vocab" depends="init">
+    <uptodate targetfile="${vocab.train}" srcfile="${ht.factors.train}" property="vocab.train.uptodate"/>
+  </target>
+
+  <target name="get-vocab" depends="get-factors,check-vocab" unless="vocab.train.uptodate">
+    <echo message="Writing counts from factor file"/>
+    <exec executable="fngram-count" dir="${ht.models.dir}">
+      <arg value="-text"/> <arg value="${basedir}/${ht.factors.train}"/> 
+      <arg line="-factor-file vocab.flm -write-counts -sort"/>
+    </exec>
+    <for list="w,t,p" param="F">
+      <sequential>
+	<exec executable="cut" dir="${ht.models.dir}" output="${ht.models.dir}/uni.count">
+	  <arg line="-f 2,3 @{F}.count"/>
+	</exec>
+	<move file="${ht.models.dir}/uni.count" tofile="${ht.models.dir}/@{F}.count"/>
+      </sequential>
+    </for>
+    <echo message="Writing vocab with frequency cutoffs"/>
+    <exec executable="ngram-count" dir="${ht.models.dir}">
+      <arg line="-read p.count -write-vocab vocab.pos -sort"/>
+    </exec>
+    <exec executable="ngram-count" dir="${ht.models.dir}">
+      <arg line="-read w.count -gt1min 5 -write-vocab vocab.words -read-with-mincounts -sort"/>
+    </exec>
+    <exec executable="ngram-count" dir="${ht.models.dir}">
+      <arg line="-read t.count -gt1min 10 -write-vocab vocab.st -read-with-mincounts -sort"/>
+    </exec>
+    <concat destfile="${vocab.train}">
+      <filelist dir="${ht.models.dir}" files="vocab.pos,vocab.st,vocab.words"/>
+    </concat>
+    <delete>
+      <filelist dir="${ht.models.dir}" files="w.count,t.count,p.count"/>
+    </delete>
+  </target>
+
+  <target name="check-pos-prior-lm" depends="init">
+    <uptodate targetfile="${posprior.lm}" srcfile="${vocab.train}" property="posprior.lm.uptodate"/>
+  </target>
+
+  <target name="make-pos-prior-lm" depends="get-vocab,check-pos-prior-lm" unless="posprior.lm.uptodate">
+    <echo message="Making POS prior language model using ${ht.models.dir}/posprior.flm"/>
+    <exec executable="fngram-count" dir="${ht.models.dir}">
+      <arg value="-text"/> <arg value="${basedir}/${ht.factors.train}"/> 
+      <arg line="-factor-file posprior.flm -vocab vocab.train -lm -unk -write-counts -nonull"/>
+      <arg line="-no-virtual-begin-sentence -no-virtual-end-sentence"/>
+      <arg line="-no-add-start-sentence-token -no-add-end-sentence-token"/>
+    </exec>
+  </target>
+
+  <target name="check-pos-feats" depends="init">
+    <uptodate targetfile="${pos.feats}" srcfile="${posprior.lm}" property="pos.feats.uptodate"/>
+  </target>
+
+  <target name="get-pos-feats" depends="make-pos-prior-lm,check-pos-feats" unless="pos.feats.uptodate">
+    <echo message="Extracting hyper-POS training features to ${pos.feats}"/>
+    <java classname="opennlp.ccg.realize.hypertagger.TagExtract" 
+	  input="${training.dirs}" output="${log.dir}/pf.out" error="${log.dir}/get-pos-feats.err">
+      <arg value="-pos"/>
+      <arg value="-P"/> <arg value="${ht.models.dir}/posprior.flm"/>
+      <arg value="-v"/> <arg value="${ht.models.dir}/vocab.train"/>
+    	<arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+	<arg value="-o"/> <arg value="${pos.feats}"/>
+    	<arg value="-d"/> <arg line="${ht.corpus.dir}"/>
+    	<arg line="${training.dirs}"/>
+    </java>
+    <!-- <echo message="Filtering POS training features by frequency"/> -->
+    <!-- <exec executable="python">
+      <arg value="bin/filter_feats.py"/>
+      <arg value="-i"/> <arg value="${pos.feats}"/>
+      <arg value="-o"/> <arg value="${ht.feats.dir}/pos.feats.tmp"/>
+      <arg line="-n 1 -f 5"/>
+    </exec>
+    <move file="${ht.feats.dir}/pos.feats.tmp" tofile="${pos.feats}"/> -->
+  </target>
+
+  <target name="check-pos-model" depends="init">
+    <uptodate targetfile="${pos.mod}" srcfile="${pos.feats}" property="pos.mod.uptodate"/>
+  </target>
+
+  <target name="make-pos-model" 
+	  depends="get-pos-feats,check-pos-model" 
+	  unless="pos.mod.uptodate">
+    <echo message="Making POS tagging model to ${pos.mod}"/>
+    <exec executable="maxent" output="${log.dir}/train-pos.log">
+      <arg value="${pos.feats}"/> 
+      <arg line="-v --lbfgs -c 0 -i 200 -g 1"/>
+      <arg value="-m"/> <arg value="${pos.mod}"/>
+    </exec>
+  </target>
+
+
+  <target name="check-ht-prior-lm" depends="init">
+    <uptodate targetfile="${htprior.lm}" srcfile="${vocab.train}" property="htprior.lm.uptodate"/>
+  </target>
+
+  <target name="make-ht-prior-lm" depends="get-vocab,check-ht-prior-lm" unless="htprior.lm.uptodate">
+    <echo message="Making hypertag prior language model using ${ht.models.dir}/stprior.flm"/>
+    <exec executable="fngram-count" dir="${ht.models.dir}">
+      <arg value="-text"/> <arg value="${basedir}/${ht.factors.train}"/> 
+      <arg line="-factor-file ht-prior.flm -vocab vocab.train -lm -unk -write-counts -nonull"/>
+      <arg line="-no-virtual-begin-sentence -no-virtual-end-sentence"/>
+      <arg line="-no-add-start-sentence-token -no-add-end-sentence-token"/>
+    </exec>
+  </target>
+
+  <target name="check-ht-feats" depends="init">
+    <uptodate targetfile="${ht.feats}" srcfile="${htprior.lm}" property="ht.feats.uptodate"/>
+  </target>
+
+  <target name="get-ht-feats" depends="make-ht-prior-lm,check-ht-feats" unless="ht.feats.uptodate">
+    <echo message="Extracting hypertagger training features to ${ht.feats}"/>
+    <java classname="opennlp.ccg.realize.hypertagger.TagExtract"
+	  input="${ht.factors.train}" output="${log.dir}/ht.out" error="${log.dir}/get-ht-feats.err">
+<!--      <arg value="-H"/> <arg value="${ht.models.dir}/ht-prior.flm"/>
+      <arg value="-V"/> <arg value="${ht.models.dir}/vocab.train"/> 
+-->
+      <arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+      <arg value="-o"/> <arg value="${ht.feats}"/>
+      <arg value="-d"/> <arg line="${ht.corpus.dir}"/>
+      <arg line="${training.dirs}"/>
+    </java>
+    <echo message="Filtering hypertagger training features by frequency"/>
+    <exec executable="python">
+      <arg value="bin/filter_feats.py"/>
+      <arg value="-i"/> <arg value="${ht.feats}"/>
+      <arg value="-o"/> <arg value="${ht.feats.dir}/ht.feats.tmp"/>
+      <arg line="-n ${catfreq.cutoff} -f 2"/>
+    </exec>
+    <move file="${ht.feats.dir}/ht.feats.tmp" tofile="${ht.feats}"/>
+  </target>
+
+  <target name="check-tag-dicts" depends="init">
+    <uptodate targetfile="${pos.dict}" srcfile="${ht.factors.train}" property="pos.dict.uptodate"/>
+  </target>
+
+  <target name="get-tag-dicts" depends="get-factors,check-tag-dicts" unless="pos.dict.uptodate">
+    <echo message="Extracting tag dictionaries to ${pos.dict} and ${word.dict}"/>
+    <java classname="opennlp.ccg.parse.supertagger.util.TaggingDictionaryExtractor">
+      <arg value="-i"/> <arg value="${ht.factors.train}"/>
+      <arg value="-f"/> <arg value="${catfreq.cutoff}"/>
+      <arg value="-p"/> <arg value="${pos.dict}"/>
+      <arg value="-w"/> <arg value="${word.dict}"/>
+    </java>
+  </target>
+	
+  <target name="check-ht-model" depends="init">
+    <uptodate targetfile="${ht.mod}" property="ht.mod.uptodate">
+      <srcfiles dir="${basedir}" includes="${pos.dict},${ht.feats}"/>
+    </uptodate>
+  </target>
+
+  <!-- this step takes a very long time; a couple of days, perhaps -->
+  <target name="make-ht-model" 
+	  depends="make-pos-model,get-ht-feats,get-tag-dicts,check-ht-model" 
+	  unless="ht.mod.uptodate">
+    <echo message="Making hypertagging model to ${ht.mod}"/>
+    <exec executable="maxent" output="${log.dir}/train-ht.log">
+      <arg value="${ht.feats}"/> 
+      <arg line="-v --lbfgs -c 0 -i 275 -g 1"/>
+      <arg value="-m"/> <arg value="${ht.mod}"/>
+    </exec>
+  </target>
+  
+<target name="check-ht2-feats" depends="init">
+    <uptodate targetfile="${ht2.feats}" srcfile="${htprior.lm}" property="ht2.feats.uptodate"/>
+  </target>
+  
+  <target name="get-ht2-feats" depends="make-ht-prior-lm,check-ht2-feats" unless="ht2.feats.uptodate">
+    <echo message="Extracting hypertagger-2pass training features to ${ht2.feats}"/>
+    <java classname="opennlp.ccg.realize.hypertagger.TagExtract"
+	  input="${ht.factors.train}" output="${log.dir}/ht2.out" error="${log.dir}/get-ht2-feats.err">
+<!--      <arg value="-H"/> <arg value="${ht.models.dir}/ht-prior.flm"/>
+      <arg value="-V"/> <arg value="${ht.models.dir}/vocab.train"/> 
+-->
+      <arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+      <arg value="-o"/> <arg value="${ht2.feats}"/>
+      <arg value="-d"/> <arg line="${ht.corpus.dir}"/>
+      <arg value="-y"/> <arg line="${ht.mod}"/>
+      <arg line="${training.dirs}"/>
+    </java>
+    <echo message="Filtering hypertagger training features by frequency"/>
+    <exec executable="python">
+      <arg value="bin/filter_feats.py"/>
+      <arg value="-i"/> <arg value="${ht2.feats}"/>
+      <arg value="-o"/> <arg value="${ht.feats.dir}/ht2.feats.tmp"/>
+      <arg line="-n ${catfreq.cutoff} -f 2"/>
+    </exec>
+    <move file="${ht.feats.dir}/ht2.feats.tmp" tofile="${ht2.feats}"/>
+  </target>
+  
+<target name="check-ht2-model" depends="init">
+    <uptodate targetfile="${ht2.mod}" property="ht2.mod.uptodate">
+      <srcfiles dir="${basedir}" includes="${ht2.feats}"/>
+    </uptodate>
+  </target>
+
+  <!-- this step takes a number of hours, perhaps -->
+  <target name="make-ht2-model" 
+	  depends="get-ht2-feats,check-ht2-model" 
+	  unless="ht2.mod.uptodate">
+    <echo message="Making hypertagging-2pass model to ${ht2.mod}"/>
+    <exec executable="maxent" output="${log.dir}/train-ht2.log">
+      <arg value="${ht2.feats}"/> 
+      <arg line="-v --lbfgs -c 0 -i 250 -g 1"/>
+      <arg value="-m"/> <arg value="${ht2.mod}"/>
+    </exec>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Top-level                                                           -->
+  <!-- =================================================================== -->
+
+  <target name="all" depends="make-ht-model,make-ht2-model"/>
+
+  <target name="clean" >
+    <delete file="${ht.mod}"/>
+    <delete file="${ht2.mod}"/>
+    <delete file="${pos.mod}"/>
+    <delete file="${ht.feats}"/>
+    <delete file="${pos.feats}"/>
+    <delete file="${pos.dev.feats}"/>
+    <delete file="${ht.dev.feats}"/>
+  </target>
+
+</project>

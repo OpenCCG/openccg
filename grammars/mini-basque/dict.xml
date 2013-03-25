@@ -1,0 +1,259 @@
+<?xml version="1.0"?>
+
+<dictionary name="Basque">
+ 
+  <entry stem="eta" pred="and" pos="Conj">
+    <member-of family="Conj"/>
+    <word form="eta" />
+  </entry>
+  <entry stem="kafe" pred="coffee" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="kafea" macros="@abs @sg @3rd"/>
+  </entry>
+  <entry stem="aita" pred="father" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="aita" macros="@abs @sg @3rd"/>
+    <word form="aitak" macros="@erg @sg @3rd"/>
+  </entry>
+  <entry stem="ama" pred="mother" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="ama" macros="@abs @sg @3rd"/>
+    <word form="amari" macros="@dat @sg @3rd"/>
+    <word form="amak" macros="@erg @sg @3rd"/>
+  </entry>
+  <entry stem="emakume" pred="woman" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="emakumea" macros="@abs @sg @3rd"/>
+    <word form="emakumeari" macros="@dat @sg @3rd"/>
+  </entry>
+  <entry stem="sagarra" pred="apples" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="sagarrak" macros="@abs @plu @3rd"/>
+  </entry>
+  <entry stem="liburu" pred="book" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="liburua" macros="@abs @sg @3rd"/>
+  </entry>
+  <entry stem="gizon" pred="man" pos="NP">
+    <member-of family="NP-case"/>
+    <word form="gizonak" macros="@erg @sg @3rd"/>
+    <word form="gizona" macros="@abs @sg @3rd"/>
+  </entry>
+  <entry stem="ni" pred="i" pos="NNP">
+    <member-of family="pronoun"/>
+    <word form="ni" macros="@abs @sg @1st"/>
+    <word form="nik" macros="@erg @sg @1st"/>
+  </entry>
+  <entry stem="joan" pred="go" pos="V">
+    <member-of family="unergative"/>
+    <word form="joan" macros="@non-fin"/>
+  </entry>
+  <entry stem="usteltzen" pred="rot" pos="V">
+    <member-of family="unergative"/>
+    <word form="usteltzen" macros="@non-fin"/>
+  </entry>
+  <entry stem="egin" pred="do" pos="V">
+    <member-of family="TV"/>
+    <word form="egin" macros="@non-fin"/>
+  </entry>
+  <entry stem="utzi" pred="leave" pos="V">
+    <member-of family="TV"/>
+    <word form="utzi" macros="@non-fin"/>
+  </entry>
+  <entry stem="egosten" pred="cook" pos="V">
+    <member-of family="TV"/>
+    <word form="egosten" macros="@non-fin"/>
+  </entry>
+  <entry stem="jaten" pred="eat" pos="V">
+    <member-of family="TV"/>
+    <word form="jaten" macros="@non-fin"/>
+  </entry>
+  <entry stem="ikusi" pred="see" pos="V">
+    <member-of family="TV"/>
+    <word form="ikusi" macros="@non-fin"/>
+  </entry>
+  <entry stem="nahi" pred="want" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="nahi" macros="@non-fin"/>
+  </entry>
+  <entry stem="eman" pred="give" pos="V">
+    <member-of family="DV"/>
+    <word form="eman" macros="@non-fin"/>
+  </entry>
+  <entry stem="dio" pred="have" pos="V">
+    <member-of family="AUX-ditransitive"/>
+<word form="dio"  macros="@sg1 @3rd1 @erg1 @sg2 @3rd2 @abs2 @sg3 @3rd3 @dat3"/>
+  </entry>
+  <entry stem="dut1" pred="have" pos="V">
+    <member-of family="AUX-intransitive"/>
+    <word form="dut" macros="@1st1" />
+    <word form="du" macros="@3rd1"/>
+    <word form="duzu" macros="@2nd1"/>
+    <word form="da" />  <!-- this is in fact unaccusative -->
+  </entry>
+  <entry stem="dut2" pred="have" pos="V">
+    <member-of family="AUX-transitive"/>
+    <word form="dut" macros="@sg1 @1st1 @erg1 @sg2 @3rd2 @abs2"/>
+    <word form="dud" macros="@sg1 @1st1 @erg1 @sg2 @3rd2 @abs2"/>
+    <word form="duzu" macros="@sg1 @2nd1 @erg1  @sg2 @3rd2 @abs2"/>
+    <word form="du" macros="@sg1 @3rd1 @erg1 @sg2 @3rd2 @abs2"/>
+  </entry>
+  <entry stem="nau" pred="have" pos="V">
+    <member-of family="AUX-transitive"/>
+    <word form="nau" macros="@sg1 @3rd1  @erg1 @sg2 @1st2 @abs2"/>
+    <word form="nauzu" macros="@sg1 @2nd1 @erg1 @sg2 @1st2 @abs2"/>
+  </entry>
+  <entry stem="zuen1" pred="have" pos="V">
+    <member-of family="AUX-transitive"/>
+    <word form="zuen" macros="@sg1 @3rd1 @sg2 @3rd2"/>
+  </entry>
+  <entry stem="ditu1" pred="have" pos="V">
+    <member-of family="AUX-transitive"/>
+    <word form="ditu" macros="@sg1 @3rd1 @plu2 @3rd2"/>
+  </entry>
+  <entry stem="zen1" pred="have" pos="V">
+    <member-of family="AUX-intransitive"/>
+    <word form="zen" macros="@sg1 @3rd1 "/>
+  </entry>
+  <entry stem="dira1" pred="have" pos="V">
+    <member-of family="AUX-intransitive"/>
+    <word form="dira" macros="@plu1 @3rd1 "/>
+  </entry>
+  <entry stem="a" pos="Affix">
+    <member-of family="case"/>
+    <word form="a" macros="@abs"/>
+  </entry>
+  <entry stem="ak" pos="Affix">
+    <member-of family="case"/>
+    <word form="ak" macros="@erg"/>
+    <word form="k" macros="@erg"/>
+  </entry>
+  <entry stem="ri" pos="Affix">
+    <member-of family="case"/>
+    <word form="ri" macros="@dat"/>
+    <word form="ari" macros="@dat"/>
+  </entry>
+  <entry stem="n" pos="Affix">
+    <member-of family="rel"/>
+    <word form="n" />
+    <word form="an" />
+  </entry>
+
+  <entry stem="n" pred="at" pos="Affix">
+    <member-of family="adjunct-case"/>
+    <word form="n" />
+  </entry>
+  <entry stem="ra" pred="to" pos="Affix">
+    <member-of family="adjunct-case"/>
+    <word form="ra" />
+  </entry>
+
+  <entry stem="gizon" pred="man" pos="N">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="eskola" pred="school" pos="N">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="seme" pred="son" pos="N">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="klase" pred="class" pos="N">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="emakume" pred="woman" pos="N" macros="@sg">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="liburu" pred="book" pos="N" macros="@sg">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="aita" pred="father" pos="N" macros="@sg">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="ama" pred="mother" pos="N" macros="@sg">
+    <member-of family="noun"/>
+  </entry>
+  <entry stem="kafe" pred="coffee" pos="N" macros="@sg">
+    <member-of family="noun"/>
+  </entry>
+
+<macro name="@abs">
+  <fs id="0" attr="case" val="s-case"/>
+</macro>
+<macro name="@abs1">
+  <fs id="1" attr="case" val="s-case"/>
+</macro>
+<macro name="@abs2">
+  <fs id="2" attr="case" val="p-case"/>
+</macro>
+<macro name="@erg">
+  <fs id="0" attr="case" val="a-case"/>
+</macro>
+<macro name="@erg1">
+  <fs id="1" attr="case" val="a-case"/>
+</macro>
+<macro name="@erg2">
+  <fs id="2" attr="case" val="a-case"/>
+</macro>
+<macro name="@dat">
+  <fs id="0" attr="case" val="dat"/>
+</macro>
+<macro name="@dat3">
+  <fs id="3" attr="case" val="dat"/>
+</macro>
+<macro name="@sg">
+  <fs id="0" attr="num" val="sing"/>
+</macro>
+<macro name="@plu">
+  <fs id="0" attr="num" val="plu"/>
+</macro>
+<macro name="@plu1">
+  <fs id="1" attr="num" val="plu"/>
+</macro>
+<macro name="@plu2">
+  <fs id="2" attr="num" val="plu"/>
+</macro>
+<macro name="@sg1">
+  <fs id="1" attr="num" val="sing"/>
+</macro>
+<macro name="@sg2">
+  <fs id="2" attr="num" val="sing"/>
+</macro>
+<macro name="@sg3">
+  <fs id="3" attr="num" val="sing"/>
+</macro>
+<macro name="@3rd">
+  <fs id="0" attr="person" val="3"/>
+</macro>
+<macro name="@3rd1">
+  <fs id="1" attr="person" val="3"/>
+</macro>
+<macro name="@3rd2">
+  <fs id="2" attr="person" val="3"/>
+</macro>
+<macro name="@3rd3">
+  <fs id="3" attr="person" val="3"/>
+</macro>
+<macro name="@1st">
+  <fs id="0" attr="person" val="1"/>
+</macro>
+<macro name="@1st1">
+  <fs id="1" attr="person" val="1"/>
+</macro>
+<macro name="@1st2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@2nd">
+  <fs id="0" attr="person" val="1"/>
+</macro>
+<macro name="@2nd1">
+  <fs id="1" attr="person" val="2"/>
+</macro>
+<macro name="@2nd2">
+  <fs id="2" attr="person" val="1"/>
+</macro>
+<macro name="@non-fin">
+  <fs id="0" attr="vform" val="non-fin"/> 
+</macro>
+
+</dictionary>

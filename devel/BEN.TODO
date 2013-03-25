@@ -1,0 +1,26 @@
+for tuesday 1/9/07:
+
+-- test new code in ccg.ply for --prefix and such.  first make sure it
+   still works with no --prefix option, producing files with prefixes from
+   the filename and that foo-grammar.xml has the right names in it that it
+   points to. (and no interference from the graphics code.) then test with
+   --prefix and make sure it does what it should (again check grammar.xml),
+   even if --prefix is specified to be blank.
+-- make sure that the existing test grammars still work. (might need to be
+   done after resolving the issue of caps vs. lowercase, since the current
+   grammars already use switch feature vars to lowercase, which will be
+   wrongly interpreted as semantic vars.) check that the testbed still does
+   what it should and gives results it should.
+-- take a look at the rough grammar; make sure it gets compiled OK by TeX
+   and the results come out.  maybe add some more text.
+-- think about that mod to family, so that a simple family with one entry
+   can appear without extra syntax:
+
+family foo: entry of some sort: hybrid logic spec;
+
+which is the same as
+
+
+family foo {
+  entry: entry of some sort: hybrid logic spec;
+}

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd" name="Dyirbal">
+  <entry pos="Conj" word=","/>
+  <entry pos="V" word="nabaygu" stem="naba"/>
+  <entry pos="V" word="miyanda"/>
+  <entry pos="V" word="yanu" stem="ya" macros="@nfut"/>
+  <entry pos="V" word="bajigu" stem="baji" macros="@purp"/>
+  <entry pos="V" word="banaganyu" stem="banaga" macros="@nfut"/>
+  <entry pos="V" word="banagaygu" stem="banaga" macros="@purp"/>
+  <entry pos="V" word="bural" macros="@purp"/>
+  <entry pos="V" word="buran" stem="bural" macros="@nfut"/>
+  <entry pos="V" word="burali" stem="bural" macros="@purp"/>
+  <entry pos="V" word="jilwal"/>
+  <entry pos="V" word="baran" stem="bara" macros="@purp"/>
+  <entry pos="V" word="mawali" stem="mawa" macros="@purp"/>
+  <entry pos="V" word="walngarra"/>
+  <entry pos="V" word="gigan" stem="giga" macros="@nfut"/>
+  <entry pos="NP" word="yara" macros="@abs @n1"/>
+  <entry pos="NP" word="burrbula" macros="@abs @n1"/>
+  <entry pos="NP" word="numa" macros="@abs @n1"/>
+  <entry pos="NP" word="gubi" macros="@abs @n1"/>
+  <entry pos="NP" word="yibi" macros="@abs @n2"/>
+  <entry pos="NP" word="yabu" macros="@abs @n2"/>
+  <entry pos="NP" word="guda" macros="@abs @n2"/>
+  <entry pos="NNP" word="naja" macros="@erg"/>
+  <entry pos="NNP" word="nyurra" macros="@erg"/>
+  <entry pos="NNP" word="nanana" macros="@abs"/>
+  <entry pos="NP" word="bayi" stem="ba" macros="@abs @n1"/>
+  <entry pos="NP" word="bangul" stem="ba" macros="@erg @n1"/>
+  <entry pos="NP" word="bagul" stem="ba" macros="@dat @n1"/>
+  <entry pos="NP" word="banul" stem="ba" macros="@gen @n1"/>
+  <entry pos="NP" word="balan" stem="ba" macros="@abs @n2"/>
+  <entry pos="NP" word="bangun" stem="ba" macros="@erg @n2"/>
+  <entry pos="NP" word="bagun" stem="ba" macros="@dat @n2"/>
+  <entry pos="NP" word="banun" stem="ba" macros="@gen @n2"/>
+  <entry pos="NP" word="balam" stem="ba" macros="@abs @n3"/>
+  <entry pos="NP" word="bagun" stem="ba" macros="@erg @n3"/>
+  <entry pos="NP" word="bagum" stem="ba" macros="@dat @n3"/>
+  <entry pos="NP" word="bala" stem="ba" macros="@abs @n4"/>
+  <entry pos="NP" word="baygu" stem="ba" macros="@erg @n4"/>
+  <entry pos="NP" word="bagu" stem="ba" macros="@dat @n4"/>
+  <entry pos="NP" word="banu" stem="ba" macros="@gen @n4"/>
+  <entry pos="Affix" word="ngu" macros="@erg"/>
+  <entry pos="Affix" word="gu" macros="@dat2"/>
+  <entry pos="Affix" word="nu"/>
+  <entry pos="Affix" word="ru"/>
+  <entry pos="Affix" word="na"/>
+  <entry pos="Affix" word="naygu" stem="na"/>
+  <macro name="@purp">
+    <fs id="0" attr="v-form" val="purposive"/>
+  </macro>
+  <macro name="@nfut">
+    <fs id="0" attr="v-form" val="purposive"/>
+  </macro>
+  <macro name="@n1">
+    <fs id="0" attr="class" val="1"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="Class">
+          <prop name="1"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@n2">
+    <fs id="0" attr="class" val="2"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="Class">
+          <prop name="2"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@n3">
+    <fs id="0" attr="class" val="3"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="Class">
+          <prop name="3"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@n4">
+    <fs id="0" attr="class" val="4"/>
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="Class">
+          <prop name="3"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@gen">
+    <fs id="0" attr="case" val="gen"/>
+  </macro>
+  <macro name="@abs">
+    <fs id="0" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@abs1">
+    <fs id="1" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@abs2">
+    <fs id="2" attr="case" val="subject-case"/>
+  </macro>
+  <macro name="@erg">
+    <fs id="0" attr="case" val="a-case"/>
+  </macro>
+  <macro name="@erg1">
+    <fs id="1" attr="case" val="a-case"/>
+  </macro>
+  <macro name="@erg2">
+    <fs id="2" attr="case" val="a-case"/>
+  </macro>
+  <macro name="@dat">
+    <fs id="0" attr="case" val="dat"/>
+  </macro>
+  <macro name="@dat2">
+    <fs id="2" attr="case" val="dat"/>
+  </macro>
+  <macro name="@sg">
+    <fs id="0" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg1">
+    <fs id="1" attr="num" val="sing"/>
+  </macro>
+  <macro name="@sg2">
+    <fs id="2" attr="num" val="sing"/>
+  </macro>
+  <macro name="@3rd">
+    <fs id="0" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd1">
+    <fs id="1" attr="person" val="3"/>
+  </macro>
+  <macro name="@3rd2">
+    <fs id="2" attr="person" val="3"/>
+  </macro>
+  <macro name="@1st">
+    <fs id="0" attr="person" val="1"/>
+  </macro>
+  <macro name="@1st1">
+    <fs id="1" attr="person" val="1"/>
+  </macro>
+  <macro name="@1st2">
+    <fs id="2" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd">
+    <fs id="0" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd1">
+    <fs id="1" attr="person" val="1"/>
+  </macro>
+  <macro name="@2nd2">
+    <fs id="2" attr="person" val="1"/>
+  </macro>
+  <macro name="@non-fin">
+    <fs id="0" attr="vform" val="non-fin"/>
+  </macro>
+</morph>

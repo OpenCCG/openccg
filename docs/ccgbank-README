@@ -1,0 +1,586 @@
+
+Introduction
+============
+
+This README describes how to use the pre-built English models trained
+using the CCGbank, as well as how to train these models yourself
+starting with the CCGbank.  On the realization side, the models make
+use of all published work on realization ranking (as of March, 2013)
+-- including discriminatively trained syntactic models, various
+n-grams, features for syntactic agreement and balanced punctuation,
+and features for dependency ordering and dependency length
+minimization -- as well as unpublished improvements to the hypertagger
+that make use of a two-stage, 'stacked' approach to supertag
+prediction.  For linux, this release also includes support for using a
+very large 5-gram memory-mapped language model with KenLM. On the
+parsing side, a reimplementation of Hockenmaier's generative parse
+model is used, along with a reimplementation of Curran, Clark &
+Vadas's supertagger in Java.  Note that the supertagger can also be
+used as a stand-alone tool; see taggers-README for details.  The
+grammars take advantage of refinements to the CCGbank that make use of
+Propbank analyses as well as more precise analyses of punctuation.
+(See references at bottom.)
+
+Since the pre-built English models and CCGbank data for training
+represent much larger downloads than the OpenCCG core files, they are
+available as separate downloads (where YYYY-MM-DD represents the date
+of creation):
+
+english-models.YYYY-MM-DD.tgz
+ccgbank-data.YYYY-MM-DD.tgz
+
+For linux, the very large KenLM language model, based on 5-grams in
+the Gigaword-4 corpus, is available as follows:
+ 
+gigaword4.5g.kenlm.bin
+
+
+Using the pre-built English models
+==================================
+
+The pre-built statisical models for English allow you to parse novel
+text in English and to generate English sentences from the (quasi-)
+logical forms of the resulting parses, thereby producing a variety of
+grammatical paraphrases.  Future releases will contain tools for
+generating a broader range of paraphrases using disjunctive logical
+forms, which can handle logical forms with similar, but not identical,
+structures.
+
+It is also possible to use the pre-built models to realize sentences
+from logical forms constructed programmatically.  Note, however, that
+in comparison to realization with small, hand-crafted grammars,
+realization with the broad coverage grammar derived from the CCGbank
+is much slower (with realization typically taking a few seconds per
+sentence).  For NLG applications, an interesting task for future work
+would be to automatically shrink the grammar's coverage to what is
+needed for a specific domain, which should yield considerable
+improvements in efficiency.
+
+The pre-built statistical models do not require you to have a copy of
+the CCGbank, and should run across different Java platforms.  They do,
+however, assume the use of the Stanford Core NLP tools for
+tokenization, named entity tagging and morphological analysis.  The
+Stanford NLP tools are licensed under the full GPL (rather than the
+LGPL, as with OpenCCG), and thus these tools are only loosely
+integrated into a chain of command-line tool invocations.  If the GPL
+is not adequate for your purposes, you'll need to find your own
+substitute tools.
+
+The first step is to make sure you have configured your environment
+variables and increased your Java memory limit as described in the
+main README ($OPENCCG_HOME/README).  A limit of 2g may be ok, though
+4g may work even better; when using the very large KenLM language
+model, you should use a limit of at least 8g.
+
+The next step is to download the current version of
+english-models.YYYY-MM-DD.tgz, and move it into the ccgbank directory,
+i.e. $OPENCCG_HOME/ccgbank/, with the undated name english-models.tgz.
+From this directory, you can unpack the English models archive as
+shown below:
+
+$ mv english-models.YYYY-MM-DD.tgz $OPENCCG_HOME/ccgbank/english-models.tgz
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build -f build-release.xml extract-models
+
+This command uses ant to extract the models in a cross-platform way.
+As noted in the main README, ccg-build is a simple front end for ant
+that configures the classpath (and a couple of properties) before
+invoking ant.  The option '-f build-release.xml' simply says to use
+the build-release.xml build file instead of the default build file.
+The 'extract-models' target unpacks the archive in a way that makes
+sure the archive is in the right place before unpacking it.  If
+extracting the models this way yields an error, however, you should
+use tar (or some other archive extraction tool), eg as follows:
+
+$ mv english-models.YYYY-MM-DD.tgz $OPENCCG_HOME/ccgbank/english-models.tgz
+$ cd $OPENCCG_HOME/ccgbank
+$ tar xzf english-models.tgz
+
+On linux, after downloading the very large language model file, you
+can install it for use as follows:
+
+$ mv gigaword4.5g.kenlm.bin $OPENCCG_HOME/ccgbank/models/realizer/.
+
+If the file gigaword4.5g.kenlm.bin is not found, the Treebank-trained
+trigram model is reused as a stand-in, which will negatively impact
+realization quality to some extent.  In principle it should also be
+possible to build your own large binary 5-gram model.  At present,
+however, there is no working JNI interface to KenLM for OS X or
+Windows included.  See http://kheafield.com/code/kenlm/ for further
+information on building large language models and getting KenLM to
+compile on different platforms, if you would like to try getting the
+JNI interface working beyond linux.
+
+After that, the next step is installing the Stanford Core NLP tools,
+as described in the section with this name below.
+
+At this point you should be ready to try out the models.  You can try
+parsing and realization on a file with a couple of novel sentences
+containing some named entities that did not exist when the Penn
+Treebank was created, as well as an adverb that is too infrequent to
+appear in the training set lexicon, as follows:
+
+$ ccg-build -f build-ps.xml test-novel &> logs/log.ps.test.novel &
+
+You can follow the progress of the parsing tool chain by looking in
+the log file.  The input file is data/novel/two-sents, and the output
+files are stored in a newly created directory
+data/novel/two-sents.dir/.  The tool chain does PTB tokenization,
+truecasing, named entity tagging, POS tagging and stemming in order to
+create a truecased version of each sentence as well as a morph file
+that includes all the words in the file.  The sentences are then
+parsed, and the resulting logical forms appear in a testbed file
+data/novel/two-sents.dir/tb.xml.  The tool chain takes a while to run
+(a couple of minutes, perhaps) as it must load several large data
+models; thus, for more efficient processing, it will make sense to run
+many more than two sentences in a batch.
+
+Once the parser has run, you can test the realizer on the resulting
+testbed file as follows:
+
+$ ccg-build -f build-rz.xml test-novel &> logs/log.rz.test.novel &
+
+Again, you can follow the progress by consulting the log file.  The
+realizations should appear in data/novel/two-sents.dir/realize.nbest.
+
+The input file for this test is given by the novel.file property (in
+build-models.properties).  You can override this property on the
+command line to re-use these build files on your own text, where
+<myfile> is the name of your file:
+
+$ ccg-build -Dnovel.file=<myfile> -f build-ps.xml test-novel &> logs/log.ps.test.novel &
+$ ccg-build -Dnovel.file=<myfile> -f build-rz.xml test-novel &> logs/log.rz.test.novel &
+
+After running these commands, the parses and realizations will be in a
+new directory <myfile>.dir/.
+
+
+Tokenization and Normalization of Novel Input Texts
+===================================================
+
+Note that when parsing text, we assume Penn Treebank III (PTB3) 
+tokenization and character escaping conventions (see the PTB3 
+documentation).***
+
+We assume the following:
+
+-Text is one sentence (or coherent utterance) per line with no 
+ intervening blank lines. (This you must do yourself.)
+
+-PTB3 parser-friendly tokenization, e.g.:
+
+    do n't, wo n't, it 's, John 's, etc.
+
+    and not: 
+
+    don 't, won 't, it ' s, John ' s, etc.
+    (as some tokenization scripts are fond of doing)
+
+ Of course, punctuation should be split off from words, so, e.g.:
+
+    John said ``Hello'' to Mary, who replied ``Hi, John''.
+
+    should be tokenized as:
+
+    John said `` Hello '' to Mary , who replied `` Hi , John '' .
+
+-PTB3 escapes for characters that are meta-symbols in the PTB3, e.g.:
+    (, ), { and } 
+
+    become: 
+
+    -LRB-, -RRB-, -LCB- and -RCB-, respectively.
+
+-"LaTeX"-style double quotation marks:
+
+    `` Hello '' , said John to Mary .
+
+    and not:
+
+    " Hello " , said John to Mary .
+	
+-Attributive quotations should be formatted in the "logical"
+ or "British" style and not the "American" style, so, e.g.:
+
+    `` Hello '' , said John to Mary .
+
+    and NOT:
+
+    `` Hello , '' said John to Mary.
+
+ (N.B. this is the only other thing related to sentence segmentation
+ and tokenization that the Stanford PTBTokenizer.java code does not 
+ accomplish.)
+
+-Also, Unicode punctuation symbols outside the ASCII range
+ should be converted to their ASCII equivalents, e.g.:
+
+    … should be re-written as ... 
+
+-When a sentence-final abbreviation ending with a period/full-stop,
+ ends a declarative sentence (i.e., there is therefore no sentence
+ final punctuation mark), the final period/full-stop should not be
+ split off so that we have, e.g.:
+
+    Many products sold at Smithy's Department Store are not produced
+    in the U.S.
+
+    tokenized as:
+
+    Many products sold at Smithy 's Department Store are not produced
+    in the U.S. 
+
+    and not:
+
+    Many products sold at Smithy 's Department Store are not produced
+    in the U.S . 
+
+These text transformations will bring novel texts more in line with the 
+texts the parser and realizer were trained on and will improve parsing
+and realization performance.  
+
+Finally, all text passed to the parser is assumed to be encoded as 
+UTF-8 or ASCII (the latter being a subset of UTF-8).  Other encodings
+may cause the parser or realizer to crash in unforseen ways.  
+
+***The Stanford Core NLP tools (which we use, see below) already do most
+of what this section covers, so if you plan not to use the Stanford
+tools you will need to find a replacement. The Stanford PTBTokenizer.java
+code does all that we mentioned above, except transforming "American"-
+style quotations to "British/logical"-style quotations, and ensuring 
+that texts are encoded in UTF-8.  American-to-logical quotation 
+transformation is performed by the code in:
+
+$OPENCCG_HOME/ccgbank/bin/american-to-logical-quotes.py 
+
+This is invoked by Ant through build-ps.xml.
+
+Unicode X-to-UTF-8 conversion can be accomplished with the script: 
+
+$OPENCCG_HOME/ccgbank/bin/toUTF-8.py 
+(assuming that Python's 'chardet' package has been installed).  
+
+The first takes text from <stdin> and pipe text to <stdout>; the second
+has various option flags (type 'python toUTF-8.py -h' for more 
+information. Both have only been tested with Python 2.6x.
+
+As for formatting your texts to be one sentence per line, this you
+must do yourself, as we cannot anticipate what forms of marked up
+texts will be passed in for parsing.
+
+
+Building the English models from the CCGbank
+============================================
+
+You can train your own English models if you have a licensed copy of
+the CCGbank.  To build the models, you'll need to download and patch
+Zhang Le's maxent toolkit and install the SRILM language modeling
+toolkit, assuming their licenses are compatible with your usage.  In
+theory it may be possible to use these tools on different platforms,
+but in practice it will be much easier to use a linux platform,
+preferably one with multiple processors and lots of memory. For
+installing Zhang Le's maxent toolkit, see the section with this title
+below.  For the SRILM toolkit, follow the installation instructions on
+the SRILM website, and make sure the SRILM executables are available
+on your PATH environment variable.
+
+After installing the required toolkits, the next step is to download
+the current version of ccgbank-data.YYYY-MM-DD.tgz, and move it into
+the ccgbank directory, i.e. $OPENCCG_HOME/ccgbank/, with the undated
+name ccgbank-data.tgz.  You'll also need to create a symbolic link to
+your original CCGbank directory from $OPENCCG_HOME/ccgbank/.
+(Alternatively, you can edit the original.ccgbank.dir property in the
+build.properties file in the ccgbank directory.)  From this directory,
+you can unpack the data archive as shown below (where
+<path_to_ccgbank> is the path to your original CCGbank directory):
+
+$ mv ccgbank-data.YYYY-MM-DD.tgz $OPENCCG_HOME/ccgbank/ccgbank-data.tgz
+$ cd $OPENCCG_HOME/ccgbank
+$ ln -s <path_to_ccgbank>/ccgbank1.1
+$ ccg-build -f build-release.xml extract-data
+
+The ccgbank-data tarball contains a patch file for converting the
+original CCGbank to the Propbank-enhanced version described in Boxwell
+and White (2008).  The 'extract-data' target in build-release.xml does
+the patching after unpacking the archive and doing a space-to-newline
+conversion that enables the patch file to only contain the real
+differences between these CCGbank versions, given that diff works
+line-by-line and CCGbank derivations are given one per line.  (Note
+that this conversion also ensures that the CCGbank cannot be recovered
+from the patch file, thereby avoiding a copyright violation for
+distributing the CCGbank.)
+
+The ccgbank-data tarball also contains various auxiliary files that
+make it possible to use the BBN named entity annotations on the Penn
+Treebank as well as to insert the quotes that were unfortunately
+removed from the original CCGbank.
+
+Once the Propbank-enhanced version of the CCGbank has been created and
+the aux files unpacked, the next step is to convert this version of
+the CCGbank to the one used by OpenCCG, which has a refined treatment
+of punctuation, refined categories for various function words,
+collapsed named entities and truecased text.  The conversion is done
+by a series of XSLT transformations, which have the advantage of the
+declarative use of XPATH matching but unfortunately end up making the
+conversion quite slow.  As such, the best way to do the conversion is
+to convert the sections in parallel.  The bin/convert_all script
+converts all sections in parallel, as follows:
+
+$ cd $OPENCCG_HOME/ccgbank
+$ bin/convert_all
+
+As each section requires up to 1GB of memory to convert, it really
+only makes sense to convert all sections in parallel on a machine with
+at least 25GB of memory and multiple processors.  The bin/convert_all
+script is very simple and can easily be edited to run fewer sections
+in parallel at a time.  Running all sections in parallel should take
+less than an hour.
+
+Once the corpus conversion is complete, the next step is to extract
+grammars for the training, development and test sections of the
+CCGbank.  (For testing, normally only the morph file is used from the
+dev and test sets, together with the training set grammar.)  The
+grammar extraction process also creates testbed files for these
+sections, which contain logical forms derived by following the
+gold-standard derivations.  Grammar extraction is done using the
+'extract-various' target in the main build file (build.xml, the
+default):
+
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build extract-various &> logs/log.extract.various &
+
+Extracting the grammars and creating the logical forms may take up to
+an hour and a half or so.  Following corpus conversion and grammar
+extraction, the next step is to train the models.  Most of the models
+can be trained using the 'all' target in build-models.xml:
+
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build -f build-models.xml all &> logs/log.models.all &
+
+This target trains the supertagger and hypertagger as well as the
+generative parsing and realization models.  As these models require
+several maxent training runs, this step will take a while, for example
+up to 24 hours depending on the speed of the machine.  (In principle
+these steps could be partly parallelized, but doing so would be
+nontrivial given the existing dependencies between steps.)
+
+The final step is to train the realizer's averaged perceptron model.
+(It is also possible to train an averaged perceptron model for the
+parser, but it has not been found to yield significant gains over the
+generative model, most likely due to the size of the discrimination
+space.)  Note that you should first install the very large language
+model as described in the section on using the pre-built models, if
+possible.
+
+Training the perceptron model requires generating training events for
+each training section, which is quite time consuming.  Event
+generation is easily done in parallel, so the perceptron training
+sequence has been broken up to allow this step to be done separately:
+
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build -f build-rz.xml event-gen-prep &> logs/log.rz.event.gen.prep &
+$ bin/gen_realizer_events_a &
+$ bin/gen_realizer_events_b &
+$ bin/gen_realizer_events_c &
+$ bin/gen_realizer_events_d &
+$ bin/gen_realizer_events_e &
+
+Preparing for event generation is fairly quick; once that's done, the
+bin/gen_realizer_events* scripts can all be run at the same time.  These
+scripts are set up to run five sections at a time; they can be easily
+edited to run more or fewer in parallel.  Event generation may take up
+to 12 hours, even with running 5 sections in parallel.
+
+Once event generation is complete, the actual perceptron training can
+be run:
+
+$ ccg-build -f build-rz.xml train-perceptron &> logs/log.rz.train.perceptron &
+
+Perceptron training is apt to take 8 hours.  If your machine has 16g
+of memory available, training can be run in less than half the time by
+commenting in the "-in_mem" options in build-rz.xml, and editing
+bin/ccg-env to use a memory limit of 16g.
+
+With the models all built, the parser and realizer can be tested on
+the CCGbank development section:
+
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build -f build-ps.xml test &> logs/log.ps.test &
+$ ccg-build -f build-rz.xml test-perceptron &> logs/log.rz.test.perceptron &
+
+If the models have been built correctly, the realization exact matches
+should be over 46% (using the very large language model), and the
+parsing unlabeled dependencies f-score should be about 0.89.  (Note
+that with named entities collapsed and some function words not
+represented in the logical forms, these f-scores are not comparable to
+the dependency f-scores reported for other CCG parsers on the
+CCGbank.)
+
+Naturally, the models can also be run on novel text, as described in
+the section on using pre-built models.
+
+
+Viewing CCGbank derivations
+===========================
+
+Derivations in the original or converted CCGbank can be viewed as
+trees using ccg-draw-tree, a front-end to the tree-drawing routine in
+NLTK's Tree class.  This tool reads in .auto files, so to view
+converted CCGbank derivations, you must first export them to .auto
+format, as shown below:
+
+$ cd $OPENCCG_HOME/ccgbank
+$ ccg-build export-to-auto
+$ ccg-draw-tree convert/00/wsj_0001.auto wsj_0001.1
+
+The export-to-auto target creates auto files for the current 'sect'
+and 'file' properties, which can be set in build.properties or
+provided on the command line (e.g. by -Dfile=*).  This example assumes
+that the first file in Section 00 is included in the files to export
+in .auto format.  Displaying the derivation for the first sentence in
+the converted CCGbank shows how balanced appositive commas are handled
+with "Pierre_Vinken , 61 years old ," (as well as a collapsed named
+entity), and also shows how "as a nonexecutive director" has been
+converted into an adjunct rather than an argument of "join".
+
+
+Installing the Stanford Core NLP tools
+======================================
+
+For novel text, it is useful to perform named entity (NE) 
+recognition and labelling, as well as morphological processing 
+(lemmatization).  For this we use the Stanford Core NLP tools, 
+available at:
+
+http://www-nlp.stanford.edu/software/corenlp.shtml
+
+To install them, simply download the archive from the
+above link, unpack it, and place the Core NLP JAR file
+in the 'ccgbank/stanford-nlp' directory, re-naming it
+'stanford-core-nlp.jar'. 
+
+If you wish to use another location or naming convention, 
+you will need to update the properties file 
+(ccgbank/build-ps.properties).
+
+If you're using a bash shell, you might do the following:
+
+$ mkdir $OPENCCG_HOME/ccgbank/tmp
+$ cd $OPENCCG_HOME/ccgbank/tmp
+$ wget http://www-nlp.stanford.edu/software/stanford-corenlp-20xx-xx-xx.tgz
+$ tar xvfz stanford-corenlp-20xx-xx-xx.tgz
+$ cd stanford-corenlp-20xx-xx-xx
+$ cp stanford-corenlp-20xx-xx-xx.jar $OPENCCG_HOME/ccgbank/stanford-nlp/stanford-core-nlp.jar
+
+Note you will need to fill in the date, 20xx-xx-xx, with whatever 
+the date of the most recent release is (see the particular file
+you get from the Stanford website).
+
+To get the NE tagging models out of this download (the Stanford NE 
+tagger combines preditions from multiple models), you will need to 
+locate the 'stanford-corenlp-20xx-xx-xx-models.jar' file (in the 
+same directory as the other JAR files) and un-jar it, like so 
+[assuming you're still in the same directory as above]:
+
+$ jar xf stanford-corenlp-20xx-xx-xx-models.jar
+$ cp edu/stanford/nlp/models/ner/* $OPENCCG_HOME/ccgbank/stanford-nlp/classifiers/.
+$ rm -rf edu
+
+You should check that the filenames for the NE tagging models copied
+to $OPENCCG_HOME/ccgbank/stanford-nlp/classifiers match those listed
+in $OPENCCG_HOME/ccgbank/build-ps.properties as ner.model1, ner.model2
+and ner.model3, updating this properties file if necessary.
+
+This will set up the only external dependency we have for
+parsing novel text using 'ccgbank/build-ps.xml'.
+
+If you wish to recompile (perhaps after modifying) the 
+application that interfaces with the Stanford NE tagger's API, 
+see the ant build file $OPENCCG_HOME/ccgbank/bin/ner/build-ner-api.xml
+and its corresponding properties file (in the same location).
+
+
+Installing Zhang Le's maxent toolkit
+====================================
+
+To train the models, you'll need to have Zhang Le's maxent toolkit
+working with a small patch.  Do the following to install the patched
+version of Zhang Le's toolkit in a directory of your choice:
+
+$ cd
+$ wget http://homepages.inf.ed.ac.uk/lzhang10/software/maxent/maxent-20061005.tar.bz2
+
+Unpack and patch the maxent.cpp file (it doesn't
+cover the case where ':' can be part of the feature
+symbol itself, and not just a delimiter that separates
+string representations of features (contextual predicates, 
+actually) from their real-valued activations).
+
+$ bunzip2 maxent-20061005.tar.bz2
+$ tar xf maxent-20061005.tar
+$ cd maxent-20061005/src
+$ patch maxent.cpp $OPENCCG_HOME/docs/maxent.cpp.patched
+
+Now compile the maxent code.
+
+$ cd 
+$ cd maxent-20061005
+$ make clean all unittest
+
+Test to make sure it (more or less) works (7 out of the 8 tests only
+seem to pass, but the training seems to work):
+
+$ cd test
+$ ./runall.py
+
+Finally, add the 'maxent' binary (under 'maxent-20061005/src/opt')
+to your PATH environment variable.
+
+
+References
+==========
+
+Michael White and Rajakrishnan Rajkumar. 2012. Minimal Dependency
+Length in Realization Ranking. In Proc. EMNLP-12.
+http://aclweb.org/anthology-new/D/D12/D12-1023.bib
+
+Rajakrishnan Rajkumar and Michael White. 2010. Designing Agreement
+Features for Realization Ranking. In Proc. of COLING-10.
+http://aclweb.org/anthology-new/C/C10/C10-2119.bib
+
+Michael White and Rajakrishnan Rajkumar. 2009. Perceptron Reranking
+for CCG Realization. In Proc. of the Conference on Empirical Methods
+in Natural Language Processing (EMNLP 2009).
+http://aclweb.org/anthology-new/D/D09/D09-1043.bib
+
+Rajakrishnan Rajkumar, Michael White and Dominic
+Espinosa. 2009. Exploiting Named Entity Classes in CCG Surface
+Realization. In Proc. of Human Language Technologies: The 2009 Annual
+Conference of the North American Chapter of the Association for
+Computational Linguistics (NAACL HLT 2009).
+http://aclweb.org/anthology-new/N/N09/N09-2041.bib
+
+Michael White and Rajakrishnan Rajkumar. 2008. A More Precise Analysis
+of Punctuation for Broad-Coverage Surface Realization with CCG. In
+Proc. of the Workshop on Grammar Engineering Across Frameworks (GEAF08).
+http://aclweb.org/anthology-new/W/W08/W08-1704.bib
+
+Dominic Espinosa, Michael White and Dennis Mehay. 2008. Hypertagging:
+Supertagging for Surface Realization with CCG. In Proceedings of the
+46th Annual Meeting of the Association for Computational Linguistics:
+Human Language Technologies (ACL-08: HLT).
+http://aclweb.org/anthology-new/P/P08/P08-1022.bib
+
+Stephen A. Boxwell and Michael White. 2008. Projecting Propbank Roles
+onto the CCGbank. In Proceedings of the Sixth International Conference
+on Language Resources and Evaluation (LREC-08).
+http://www.lrec-conf.org/proceedings/lrec2008/pdf/789_paper.pdf
+
+James R. Curran, Stephen Clark and David Vadas. 2006.  Multi-Tagging
+for Lexicalized-Grammar Parsing. In Proc. ACL-06.
+http://aclweb.org/anthology-new/P/P06/P06-1088.bib
+
+Julia Hockenmaier and Mark Steedman. 2002.  Generative Models for
+Statistical Parsing with Combinatory Categorial Grammar.  In Proc. ACL-02.
+http://aclweb.org/anthology-new/P/P02/P02-1043.bib
+

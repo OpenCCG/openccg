@@ -1,0 +1,473 @@
+<!--
+ Copyright (C) 2005-2011 Scott Martin, Rajakrishan Rajkumar and Michael White
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- This build file is for corpus conversion and grammar extraction. -->
+
+<!-- $Id: build.xml,v 1.29 2011/11/20 15:39:18 mwhite14850 Exp $ -->
+<project name="CCGBankExtract" default="extract" basedir=".">
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <property file="build.properties" />
+
+  <!-- =================================================================== -->
+  <!-- File lists for re-use by transformations.                           -->
+  <!-- =================================================================== -->
+  <filelist id="convert-initial" dir="${templates.dir}">
+    <file name="uncurryBareParse.xsl" />
+    <file name="markMistakes.xsl" />
+    <file name="correctMistakes1.xsl" />
+    <file name="changePunct.xsl" />
+    <file name="adjustCats.xsl" />
+    <file name="labelConj1.xsl" />
+  </filelist>
+
+  <filelist id="convert-all" dir="${templates.dir}">
+    <file name="uncurryBareParse.xsl" />
+    <file name="markMistakes.xsl" />
+    <file name="correctMistakes1.xsl" />
+    <file name="changePunct.xsl" />
+    <!--<file name="adjustCandCcats1.xsl",-->
+    <file name="adjustCats.xsl" />
+
+    <file name="allotIdLeaf.xsl" />
+    <file name="insertPTBInfo.xsl" />
+    <file name="labelConj1.xsl" />
+
+    <file name="annotateExtraposedAppos.xsl" />
+    <file name="annotateReportedSpeech.xsl" />
+    <file name="adjustReportedSpeech.xsl" />
+    <file name="annotateParentheticals1.xsl" />
+    <file name="adjustParenthetical.xsl" />
+
+    <!--Appositive vs Conjunction detection and annotation-->
+    <file name="annotateAppos1.xsl" />
+    <file name="annotateAppos2.xsl" />
+    <!-- Provide correct analysis for Appositives present-->
+    <file name="labelAppos.xsl" />
+    <file name="annotateAppos3.xsl" />
+    <!-- Ensure proper balancing of the appositives detected above.-->
+    <file name="balanceAppos.xsl" />
+    <!-- Delete balancing commas-->
+    <file name="adjustAppos.xsl" />
+
+    <!-- Confer comma cats to place names-->
+    <file name="labelPlace1.xsl" />
+    <file name="labelPlace2.xsl" />
+    <file name="annotatePlace.xsl" />
+
+    <file name="labelConj2.xsl" />
+    <file name="labelConj3.xsl" />
+
+    <!-- Various other types of comma adjuncts-->
+    <file name="labelPuncts.xsl" />
+
+    <file name="preSentAdj.xsl" />
+    <file name="annotateVPCommas.xsl" />
+    <file name="annotateParentheticals2.xsl" />
+
+    <file name="annotateStrayAppos.xsl" />
+    <file name="annotateNom-AdjConj.xsl" />
+
+    <file name="inferConjRules.xsl" />
+    <file name="annotatePrtConjs.xsl" />
+
+    <!-- Dash & bracket rules-->
+    <file name="annotateAppos-Dash.xsl" />
+    <file name="balanceDash-Paren.xsl" />
+    <file name="annotateBrackets.xsl" />
+
+    <!-- Colon rules-->
+    <file name="annotateColons.xsl" />
+
+    <!-- Dot rules-->
+    <file name="annotateDots.xsl" />
+
+    <!-- Final period feats-->
+    <file name="sentFinalPuncts.xsl" />
+
+    <!--<file name="replaceColons.xsl"/>-->
+    <file name="allotIdLeaf.xsl" />
+    <!-- <file name="reinsertPTBInfo.xsl" /> -->
+
+    <!--Add PTB quotation marks-->
+    <file name="insertQuoteSemClassInfo.xsl" />
+    <file name="annotateQuotes.xsl" />
+    <file name="allotIdTree.xsl" />
+
+    <!--Collapse NEs if desired options are set-->
+    <file name="collapseMWUPart.xsl"/>
+
+    <!--Shared task NE collapsing -->
+    <!-- <file name="collapseMWUSharedTask.xsl"/> -->
+    
+    <file name="trueCaser.xsl"/>
+
+    <file name="introduceMMExtns.xsl"/>
+
+    <file name="correctPPHeads.xsl" />
+    <file name="computeCats.xsl" />
+    <file name="adjustRoles.xsl" />
+    <file name="addStems.xsl" />
+
+    <!--Normalize tags-->
+    <file name="normPTBTags.xsl" />
+    <file name="normPunctPos.xsl" />
+    <file name="allotIndexRel.xsl" />
+  </filelist>
+
+  <filelist id="convert-conj" dir="${templates.dir}">
+    <file name="inferConjRules.xsl" />
+  </filelist>
+
+  <filelist id="convert-final" dir="${templates.dir}">
+    <file name="computeCats.xsl" />
+    <file name="adjustRoles.xsl" />
+    <file name="addStems.xsl" />
+    <file name="normPunctPos.xsl" />
+  </filelist>
+
+  <filelist id="extract-lexicon" dir="${templates.dir}">
+    <file name="filterLex.xsl" />
+    <file name="closedCatInsert.xsl" />
+    <file name="insertLF.xsl" />
+    <!--<file name="insertPunctLF.xsl"/>-->
+    <file name="insertPunctLF-PosMod.xsl" />
+    <file name="addFilterLexFeats.xsl"/>
+    <file name="insertSemFeats.xsl" />
+    <file name="markUnmatched.xsl" />
+    <file name="repairUnmatched.xsl" />
+    <!--<file name="macroLexDef.xsl"/>-->
+  </filelist>
+
+  <filelist id="extract-morph" dir="${templates.dir}">
+    <file name="morphExtr.xsl" />
+    <file name="macroInsert.xsl" />
+  </filelist>
+
+  <filelist id="extract-rules" dir="${templates.dir}">
+    <file name="ccgRules.xsl" />
+  </filelist>
+
+
+  <!-- =================================================================== -->
+  <!-- Init                                                                -->
+  <!-- =================================================================== -->
+
+  <target name="init">
+    <taskdef resource="opennlp/ccgbank/ccgbank.properties"/>
+    <!-- make property 'ext' encoding sect and file, using 'all' instead of * -->
+    <var name="fid" value="${file}"/>
+    <if>
+      <equals arg1="${fid}" arg2="*" />
+      <then>
+	<var name="fid" value="all"/>
+      </then>
+    </if>
+    <var name="sid" value="${sect}"/>
+    <if>
+      <equals arg1="${sid}" arg2="*" />
+      <then>
+	<var name="sid" value="all"/>
+      </then>
+    </if>
+    <property name="ext" value="${sid}-${fid}"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Conversion                                                          -->
+  <!-- NB: can use bin/convert-all to run sections in parallel             -->
+  <!-- =================================================================== -->
+
+  <!-- Checks whether converted files are up-to-date wrt the flag file. -->
+  <!-- NB: to run conversion again, delete ${convert.dir}/done-*        -->
+  <target name="check-converted" depends="init">
+    <uptodate property="converted.uptodate" targetfile="${convert.dir}/done-${ext}">
+      <srcfiles dir="${ccgbank.dir}" includes="${sect}/${file}.auto"/>
+    </uptodate>
+  </target>
+
+  <!-- This version includes all the aux files (incl quotes), but no NE info. -->
+  <target name="convert-puncts-aux" depends="check-converted" unless="converted.uptodate">
+    <convert target="${convert.dir}" wordsFile="${words}" stemsFile="${stems}" auxFileDirectory="${aux.dir}">
+      <sources>
+	<fileset dir="${ccgbank.dir}">
+	  <include name="${sect}/${file}.auto" />
+	</fileset>
+      </sources>
+      <templates>
+	<filelist refid="convert-all" />
+      </templates>
+    </convert>
+    <touch file="${convert.dir}/done-${ext}"/>
+  </target>
+
+  <!-- This version also includes NE info. -->
+  <target name="convert-puncts-aux-bbn" depends="check-converted" unless="converted.uptodate">
+    <convert target="${convert.dir}" wordsFile="${words}" stemsFile="${stems}" auxFileDirectory="${aux.dir}" bbnAuxDirectory="${aux.dir}">
+      <sources>
+	<fileset dir="${ccgbank.dir}">
+	  <include name="${sect}/${file}.auto" />
+	</fileset>
+      </sources>
+      <templates>
+	<filelist refid="convert-all" />
+      </templates>
+    </convert>
+    <touch file="${convert.dir}/done-${ext}"/>
+  </target>
+
+  <!-- Shared task conversion -->
+  <!-- In task "convert-all", instead of transform "collapseMWUPart.xsl", add "collapseMWUSharedTask.xsl"-->
+  <!-- Also in build.properties file, set aux.dir=/home/scratch/raja/genchal11/SR_release1.0-Aux/hlds/-->
+  <target name="convert-sharedtask" depends="check-converted" unless="converted.uptodate">
+    <convert target="${convert.dir}" wordsFile="${words}" stemsFile="${stems}" auxFileDirectory="${aux.dir}" bbnAuxDirectory="${aux.dir}">
+      <sources>
+	<fileset dir="${ccgbank.dir}">
+	  <include name="${sect}/${file}.auto" />
+	</fileset>
+      </sources>
+      <templates>
+	<filelist refid="convert-all" />
+      </templates>
+    </convert>
+    <touch file="${convert.dir}/done-${ext}"/>
+  </target>
+
+  <!-- This version is for testing ... -->
+  <target name="convert-test" depends="init">
+    <convert target="./tmp" wordsFile="${words}" stemsFile="${stems}" auxFileDirectory="${aux.dir}">
+      <sources>
+	<fileset dir="${ccgbank.dir}">
+	  <include name="${sect}/${file}.auto" />
+	</fileset>
+      </sources>
+      <templates>
+	<!--
+	<filelist id="convert-test" dir="${templates.dir}">
+	  <file name="uncurryBareParse.xsl" />
+	  <file name="find-s-back-n.xsl" />
+	</filelist>
+	-->
+	<filelist refid="convert-initial"/>
+	<filelist refid="convert-final"/>
+      </templates>
+    </convert>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Export                                                              -->
+  <!-- =================================================================== -->
+
+  <target name="export-to-auto" depends="init">
+    <xslt style="templates/exportToAuto.xsl" basedir="${convert.dir}" destdir="${convert.dir}"
+	  extension=".auto" includes="${sect}/${file}.xml">
+      <factory name="org.apache.xalan.processor.TransformerFactoryImpl" />
+    </xslt>
+  </target>
+
+  <target name="export-to-auto-archive" depends="init">
+    <tar tarfile="openccgbank.auto.tar">
+      <tarfileset dir="${convert.dir}" includes="**/*.auto" />
+    </tar>
+    <gzip src="openccgbank.auto.tar" zipfile="openccgbank.auto.tgz" />
+    <delete file="openccgbank.auto.tar" />
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Extraction                                                          -->
+  <!-- =================================================================== -->
+
+  <!-- for the section and file, extracts a grammar with no cutoffs and makes LFs -->
+  <target name="extract" depends="init">
+    <echo>Extracting grammar with no cutoffs and making LFs</echo>
+    <echo>Section: ${sect}  File: ${file}</echo>
+    <extract target="${extract.dir}" grammarName="base" ppheads="false" catFreqCutoff="1" lexFreqCutoff="1" openFreqCutoff="1" ruleFreqCutoff="1" skipUnmatched="false">
+      <sources>
+	<fileset dir="${convert.dir}">
+	  <include name="${sect}/${file}.xml" />
+	</fileset>
+      </sources>
+      <templates type="lexicon"> <filelist refid="extract-lexicon" /> </templates>
+      <templates type="morph"> <filelist refid="extract-morph" /> </templates>
+      <templates type="rules"> <filelist refid="extract-rules" /> </templates>
+      <testbed debugDerivations="false" text="${info.dir}/text-${ext}" factors="${info.dir}/factors-${ext}" combos="${info.dir}/combos-${ext}" tree="${info.dir}/tree-${ext}" preds="${info.dir}/preds-${ext}"/>
+    </extract>
+  </target>
+
+  <!-- definitions for extract-all -->
+  <property name="all.dirs" value="00,${training.dirs},23"/>
+
+  <macrodef name="concat-info">
+    <attribute name="type"/>
+    <sequential>
+      <echo>Concatenating @{type}-train</echo>
+      <concat destfile="${info.dir}/@{type}-train">
+	<fileset dir="${info.dir}" 
+		 includes="@{type}-*-all"
+		 excludes="@{type}-00-all,@{type}-01-all,@{type}-22-all,@{type}-23-all,@{type}-24-all"/>
+      </concat>
+    </sequential>
+  </macrodef>
+
+  <!-- Checks whether factors-train (in particular) is up-to-date. -->
+  <target name="check-all-extracted" depends="init">
+    <uptodate property="extract.all.uptodate" 
+	      srcfile="${convert.dir}/02/wsj_0200.xml" 
+	      targetfile="${info.dir}/factors-train"/>
+  </target>
+
+  <!-- for all sections in use, extracts a grammar with no cutoffs and makes LFs, concatenating info files -->
+  <!-- nb: using a loop with exec here to run each section in its own VM -->
+  <target name="extract-all" depends="check-all-extracted" unless="extract.all.uptodate">
+    <for list="${all.dirs}" param="sect">
+      <sequential>
+	<echo>Starting extract task for section @{sect}</echo>
+	<exec executable="ccg-build" dir="." output="${log.dir}/log.extract.@{sect}">
+	  <arg value="-Dsect=@{sect}"/>
+	  <arg value="-Dfile=*"/>
+	  <arg value="extract"/>
+	</exec>
+      </sequential>
+    </for>
+    <echo>Concatenating training section files in ${info.dir}</echo>
+    <concat-info type="text"/>
+    <concat-info type="textsc"/>
+    <concat-info type="factors"/>
+    <concat-info type="combos"/>
+    <concat-info type="tree"/>
+    <concat-info type="preds"/>
+  </target>
+
+  <!-- Checks whether the training lexicon (in particular) is up-to-date. -->
+  <target name="check-train-extracted" depends="init">
+    <uptodate property="extract.train.uptodate" 
+	      srcfile="${convert.dir}/02/wsj_0200.xml" 
+	      targetfile="${grams.dir}/train/lexicon.xml"/>
+  </target>
+
+  <!-- extracts a grammar from the training section with no cat cutoffs, copying it to ${grams.dir}/train -->
+  <target name="extract-train" depends="check-train-extracted"
+	  unless="extract.train.uptodate">
+    <extract target="${extract.dir}" grammarName="train" ppheads="false" catFreqCutoff="1" lexFreqCutoff="1" openFreqCutoff="50" ruleFreqCutoff="10" skipUnmatched="true">
+      <sources>
+	<fileset dir="${convert.dir}">
+	  <include name="*/*.xml" />
+	  <exclude name="00/*" />
+	  <exclude name="01/*" />
+	  <exclude name="22/*" />
+	  <exclude name="23/*" />
+	  <exclude name="24/*" />
+	</fileset>
+      </sources>
+      <templates type="lexicon"> <filelist refid="extract-lexicon" /> </templates>
+      <templates type="morph"> <filelist refid="extract-morph" /> </templates>
+      <templates type="rules"> <filelist refid="extract-rules" /> </templates>
+    </extract>
+    <copy todir="${grams.dir}/train">
+      <fileset dir="${extract.dir}" includes="*.xml,*.html"/>
+    </copy>
+  </target>
+
+  <!-- Checks whether the training lexicon with cutoffs is up-to-date. -->
+  <target name="check-train-cfc10-extracted" depends="init">
+    <uptodate property="extract.train.cfc10.uptodate" 
+	      srcfile="${convert.dir}/02/wsj_0200.xml" 
+	      targetfile="${grams.dir}/train-cfc10/lexicon.xml"/>
+  </target>
+
+  <!-- extracts a grammar from the training section with cutoffs, copying it to ${grams.dir}/train-cfc10 -->
+  <target name="extract-train-cfc10" depends="check-train-cfc10-extracted"
+	  unless="extract.train.cfc10.uptodate">
+    <extract target="${extract.dir}" grammarName="train" ppheads="false" catFreqCutoff="10" lexFreqCutoff="3" openFreqCutoff="50" ruleFreqCutoff="10" skipUnmatched="true">
+      <sources>
+	<fileset dir="${convert.dir}">
+	  <include name="*/*.xml" />
+	  <exclude name="00/*" />
+	  <exclude name="01/*" />
+	  <exclude name="22/*" />
+	  <exclude name="23/*" />
+	  <exclude name="24/*" />
+	</fileset>
+      </sources>
+      <templates type="lexicon"> <filelist refid="extract-lexicon" /> </templates>
+      <templates type="morph"> <filelist refid="extract-morph" /> </templates>
+      <templates type="rules"> <filelist refid="extract-rules" /> </templates>
+    </extract>
+    <copy todir="${grams.dir}/train-cfc10">
+      <fileset dir="${extract.dir}" includes="*.xml,*.html"/>
+    </copy>
+  </target>
+
+  <!-- Checks whether the training lexicon (in particular) is up-to-date. -->
+  <target name="check-dev-extracted" depends="init">
+    <uptodate property="extract.dev.uptodate" 
+	      srcfile="${convert.dir}/00/wsj_0001.xml" 
+	      targetfile="${grams.dir}/dev/lexicon.xml"/>
+  </target>
+
+  <!-- extracts a grammar from the dev section with no cat cutoffs, copying it to ${grams.dir}/dev -->
+  <target name="extract-dev" depends="check-dev-extracted" unless="extract.dev.uptodate">
+    <extract target="${extract.dir}" grammarName="dev" ppheads="false" catFreqCutoff="1" lexFreqCutoff="1" openFreqCutoff="10" ruleFreqCutoff="3" skipUnmatched="true">
+      <sources>
+	<fileset dir="${convert.dir}">
+	  <include name="00/*.xml" />
+	</fileset>
+      </sources>
+      <templates type="lexicon"> <filelist refid="extract-lexicon" /> </templates>
+      <templates type="morph"> <filelist refid="extract-morph" /> </templates>
+      <templates type="rules"> <filelist refid="extract-rules" /> </templates>
+    </extract>
+    <copy todir="${grams.dir}/dev">
+      <fileset dir="${extract.dir}" includes="*.xml,*.html"/>
+    </copy>
+  </target>
+
+  <!-- for the section and file, extracts a grammar with no cutoffs and makes LFs with debug derivs flag set -->
+  <target name="extract-debug" depends="init">
+    <echo>Extracting grammar with no cutoffs and making LFs with debug derivs true</echo>
+    <echo>Section: ${sect}  File: ${file}</echo>
+    <extract target="${extract.dir}" grammarName="base" ppheads="false" catFreqCutoff="1" lexFreqCutoff="1" openFreqCutoff="1" ruleFreqCutoff="1" skipUnmatched="false">
+      <sources>
+	<fileset dir="${convert.dir}">
+	  <include name="${sect}/${file}.xml" />
+	</fileset>
+      </sources>
+      <templates type="lexicon"> <filelist refid="extract-lexicon" /> </templates>
+      <templates type="morph"> <filelist refid="extract-morph" /> </templates>
+      <templates type="rules"> <filelist refid="extract-rules" /> </templates>
+      <testbed debugDerivations="true" />
+    </extract>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Top-level                                                           -->
+  <!-- 1st: do bin/convert-all to convert sections in parallel             -->
+  <!--      (alternatively, do convert-puncts-aux-bbn for all sections)    -->
+  <!-- 2nd: do extract-various                                             -->
+  <!-- 3rd: do ccg-build -f build-models.xml all                           -->
+  <!-- =================================================================== -->
+
+  <target name="extract-various" depends="extract-all,extract-train,extract-train-cfc10,extract-dev"/>
+
+</project>
+
+<!-- End of file -->

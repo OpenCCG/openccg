@@ -1,0 +1,5 @@
+#!/bin/sh
+# For usage, do: ccg-cvr -h
+. ccg-env
+"$JAVA" $JAVA_ARGS opennlp.ccg.test.CrossValidateRealizer $@
+

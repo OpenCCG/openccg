@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<dictionary name="Inuit">
+ 
+  <entry stem="qiti" pred="dance" pos="V">
+    <member-of family="IV"/>
+    <word form="qitissallutik"/>
+  </entry>
+  <entry stem="kamat" pred="angry" pos="V">
+    <member-of family="IV"/>
+    <word form="kamat"/>
+  </entry>
+  <entry stem="niriursui" pred="promise" pos="V">
+    <member-of family="TV"/>
+    <member-of family="IV-control1"/>
+    <word form="niriursuipput"/>
+  </entry>
+  <entry stem="tugu" pred="kill" pos="V">
+    <member-of family="TV"/>
+    <word form="tugu" />
+  </entry>
+  <entry stem="ikiu" pred="help" pos="V">
+    <member-of family="TV"/>
+    <word form="ikiussallugu" />
+  </entry>
+  <entry stem="miiqqat" pred="children" pos="NP">
+    <member-of family="Noun"/>
+    <word form="miiqqat"/>
+  </entry>
+  <entry stem="miiraq" pred="child" pos="NP">
+    <member-of family="Noun"/>
+    <word form="miiraq" />
+  </entry>
+  <entry stem="Juuna" pred="Juuna" pos="NP">
+    <member-of family="Noun"/>
+    <word form="Juuna" />
+  </entry>
+  <entry stem="Piita" pred="Piita" pos="NP">
+    <member-of family="Noun"/>
+    <word form="Piita" />
+  </entry>
+  <entry stem="nanuq" pred="polar-bear" pos="NP">
+    <member-of family="Noun"/>
+    <word form="nanuq" />
+  </entry>
+  <entry stem="p" pos="Affix">
+    <member-of family="case"/>
+    <word form="p" macros="@erg" />
+  </entry>
+  <entry stem="ta" pos="Affix">
+    <member-of family="rel"/>
+    <word form="taa" />
+    <word form="tuq" />
+  </entry>
+
+
+<macro name="@erg">
+  <fs id="0" attr="case" val="a-case"/>
+</macro>
+</dictionary>

@@ -1,0 +1,52 @@
+  
+This SAMPLE_GRAMMARS file describes the sample grammars that come 
+with the distribution, and provides an overview of how the grammars 
+are organized.
+
+Grammars written directly in the XML format used by OpenCCG appear in
+separate directories under grammars/.  There are currently four small
+English grammars -- tiny, worldcup, flights, and comic -- plus a series of
+related grammars, mini-*, for Basque, Dyirbal, English, Inuit, Tagalog and
+Turkish, which are from Bozsahin and Steedman's (2003) study of
+ergativity. The worldcup grammar includes the English examples from
+Baldridge (2002). (The Dutch, Turkish, Tagalog, and Toba Batak grammars
+have not been updated from Grok version 0.6.) The flights and comic
+grammars (used in the FLIGHTS and COMIC systems) make use of a shared
+grammar of core English, in the core-en dir, and contain categories for
+pitch accents and boundary tones.
+
+Grammars written in the front-end `dot CCG' format, which attempts to provide 
+a more powerful and easier-to-use format than the raw XML, are in separate
+directories under ccg-format-grammars/.  There are currently three grammars
+here -- tiny, tinytiny, and arabic. `tiny' is a grammar originally based on
+the `tiny' English grammar contained in the grammars/ directory and
+documented above.  It has been significantly expanded so as to demonstrate
+the various features of the CCG format.  `tinytiny' is a smaller English
+grammar extracted from `tiny', which attempts to demonstrate a minimal-size
+useful grammar. `arabic' is a grammar of a large chunk of Classical Arabic,
+written by Ben Wing.  It was created in particular to demonstrate the power
+of CCG-format macros in handling complex morphology, and contains a nearly
+full grammar of Arabic verbs.  Dot CCG grammars are compiled using ccg2xml; 
+run ccg2xml -h for usage.
+
+The best place to look for more info on the dot CCG format is in
+ccg-format-grammars/tiny/tiny.ccg and in src/ccg2xml/README.
+
+This release also includes a broad English coverage grammar from the
+CCGBank and associated statistical models; see docs/ccgbank-README for
+details.
+
+Note that with all the grammars, there is the option to store logical
+forms in an xml node-rel format for graphs.  Conversion to this graph
+format is done using a couple of XSLT transforms specified in the
+grammar.xml file; see grammars/worldcup/grammar.xml for an example.
+When using this graph format, it is also possible to visualize the
+semantic graphs, as described in the main README file.
+
+At present, ccg2xml does not support writing grammar.xml files with
+the XSLT transforms for the node-rel graph format.  As a workaround,
+you can add these transforms to your own version of the file which you
+then copy over the generated grammar.xml file, as shown below.
+
+> ccg2xml --prefix= mygram.ccg
+> cp mygram-grammar.xml grammar.xml

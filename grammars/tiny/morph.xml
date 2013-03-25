@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+This file contains the morph entries.
+
+Copyright (C) 2005 David Reitter and University of Edinburgh (Michael White) 
+$Revision: 1.8 $, $Date: 2010/09/13 04:37:19 $ 
+-->
+<morph 
+  name="tiny"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:noNamespaceSchemaLocation="../morph.xsd"
+>
+
+
+  <!-- ===================== Simple determiners ==================== -->
+  <entry pos="Det" word="a" macros="@sg"/>
+  <entry pos="Det" word="the"/>
+  <entry pos="Det" word="some"/>
+
+  
+  <!-- ======================== Pronouns =========================== -->
+  <entry pos="Pro" word="I" stem="pro1" class="animate-being" macros="@1st @sg @nom @sg-X"/>
+  <entry pos="Pro" word="me" stem="pro1" class="animate-being" macros="@1st @sg @acc @sg-X"/>
+  <entry pos="Pro" word="we" stem="pro1" class="animate-being" macros="@1st @pl @nom @pl-X"/>
+  <entry pos="Pro" word="us" stem="pro1" class="animate-being" macros="@1st @pl @acc @pl-X"/>
+  <entry pos="Pro" word="you" stem="pro2" class="animate-being" macros="@2nd"/>
+  <entry pos="Pro" word="she" stem="pro3f" class="animate-being" macros="@3rd @sg @nom @sg-X"/>
+  <entry pos="Pro" word="her" stem="pro3f" class="animate-being" macros="@3rd @sg @acc @sg-X"/>
+  <entry pos="Pro" word="he" stem="pro3m" class="animate-being" macros="@3rd @sg @nom @sg-X"/>
+  <entry pos="Pro" word="him" stem="pro3m" class="animate-being" macros="@3rd @sg @acc @sg-X"/>
+  <entry pos="Pro" word="it" stem="pro3n" class="thing" macros="@3rd @sg @sg-X"/>
+  <entry pos="Pro" word="they" stem="pro3n" macros="@3rd @pl @nom @pl-X"/>
+  <entry pos="Pro" word="them" stem="pro3n" macros="@3rd @pl @acc @pl-X"/>
+
+  
+  <!-- ========================== Nouns ============================ -->
+  <entry pos="N" word="book" class="thing" macros="@sg @sg-X"/>
+  <entry pos="N" word="books" stem="book" class="thing" macros="@pl @pl-X"/>
+  <entry pos="N" word="DVD" class="thing" macros="@sg @sg-X"/>
+  <entry pos="N" word="DVDs" stem="DVD" class="thing" macros="@pl @pl-X"/>
+  <entry pos="N" word="flower" class="thing" macros="@sg @sg-X"/>
+  <entry pos="N" word="flowers" stem="flower" class="thing" macros="@pl @pl-X"/>
+  <entry pos="N" word="policeman" class="person" macros="@sg @sg-X"/>
+  <entry pos="N" word="policemen" stem="policeman" class="person" macros="@pl @pl-X"/>
+  <entry pos="N" word="teacher" class="person" macros="@sg @sg-X"/>
+  <entry pos="N" word="teachers" stem="teacher" class="person" macros="@pl @pl-X"/>
+
+
+  <!-- ======================== Adjectives ========================= -->
+  <entry pos="Adj" word="blue"/>
+  <entry pos="Adj" word="green"/>
+  <entry pos="Adj" word="scarlet"/>
+  <entry pos="Adj" word="gray"/>
+
+
+  <!-- ===================== Intensifying Adverbs ================== -->
+  <entry pos="Adv" word="very"/>
+
+
+  <!-- ======================= Prepositions ======================== -->
+  <entry pos="Prep" word="for"/>
+
+  
+  <!-- ========================== Verbs ============================ -->  
+  <entry pos="V" word="buy" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="buys" stem="buy" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="buy" macros="@pres @pl"/>
+  <entry pos="V" word="bought" stem="buy" macros="@past"/>
+
+  <entry pos="V" word="rent" macros="@pres @non-3rd @sg"/>
+  <entry pos="V" word="rent" macros="@pres @pl"/>
+  <entry pos="V" word="rents" stem="rent" macros="@pres @3rd @sg"/>
+  <entry pos="V" word="rented" stem="rent" macros="@past"/>
+
+  
+  
+  <!-- ========================== Macros =========================== -->  
+  <!-- ============================================================= -->  
+
+  <!--
+    The macro @non-3rd supplies a syntactic number value that is
+    compatible with both @1st and @2nd, as specified in types.xml.
+  -->
+  <macro name="@1st">
+     <fs id="2" attr="pers" val="1st"/>
+  </macro>
+  <macro name="@2nd">
+     <fs id="2" attr="pers" val="2nd"/>
+  </macro>
+  <macro name="@3rd">
+     <fs id="2" attr="pers" val="3rd"/>
+  </macro>
+  <macro name="@non-3rd">
+     <fs id="2" attr="pers" val="non-3rd"/>
+  </macro>
+  
+  <macro name="@nom">
+    <fs id="2" attr="case" val="nom"/>
+  </macro>
+  <macro name="@acc">
+    <fs id="2" attr="case" val="acc"/>
+  </macro>
+  
+  <macro name="@sg">
+     <fs id="2">
+       <feat attr="num" val="sg"/>
+     </fs>
+  </macro>
+  <macro name="@pl">
+     <fs id="2">
+       <feat attr="num" val="pl"/>
+     </fs>
+  </macro>
+
+  <!-- 
+    The macros @sg-X and @pl-X add a semantic number feature on the
+    nominal head X to the LFs of nouns and pronouns
+  -->
+  <macro name="@sg-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="sg"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="num">
+          <prop name="pl"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="tense">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+
+</morph>

@@ -1,0 +1,188 @@
+<!--
+ Copyright (C) 2011 Michael White
+ 
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Lesser General Public
+ License as published by the Free Software Foundation; either
+ version 2.1 of the License, or (at your option) any later version.
+ 
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Lesser General Public License for more details.
+ 
+ You should have received a copy of the GNU Lesser General Public
+ License along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<!-- This build file is for creating the archive files ccgbank-data.tgz and english-models.tgz. -->
+
+<!-- $Id: build-release.xml,v 1.6 2011/12/12 19:53:06 mwhite14850 Exp $ -->
+<project name="CCGbankRelease" default="all" basedir=".">
+  
+  <taskdef resource="net/sf/antcontrib/antlib.xml"/>
+  <property file="build.properties"/>
+  <property file="build-release.properties"/>
+
+
+  <!-- =================================================================== -->
+  <!-- Initialization target                                               -->
+  <!-- =================================================================== -->
+  <target name="init">
+    <tstamp/>
+    <!-- initial dependencies -->
+    <available file="${tmp.dir}/original/00/wsj_0001.auto" property="ccgbank.spaceconverted.exists"/>
+    <available file="${tmp.dir}/propccgbank/00/wsj_0001.auto" property="propccgbank.spaceconverted.exists"/>
+    <available file="${tmp.dir}/propccgbank.patch" property="propccgbank.patch.exists"/>
+    <available file="${basedir}/ccgbank-data.tgz" property="ccgbank.data.exists"/>
+    <available file="${basedir}/english-models.tgz" property="english.models.exists"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Make ccgbank-data.tgz                                               -->
+  <!-- =================================================================== -->
+
+  <target name="convert-spaces-ccgbank" depends="init" unless="ccgbank.spaceconverted.exists">
+    <echo message="Converting spaces to newlines in original ccgbank"/>
+    <for param="file">
+      <path>
+	<fileset dir="${original.ccgbank.dir}" includes="*/*.auto"/>
+      </path>
+      <sequential>
+	<propertyregex override="yes" property="file.name" input="@{file}" regexp=".*/([^/].*)" replace="\1"/>
+	<propertyregex override="yes" property="file.dir" input="@{file}" regexp=".*/([^/]*)/[^/]*" replace="\1"/>
+	<mkdir dir="${tmp.dir}/original/${file.dir}"/>
+	<exec executable="python" input="@{file}" output="${tmp.dir}/original/${file.dir}/${file.name}">
+	  <arg value="bin/convert-spaces-to-newlines.py"/>
+	</exec>
+      </sequential>
+    </for>
+  </target>
+
+  <target name="convert-spaces-propccgbank" depends="init" unless="propccgbank.spaceconverted.exists">
+    <echo message="Converting spaces to newlines in propccgbank"/>
+    <for param="file">
+      <path>
+	<fileset dir="${ccgbank.dir}" includes="*/*.auto"/>
+      </path>
+      <sequential>
+	<propertyregex override="yes" property="file.name" input="@{file}" regexp=".*/([^/].*)" replace="\1"/>
+	<propertyregex override="yes" property="file.dir" input="@{file}" regexp=".*/([^/]*)/[^/]*" replace="\1"/>
+	<mkdir dir="${tmp.dir}/propccgbank/${file.dir}"/>
+	<exec executable="python" input="@{file}" output="${tmp.dir}/propccgbank/${file.dir}/${file.name}">
+	  <arg value="bin/convert-spaces-to-newlines.py"/>
+	</exec>
+      </sequential>
+    </for>
+  </target>
+
+  <target name="make-propccgbank-patch" depends="convert-spaces-ccgbank,convert-spaces-propccgbank" 
+	  unless="propccgbank.patch.exists">
+    <echo message="Making patch file propccgbank.patch"/>
+    <exec executable="diff" dir="${tmp.dir}" output="${tmp.dir}/propccgbank.patch" logError="true">
+      <arg line="-urN original propccgbank"/>
+    </exec>
+  </target>
+
+  <target name="make-ccgbank-data-tarball" depends="make-propccgbank-patch">
+    <echo message="Making ccgbank-data.tgz"/>
+    <!-- nb: using hardcoded dir names to get relative paths straight -->
+    <tar destfile="ccgbank-data.tgz" compression="gzip"
+         basedir="${basedir}"
+         includes="aux/** tmp/propccgbank.patch" />
+  </target>
+
+  <target name="make-ccgbank-data" depends="init" unless="ccgbank.data.exists">
+    <antcall target="make-ccgbank-data-tarball"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Make english-models.tgz                                             -->
+  <!-- =================================================================== -->
+
+  <target name="make-english-models" depends="init" unless="english.models.exists">
+    <echo message="Making english-models.tgz"/>
+    <!-- nb: using hardcoded dir names to get relative paths straight -->
+    <tar destfile="english-models.tgz" compression="gzip"
+         basedir="${basedir}"
+         includes="models/*/*.lm models/*/*.3bo models/*/*.gz models/*/*.mod 
+		   models/*/vocab.* models/*/*dict*
+		   aux/aux-files/truecase-list.gz plugins/*.class 
+		   extract/grammars/** extract/info/combos-train"
+	 excludes="**/*.flm"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Extract ccgbank-data.tgz                                            -->
+  <!-- =================================================================== -->
+
+  <target name="patch-ccgbank" depends="convert-spaces-ccgbank">
+    <echo message="Patching original ccgbank with patch file propccgbank.patch"/>
+    <mkdir dir="${tmp.dir}/patched"/>
+    <copy todir="${tmp.dir}/patched"> <fileset dir="${tmp.dir}/original"/> </copy>
+    <exec executable="patch" dir="${tmp.dir}/patched" logError="true">
+      <arg line="-p1 -u -s -i ../propccgbank.patch"/>
+    </exec>
+    <echo message="Reversing spaces to newlines in patched ccgbank to propccgbank"/>
+    <mkdir dir="${ccgbank.dir}"/>
+    <for param="file">
+      <path>
+	<fileset dir="${tmp.dir}/patched" includes="*/*.auto"/>
+      </path>
+      <sequential>
+	<propertyregex override="yes" property="file.name" input="@{file}" regexp=".*/([^/].*)" replace="\1"/>
+	<propertyregex override="yes" property="file.dir" input="@{file}" regexp=".*/([^/]*)/[^/]*" replace="\1"/>
+	<mkdir dir="${ccgbank.dir}/${file.dir}"/>
+	<exec executable="python" input="@{file}" output="${ccgbank.dir}/${file.dir}/${file.name}">
+	  <arg value="bin/reverse-spaces-to-newlines.py"/>
+	</exec>
+      </sequential>
+    </for>
+  </target>
+
+  <target name="check-propccgbank" depends="init">
+    <uptodate srcfile="${basedir}/ccgbank-data.tgz" targetfile="${ccgbank.dir}/00/wsj_0001.auto" 
+	      property="propccgbank.uptodate"/>
+  </target>
+
+  <target name="extract-ccgbank-data" depends="check-propccgbank" unless="propccgbank.uptodate">
+    <echo message="Extracting ccgbank-data.tgz"/>
+    <untar src="ccgbank-data.tgz" dest="${basedir}" compression="gzip"/>
+    <antcall target="patch-ccgbank"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Extract english-models.tgz                                          -->
+  <!-- =================================================================== -->
+
+  <target name="extract-english-models" depends="init">
+    <echo message="Extracting english-models.tgz"/>
+    <untar src="english-models.tgz" dest="${basedir}" compression="gzip"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Cleans temp files                                                   -->
+  <!-- =================================================================== -->
+  <target name="clean" depends="init">
+    <delete dir="${tmp.dir}/original"/>
+    <delete dir="${tmp.dir}/patched"/>
+    <delete dir="${tmp.dir}/propccgbank"/>
+    <delete file="${tmp.dir}/propccgbank.patch"/>
+  </target>
+
+
+  <!-- =================================================================== -->
+  <!-- Top-level                                                           -->
+  <!-- =================================================================== -->
+
+  <target name="all" depends="make-ccgbank-data,make-english-models,clean"/>
+  <target name="extract-data" depends="extract-ccgbank-data,clean"/>
+  <target name="extract-models" depends="extract-english-models"/>
+
+</project>

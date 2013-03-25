@@ -1,0 +1,32 @@
+Loading grammar from URL: file:/home/bozsahin/openccg/grammars/mini-turkish/grammar.xml
+
+Parse	Realize	String
+-----	-------	------
+ok	-	cocuk kitab i oku ma ya calisti
+ok	-	*cocuk kitab i oku ma yi calisti
+ok	-	cocuk kitab i oku mak istedi
+ok	-	cocuk kitab i oku ma yi istedi
+ok	-	*cocuk kitab i oku ma ya istedi
+ok	-	*cocuk adam kitab i ver me yi istedi
+ok	-	adam cocug u kitab i oku ma ya zorladi
+ok	-	*adam cocug u kitab i oku ma yi zorladi
+ok	-	cocug u adam kitab i oku ma ya zorladi
+ok	-	adam cocug u kitab i kadin a ver me ye zorladi
+ok	-	adam cocug u kadin a kitab i ver me ye zorladi
+ok	-	cocug u adam kadin a kitab i ver me ye zorladi
+ok	-	*adam cocug u kadin kitab i ver me ye zorladi
+ok	-	*adam cocug a kadin a kitab i ver me ye zorladi
+ok	-	kitab i oku yan adam uyudu
+ok	-	cocuk kitab i oku yan adam i gordu
+ok	-	adam in gor dugu cocuk uyudu
+ok	-	cocuk adam in gor dugu kitab i okudu
+ok	-	cocug un kitab i ver digi adam uyudu
+ok	-	cocug un adam a ver digi kitap dustu
+ok	-	*adam cocug un adam a ver en kadin i gordu
+ok	-	*adam adam a kitab i ver digi kadin i gordu
+ok	-	adam cocug a carpti ve dustu
+ok	-	cocug a adam carpti ve dustu
+ok	-	cocug a carpti ve adam dustu
+ok	-	kitab i adam cocug a verdi ama kadin almisti
+ok	-	cocug a kitab i adam verdi ama kadin almisti
+ok	-	dergi ye adam bakti ama cocuk okudu

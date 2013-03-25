@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 University of Edinburgh (Michael White) 
+$Revision: 1.11 $, $Date: 2006/08/15 18:24:18 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Elements and types for hybrid logic dependency semantics (HLDS) constructs.
+    
+    The subset of hybrid logic terms used in HLDS is defined here.
+    (The Java classes currently support a slightly larger subset.)
+    To support flattening of these terms into elementary predications, the 
+    contents of the satisfaction operators and diamond relations (modal ops) 
+    are restricted, as described in detail below.
+    
+    Note that where a list of terms is allowed, these are implicitly conjoined; 
+    a conjunction operator is inserted upon loading, when necessary.
+    LFs with disjunctive or optionality operators may also be specified.
+    
+    Nominals and variables may be given a type (or sort) listed in the 
+    types file, by appending the type to the name after a colon. 
+    Propositions whose names appear in the types file are also treated as typed.
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="tokens.xsd"/>
+
+  <xsd:complexType name="hldsPreds">
+    <xsd:annotation>
+    <xsd:documentation>
+      Typically one or more satisfaction operators, encoding the semantics 
+      associated with a category.
+      Exclusive disjunctions (xor) are also allowed.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice maxOccurs="unbounded">
+      <xsd:element ref="satop"/>
+      <xsd:element ref="op"/>
+    </xsd:choice>
+  </xsd:complexType>
+  
+  <xsd:complexType name="hldsFeatVals">
+    <xsd:annotation>
+    <xsd:documentation>
+      The possible values of an LF feature, i.e., 
+      a nominal (atom or variable), proposition, or variable (over HLDS terms).
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:choice>
+      <xsd:element ref="nominal"/>
+      <xsd:element ref="prop"/>
+      <xsd:element ref="var"/>
+    </xsd:choice>
+  </xsd:complexType>
+  
+  <xsd:element name="satop">
+    <xsd:annotation>
+    <xsd:documentation>
+      A satisfaction operator, with a nominal and an arg.
+      The nominal can either be a nominal atom, named by the "nom" attribute, 
+      or a nominal variable, named by the "nomvar" attribute.
+      The nominal may be optionally marked as "shared" (see nominal def below).
+      The arg optionally begins with a proposition, followed by any number 
+      of diamond relations or disjunctive/optionality operators, 
+      but must be non-empty.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice>
+        <xsd:sequence>
+          <xsd:element ref="prop"/>
+          <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element ref="diamond"/>
+            <xsd:element ref="op"/>
+          </xsd:choice>
+        </xsd:sequence>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element ref="diamond"/>
+          <xsd:element ref="op"/>
+        </xsd:choice>
+      </xsd:choice>
+      <xsd:attribute name="nom" type="typedFeature"/>
+      <xsd:attribute name="nomvar" type="typedFeature"/>
+      <xsd:attribute name="shared" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="prop">
+    <xsd:annotation>
+    <xsd:documentation>
+      A named proposition.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="name" type="token" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+  
+  <xsd:element name="diamond">
+    <xsd:annotation>
+    <xsd:documentation>
+      A diamond relation (modal operator), with a mode and an arg.
+      The "mode" attribute names the relation.
+      The arg is either just a proposition or a variable, 
+      or a nominal followed optionally by a proposition and 
+      any number of nested diamond relations or disjunctive/optionality operators.
+      In the former case, the relation encodes a semantic feature; in the latter case, it encodes 
+      a relation to another semantic head.
+      The arg may also be a disjunctive operator containing satops.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice>
+        <xsd:element ref="prop"/>
+        <xsd:element ref="var"/>
+        <xsd:sequence>
+          <xsd:element ref="nominal"/>
+          <xsd:element ref="prop" minOccurs="0"/>
+          <xsd:choice minOccurs="0" maxOccurs="unbounded">
+            <xsd:element ref="diamond"/>
+            <xsd:element ref="op"/>
+          </xsd:choice>
+        </xsd:sequence>
+        <xsd:element ref="op"/>
+      </xsd:choice>
+      <xsd:attribute name="mode" type="xsd:NMTOKEN" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="op">
+    <xsd:annotation>
+    <xsd:documentation>
+      A conjunction (conj), exclusive disjunction (xor) 
+      or optionality (opt) operator.
+      Note that conjunctions are usually left implicit.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice maxOccurs="unbounded">
+        <xsd:element ref="satop"/>
+        <xsd:element ref="diamond"/>
+        <xsd:element ref="nominal"/>
+        <xsd:element ref="op"/>
+      </xsd:choice>
+      <xsd:attribute name="name" use="required">
+        <xsd:simpleType>
+          <xsd:restriction base = "xsd:string">
+            <xsd:enumeration value = "conj"/>
+            <xsd:enumeration value = "xor"/>
+            <xsd:enumeration value = "opt"/>
+          </xsd:restriction>
+        </xsd:simpleType>
+      </xsd:attribute>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="nominal" type="shareableNamedTerm" abstract="true">
+    <xsd:annotation>
+    <xsd:documentation>
+      A nominal term, either an atom or a variable.
+      The "shared" attribute indicates that the nominal term 
+      provides a reference to a node that is a shared part of
+      multiple alternatives, rather than being a subordinated 
+      or coordinated reference.
+    </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  
+  <xsd:element name="nom" type="shareableNamedTerm" substitutionGroup="nominal">
+    <xsd:annotation>
+    <xsd:documentation>
+      A nominal atom.
+    </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  
+  <xsd:element name="nomvar" type="shareableNamedTerm" substitutionGroup="nominal">
+    <xsd:annotation>
+    <xsd:documentation>
+      A nominal variable.
+    </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  
+  <xsd:element name="var" type="namedTerm">
+    <xsd:annotation>
+    <xsd:documentation>
+      A variable over HLDS terms. 
+    </xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  
+  <xsd:complexType name="namedTerm">
+    <xsd:annotation>
+    <xsd:documentation>
+      A term with a name.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="name" type="typedFeature" use="required"/>
+  </xsd:complexType>
+  
+  <xsd:complexType name="shareableNamedTerm">
+    <xsd:annotation>
+    <xsd:documentation>
+      A named term with an optional "shared" attribute.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="namedTerm">
+        <xsd:attribute name="shared" type="xsd:boolean"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  
+</xsd:schema>
+

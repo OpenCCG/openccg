@@ -1,0 +1,8 @@
+Loading grammar from URL: file:/home/bozsahin/openccg/grammars/mini-inuit/grammar.xml
+
+Parse	Realize	String
+-----	-------	------
+ok	-	miiqqat Juuna ikiussallugu niriursuipput
+ok	-	miiqqat qitissallutik niriursuipput
+ok	-	nanuq Piita p tugu taa
+ok	-	miiraq kamat tuq

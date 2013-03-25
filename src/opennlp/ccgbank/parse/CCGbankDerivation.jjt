@@ -1,0 +1,274 @@
+// Grammar to parse all the ccgbank derivations in a given ccgbank file
+
+options {
+    MULTI=true;
+    NODE_DEFAULT_VOID=false;
+    NODE_SCOPE_HOOK=true;   
+    STATIC=true;
+    USER_TOKEN_MANAGER=false;
+    NODE_PREFIX=""; 
+    NODE_USES_PARSER=true;
+}
+
+PARSER_BEGIN(CCGbankDerivation)
+
+package opennlp.ccgbank.parse;
+
+import java.util.*;
+import org.apache.tools.ant.Task;
+//import java.io.*;
+
+public class CCGbankDerivation {
+
+    // The java code to operate the node scope hook
+    static void jjtreeOpenNodeScope(Node n) {
+        ((SimpleNode)n).first_token = getToken(1);
+    }
+
+    static void jjtreeCloseNodeScope(Node n) {
+        ((SimpleNode)n).last_token = getToken(0);
+    }
+}
+
+PARSER_END(CCGbankDerivation)
+
+
+// enter PROPINFO state (for extra Propbank-derived info) on "{"
+// nb: this is a workaround for ATOMCAT being perhaps too broadly defined
+TOKEN: { <LCURLY: "{">  : PROPINFO }
+
+// return to normal on ">" at end of node
+<*> TOKEN: { <RANGLE: ">"> : DEFAULT }
+
+// tokens in PROPINFO state
+<PROPINFO> TOKEN: { <COMMA: ","> }
+<PROPINFO> TOKEN: { <DOT: "."> }
+<PROPINFO> TOKEN: { <COLON: ":"> }
+<PROPINFO> TOKEN: { <ALPHNUMHYPH: (["A"-"Z","a"-"z","-","0"-"9"])+> } // for stems and sem roles
+<PROPINFO> TOKEN: { <RCURLY: "}"> }
+<PROPINFO> TOKEN: { <LSQUARE: "["> }
+<PROPINFO> TOKEN: { <RSQUARE: "]"> }
+
+
+// regular tokens
+// mww: ATOMCAT is really too broad, b/c it's used for words too ...
+TOKEN:
+{
+    <ATOMCAT: (["A"-"Z","a"-"z","[","]","-","'",".",",","$","=","0"-"9","_",":","&","%",";","?","#","@","!","`","*"])+>
+    |
+    <OP: "/" | "\\">
+    |
+    <SPL: (<ATOMCAT>("\\/")*)+|("\\*")+>
+    //The SPL token is for treebank words like "1\/2" or "bassoonist\/pianist\/composer" or "\*" where the middle tokens stand elsewhere for ccg operations. 
+    //So the SPL prevents such words from interfering with the tokenization
+}
+
+<*> SKIP: { " " | "\t" | "\n" | "\r" }
+
+
+SimpleNode start():
+{}
+{
+    // Every file consists of one or more treebank entries
+    // Each treebank entry consists of 1 header and 1 or more treenodes or leafnodes
+    ( header() ( LOOKAHEAD(2) leafnode() | treenode()) )+
+    { return jjtThis; }
+}
+
+void header():
+{
+    Token t1 = new Token();
+    Token t2 = new Token();
+    Token t3 = new Token();
+    jjtThis.type="Header";
+}
+{
+    // Header, eg: ID=wsj_2300.1 PARSER=GOLD NUMPARSE=1
+    t1=<ATOMCAT> [t2=<ATOMCAT> t3=<ATOMCAT>]
+    {
+        jjtThis.header = t1.image + " " + t2.image + " " + t3.image;
+    }
+}
+
+
+void treenode():
+{
+    Token leftover = new Token();
+    Token head = new Token();
+    Token dtr = new Token();
+    Token lex = new Token();
+    Token sense = new Token();
+    Token role = new Token();
+    jjtThis.type="Treenode";
+}
+{
+    // Storing the ccgID.  (mww: huh?)
+    // Sample Treenode: <T S[dcl] 0 2>
+    // With Propbank roles: <T S[dcl] 0 2 {stop.01:ARG0,use.01:ARG0}>
+    "(" 
+        "<T" // Root of a treenode
+    
+            // Treenode category specification 
+            catSpecRedundant()
+    
+            (
+                // The lookahead traps [conj] feature which follows the catspec
+                LOOKAHEAD(3)
+                leftover=<ATOMCAT> head=<ATOMCAT> dtr=<ATOMCAT>
+                { jjtThis.leftover=leftover.image; }          
+                |
+                head=<ATOMCAT>
+                dtr=<ATOMCAT>
+            )
+            
+            // Headedness, number of dtrs info stored in the SimpleNode data structure
+            { jjtThis.head=head.image; jjtThis.dtr=dtr.image; }
+    
+            // optional propbank info
+            // nb: need to use eg <DOT> instead of "." once in PROPINFO lex state 
+            [
+                "{"
+                    lex=<ALPHNUMHYPH> <DOT> sense=<ALPHNUMHYPH> <COLON> role=<ALPHNUMHYPH> 
+                    { 
+                    	jjtThis.nodeRoles = new ArrayList<SimpleNode.LexSenseRole>(3);
+                    	jjtThis.nodeRoles.add(new SimpleNode.LexSenseRole(lex.image, sense.image, role.image));
+                	}
+                    (
+                        <COMMA>
+	                    lex=<ALPHNUMHYPH> <DOT> sense=<ALPHNUMHYPH> <COLON> role=<ALPHNUMHYPH> 
+	                    { jjtThis.nodeRoles.add(new SimpleNode.LexSenseRole(lex.image, sense.image, role.image)); }
+                    )*
+                <RCURLY>
+            ]
+            
+        <RANGLE> // closure of one the root of a treenode
+        
+        // A treenode consists of 1 or more treenodes or leafnodes. 
+        ( LOOKAHEAD(2) leafnode() | treenode() )+
+            
+    ")" // Close of a treenode
+}
+
+
+void leafnode():
+{
+    Token t = new Token();
+    Token lex = new Token();
+    Token sense = new Token();
+    Token role = new Token();
+    jjtThis.type="Leafnode";
+}
+{
+    /* Sample Leafnode structures:
+     (<L S/S RB RB No S_42/S_42>)
+     (<L . . . . .>)
+     (<L (S[dcl]\S[dcl])\NP VBD VBD reported (S[dcl]\S[dcl]_8)\NP_9 {report.01:rel} [ARG1,ARG0]>)
+    */
+    "(" 
+        "<L" 
+            // Parsed but Ignored
+            catSpecRedundant()
+            //((S[b]\NP)/NP)/    mww: huh?
+    
+            // POS tag stored in a SimpleNode DS
+            t=<ATOMCAT> { jjtThis.pos = t.image; }
+        
+            // The pos tag has been repeated in the ccgbank. 
+            // For numerals (null) is an entry. 
+            // Hence the optional brackets in the bnf below.
+            ( ["("] <ATOMCAT> [")"])
+        
+            ( t=<ATOMCAT> | t=<SPL> )
+            { jjtThis.lex = t.image; }
+        
+            catSpec()
+            
+            // optional propbank info
+            [
+                "{"
+                    lex=<ALPHNUMHYPH> <DOT> sense=<ALPHNUMHYPH> <COLON> role=<ALPHNUMHYPH> // role or 'rel'
+                    { 
+                    	jjtThis.nodeRoles = new ArrayList<SimpleNode.LexSenseRole>(3);
+                    	jjtThis.nodeRoles.add(new SimpleNode.LexSenseRole(lex.image, sense.image, role.image));
+                	}
+                    (
+                        <COMMA>
+	                    lex=<ALPHNUMHYPH> <DOT> sense=<ALPHNUMHYPH> <COLON> role=<ALPHNUMHYPH> 
+	                    { jjtThis.nodeRoles.add(new SimpleNode.LexSenseRole(lex.image, sense.image, role.image)); }
+                    )*
+                <RCURLY>
+            ]
+            [
+                <LSQUARE>
+                    role=<ALPHNUMHYPH> 
+                    { 
+                    	jjtThis.argRoles = new ArrayList<String>(4);
+                    	jjtThis.argRoles.add(role.image);
+                	}
+                    (
+                        <COMMA>
+                        role=<ALPHNUMHYPH> 
+                        { jjtThis.argRoles.add(role.image); }
+                    )*
+                <RSQUARE>
+            ]
+        <RANGLE> //">" 
+    ")"
+}
+
+void catSpec():
+{ jjtThis.type="complexcat"; }
+{
+    // The result category (atomic or complex)
+    ( 
+        ( "(" catSpec() ")" [<ATOMCAT>] )  // mww: the extra "atomcat" is really for an index on the complex cat
+        |
+        atomcat()
+    )
+        
+    // The argument of the function (atomic or complex). 
+    // Note: The following could be processed as a separate production "Embedded category" , but this would produce a node of that name. 
+    //       To avoid that, the preceding BNF notation has been repeated here. 
+    [
+        op()
+        ( 
+            ( "(" catSpec() ")" [<ATOMCAT>] )
+            |
+            atomcat()
+        )
+    ]
+}
+
+
+void catSpecRedundant():
+{ jjtThis.type="Redundant"; }  
+{
+    ( 
+        ( "(" catSpec() ")" )
+        |
+        atomcat()
+    )
+    [
+        op()
+        ( 
+            ( "(" catSpec() ")" )
+            |
+            atomcat()
+        )
+    ]
+}
+
+
+void atomcat():
+{ jjtThis.type="atomcat"; }
+{
+    <ATOMCAT>
+}
+
+void op():
+{ Token t = new Token(); jjtThis.type="op"; }
+{
+    t=<OP> { jjtThis.cat=t.image; }
+}
+
+

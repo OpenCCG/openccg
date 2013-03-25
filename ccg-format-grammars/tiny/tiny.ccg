@@ -1,0 +1,648 @@
+#############################################################
+#                                                           #
+#                          tiny.ccg                         #
+#                                                           #
+#############################################################
+
+# Author: Ben Wing <ben@666.com>
+# Date: April 2006
+
+# This is derived from Geert-Jan M. Kruijff's 'coordination' grammar,
+# which was simplified, revised and extended.
+# 
+#                     David Reitter, dreitter at inf.ed.ac dot uk, 01/2005
+#                     Michael White, mwhite at inf dot ed.ac.uk, 01/2005
+
+# This is the `tiny' grammar, in .ccg format.  There are a bunch
+# of comments below to explain the format.  See also the `arabic'
+# grammar for an example of extended macro use to handle a complex
+# morphology.
+
+# To generate a grammar for use with OpenCCG, use `genccg' (or whatever
+# it's currently called).  This generates the various XML files needed for
+# OpenCCG (grammar.xml, lexicon.xml, morph.xml, types.xml, and rules.xml).
+# After doing this, you can run `tccg' to load the grammar and use it for
+# parsing.
+
+# Some general notes about this format:
+
+# -- The general feel of the syntax is like C, Java or Perl.  Indentation
+#    and whitespace is unimportant. (The only exception is in macro
+#    definitions, where the text of a macro must either be on the same line
+#    as the definition -- possibly extended with backslash
+#    line-continuation markers -- or be enclosed in braces.)
+#
+# -- The syntax tries to be very forgiving of the usage of commas and
+#    semicolons, for the benefit of macro definitions.  In most lists, in
+#    fact, commas are optional -- arguments can be separated by no commas,
+#    one comma, or many commas, and extra commas can occur at the end of
+#    the list.  All of this makes macro definitions and macro calls much
+#    easier.  We usually write such lists below without commas.
+#
+#    The main exception where commas matter is in macro calls.  You can
+#    still put an extra comma at the end of a macro call, but otherwise you
+#    must have exactly one comma (no more, no less) between arguments.  The
+#    reason is that macro arguments can contain pretty much any text
+#    whatsoever (including no text at all), so commas are needed to
+#    indicate where one argument stops and the next one starts.
+#
+#    NOTE: The parser pays attention to parens, brackets, and braces in the
+#    text of a macro call argument, and will not get confused by commas
+#    inside of matched delimiters.  Thus, a macro call `foo(a, bar(b, c))'
+#    is correctly interpreted as a call to foo() with two arguments, `a'
+#    and `bar(b, c)', and *NOT* a call to foo() with three arguments `a',
+#    `bar(b', and `c)'.)
+#
+#    Note also how the text of macro definitions and calls can optionally
+#    be surrounded by braces, to clearly delimit the text boundaries (see
+#    below).  It's important to note that the braces do *NOT* form part of
+#    the text itself; if you really want your text surrounded by braces,
+#    you need to add a second set around the text.
+#
+# -- You can use the `-t' option to see what things look like after macro
+#    substitutions have been applied.
+#
+# -- The order of declarations in this file is not significant except
+#    that macros and features must be defined before they can be used.
+#
+# -- You can surround literal text (word stems, inflections, etc.) with
+#    single or double quotes in order to insert characters into the text
+#    that would otherwise be interpreted by the parser, such as spaces,
+#    colons, etc.  Without such quotes, the only characters that can occur
+#    in a word are letters, numbers, '_', '-', '+' and '%'.  Note, however,
+#    that there is no such thing as "reserved words" in this format; words
+#    like 'feature', 'word', 'entry', etc. that have a special significance
+#    in the right place in the syntax can otherwise be freely used as word
+#    stems and inflections, macro variable names, part of speech tags, etc.
+
+#############################################################
+#                                                           #
+#                          FEATURES                         #
+#                                                           #
+#############################################################
+
+# Declaration of features.  This is used as follows:
+#
+# (1) So that you can just specify a feature value inside brackets below,
+#     and the appropriate feature is substituted.  That is, a declaration
+#     like n[nom] is equivalent to n[CASE=nom].
+#
+# (2) To specify the types listed in types.xml.
+#
+# (3) To specify the feature values used in word declarations.  These
+#     compile out into <macro ...> declarations in morph.xml (unrelated to
+#     our own use of macros).  In order for this to happen, however, you
+#     *must* specify a "macro-tie", inside of parentheses after the feature
+#     type.  This is either a number (for a syntactic macro) or a letter
+#     (for a semantic macro).  See below for exactly how these are used.
+#
+# (A "strict feature" mode may be implemented at some point, where all
+# features that are used in category definitions must be declared.)
+
+feature {
+  # A number following the feature type, as follows, is used for syntactic
+  # features that can be attached to a word.  The number is a feature-
+  # structure ID; when an atomic category in a lexical category definition
+  # has the corresponding ID, these features will be inserted into that
+  # category.  Hence, the <2> here corresponds to the <2> that occurs
+  # below in the definition of Noun, Det, verbcat(), etc.
+  CASE<2>: nom acc;
+  NUM<2>: sg pl;
+  # You can specify more than one number if you want.
+  # NUM<2,3>: sg pl;
+
+  # A word in place of a number causes semantic macros to be created; if
+  # used in a word {} declaration, the relevant info will be inserted into
+  # the hybrid logic part of a lexical category declaration, attached to
+  # the argument of the given name.  A declaration like (X:NUM) means that
+  # 'NUM' is used in the XML <diamond mode="..."> declaration in place of
+  # the feature's actual name. (FIXME: I don't know what the significance
+  # of this is.)
+  sem-num<X:NUM>: sg-X pl-X;
+  TENSE<E>: past pres;
+
+  # You can create hierarchical values as shown.
+  PERS<2>: non-3rd {1st 2nd} 3rd;
+
+  # Alternatively, you can explicitly list the parent(s) of a feature --
+  # e.g. to create multiple-inheritance hierarchies.
+  #alternate-pers<2>: non-3rd 1st[non-3rd] 2nd[non-3rd] 3rd;
+
+  # Here's a more complicated hierarchy, from the original tiny grammar.
+  ontology: sem-obj {
+              phys-obj {
+                animate-being {
+                  person
+                }
+                thing
+              }
+              situation {
+                change {
+                  action
+                }
+                state
+              }
+            };
+
+  # Here we show how you can mix the two ways of declaring hierarchies,
+  # if you have a primarily single-inheritance hierarchy but with certain
+  # multiply-inherited values.  In this hierarchy, 'werewolf' gets both
+  # 'man' and 'wolf' as its parents.  'intersex' will have only 'man' and
+  # 'woman' as parents -- 'rational-being' will not be specified as it's
+  # redundant.
+  entity: being {
+	    # We would call this `thing' but that is used above in
+            # the `ontology' hierarchy, and causes a warning to be issued
+            thing2
+            animate {
+              irrational-being {
+                fish
+                mammal { dog-like {dog wolf} cat horse }
+              }
+              rational-being {
+                man {
+                  centaur[horse]
+                  werewolf[wolf]
+                }
+                woman {
+                  mermaid[fish]
+                }
+                intersex[man woman]
+              }
+            }
+          }
+          nothingness;
+}
+
+# You can also specify that a feature is "distributive" and/or give
+# licensing information for the realizer.
+#
+# Here's the equivalent of the stuff in flights/lexicon.xml and
+# flights/types.xml.
+#
+# A ! before a feature makes it distributive.  You can specify
+# licensing-related attributes on either a feature or a feature-value, in
+# the standard way of specifying attributes in .ccg format.
+
+feature {
+  !owner(location=args-only, instantiate=false);
+  !info;
+  form: dcl-base {dcl, fronted},
+        q-base {q(license-marked-cats=true, also-licensed-by=q-base),
+                wh(license-marked-cats=true, also-licensed-by=q-base)},
+        base,
+        emb(location=target-only),
+        inf(location=target-only),
+        adj(location=target-only),
+        ng;
+}
+
+# If you really want the feature value as used in the word {} declarations
+# to be different from the feature value elsewhere, you can do that.
+# This allows you to generate the following XML:
+#
+#  <macro name="@acc0">
+#    <fs id="0" attr="case" val="p-case"/>
+#  </macro>
+#  <macro name="@acc1">
+#    <fs id="1" attr="case" val="p-case"/>
+#  </macro>
+#  <macro name="@acc2">
+#    <fs id="2" attr="case" val="p-case"/>
+#  </macro>
+#  <macro name="@acc3">
+#    <fs id="3" attr="case" val="p-case"/>
+#  </macro>
+#
+#feature {
+#  case<0>: acc0:p-case;
+#  case<1>: acc1:p-case;
+#  case<2>: acc2:p-case;
+#  case<3>: acc3:p-case;
+#}
+
+# NOTE: (1) This doesn't quite work in ccg2xml yet, since only `acc3' gets
+# added to the hierarchy in types.xml. (2) The entire motivation for doing
+# this kind of thing is kludgy, and will be eliminated by allowing features
+# to be explicitly specified for the result of a lexical insertion rule,
+# much like the way that type-raising rules currently work.
+
+# Here's how you specify a relation-sorting order, in case you care.
+relation-sorting: foo * bar baz;
+
+#############################################################
+#                                                           #
+#                           WORDS                           #
+#                                                           #
+#############################################################
+
+#
+################## Functional words #################
+#
+
+# Some examples of words.
+#
+# The format of word declarations is
+#
+# word STEM:FAMILY ...(ATTRS): FEATURES;
+#
+# or
+#
+# word STEM:FAMILY ...(ATTRS) { INFLECTED-FORM: FEATURES; ...}
+#
+# where STEM is the word's stem, FAMILY is a list of the families that a
+# word is part of, and ATTRS specifies any other attributes associated
+# with the word.  FEATURES gives the word's features; these come from the
+# feature {} declarations above. (NOTE: Only feature values whose features
+# specify a "macro-tie" value -- something in <> following the
+# feature's name -- can be used.  See above.)
+#
+# ATTRS is a list; each attribute is either a specification ATTRIBUTE=VALUE
+# or a single VALUE (equivalent to class=VALUE).  The useful attributes are
+#
+# class		Semantic class of a word.
+# pred		Semantic predicate of a word, used in the logical form;
+#               if omitted, defaults to the word's stem.
+# excluded      List of excluded lexical categories.
+# coart         Boolean indicating that this entry is a coarticulation,
+#               eg a pitch accent, gesture, or other word-associated element.
+#
+# Any of FAMILY, ATTRS and/or FEATURES can be omitted.
+#
+# The second form above, with braces, is used for words with different
+# inflections.  Instead of specifying the features directly after the word,
+# you list the features for each inflection separately.  Note that * is
+# shorthand for the stem itself.
+#
+# Note that there can be more than one word {} declaration for a single stem.
+#
+# The families in FAMILY can be either a family name, from a family {}
+# block, or a part of speech. (`genccg' will derive the appropriate parts
+# of speech from any families given when creating the XML file.)  Note that
+# the words associated with a particular family can be specified either by
+# tagging each word with its family, by listing a family's words explicitly
+# using the `member' declaration inside of a family {} block, or by a
+# combination of the two.
+
+word the:Det;
+word some:Det;
+word a:Det: sg;
+
+word for;
+
+word pro1:Pro(animate-being) {
+  I: 1st sg nom sg-X;
+  me: 1st sg acc sg-X;
+  we: 1st pl nom pl-X;
+  us: 1st pl acc pl-X;
+}
+
+word pro2:Pro(animate-being) {
+  you: 2nd;
+}
+
+word pro3f:Pro(animate-being) {
+  she: 3rd sg nom sg-X;
+  her: 3rd sg acc sg-X;
+}
+
+word pro3m:Pro(animate-being) {
+  he: 3rd sg nom sg-X;
+  him: 3rd sg acc sg-X;
+}
+
+word pro3n:Pro(thing) {
+  it: 3rd sg sg-X;
+}
+
+# If we want the CLASS associated with only some of the inflections,
+# we can use the same stem in more than one decl. (Assigning neuter to
+# "they" is strange but that's how the original morph.xml did it!)
+
+word pro3n:Pro {
+  they: 3rd pl nom pl-X;
+  them: 3rd pl acc pl-X;
+}
+
+#
+################## Nouns #################
+#
+
+# Here, we make use of macros.  The basic idea behind macros is simple:
+# They simply do string substitution.  However, parameters can be given,
+# making them very powerful.
+
+# This macro says: Every time an expression of the form basic-noun(...) 
+# occurs, replace it with the text that comes after.  The parameters will
+# be substituted into the text.  The braces that denote the macro's text do
+# *NOT* form part of the text that is substituted. (Alternatively, you
+# can put the entire replacement text on the same line as the macro
+# definition, using a backslash at the end of the line if needed in order
+# to continue the definition on the next line.) Likewise, braces can be
+# used to surround text in an argument to a macro call and will not form of
+# the argument's text.  This is useful when the argument's text contains
+# commas.  In either case, if you really want the text itself to have
+# braces around it, you need to put two sets of braces around it.
+
+# Note that macro substitutions are processed recursively: If the
+# text of a macro substitution contains calls to other macros, they will
+# also be processed.  This makes "inheritance" very easy to implement.
+
+# Inside of a macro definition's text, the . operator can be used; this
+# concatenates two words together into a single word.  See the definition
+# of normal-noun() below for a simple example.
+
+# Substitution of arguments does not occur inside of quoted text.
+
+def basic-noun(sing, plur, class) {
+  word sing:N(class) {
+    *: sg sg-X;
+    plur: pl pl-X;
+  }
+}
+
+#def normal-noun(stem, class) {
+#  word stem:N(class) {
+#    *: sg sg-X;
+#    stem . s: pl pl-X;
+#  }
+#}
+
+# or equivalently, using our definition of basic-noun():
+
+# def normal-noun(stem, class) basic-noun(stem, stem . s, class)
+
+# But in fact, we do something more clever to handle pluralization.
+# Here we make use of some built-in macros():
+#
+# regsub(PATTERN, REPLACEMENT, TEXT):
+#   Replace all occurrences of regexp PATTERN with REPLACEMENT in TEXT.
+#   This follows normal Python conventions for regular expression
+#   substitution.
+#
+# ifmatch(PATTERN, TEXT, IF-TEXT, ELSE-TEXT):
+#   If TEXT matches PATTERN at its beginning, substitute IF-TEXT; else,
+#   substitute ELSE-TEXT.
+#
+# ifmatch-nocase(PATTERN, TEXT, IF-TEXT, ELSE-TEXT):
+#   Just like ifmatch() but its pattern-matching is case-insensitive.
+
+def pluralize(word) {
+  # This shows a complicated expression involving the built-ins
+  # 'ifmatch' and 'regsub'.  If the word ends in a vowel + o or y,
+  # we add s.  Else, if the word ends in (consonant) + o or y, or s, sh, ch,
+  # or x, we change y to i and add es.  Finally, in all other cases,
+  # just add s.  So buy -> buys, boy-> boys, but try -> tries, lady -> ladies.
+  # Similarly, go -> goes but goo -> goos.  For words like volcano -> volcanos
+  # you have to put the forms in manually (or change the rule here, and put
+  # forms in -o + es in manually, e.g. does, goes, tomatoes, potatoes).
+  #
+  ifmatch('^.*[aeiou][oy]$', word, word . s,
+    ifmatch('^.*([sxoy]|sh|ch)$', word, regsub('^(.*)y$', '\1i', word) . es,
+            word . s))
+}
+
+def noun(sing, class) basic-noun(sing, pluralize(sing), class)
+
+noun(book, thing)
+noun(DVD, thing)
+noun(glass, thing)
+noun(church, thing)
+noun(flower, thing)
+noun(bath, thing)
+noun(teacher, person)
+noun(lady, person) # Pluralized (correctly) to 'ladies'
+noun(boy, person)  # Pluralized (correctly) to 'boys'
+
+# An irregular noun.
+basic-noun(policeman, policemen, person)
+
+#
+################## Verbs #################
+#
+
+# The "props" parameter specifies families or attributes.
+
+def basic-verb(stem, props, 3sing, pasttense) {
+  word stem:props {
+    *: pres non-3rd sg;
+    3sing: pres 3rd sg;
+    *: pres pl;
+    pasttense: past;
+  }
+}
+
+def verb(stem, props, pasttense) \
+  basic-verb(stem, props, pluralize(stem), pasttense)
+
+verb(buy, TransV DitransBenV, bought)
+verb(rent, TransV DitransBenV, rented)
+verb(go, IntransV, went)
+verb(sleep, IntransV, slept)
+# Here we show how you can specify a predicate or other attribute.
+# Admittedly this is not too useful here, but it can be much more so in
+# the case of a foreign language, where we want the semantic predicates
+# to be in English. (See arabic.ccg.)
+verb(eat, TransV IntransV (pred=manjar), ate)
+
+#############################################################
+#                                                           #
+#                           RULES                           #
+#                                                           #
+#############################################################
+
+# This declaration specifies the contents of rules.xml.  Each statement
+# specifies a single rule; it is also possible for statements to cancel
+# some or all rules.
+#
+# Note that some rules are enabled by default; this includes application,
+# composition and crossed composition (forward and backward in each case),
+# as well as forward type-raising from np to s/(s\np) and backward
+# type-raising from np to s$1\(s$1/np).
+
+rule {
+  # turn off forward cross-composition
+  no xcomp +;
+
+  # this is how we could turn off all type-raising rules.
+  # no typeraise;
+
+  # Declare a backward type-raising rule from pp to s$1\(s$1/pp).
+  # The $ causes a dollar-sign raise category to be created, as shown;
+  # without it, we'd just get s\(s/pp).
+  typeraise - $: pp => s;
+
+  # Declare a type-changing rule to enable pro-drop (not useful in English!)
+  # typechange: s[finite]\np[nom]$1 => s[finite]$1 ;
+}
+
+# This shows how you can turn off all defaults and specify your own
+# properties from scratch, if you want.
+
+# rule {
+#   no; # remove all defaults
+#   app +-;
+#   comp +-; # +- means both forward and backward
+#   xcomp -;
+#   sub +-;
+#   xsub +-;
+#   # Defaults for typeraising are np => s, if omitted.
+#   typeraise +;
+#   typeraise - $;
+# }
+# 
+
+#############################################################
+#                                                           #
+#                         CATEGORIES                        #
+#                                                           #
+#############################################################
+
+# Specify lexical families and the lexical insertion rules for each
+# family.  Properties of the family can be given in parens after the
+# family name.  The family name should either be the same as a part
+# of speech, or the part of speech should be given in parens after
+# the family name.
+
+# Categories can be specified in an expected form, e.g. s\np[nom]/np[acc].
+# The notation np<3>[acc] corresponds to XML code like this:
+#      <atomcat type="np">
+#        <fs id="3">
+#          <feat attr="CASE" val="acc"/>
+#        </fs>
+#      </atomcat>
+# i.e. the <3> specifies the feature-structure ID, and the [acc]
+# specifies a <feat> constraint.  In this case, a constraint of the form
+# [CASE=acc] is generated because of the feature {} declaration above.
+# If an unknown value is given, e.g. [foo], it's assumed to be a feature,
+# rather than a feature value, and you get code like
+#          <feat attr="foo"> <featvar name="FOO"/> </feat>
+#          <feat attr="CASE" val="acc"/>
+# You can also write [foo=bar] to explicitly give a feature and value.
+# And an entry like [X] corresponds to
+#          <feat attr="index"> <lf> <nomvar name="X"/> </lf> </feat>
+# Note also that slashes can be followed by a slash mode, e.g. /<, or
+# the mode can be omitted; in this case, a default mode is generated:
+# \<, />, |.
+
+family Det(indexRel=det) {
+  entry: np<2>[X PERS=3rd] /^ n<2>[X]:
+         X:sem-obj(<det>*);
+}
+
+family Prep-Nom(Prep, indexRel="*NoSem*") {
+  # You can name your entries, as shown, although it's not clear there's
+  # much point.
+  #
+  # The pp<~3> notation generates an 'inheritsFrom' tag rather than an 'id'
+  # tag for the feature structure.  This unifies only the properties not
+  # explicitly given in the category, i.e. everything but 'lex' will unify.
+  #
+  # The entry [lex=*] corresponds to <feat attr="lex" val="[*DEFAULT*]"/>
+  # and means that a feature 'lex' will be attached, whose value is the
+  # word stem.
+  entry Nominal: pp<~3>[lex=*] /< np<3>[acc];
+
+  # If members are specified, the family defaults to 'closed'.
+  member: for;
+}
+
+family Conj {
+  entry: np[NUM, X0] \* np[X1] / np[X2]:
+         X0(and ^ <First>(L1 ^ elem ^ <Item>X1 ^
+	                  <Next>(L2 ^ elem ^ <Item>X2)));
+}
+
+family DollarTest {
+  entry: s\np$1\*(s\np);
+  entry: s\(np$1)\*(s\np);
+}
+
+family N {
+  entry: n<2>[X NUM]: X:sem-obj(*);
+}
+
+family Pro {
+  entry: np<2>[X NUM PERS CASE]:
+         X:sem-obj(*);
+}
+
+# Here we create a macro to describe the category for a verb, with transitive
+# arguments ARGS (possibly empty) and corresponding semantics SEM.
+# Don't call this macro just "verb" since that's used above already!
+
+def verbcat(args, sem) {
+  # A * here corresponds to <prop name="[*DEFAULT*]"/>.
+  # Similar use of * appears above in [lex=*] in prepositions,
+  # and <det>* in determiners.
+  s<1>[E] \ np<2>[X NUM PERS nom] args:
+     E:action(* <Actor>X:animate-being sem)
+}
+family IntransV(V) {
+  entry: verbcat(,);
+}
+
+# This shows how we could extend verbcat() to handle transitive verbs.
+# Since the arguments for ditransitive verbs could potentially either
+# before or after the transitive argument, we need two different macros.
+# Or, we could create one macro, with two different parameters for "before"
+# and "after" arguments.
+
+def before_transverbcat(args, sem) {
+  verbcat(args / np<3>[Y acc], <Patient>Y:sem-obj sem)
+}
+
+def after_transverbcat(args, sem) {
+  verbcat(/ np<3>[Y acc] args, <Patient>Y:sem-obj sem)
+}
+
+family TransV(V) {
+  entry: after_transverbcat(,);
+}
+
+family DitransBenV(V) {
+
+  # Careful here!  Remember that the arguments in a CCG category will be
+  # listed in backwards order compared to how they appear in the surface
+  # syntax.  Hence SUBJ VERB X Y Z corresponds to s\np/z/y/x.
+
+  entry DTV:
+    after_transverbcat(/< np[Z acc], <Beneficiary>Z:animate-being);
+  entry NP-PPfor:
+    before_transverbcat(/ pp[Z lex=for], <Beneficiary>Z:animate-being);
+
+  # This shows how we could define the previous entry directly in
+  # terms of verbcat().
+  #entry NP-PPfor: verbcat(/ pp<4>[Z lex=for] /< np<3>[Y acc],
+  #                         <Patient>Y:sem-obj <Beneficiary>Z:animate-being);
+}
+
+#############################################################
+#                                                           #
+#                           TESTBED                         #
+#                                                           #
+#############################################################
+
+# Statements to put in testbed.xml.  If you omit the number, it will omit
+# the corresponding numOfParses item in the XML; I think this currently
+# is equivalent to specifying 1 as the number.  If you put a ! before a
+# line, this indicates a "known failure" (known="true" in the XML).
+
+testbed {
+  the teacher buys the policeman a book: 1;
+  the teacher buys the policemen some flowers: 1;
+  the teachers buy a book: 3;
+  she buys it: 3;
+  she buy it: 0;
+  # Possible example of a known failure, in case we know we don't correctly
+  # reject "she buy buy":
+  ! she buy buy: 0;
+  they buys it: 0;
+  she buys the flower for him: 1;
+  she buys the flower for he: 0;
+  her buys the flower for him: 0;
+  he rented her a DVD: 1;
+  he rented a DVD for her: 1;
+  he rented a DVD her: 0;
+}
+

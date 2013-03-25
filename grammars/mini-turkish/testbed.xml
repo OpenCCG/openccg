@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<regression>
+  <item numOfParses="1" string="cocuk kitab i oku ma ya calisti"/>
+  <item numOfParses="0" string="cocuk kitab i oku ma yi calisti"/>
+  <item numOfParses="1" string="cocuk kitab i oku mak istedi"/>
+  <item numOfParses="1" string="cocuk kitab i oku ma yi istedi"/>
+  <item numOfParses="0" string="cocuk kitab i oku ma ya istedi"/>
+  <item numOfParses="0" string="cocuk adam kitab i ver me yi istedi"/>
+  <item numOfParses="1" string="adam cocug u kitab i oku ma ya zorladi"/>
+  <item numOfParses="0" string="adam cocug u kitab i oku ma yi zorladi"/>
+  <item numOfParses="1" string="cocug u adam kitab i oku ma ya zorladi"/>
+  <item numOfParses="1" string="adam cocug u kitab i kadin a ver me ye zorladi"/>
+  <item numOfParses="1" string="adam cocug u kadin a kitab i ver me ye zorladi"/>
+  <item numOfParses="1" string="cocug u adam kadin a kitab i ver me ye zorladi"/>
+  <item numOfParses="0" string="adam cocug u kadin kitab i ver me ye zorladi"/>
+  <item numOfParses="0" string="adam cocug a kadin a kitab i ver me ye zorladi"/>
+  <item numOfParses="1" string="kitab i oku yan adam uyudu"/>
+  <item numOfParses="1" string="cocuk kitab i oku yan adam i gordu"/>
+  <item numOfParses="1" string="adam in gor dugu cocuk uyudu"/>
+  <item numOfParses="1" string="cocuk adam in gor dugu kitab i okudu"/>
+  <item numOfParses="1" string="cocug un kitab i ver digi adam uyudu"/>
+  <item numOfParses="1" string="cocug un adam a ver digi kitap dustu"/>
+  <item numOfParses="0" string="adam cocug un adam a ver en kadin i gordu"/>
+  <item numOfParses="0" string="adam adam a kitab i ver digi kadin i gordu"/>
+  <item numOfParses="2" string="adam cocug a carpti ve dustu"/>
+  <item numOfParses="1" string="cocug a adam carpti ve dustu"/>
+  <item numOfParses="1" string="cocug a carpti ve adam dustu"/>
+  <item numOfParses="2" string="kitab i adam cocug a verdi ama kadin almisti"/>
+  <item numOfParses="1" string="cocug a kitab i adam verdi ama kadin almisti"/>
+  <item numOfParses="1" string="dergi ye adam bakti ama cocuk okudu"/>
+</regression>

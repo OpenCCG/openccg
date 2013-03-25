@@ -1,3 +1,10 @@
+0.9.6 - ...
+-----------
+
+* Updated .gitignore, CHANGES and docs/index.html for transition to
+  GitHub
+
+
 0.9.5 - dependency length minimization, disjunctivizer, KenLM
 -------------------------------------------------------------
 

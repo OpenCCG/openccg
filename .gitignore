@@ -35,7 +35,7 @@ ccgbank/original/feats/supertagger/
 ccgbank/original/logs/
 ccgbank/propccgbank/
 ccgbank/stanford-nlp/*.jar
-ccgbank/classifiers/*.prop
+ccgbank/stanford-nlp/classifiers/*.prop
 docs/api/
 docs/grammars-rough-guide.pdf
 docs/realizer-manual.pdf

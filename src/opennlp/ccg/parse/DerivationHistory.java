@@ -118,15 +118,21 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
     }
     
     /** Returns the complexity of the derivation, as the sum of 
-        the number of steps, plus the number of composition or 
-        substitution steps, plus the number of crossing steps. */
+        the number of steps, plus the number of type-raising, composition or 
+        substitution steps, plus the number of crossing steps, 
+        plus the arities of the categories. */
     public int complexity() {
     	if (_complexity > 0) return _complexity;
-        if (_noHistory) return 0;
-        int retval = 1;
+        int retval = (_output.getCategory() instanceof ComplexCat)
+        		? ((ComplexCat)_output.getCategory()).arity()
+        		: 0;
+        if (_noHistory) { _complexity = retval; return retval; } 
+        retval++;
+//        if (_noHistory) return 0;
+//        int retval = 1;
         String ruleName = _rule.name();
         if (ruleName.length() > 1 && (ruleName.charAt(0) == '>' || ruleName.charAt(0) == '<')) {
-            if (ruleName.charAt(1) == 'B' || ruleName.charAt(1) == 'S') {
+            if (ruleName.charAt(1) == 'T' || ruleName.charAt(1) == 'B' || ruleName.charAt(1) == 'S') {
                 retval++;
                 if (ruleName.length() == 3 && ruleName.charAt(2) == 'x') retval++;
             }
@@ -136,6 +142,11 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
         }
         _complexity = retval;
         return retval;
+    }
+    
+    /** Returns whether the current rule is a type-raising rule. */
+    public boolean ruleIsTypeRaising() {
+    	return _rule != null && _rule instanceof AbstractTypeRaisingRule;
     }
     
     /** Returns whether the derivation contains a unary rule cycle. */

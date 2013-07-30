@@ -19,8 +19,10 @@
 package opennlp.ccg.unify;
 
 import opennlp.ccg.synsem.*;
+import opennlp.ccg.hylo.*;
 
 import gnu.trove.*;
+import java.util.*;
 
 /**
  * Center of command for the unification process.  
@@ -94,14 +96,17 @@ public class UnifyControl {
         _varIndex++;
     }
 
+    /** Returns a unique var index. */
     public static int getUniqueVarIndex() {
         return ++_varIndex;
     }
 
+    /** Returns a unique feature structure index. */
     public static int getUniqueFeatureStructureIndex() {
         return ++_fsIndex;
     }
     
+    /** Returns a copy of the given category, feature variable or feature structure, otherwise returns the same object. */
     public static Object copy(Object o) {
         if (o instanceof Category) {
             return ((Category)o).copy();
@@ -114,6 +119,63 @@ public class UnifyControl {
         } else {
             return o;
         }
+    }
+    
+    private static CategoryFcn addIndexFcn = new CategoryFcnAdapter() {
+        public void forall (Category c) {
+            FeatureStructure fs = c.getFeatureStructure();
+            if (fs == null) return;
+            int index = fs.getIndex();
+            if (index <= 0) fs.setIndex(++_fsIndex);
+        }
+    };
+
+    /** Adds indices to any feature structures without one already. */
+    public static void addIndices(Category cat) { cat.forall(addIndexFcn); }
+    
+    private static Set<String> attsToSave = new HashSet<String>();
+    private static Map<String,Object> featsToSave = new HashMap<String,Object>();
+
+    private static CategoryFcn removeAttsFcn = new CategoryFcnAdapter() {
+        public void forall (Category c) {
+            FeatureStructure fs = c.getFeatureStructure();
+            if (fs == null) return;
+            featsToSave.clear();
+            for (String att: attsToSave) {
+            	if (fs.hasAttribute(att)) featsToSave.put(att, fs.getValue(att));
+            }
+            fs.clear();
+            for (String att : featsToSave.keySet()) 
+            	fs.setFeature(att, featsToSave.get(att));
+        }
+    };
+
+    /** Removes all features except those in given collection of attributes. */
+    public static void removeFeatsExcept(Category cat, Collection<String> atts) {
+    	attsToSave.clear();
+    	attsToSave.addAll(atts);
+    	cat.forall(removeAttsFcn);
+    }
+
+    private static CategoryFcn abstractNominalsFcn = new CategoryFcnAdapter() {
+        public void forall (Category c) {
+        	LF lf = c.getLF();
+        	if (lf != null) c.setLF(HyloHelper.abstractNominals(lf));
+            FeatureStructure fs = c.getFeatureStructure();
+            if (fs == null) return;
+            for (String att : fs.getAttributes()) {
+            	Object val = fs.getValue(att);
+            	if (val instanceof Nominal) {
+            		Nominal var = HyloHelper.abstractNominal((Nominal)val);
+            		if (var != val) fs.setFeature(att, var);
+            	}
+            }
+        }
+    };
+    
+    /** Abstracts nominal atoms, replacing them with corresponding nominal variables. */
+    public static void abstractNominals(Category cat) {
+    	cat.forall(abstractNominalsFcn);
     }
 }
 

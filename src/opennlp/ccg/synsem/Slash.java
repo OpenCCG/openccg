@@ -129,6 +129,10 @@ public final class Slash implements Unifiable, Mutable, Serializable {
 		mf.modify(this);
 	}
 
+	public byte getDir() { return _dir; }
+	
+	public Modality getModality() { return _modality; }
+	
 	public boolean isActive() {
 		return _ability == ACTIVE || _ability == INERT_OR_ACTIVE;
 	}

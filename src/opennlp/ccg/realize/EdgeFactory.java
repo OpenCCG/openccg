@@ -294,8 +294,30 @@ public class EdgeFactory
     
     
     //-----------------------------------------------------------------
+    // rule instance construction
+    //
+
+    /** 
+     * Makes a rule instance with the given sign and bitset and no active LF alts, 
+     * computing the indices.
+     */
+    public RuleInstance makeRuleInstance(TypeChangingRule rule, BitSet bitset) {
+    	BitSet indices = getIndices(rule.getArg(), rule.getResult());
+    	return new RuleInstance(rule, bitset, indices, Collections.<List<Alt>> emptyList());
+    }
+
+    
+    //-----------------------------------------------------------------
     // edge construction
     //
+
+    /** 
+     * Makes an edge with the given sign and bitset and no active LF alts, 
+     * computing the sign score and bookkeeping items.
+     */
+    public Edge makeEdge(Sign sign, BitSet bitset) {
+    	return makeEdge(sign, bitset, Collections.<List<Alt>> emptyList());
+    }
 
     /** Makes an edge, computing the completeness percentage, sign score, 
         and indices, and setting the most specific incomplete LF chunk (if any). */

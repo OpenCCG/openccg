@@ -141,30 +141,35 @@ public class Chart
     // a less complex derivation
     private List<Edge> supercededEdgesPendingRemoval = new ArrayList<Edge>();
 
-    // maps signs to edges (w/o optional bits marked as covered)
-    private Map<Sign,Edge> signMap = new IdentityHashMap<Sign,Edge>();
-    
     // the edges seen so far
     private EdgeHash edgeHash = new EdgeHash();
     
 
-    // maps edges to representative edges, according to their 
-    // coverage vectors and their cats, sans LFs
+    /**
+     * Returns a map from edges to representative edges, according to their 
+     * coverage vectors and their cats, sans LFs.  Uses a trove map to avoid 
+     * wrapper objects to implement a custom hashing.
+     */
     @SuppressWarnings("unchecked")
-    private Map<Edge, Edge> catMap = new THashMap(
-        new TObjectHashingStrategy() {
-			private static final long serialVersionUID = 1L;
-			public int computeHashCode(Object o) {
-                Edge edge = (Edge) o;
-                return edge.bitset.hashCode() + edge.sign.getCategory().hashCodeNoLF();
-            }
-            public boolean equals(Object o1, Object o2) {
-                Edge edge1 = (Edge) o1; Edge edge2 = (Edge) o2;
-                return edge1.bitset.equals(edge2.bitset) &&
-                    edge1.sign.getCategory().equalsNoLF(edge2.sign.getCategory());
-            }
-        }
-    );
+    public static Map<Edge, Edge> createCatMap() { 
+    	return new THashMap(
+	        new TObjectHashingStrategy() {
+				private static final long serialVersionUID = 1L;
+				public int computeHashCode(Object o) {
+	                Edge edge = (Edge) o;
+	                return edge.bitset.hashCode() + edge.sign.getCategory().hashCodeNoLF();
+	            }
+	            public boolean equals(Object o1, Object o2) {
+	                Edge edge1 = (Edge) o1; Edge edge2 = (Edge) o2;
+	                return edge1.bitset.equals(edge2.bitset) &&
+	                    edge1.sign.getCategory().equalsNoLF(edge2.sign.getCategory());
+	            }
+	        }
+	    );
+    }
+    
+    // the cat map, for tracking representative edges
+    private Map<Edge, Edge> catMap = createCatMap();
     
     // cell map: based on input coverage vectors
     private Map<BitSet,Integer> cellMap = new HashMap<BitSet,Integer>();
@@ -480,10 +485,15 @@ public class Chart
     // unpacking    
     
     /** Unpack complete edges, if any; otherwise unpack all. */
-	protected void doUnpacking() {
+	public void doUnpacking() {
+	    boolean foundComplete = bestEdge.complete();
+		doUnpacking(edges, foundComplete);
+	}
+	
+    /** Unpack given complete edges, if foundComplete flag is true; otherwise unpack all. */
+	public void doUnpacking(List<Edge> edges, boolean foundComplete) {
 	    @SuppressWarnings("unchecked")
         Set<Edge> unpacked = new THashSet(new TObjectIdentityHashingStrategy());
-	    boolean foundComplete = bestEdge.complete();
         // unpack each relevant edge, updating best edge 
         for (Edge edge : edges) {
             if (foundComplete && !edge.complete()) continue;
@@ -514,11 +524,6 @@ public class Chart
         // replace edge's alts, add to unpruned edges
         edge.altEdges.clear(); edge.altEdges.addAll(mergedList);
         allEdges.addAll(mergedList);
-        // update signMap (for debugging)
-        for (Edge mergedEdge : mergedList) {
-        	if (!signMap.containsKey(mergedEdge.sign))
-        		signMap.put(mergedEdge.sign, mergedEdge);
-        }
     }
     
     // recursively unpack inputs, make alt combos and add to merged
@@ -547,7 +552,7 @@ public class Chart
         // otherwise recursively unpack
         Edge[] inputEdges = new Edge[inputSigns.length];
         for (int i = 0; i < inputSigns.length; i++) {
-            inputEdges[i] = signMap.get(inputSigns[i]); // get input edge using signMap
+        	inputEdges[i] = (Edge) inputSigns[i].getData(Edge.class);
             unpack(inputEdges[i], unpacked);
         }
         // then make edges for new combos, and add to merged (if unseen)
@@ -566,7 +571,7 @@ public class Chart
 
     // returns a list of sign arrays, with each array of length inputEdges.length - i, 
     // representing all combinations of alt signs from i onwards
-    private List<Sign[]> inputCombos(Edge[] inputEdges, int index) {
+    private static List<Sign[]> inputCombos(Edge[] inputEdges, int index) {
         Edge edge = inputEdges[index];
         // base case, inputEdges[last]
         if (index == inputEdges.length-1) {
@@ -799,7 +804,7 @@ public class Chart
     	if (inputs == null) return " (lex)";
     	String retval = " (";
 		for (Sign sign : inputs) {
-			Edge repEdge = signMap.get(sign);
+			Edge repEdge = (Edge) sign.getData(Edge.class);
 			if (repEdge != null) retval += edgeList.indexOf(repEdge) + " ";
 		}
 		retval += history.getRule().name() + ")";
@@ -1003,7 +1008,6 @@ public class Chart
             if (collectCombos) edge.initEdgeCombos();
             catMap.put(edge, edge);
             edges.add(edge);
-        	signMap.put(edge.sign, edge);
             // anytime case: add to all edges list too
             if (!usePacking) allEdges.add(edge);
             // and return
@@ -1018,7 +1022,6 @@ public class Chart
         // anytime case: if not pruning, just add edge to all edges list, and return
         if (pruningValue == NO_PRUNING) {
             allEdges.add(edge);
-        	signMap.put(edge.sign, edge); // for debugging
             return true;
         }
         // otherwise do pruning
@@ -1034,7 +1037,6 @@ public class Chart
         // add edge to all edges list, if it was not pruned
         if (!edgeItselfPruned) {
             allEdges.add(edge);
-        	signMap.put(edge.sign, edge); // for debugging
             return true;
         }
         // otherwise false

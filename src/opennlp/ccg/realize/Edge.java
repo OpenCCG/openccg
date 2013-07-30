@@ -34,6 +34,8 @@ import java.text.*;
  * It also has a completeness percentage and a score, 
  * as well as its most specific incomplete LF chunk (if any).
  * Edges are created by an EdgeFactory and managed by a Chart.
+ * A new edge is stored as a data object for the sign if the sign 
+ * has no existing edge data object.
  * </p>
  * <p>
  * A representative edge is an edge that represents (stands in for) 
@@ -94,6 +96,7 @@ public class Edge extends Tracker
         this.sign = sign;
         this.completeness = completeness; this.score = score; 
         this.incompleteLfChunk = incompleteLfChunk;
+        if (sign.getData(Edge.class) == null) sign.addData(this);
     }
 
     

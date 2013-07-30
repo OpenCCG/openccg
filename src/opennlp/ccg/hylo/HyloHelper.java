@@ -333,7 +333,7 @@ public class HyloHelper {
     public static String getRel(LF lf) {
         if (!isRelPred(lf) && !isAttrPred(lf)) return null;
         LF arg = ((SatOp)lf).getArg();
-        return ((Diamond)arg).getMode().toString();
+        return ((Diamond)arg).getMode().getName();
     }
     
     /**
@@ -563,6 +563,46 @@ public class HyloHelper {
 	 */
 	public static Nominal convertNominals(LF lf, Sign root, Nominal nominalRoot) {
 		return Converter.convertNominals(lf, root, nominalRoot);
+	}
+	
+
+    //-----------------------------------------------------------------
+    // abstract nominals
+    
+	/**
+	 * Returns a nominal var with the given atom's uppercased name and type, or
+	 * just the given nominal if it's not an atom.
+	 */
+    public static Nominal abstractNominal(Nominal nom) {
+    	if (!(nom instanceof NominalAtom)) return nom;
+    	NominalAtom atom = (NominalAtom) nom;
+    	return new NominalVar(atom.getName().toUpperCase(), atom.getType());
+    }
+
+    /**
+     * Returns an LF with nominal atoms abstracted to nominal vars, 
+     * assuming that the given LF is one or more elementary predications.
+     */
+    @SuppressWarnings("unchecked")
+	public static LF abstractNominals(LF lf) {
+		List<SatOp> preds = getPreds(lf);
+		for (int i=0; i < preds.size(); i++) {
+			SatOp pred = preds.get(i);
+			Nominal nom = abstractNominal(pred._nominal);
+			Nominal nom2 = getSecondaryNominal(pred);
+			SatOp predA;
+			if (nom2 != null) {
+				nom2 = abstractNominal(nom2);
+				predA = new SatOp(nom, new Diamond(((Diamond)pred._arg)._mode, nom2));
+			}
+			else predA = new SatOp(nom, pred._arg);
+			preds.set(i, predA);
+		}
+		if (preds.size() == 1) return preds.get(0);
+		else {
+			List<?> lfPreds = preds; 
+			return new Op(Op.CONJ, (List<LF>) lfPreds);
+		}
 	}
 	
 

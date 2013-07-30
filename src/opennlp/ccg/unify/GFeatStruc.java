@@ -132,7 +132,7 @@ public class GFeatStruc extends HashMap<String,Object> implements FeatureStructu
     }
     
     public void clear() { 
-        clear();
+        super.clear();
         _empty = true;
     }
 

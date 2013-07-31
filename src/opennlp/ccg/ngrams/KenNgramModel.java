@@ -18,7 +18,7 @@ public class KenNgramModel extends AbstractStandardNgramModel {
     // Map of hash of word to integer representation (integerized word used by KenLM).
     private Map<Long,Integer> hash2ID = new HashMap<Long,Integer>();
     // Map of String (word to score) to hash of word.
-    private Map<String,Integer> word2Hash = new HashMap<String,Integer>();
+//    private Map<String,Integer> word2Hash = new HashMap<String,Integer>();
     // Map from hashes to tokens (to see whether we have encountered a new token). 
     private Map<Long,String> hash2String = new HashMap<Long,String>();
     // List of vocabulary tokens. New items are added and assigned their index as a representation.
@@ -31,7 +31,7 @@ public class KenNgramModel extends AbstractStandardNgramModel {
     private char neDelim = '_';
     
     // A reusable container for scoring strings.
-    private List<String> someStringsToScore = null;
+//    private List<String> someStringsToScore = null;
 
     // Whether to print out messages that trace the scoring process.
     public boolean debugScore = false;
@@ -48,7 +48,7 @@ public class KenNgramModel extends AbstractStandardNgramModel {
 	this.splitNEs = splitNEs;
 	this.neDelim = neDelim;
 	kenlm = new KenLM(order, lmFile);	
-	someStringsToScore = new ArrayList<String>(order);
+//	someStringsToScore = new ArrayList<String>(order);
 	this.useNgramFeatures = useNgramFeatures;
     }
 
@@ -98,7 +98,7 @@ public class KenNgramModel extends AbstractStandardNgramModel {
 	    for(Word w : words) {
 		String wdString = w.getForm();
 		String[] parts = wdString.replace(neDelim,' ').split("\\s+");
-		ArrayList<String> subTmp = new ArrayList<String>(parts.length);
+//		ArrayList<String> subTmp = new ArrayList<String>(parts.length);
 		for(String part : parts) {
 		    String newWdForm = (lowercaseText) ? part.toLowerCase() : part;
 		    // add null attr/val list, since it is not accessible.

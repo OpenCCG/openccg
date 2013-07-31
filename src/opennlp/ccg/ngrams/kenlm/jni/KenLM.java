@@ -1,12 +1,5 @@
 package opennlp.ccg.ngrams.kenlm.jni;
 
-import java.util.List;
-import opennlp.ccg.ngrams.kenlm.*;
-import opennlp.ccg.ngrams.*;
-import java.util.List;
-import java.util.ArrayList;
-import java.io.*;
-
 // TODO(Joshua devs): include my state object with your LM state then
 // update this API to pass state instead of int[].
 

@@ -151,7 +151,7 @@ public class NominalVar extends HyloVar implements Nominal {
      */
     public Element toXml() {
         Element retval = new Element("nomvar");
-        retval.setAttribute("name", toString());
+        retval.setAttribute("name", nameWithType());
         return retval;
     }
 }

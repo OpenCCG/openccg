@@ -159,6 +159,13 @@ public class HyloVar extends HyloFormula implements Variable, Indexed {
         return retval;
     }
 
+    /** Returns the name with the type separated by a colon if the type is not the top type. */
+    public String nameWithType() { 
+        String retval = _name;
+        if (!type.getName().equals(Types.TOP_TYPE)) retval += ":" + type.getName();
+        return retval;
+    }
+
     /**
      * Returns a pretty-printed string of this LF, with the given indent.
      */
@@ -202,7 +209,7 @@ public class HyloVar extends HyloFormula implements Variable, Indexed {
      */
     public Element toXml() {
         Element retval = new Element("var");
-        retval.setAttribute("name", toString());
+        retval.setAttribute("name", nameWithType());
         return retval;
     }
 }

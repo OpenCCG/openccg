@@ -22,6 +22,7 @@ package opennlp.ccg.synsem;
 import opennlp.ccg.unify.*;
 import opennlp.ccg.hylo.*;
 import gnu.trove.*;
+import org.jdom.Element;
 
 /**
  * A CCG category.
@@ -149,4 +150,9 @@ public interface Category extends Unifiable, Mutable, java.io.Serializable {
      * Returns a TeX-formatted string representation for the category.
      */
     public String toTeX();
+    
+    /**
+     * Returns an XML element representing the category.
+     */
+    public Element toXml();
 }

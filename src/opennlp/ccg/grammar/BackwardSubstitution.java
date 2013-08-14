@@ -23,6 +23,8 @@ import opennlp.ccg.synsem.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * Backward substitution, e.g. Y\Z X\Y\Z => X\Z
  * 
@@ -50,6 +52,9 @@ public class BackwardSubstitution extends AbstractSubstitutionRule {
 		}
 		_functorSlash.setAbility("active");
 	}
+
+    /** Returns an XML element representing the rule. */
+    public Element toXml() { return super.toXml("backward"); }
 
 	public List<Category> applyRule(Category[] inputs) throws UnifyFailure {
 		if (inputs.length != 2) {

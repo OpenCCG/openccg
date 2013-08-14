@@ -31,6 +31,7 @@ import org.jdom.input.*;
 import org.jdom.output.*;
 import org.jdom.transform.*;
 import org.xml.sax.*;
+
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
@@ -591,5 +592,71 @@ public class Grammar {
 	public final String getName() {
 		return grammarName;
 	}
+	
+	
+    /**
+     * Writes the list of words to a basic morph file.
+     * @throws IOException 
+     */
+    public void toMorphXml(List<Word> words, String filename) throws IOException {
+    	Collections.sort(words);
+    	XMLOutputter xout = new XMLOutputter();
+    	xout.setFormat(Format.getPrettyFormat());
+    	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+    	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    	out.println("<morph name=\"" + grammarName + "\">");
+    	for (Word w : words) {
+    		Element e = new Element("entry");
+    		e.setAttribute("word", w.getForm());
+    		if (w.getForm() != w.getStem() && w.getStem() != null) e.setAttribute("stem", w.getStem());
+    		if (w.getPOS() != null) e.setAttribute("pos", w.getPOS());
+    		if (w.getSemClass() != null) e.setAttribute("class", w.getSemClass());
+    		xout.output(e, out); out.println();
+    	}
+    	out.println("</morph>");
+    	out.flush(); out.close();
+    }
+	
+    /**
+     * Writes the list of categories and associated POS tags to a basic lexicon file.
+     * Note that the LFs are expected to have a [*DEFAULT*] proposition in the 
+     * desired location for predicate insertion.
+     * @throws IOException 
+     */
+    public void toLexiconXml(List<Category> cats, List<String> POSs, String filename) throws IOException {
+    	// create map from supertags with unique suffixes to cat/pos pairs
+    	Map<String,Pair<Category,String>> stagMap = new HashMap<String,Pair<Category,String>>();
+    	for (int i=0; i < cats.size(); i++) {
+    		Category cat = cats.get(i); String pos = POSs.get(i);
+    		String stag = cat.getSupertag();
+    		if (stagMap.containsKey(stag)) {
+        		int j = 1;
+    			while (stagMap.containsKey(stag+"-"+j)) j++;
+    			stag += "-"+j;
+    		}
+    		stagMap.put(stag, new Pair<Category,String>(cat, pos));
+    	}
+    	List<String> keys = new ArrayList<String>(stagMap.keySet());
+    	Collections.sort(keys);
+    	XMLOutputter xout = new XMLOutputter();
+    	xout.setFormat(Format.getPrettyFormat());
+    	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+    	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    	out.println("<lexicon name=\"" + grammarName + "\">");
+    	for (String key : keys) {
+    		Pair<Category,String> p = stagMap.get(key);
+    		Category cat = p.a; String pos = p.b;
+    		Element fam = new Element("family");
+    		fam.setAttribute("name", key);
+    		fam.setAttribute("pos", pos);
+    		Element ent = new Element("entry");
+    		ent.setAttribute("name", "1");
+    		fam.addContent(ent);
+    		ent.addContent(cat.toXml());
+    		xout.output(fam, out); out.println();
+    	}
+    	out.println("</lexicon>");
+    	out.flush(); out.close();
+    }
 }
 

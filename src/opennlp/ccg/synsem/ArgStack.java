@@ -101,6 +101,26 @@ public class ArgStack implements Serializable {
 		args.toArray(_list);
 	}
 
+	public void toXml(Element catElt) {
+		for (Arg arg: _list) {
+			if (arg instanceof SetArg)
+				catElt.addContent(((SetArg) arg).toXml());
+			else if (arg instanceof Dollar) {
+				Dollar dollar = (Dollar) arg;
+				if (!dollar.getSlash().toString().equals("|."))
+					catElt.addContent(dollar.getSlash().toXml());
+				Element dollarElt = new Element("dollar");
+				dollarElt.setAttribute("name", dollar.name());
+				catElt.addContent(dollarElt);
+			}
+			else if (arg instanceof BasicArg) {
+				BasicArg barg = (BasicArg) arg;
+				catElt.addContent(barg.getSlash().toXml());
+				catElt.addContent(barg.getCat().toXml());
+			}
+		}
+	}
+	
 	public void addAt(Arg c, int index) {
 		Arg[] $list = new Arg[_list.length + 1];
 		insert(subList(0, index)._list, $list, 0);

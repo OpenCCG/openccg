@@ -23,6 +23,8 @@ import opennlp.ccg.unify.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 
 /**
  * Rule for joining fragments that don't fit together, when all else fails.
@@ -37,6 +39,9 @@ public class FragmentJoining extends AbstractRule {
 	/** Constructor. */
 	public FragmentJoining() { _name = "*"; }
 	
+    /** Returns an XML element representing the rule (not supported). */
+    public Element toXml() { throw new RuntimeException("toXml not supported for FragmentJoining rules"); }
+
 	/**
 	 *  Returns the result of applying this rule to two input signs.
 	 */

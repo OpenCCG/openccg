@@ -23,6 +23,7 @@ import opennlp.ccg.unify.*;
 import opennlp.ccg.util.DisplayPrefs;
 import opennlp.ccg.grammar.Grammar;
 import org.jdom.*;
+
 import gnu.trove.*;
 
 /**
@@ -78,6 +79,19 @@ public final class AtomCat extends AbstractCat implements TargetCat {
         }
     }
 
+    /**Returns an XML element representing the category. */
+    public Element toXml() {
+    	Element retval = new Element("atomcat");
+    	retval.setAttribute("type", type);
+    	if (!_featStruc.isEmpty() || _featStruc.getIndex() > 0) {
+    		if (_featStruc instanceof GFeatStruc) { // only supporting GFeatStruc per xml construction
+    			retval.addContent(((GFeatStruc) _featStruc).toXml());
+    		}
+    	}
+    	// call super to add LF if present
+    	super.toXml(retval);
+    	return retval;
+    }
 
     /**
      * Returns this category as the target category.

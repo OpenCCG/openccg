@@ -25,6 +25,7 @@ import opennlp.ccg.grammar.*;
 import opennlp.ccg.hylo.*;
 
 import org.jdom.*;
+
 import gnu.trove.*;
 
 import java.io.*;
@@ -127,6 +128,7 @@ public class Sign implements LexSemOrigin, Serializable {
             public List<Category> applyRule(Category[] inputs) { throw new RuntimeException("Not supported."); }
             public RuleGroup getRuleGroup() { throw new RuntimeException("Not supported."); }
             public void setRuleGroup(RuleGroup ruleGroup) { throw new RuntimeException("Not supported."); }
+            public Element toXml() { throw new RuntimeException("Not supported."); }
         };
         retval._history = new DerivationHistory(new Sign[]{lexSign,coartSign}, retval, coartRule);
         return retval;

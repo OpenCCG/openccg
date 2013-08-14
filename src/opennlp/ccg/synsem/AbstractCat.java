@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import gnu.trove.*;
 import org.jdom.*;
+
 import opennlp.ccg.hylo.*;
 import opennlp.ccg.unify.*;
 
@@ -72,6 +73,14 @@ public abstract class AbstractCat implements Category, Serializable {
         if (lfElt != null) {
             _lf = HyloHelper.flattenLF(HyloHelper.getLF(lfElt));
         }
+    }
+
+    /**
+     * Adds an XML element for the LF, if any, to the given catElt.
+     * Uses {@link HyloHelper#toXml(LF)}.
+     */
+    public void toXml(Element catElt) {
+    	if (_lf != null) catElt.addContent(HyloHelper.toXml(_lf));
     }
 
     // during deserialization, intern computed supertag, and ensure varmap recomputed

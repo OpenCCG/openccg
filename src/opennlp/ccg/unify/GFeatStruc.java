@@ -18,6 +18,7 @@
 
 package opennlp.ccg.unify;
 
+import opennlp.ccg.synsem.LF;
 import opennlp.ccg.hylo.*;
 import opennlp.ccg.grammar.*;
 import gnu.trove.*;
@@ -70,6 +71,45 @@ public class GFeatStruc extends HashMap<String,Object> implements FeatureStructu
                 setFeature((Element)featIt.next());
             }
         }
+    }
+    
+    public Element toXml() {
+    	Element retval = new Element("fs");
+    	if (_index > 0) retval.setAttribute("id", Integer.toString(_index));
+    	if (_inheritsFrom > 0) retval.setAttribute("inheritsFrom", Integer.toString(_inheritsFrom));
+    	List<String> keys = new ArrayList<String>(keySet()); 
+		Collections.sort(keys);
+    	if (size() == 1 && get(keys.get(0)) instanceof SimpleType) {
+    		String attr = keys.get(0); SimpleType val = (SimpleType) get(attr);
+    		retval.setAttribute("attr", attr);
+    		retval.setAttribute("val", val.getName());
+    	}
+    	else {
+    		for (String attr : keys) {
+    			Element featElt = new Element("feat");
+    			featElt.setAttribute("attr", attr);
+    			retval.addContent(featElt);
+    			Object val = get(attr);
+    			if (val instanceof SimpleType) 
+    				featElt.setAttribute("val", ((SimpleType) val).getName());
+    			else {
+    				if (val instanceof GFeatVar) {
+    					GFeatVar var = (GFeatVar) val;
+    					Element varElt = new Element("featvar");
+    					featElt.addContent(varElt);
+    					String name = var.name();
+    					String typeName = var.getType().getName();
+    					if (!typeName.equals(Types.TOP_TYPE)) name += ":" + typeName;
+    					varElt.setAttribute("name", name);
+    				}
+    				else if (val instanceof LF)
+    					featElt.addContent(HyloHelper.toXml((LF)val));
+    				else 
+    					throw new RuntimeException("Unsupported feature value type in constructing XML: " + val);
+    			}
+    		}
+    	}
+    	return retval;
     }
 
     public void deepMap(ModFcn mf) {

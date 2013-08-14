@@ -25,6 +25,8 @@ import opennlp.ccg.synsem.*;
 import java.util.*;
 import java.util.prefs.Preferences;
 
+import org.jdom.Element;
+
 /**
  * Super class for composition rules.
  * 
@@ -54,6 +56,14 @@ public abstract class AbstractCompositionRule extends AbstractApplicationRule {
 	protected boolean _isHarmonic;
 
 	protected Slash _argSlash;
+
+    /** Returns an XML element representing the rule. */
+    public Element toXml(String dir) {
+    	Element retval = new Element("composition");
+    	retval.setAttribute("dir", dir);
+    	retval.setAttribute("harmonic", Boolean.toString(_isHarmonic));
+    	return retval;
+    }
 
 	protected boolean eisner() { return useEisnerConstraints && _isHarmonic; }
 	

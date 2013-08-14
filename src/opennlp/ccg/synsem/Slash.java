@@ -113,6 +113,20 @@ public final class Slash implements Unifiable, Mutable, Serializable {
 		_modality = m;
 		_ability = a;
 	}
+	
+	public Element toXml() {
+    	Element retval = new Element("slash");
+    	retval.setAttribute("dir", encode());
+    	String ability = decodeAbility();
+    	if (_modality instanceof SlashMode) {
+    		String mode = _modality.toString();
+    		if (!mode.equals(".")) retval.setAttribute("mode", mode);
+    	}
+    	else if (_modality instanceof VarModality)
+    		retval.setAttribute("varmodality", ((VarModality) _modality).name());
+    	if (ability != null) retval.setAttribute("ability", ability);
+    	return retval;
+	}
 
 	public Slash copy() {
 		Slash retval = new Slash(_dir, (Modality) _modality.copy(), _ability);
@@ -154,6 +168,12 @@ public final class Slash implements Unifiable, Mutable, Serializable {
 		}
 	}
 	
+	/** Returns a string for the ability or null if not set. */
+	public String decodeAbility() {
+		if (_ability == INERT) return "inert";
+		else if (_ability == ACTIVE) return "active";
+		else return null;
+	}
 	
 	/** Returns whether this cat is a modifier cat (defaults to false). */
 	public boolean isModifier() { return _modifier; }
@@ -322,9 +342,9 @@ public final class Slash implements Unifiable, Mutable, Serializable {
 	}
 
 	/**
-	 * Returns the supertag for this slash.
+	 * Returns the direction for this slash as a string.
 	 */
-	public String getSupertag() {
+	public String encode() {
 		switch (_dir) {
 		case R:
 			return "/";
@@ -333,6 +353,13 @@ public final class Slash implements Unifiable, Mutable, Serializable {
 		default:
 			return "|";
 		}
+	}
+
+	/**
+	 * Returns the supertag for this slash.
+	 */
+	public String getSupertag() {
+		return encode();
 	}
 
 	/**

@@ -23,6 +23,8 @@ import opennlp.ccg.synsem.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * Type-raising, e.g. np => s/(s\np).
  *
@@ -88,6 +90,25 @@ public abstract class AbstractTypeRaisingRule extends AbstractRule {
             _result = new ComplexCat((AtomCat)_result, dol);
         }
         
+    }
+
+    /** Returns an XML element representing the rule. */
+    public Element toXml(String dir) {
+    	Element retval = new Element("typeraising");
+    	retval.setAttribute("dir", dir);
+    	boolean usesDollar = (_result instanceof ComplexCat) && ((ComplexCat)_result).containsDollarArg();
+    	retval.setAttribute("useDollar", Boolean.toString(usesDollar));
+    	if (!(_arg instanceof AtomCat) || !((AtomCat)_arg).getType().equals("np")) {
+        	Element argElt = new Element("arg");
+        	retval.addContent(argElt);
+        	argElt.addContent(_arg.toXml());
+    	}
+    	if (!((AtomCat)_result.getTarget()).getType().equals("s")) {
+        	Element resultElt = new Element("result");
+        	retval.addContent(resultElt);
+        	resultElt.addContent(_result.getTarget().toXml());
+    	}
+    	return retval;
     }
 
     /** Returns 1. */

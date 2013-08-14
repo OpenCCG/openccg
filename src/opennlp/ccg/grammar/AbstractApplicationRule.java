@@ -23,6 +23,8 @@ import opennlp.ccg.synsem.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * Super class for application rules.
  *
@@ -35,6 +37,13 @@ public abstract class AbstractApplicationRule extends AbstractRule {
 	private static final long serialVersionUID = 1L;
 	
 	protected Slash _functorSlash;
+
+    /** Returns an XML element representing the rule. */
+    public Element toXml(String dir) {
+    	Element retval = new Element("application");
+    	retval.setAttribute("dir", dir);
+    	return retval;
+    }
 
     public int arity() {
         return 2;

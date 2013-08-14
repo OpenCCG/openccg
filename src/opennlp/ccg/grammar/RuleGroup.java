@@ -25,6 +25,7 @@ import opennlp.ccg.unify.*;
 import opennlp.ccg.util.*;
 
 import org.jdom.*;
+import org.jdom.output.*;
 import gnu.trove.*;
 
 import java.io.*;
@@ -270,6 +271,26 @@ public class RuleGroup implements Serializable {
         return new TypeChangingRule(arg, result, rname, firstEP);
     }
 
+    /**
+     * Writes the rules to an XML file with the given name.
+     * @throws IOException 
+     */
+    public void toXml(String filename) throws IOException {
+    	XMLOutputter xout = new XMLOutputter();
+    	xout.setFormat(Format.getPrettyFormat());
+    	PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(filename)));
+    	out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+    	out.println("<rules name=\"" + grammar.getName() + "\">");
+    	for (Rule r : binaryRules) { 
+    		xout.output(r.toXml(), out); out.println();
+    	}
+    	for (Rule r : unaryRules) {
+    		xout.output(r.toXml(), out); out.println();
+    	}
+    	out.println("</rules>");
+    	out.flush(); out.close();
+    }
+    
     /**
      * Sets the dynamic combos flag to the given value, controlling whether the 
      * observed supercat combos is determined dynamically.

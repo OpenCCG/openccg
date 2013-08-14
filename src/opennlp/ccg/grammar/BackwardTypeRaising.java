@@ -18,6 +18,8 @@
 
 package opennlp.ccg.grammar;
 
+import org.jdom.Element;
+
 import opennlp.ccg.synsem.*;
 
 /**
@@ -37,6 +39,11 @@ public class BackwardTypeRaising extends AbstractTypeRaisingRule {
               useDollar, arg, result);
     }
     
+    /** Returns an XML element representing the rule. */
+    public Element toXml() {
+    	return super.toXml("backward");
+    }
+
     public String toString() {
         return "X => Y\\(Y/X)";
     }

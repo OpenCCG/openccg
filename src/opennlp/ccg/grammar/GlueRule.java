@@ -20,6 +20,8 @@ package opennlp.ccg.grammar;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 import opennlp.ccg.synsem.*;
 import opennlp.ccg.unify.*;
 
@@ -45,6 +47,9 @@ public class GlueRule extends AbstractRule {
 	/** Constructor. */
 	public GlueRule() { _name = "glue"; }
 	
+    /** Returns an XML element representing the rule (not supported). */
+    public Element toXml() { throw new RuntimeException("toXml not supported for GlueRule rules"); }
+
 	/** Arity. */
 	public int arity() { return 2; }
 

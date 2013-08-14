@@ -59,6 +59,18 @@ public final class SetArg implements Arg, Serializable {
 		_args = args;
 	}
 
+	public Element toXml() {
+		Element retval = new Element("setarg");
+		for (Arg arg : _args._list) {
+			if (arg instanceof BasicArg) { // only supporting basic args per xml construction
+				BasicArg barg = (BasicArg) arg;
+				retval.addContent(barg.getSlash().toXml());
+				retval.addContent(barg.getCat().toXml());
+			}
+		}
+		return retval;
+	}
+	
 	public Arg copy() {
 		return new SetArg(_args.copy());
 	}

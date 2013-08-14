@@ -23,6 +23,8 @@ import opennlp.ccg.synsem.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * Forward application: X/Y Y => X
  * 
@@ -38,6 +40,9 @@ public class ForwardApplication extends AbstractApplicationRule {
 		_functorSlash = new Slash('/');
 		_functorSlash.setAbility("active");
 	}
+	
+    /** Returns an XML element representing the rule. */
+    public Element toXml() { return super.toXml("forward"); }
 
 	public List<Category> applyRule(Category[] inputs) throws UnifyFailure {
 		if (inputs.length != 2) {

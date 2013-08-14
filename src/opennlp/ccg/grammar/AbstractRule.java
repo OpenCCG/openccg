@@ -25,6 +25,8 @@ import opennlp.ccg.hylo.*;
 import java.io.Serializable;
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * Implements some default behavior for Rule objects.
  *
@@ -44,6 +46,9 @@ public abstract class AbstractRule implements Rule, Serializable {
     
     /** Reusable list of head cats, one for each result. */
     protected List<Category> _headCats = new ArrayList<Category>(); 
+
+    /** Returns an XML element representing the rule. */
+    abstract public Element toXml();
 
     /** Applies the rule to the given input signs, adding to the given list of results. */
     public void applyRule(Sign[] inputs, List<Sign> results) {

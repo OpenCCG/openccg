@@ -81,6 +81,15 @@ public final class ComplexCat extends AbstractCat {
 		setModifierSlashes();
 	}
 	
+    /**Returns an XML element representing the category. */
+    public Element toXml() {
+    	Element retval = new Element("complexcat");
+    	retval.addContent(_target.toXml());
+    	_args.toXml(retval);
+    	// call super to add LF if present
+    	super.toXml(retval);
+    	return retval;
+    }
 	
 	// sets modifier slashes based on feat struc ids
 	private void setModifierSlashes() {

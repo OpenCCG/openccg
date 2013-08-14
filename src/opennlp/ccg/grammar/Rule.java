@@ -23,6 +23,8 @@ import opennlp.ccg.synsem.*;
 import opennlp.ccg.unify.*;
 import java.util.*;
 
+import org.jdom.Element;
+
 
 /**
  * Interface for categorial rules.
@@ -66,5 +68,8 @@ public interface Rule {
      * Sets this rule's rule group.
      */
     public void setRuleGroup(RuleGroup ruleGroup);
+    
+    /** Returns an XML element representing the rule. */
+    public Element toXml();
 }
 

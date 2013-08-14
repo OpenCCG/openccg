@@ -23,6 +23,8 @@ import opennlp.ccg.synsem.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * Super class for substitution rules.
  *
@@ -36,6 +38,14 @@ public abstract class AbstractSubstitutionRule extends AbstractApplicationRule {
 	
 	protected boolean _isHarmonic;
     protected Slash _argSlash;
+
+    /** Returns an XML element representing the rule. */
+    public Element toXml(String dir) {
+    	Element retval = new Element("substitution");
+    	retval.setAttribute("dir", dir);
+    	retval.setAttribute("harmonic", Boolean.toString(_isHarmonic));
+    	return retval;
+    }
 
     protected List<Category> apply (Category xyzCat, Category yzCat)
         throws UnifyFailure {

@@ -24,6 +24,8 @@ import opennlp.ccg.synsem.*;
 
 import java.util.*;
 
+import org.jdom.Element;
+
 /**
  * A CCG unary type changing rule.
  *
@@ -59,6 +61,18 @@ public class TypeChangingRule extends AbstractRule implements LexSemOrigin {
         setOrigin();
     }
 
+    /** Returns an XML element representing the rule. */
+    public Element toXml() {
+    	Element retval = new Element("typechanging");
+    	retval.setAttribute("name", _name);
+    	Element argElt = new Element("arg");
+    	retval.addContent(argElt);
+    	argElt.addContent(_arg.toXml());
+    	Element resultElt = new Element("result");
+    	retval.addContent(resultElt);
+    	resultElt.addContent(_result.toXml());
+    	return retval;
+    }
 
     /** Returns 1. */
     public int arity() { return 1; }

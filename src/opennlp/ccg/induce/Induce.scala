@@ -2,8 +2,7 @@ package opennlp.ccg.induce
 
 import scala.collection.generic.Sorted
 import scala.collection.JavaConversions._
-import scala.collection.mutable.ListBuffer
-import scala.collection.mutable.HashMap
+import scala.collection.mutable._
 import java.io._
 import java.util.BitSet
 import org.jdom._
@@ -259,9 +258,9 @@ object Induce extends App {
   }
 
   // map to track unique unary rules
-  val ruleMap = HashMap[(Category,Category),Int]()
+  val ruleMap = HashMap[(Category,Category),TypeChangingRule]()
   
-  def getRuleNum(arg:Category, result:Category) = {
+  def getRuleName(arg:Category, result:Category) = {
 	val argA = arg.copy()
 	UnifyControl.abstractNominals(argA)
 	val resA = result.copy()
@@ -269,10 +268,12 @@ object Induce extends App {
 	val numOpt = ruleMap.get((argA,resA))
 	if (numOpt == None) {
 	  val num = ruleMap.size
-	  ruleMap.put((argA,resA), num)
-	  num
+	  val name = "tc"+num
+	  val lf = HyloHelper.firstEP(resA.getLF)
+	  ruleMap.put((argA,resA), new TypeChangingRule(argA, resA, name, lf))
+	  name
 	}
-	else numOpt.get
+	else numOpt.get.name
   }
   
   def makeRuleInst(headCat:Category, modCat:Category, relPredIdx:Int, rightward:Boolean) = {
@@ -297,8 +298,8 @@ object Induce extends App {
     else {
       new ComplexCat(headCatCopy.asInstanceOf[TargetCat], args, lf)
     }
-	val num = getRuleNum(modCatCopy, resultCat)
-	val unaryRule = new TypeChangingRule(modCatCopy, resultCat, "tc"+num, lf)
+	val name = getRuleName(modCatCopy, resultCat)
+	val unaryRule = new TypeChangingRule(modCatCopy, resultCat, name, lf)
 	val bitset = new BitSet(preds.size())
 	bitset.set(relPredIdx)
 	val retval = edgeFactory.makeRuleInstance(unaryRule, bitset)
@@ -311,8 +312,8 @@ object Induce extends App {
 	  args2.add(new BasicArg(slash2, argCat2))
 	  val lf2 = lf.copy()
 	  val resultCat2 = new ComplexCat(headCat2.asInstanceOf[TargetCat], args2, lf2)
-	  val num2 = getRuleNum(modCat2, resultCat2)
-	  val unaryRule2 = new TypeChangingRule(modCat2, resultCat2, "tc"+num2, lf2)
+	  val name2 = getRuleName(modCat2, resultCat2)
+	  val unaryRule2 = new TypeChangingRule(modCat2, resultCat2, name2, lf2)
 	  val bitset2 = bitset.clone().asInstanceOf[BitSet]
 	  val retval2 = edgeFactory.makeRuleInstance(unaryRule2, bitset2)
 	  (retval, new Some(retval2))
@@ -571,6 +572,25 @@ object Induce extends App {
 //  out.println(ruleMap)
   
   // TODO abstract cats in best deriv lex items, save these and deriv's rules
+
+  val rules_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/tmp.rules.xml"
+  out.println("saving rules to " + rules_fn)
+  val updatedRules = new RuleGroup(grammar)
+  for (rule <- grammar.rules.getBinaryRules) updatedRules.addRule(rule)
+  for (rule <- grammar.rules.getUnaryRules) updatedRules.addRule(rule)
+  val bestRules = HashSet[String]()
+  def getTCRs(sign:Sign):Unit = {
+    val hist = sign.getDerivationHistory
+    if (!hist.isEmpty) {
+      val rule = hist.getRule
+	  if (rule.isInstanceOf[TypeChangingRule]) bestRules += rule.name()
+	  for (child <- hist.getInputs) getTCRs(child)
+    }
+  }
+  getTCRs(rzchart.bestEdge.getSign)
+  for (rule <- ruleMap.values if bestRules.contains(rule.name)) updatedRules.addRule(rule)
+  updatedRules.toXml(rules_fn)
+  out.println()
   
   out.flush()
   out.close()

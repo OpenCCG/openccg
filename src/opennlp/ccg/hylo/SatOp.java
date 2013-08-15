@@ -220,7 +220,7 @@ public class SatOp extends HyloFormula {
         if (_nominal instanceof NominalAtom) {
             retval.setAttribute("nom", _nominal.toString());
         } else {
-            retval.setAttribute("nomvar", _nominal.toString());
+            retval.setAttribute("nomvar", ((NominalVar)_nominal).nameWithType());
         }
         Element argElt = _arg.toXml();
         retval.addContent(argElt);

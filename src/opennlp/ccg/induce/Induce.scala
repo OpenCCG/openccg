@@ -573,11 +573,13 @@ object Induce extends App {
   
   // TODO abstract cats in best deriv lex items, save these and deriv's rules
 
-  val rules_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/tmp.rules.xml"
+  val rules_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/induced/rules.xml"
   out.println("saving rules to " + rules_fn)
   val updatedRules = new RuleGroup(grammar)
   for (rule <- grammar.rules.getBinaryRules) updatedRules.addRule(rule)
-  for (rule <- grammar.rules.getUnaryRules) updatedRules.addRule(rule)
+  for (rule <- grammar.rules.getUnaryRules if !rule.isInstanceOf[TypeChangingRule]) updatedRules.addRule(rule)
+  for (rule <- grammar.rules.getUnaryRules if rule.isInstanceOf[TypeChangingRule]) updatedRules.addRule(rule)
+  val numExistingUnaries = updatedRules.getUnaryRules.size
   val bestRules = HashSet[String]()
   def getTCRs(sign:Sign):Unit = {
     val hist = sign.getDerivationHistory
@@ -589,9 +591,45 @@ object Induce extends App {
   }
   getTCRs(rzchart.bestEdge.getSign)
   for (rule <- ruleMap.values if bestRules.contains(rule.name)) updatedRules.addRule(rule)
+  val numRules = updatedRules.getBinaryRules.size + updatedRules.getUnaryRules.size 
   updatedRules.toXml(rules_fn)
-  out.println()
+  out.println("saved " + numRules + " rules")
   
+  val lexicon_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/induced/lexicon.xml"
+  out.println("saving categories to " + lexicon_fn)
+  val bestLexCats = HashSet[(Category,String)]()
+  val bestWords = HashSet[Word]()
+  def getLexItems(sign:Sign):Unit = {
+    val hist = sign.getDerivationHistory
+    if (hist.isEmpty) {
+      val cat = sign.getCategory.copy()
+      val word = sign.getWords.get(0)
+      val morph = Word.createFullWord(word, word.getStem, word.getPOS, null, word.getSemClass) // remove supertag
+      UnifyControl.abstractNominals(cat, word.getStem)
+      bestLexCats += Pair(cat, word.getPOS)      
+      bestWords += morph
+    }
+    else {
+	  for (child <- hist.getInputs) getLexItems(child)
+    }
+  }
+  getLexItems(rzchart.bestEdge.getSign)
+  val cats = ListBuffer[Category]()
+  val tags = ListBuffer[String]()
+  for ((cat,pos) <- bestLexCats) {
+    cats += cat
+    tags += pos
+  }
+  grammar.toLexiconXml(cats, tags, lexicon_fn)
+  out.println("saved " + cats.size + " cats")
+
+  val morph_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/induced/morph.xml"
+  out.println("saving words to " + morph_fn)
+  val wordList = ListBuffer[Word]() ++ bestWords
+  grammar.toMorphXml(wordList, morph_fn)
+  out.println("saved " + wordList.size + " words")
+  out.println()
+
   out.flush()
   out.close()
   println("done.")

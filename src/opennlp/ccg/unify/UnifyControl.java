@@ -19,6 +19,7 @@
 package opennlp.ccg.unify;
 
 import opennlp.ccg.synsem.*;
+import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.*;
 
 import gnu.trove.*;
@@ -157,10 +158,12 @@ public class UnifyControl {
     	cat.forall(removeAttsFcn);
     }
 
-    private static CategoryFcn abstractNominalsFcn = new CategoryFcnAdapter() {
+    private static class AbstractNominalsFcn extends CategoryFcnAdapter {
+    	String lexReplace;
+    	public AbstractNominalsFcn(String lexReplace) { this.lexReplace = lexReplace; }
         public void forall (Category c) {
         	LF lf = c.getLF();
-        	if (lf != null) c.setLF(HyloHelper.abstractNominals(lf));
+        	if (lf != null) c.setLF(HyloHelper.abstractNominals(lf, lexReplace));
             FeatureStructure fs = c.getFeatureStructure();
             if (fs == null) return;
             for (String att : fs.getAttributes()) {
@@ -169,12 +172,25 @@ public class UnifyControl {
             		Nominal var = HyloHelper.abstractNominal((Nominal)val);
             		if (var != val) fs.setFeature(att, var);
             	}
+            	else if (att.equals("lex") && val instanceof SimpleType && ((SimpleType)val).getName().equals(lexReplace)) {
+            		SimpleType defaultType = Grammar.theGrammar.types.getSimpleType("[*DEFAULT*]");
+            		fs.setFeature(att, defaultType);
+            	}
             }
         }
-    };
+    }
     
-    /** Abstracts nominal atoms, replacing them with corresponding nominal variables. */
-    public static void abstractNominals(Category cat) {
+    /** 
+     * Abstracts nominal atoms, replacing them with corresponding nominal variables. 
+     */
+    public static void abstractNominals(Category cat) { abstractNominals(cat, null); }
+    
+    /** 
+     * Abstracts nominal atoms, replacing them with corresponding nominal variables. 
+     * If lexReplace is non-null, also replaces matching lex feats and lex preds with [*DEFAULT*].
+     */
+    public static void abstractNominals(Category cat, String lexReplace) {
+    	CategoryFcn abstractNominalsFcn = new AbstractNominalsFcn(lexReplace);
     	cat.forall(abstractNominalsFcn);
     }
 }

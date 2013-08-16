@@ -582,9 +582,10 @@ public class HyloHelper {
     /**
      * Returns an LF with nominal atoms abstracted to nominal vars, 
      * assuming that the given LF is one or more elementary predications.
+     * If lexReplace is non-null, also replaces matching lex preds with [*DEFAULT*].
      */
     @SuppressWarnings("unchecked")
-	public static LF abstractNominals(LF lf) {
+	public static LF abstractNominals(LF lf, String lexReplace) {
 		List<SatOp> preds = getPreds(lf);
 		for (int i=0; i < preds.size(); i++) {
 			SatOp pred = preds.get(i);
@@ -595,7 +596,10 @@ public class HyloHelper {
 				nom2 = abstractNominal(nom2);
 				predA = new SatOp(nom, new Diamond(((Diamond)pred._arg)._mode, nom2));
 			}
-			else predA = new SatOp(nom, pred._arg);
+			else if (pred._arg instanceof Proposition && ((Proposition)pred._arg)._name.equals(lexReplace)) 
+				predA = new SatOp(nom, new Proposition("[*DEFAULT*]"));
+			else 
+				predA = new SatOp(nom, pred._arg);
 			preds.set(i, predA);
 		}
 		if (preds.size() == 1) return preds.get(0);

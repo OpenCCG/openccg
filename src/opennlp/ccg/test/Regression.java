@@ -91,6 +91,9 @@ public class Regression {
     /** File to write n-best realizations to (if any). */
     public String nbestrealfile = null;
     
+    /** Flag for whether to normalize strings as for BLEU scoring in n-best output. */
+    public boolean nbestnormbleu = false;
+    
     /** Directory to save best realization serializations to (if any). */
     public String realserdir = null;
     
@@ -773,10 +776,12 @@ public class Regression {
                 if (id == null) id = "" + i;
             	nbestrealPW.println("<seg id=\"" + id + "\"" + extras + ">");
             	// add ref sentence
-            	nbestrealPW.println("<ref>" + norm_bleu(testItem.sentence) + "</ref>");
+            	String ref = (nbestnormbleu) ? norm_bleu(testItem.sentence) : testItem.sentence; 
+            	nbestrealPW.println("<ref>" + ref + "</ref>");
             	// add best realization
             	String scores = "score=\"" + nf.format(score) + "\" edge-score=\"" + nfE.format(bestEdge.score) + "\"";
-            	nbestrealPW.println("<best " + scores + ">" + norm_bleu(bestRealization) + "</best>");
+            	String best = (nbestnormbleu) ? norm_bleu(bestRealization) : bestRealization;
+            	nbestrealPW.println("<best " + scores + ">" + best + "</best>");
                 // if complete, add remaining n-best
                 if (bestEdge.complete()) {
                     List<Edge> bestEdges = chart.bestEdges();
@@ -786,7 +791,8 @@ public class Regression {
                         double eScore = defaultNgramScorer.score(e.getSign(), false); // nb: use default n-gram precision score for reporting
                     	String eScores = " score=\"" + nf.format(eScore) + "\" edge-score=\"" + nfE.format(e.score) + "\"";
                     	// add next realization
-                    	nbestrealPW.println("<next" + eScores + ">" + norm_bleu(eSent) + "</next>");
+                    	String next = (nbestnormbleu) ? norm_bleu(eSent) : eSent;
+                    	nbestrealPW.println("<next" + eScores + ">" + next + "</next>");
                     }
                 }
                 // close item
@@ -1396,7 +1402,7 @@ public class Regression {
                        "  (-derivf <derivfactorsfile>) \n" +
                        "  (-2events <eventfile>) (-includegoldinevents) \n" +
                        "  (-2apml <apmldir>) (-bleu <bleufileprefix>) \n" +
-                       "  (-nbestrealfile <nbestrealfile>) (-realserdir <realserdir>) \n" + 
+                       "  (-nbestrealfile <nbestrealfile>) (-nbestnormbleu) (-realserdir <realserdir>) \n" + 
                        "  (-rescorefile <rescorefile>) \n" + 
                        "  (-g <grammarfile>) (-s <statsfile>) (<regressionfile>|<regressiondir>)";
                        
@@ -1477,6 +1483,7 @@ public class Regression {
             if (args[i].equals("-2apml")) { tester.apmldir = args[++i]; continue; }
             if (args[i].equals("-bleu")) { tester.bleufileprefix = args[++i]; continue; }
             if (args[i].equals("-nbestrealfile")) { tester.nbestrealfile = args[++i]; continue; }
+            if (args[i].equals("-nbestnormbleu")) { tester.nbestnormbleu = true; continue; }
             if (args[i].equals("-realserdir")) { tester.realserdir = args[++i]; continue; }
             if (args[i].equals("-rescorefile")) { tester.rescorefile = args[++i]; continue; }
             if (args[i].equals("-g")) { grammarfile = args[++i]; continue; }

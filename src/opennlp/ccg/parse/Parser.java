@@ -138,6 +138,9 @@ public class Parser
     // parse results
     private ArrayList<Sign> result;
 
+    // parse scores
+    private ArrayList<Double> scores;
+
     // flag for whether to glue fragments currently
     private boolean gluingFragments = false;
     
@@ -330,6 +333,11 @@ public class Parser
      */
     public List<Sign> getResult() { return result; }
 
+    /**
+     * Returns the corresponding scores for the results of the parse.
+     */
+    public List<Double> getScores() { return scores; }
+
 	/** Returns the edge count prior to unpacking. */
 	public int edgeCount() { return (chart != null) ? chart.edgeCount() : 0; }
 	
@@ -419,12 +427,16 @@ public class Parser
     // create answer ArrayList
     private void createResult(int size) throws ParseException {
         result = new ArrayList<Sign>();
+        scores = new ArrayList<Double>();
         // unpack top
         List<Edge> unpacked = (lazyUnpackingToUse) 
         	? chart.lazyUnpack(0,size - 1) 
 			: chart.unpack(0, size - 1);
         // add signs for unpacked edges
-        for (Edge edge : unpacked) result.add(edge.sign);
+        for (Edge edge : unpacked) {
+        	result.add(edge.sign);
+        	scores.add(edge.score);
+        }
         // check non-empty
         if (result.size() == 0) {
             throw new ParseException("Unable to parse");

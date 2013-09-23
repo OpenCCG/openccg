@@ -565,6 +565,14 @@ public class HyloHelper {
 		return Converter.convertNominals(lf, root, nominalRoot);
 	}
 	
+	/**
+	 * Converts nominal atoms back to vars, returning the converted nominal root. 
+	 * The LF is assumed to be flattened to elementary predications.
+	 */
+	public static Nominal convertNominalsToVars(LF lf, Nominal nominalRoot) {
+		return Converter.convertNominalsToVars(getPreds(lf), nominalRoot);
+	}
+	
 
     //-----------------------------------------------------------------
     // append 

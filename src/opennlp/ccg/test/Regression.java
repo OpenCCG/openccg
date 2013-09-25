@@ -672,7 +672,7 @@ public class Regression {
                 if (parsedComplete) extras += " complete=\"true\"";
                 String id = testItem.info;
                 if (id == null) id = "" + i;
-                nbestparsePW.println("<seg id=\"" + id + "\" str=\"" + testItem.sentence + "\"" + extras + ">");
+                nbestparsePW.println("<seg id=\"" + id + "\" str=\"" + xmlEscape(testItem.sentence) + "\"" + extras + ">");
             	String tagend = (nbestincludelfs) ? ">" : "/>";
             	// add best parse
             	if (parseScore != null) { 
@@ -855,11 +855,11 @@ public class Regression {
                 if (id == null) id = "" + i;
             	nbestrealPW.println("<seg id=\"" + id + "\"" + extras + ">");
             	// add ref sentence
-            	String ref = (nbestnormbleu) ? norm_bleu(testItem.sentence) : testItem.sentence; 
+            	String ref = (nbestnormbleu) ? norm_bleu(testItem.sentence) : xmlEscape(testItem.sentence); 
             	nbestrealPW.println("<ref>" + ref + "</ref>");
             	// add best realization
             	String scores = "score=\"" + nf.format(score) + "\" edge-score=\"" + nfE.format(bestEdge.score) + "\"";
-            	String best = (nbestnormbleu) ? norm_bleu(bestRealization) : bestRealization;
+            	String best = (nbestnormbleu) ? norm_bleu(bestRealization) : xmlEscape(bestRealization);
             	if (!nbestincludelfs)
             		nbestrealPW.println("<best " + scores + ">" + best + "</best>");
             	else {
@@ -886,7 +886,7 @@ public class Regression {
                         double eScore = defaultNgramScorer.score(e.getSign(), false); // nb: use default n-gram precision score for reporting
                     	String eScores = " score=\"" + nf.format(eScore) + "\" edge-score=\"" + nfE.format(e.score) + "\"";
                     	// add next realization
-                    	String next = (nbestnormbleu) ? norm_bleu(eSent) : eSent;
+                    	String next = (nbestnormbleu) ? norm_bleu(eSent) : xmlEscape(eSent);
                     	if (!nbestincludelfs)
                     		nbestrealPW.println("<next" + eScores + ">" + next + "</next>");
                     	else {

@@ -470,6 +470,7 @@ public class Grammar {
             JDOMResult result = new JDOMResult(); // as suggested by Amy Isard, for better java/xml version compatibility
             transformer.transform(new JDOMSource(doc), result);
             XMLOutputter outputter = new XMLOutputter();
+            outputter.setFormat(Format.getPrettyFormat());
             outputter.output(result.getDocument(), new OutputStreamWriter(out)); // end of A.I. suggestion
         } catch (TransformerException exc) { 
             throw (IOException) new IOException().initCause(exc);

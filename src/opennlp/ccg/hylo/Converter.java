@@ -233,4 +233,42 @@ public class Converter {
     	seen.pop();
     	return false;
     }
+    
+    
+    //---------------------------------------------------------------------------
+    // convert nominal atoms back to vars
+    //
+    
+    /** Converts nominal atoms back to vars. */
+	static void convertNominalsToVars(List<SatOp> preds) {
+		convertNominalsToVars(preds, null);
+    }
+	
+	/**
+	 * Converts nominal atoms back to vars, returning the converted nominal root. 
+	 */
+	static Nominal convertNominalsToVars(List<SatOp> preds, Nominal nominalRoot) {
+		Nominal retval = null;
+		for (SatOp pred : preds) {
+			Nominal nom = pred._nominal;
+			Nominal nv = convertNominalToVar(nom);
+			if (nom.equals(nominalRoot)) retval = nv;
+			pred.setNominal(nv);
+			LF arg = pred.getArg();
+			if (arg instanceof Diamond) {
+				Diamond dArg = (Diamond) arg;
+				LF arg2 = dArg.getArg();
+				if (arg2 instanceof Nominal) {
+					Nominal nv2 = convertNominalToVar((Nominal)arg2);
+					dArg.setArg(nv2);
+				}
+			}
+		}
+		return retval;
+	}
+	
+	// returns a nominal var with the same name as the given nominal
+	static Nominal convertNominalToVar(Nominal nom) {
+		return new NominalVar(nom.getName().toUpperCase(), nom.getType());
+	}
 }

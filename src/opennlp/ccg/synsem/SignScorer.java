@@ -18,6 +18,7 @@
 
 package opennlp.ccg.synsem;
 
+import java.util.Random;
 
 /**
  * Interface for sign scoring models.
@@ -37,6 +38,12 @@ public interface SignScorer
     /** A scorer that returns 0 for all signs. */
     public static SignScorer nullScorer = new SignScorer() { 
         public double score(Sign sign, boolean complete) { return 0; }
+    };
+
+    /** A scorer that returns a random number in [0,1] for all signs. */
+    public static SignScorer randomScorer = new SignScorer() { 
+    	Random random = new Random();
+        public double score(Sign sign, boolean complete) { return random.nextDouble(); }
     };
 }
 

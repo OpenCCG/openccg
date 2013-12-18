@@ -41,6 +41,7 @@ import opennlp.ccg.util.SingletonList;
 import opennlp.ccg.perceptron.*;
 
 import org.jdom.*;
+import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 /**
@@ -91,6 +92,9 @@ public class Regression {
     /** File to write n-best realizations to (if any). */
     public String nbestrealfile = null;
     
+    /** Flag for whether to normalize strings as for BLEU scoring in n-best output. */
+    public boolean nbestnormbleu = false;
+    
     /** Directory to save best realization serializations to (if any). */
     public String realserdir = null;
     
@@ -99,6 +103,12 @@ public class Regression {
     
     /** Map from info keys to best realization signs for serialization (if any). */
     public Map<String,Sign> bestRealMap = null;
+    
+    /** Flag for whether to include LFs in n-best output. */
+    public boolean nbestincludelfs = false;
+    
+    /** File to write n-best parses to (if any). */
+    public String nbestparsefile = null;
     
     /** The grammar to use for testing. */
     public Grammar grammar = null;
@@ -222,6 +232,7 @@ public class Regression {
     private PrintWriter bleuSrc = null;
     private PrintWriter nbestrealPW = null;
     private PrintWriter rescorePW = null;
+    private PrintWriter nbestparsePW = null;
     
     private XMLOutputter xmlOutputter = new XMLOutputter(); // for xml-escaping strings
     
@@ -299,6 +310,15 @@ public class Regression {
         }
     }
     
+    // sets up n-best parsing output
+    private void nbestparseSetup() throws IOException {
+        // set up file to write sentence & n-best parses (if any)
+        if (nbestparsefile != null && doParsing) {
+            nbestparsePW = new PrintWriter(new BufferedWriter(new FileWriter(nbestparsefile)));
+            nbestparsePW.println("<nbest>");
+        }
+    }
+    
     // starts a doc
     private void bleuStartDoc(String id) {
     	if (bleufileprefix != null && doRealization) {
@@ -348,6 +368,15 @@ public class Regression {
     	}
     }
 
+    // finishes n-best parsing output
+    private void nbestparseFinish() throws IOException {
+    	// finish n-best real file, if apropos
+    	if (nbestparsefile != null && doParsing) {
+    		nbestparsePW.println("</nbest>");
+    		nbestparsePW.flush(); nbestparsePW.close();
+    	}
+    }
+
     // resets bestRealMap
     private void realserStartDoc() {
     	if (realserdir != null && doRealization) {
@@ -377,13 +406,13 @@ public class Regression {
     public void runTest(File regressionFile) throws IOException {
     	// set up event file (if any)
     	if (eventfile != null) events = EventFile.openWriter(new File(eventfile));
-        // set up bleu output, n-best realizations, rescoring (if apropos)
-    	bleuSetup(); nbestrealSetup(); rescoreSetup();
+        // set up bleu output, n-best realizations, rescoring, n-best parses (if apropos)
+    	bleuSetup(); nbestrealSetup(); rescoreSetup(); nbestparseSetup();
     	// do each file or files
     	for (File f : getXMLFiles(regressionFile))
     		runSingleTest(f);
-    	// finish bleu, n-best realization output, rescoring (if apropos)
-    	bleuFinish(); nbestrealFinish(); rescoreFinish();
+    	// finish bleu, n-best realization output, rescoring, n-best parses (if apropos)
+    	bleuFinish(); nbestrealFinish(); rescoreFinish(); nbestparseFinish();
     	// close event file (if any)
     	if (events != null) { events.flush(); events.close(); }
     	// show stats (if apropos)
@@ -446,7 +475,9 @@ public class Regression {
             }
             
             List<Sign> parses = null;
+            List<Double> parseScores = null;
             LF parsedLF = null;
+            LF compactedLF = null;
             LF transformedParsedLF = null;
             boolean parsed = false;
             boolean parsedComplete = false;
@@ -472,6 +503,7 @@ public class Regression {
                 	}
                 	// retrieve results
                     parses = parser.getResult();
+                    parseScores = parser.getScores();
                     parsed = true;
                     parsedComplete = !parses.get(0).getCategory().isFragment();
                     // get LF of best parse, if needed
@@ -481,9 +513,9 @@ public class Regression {
 	                    Nominal index = cat.getIndexNominal();
 	                    parsedLF = cat.getLF();
 	                    index = HyloHelper.convertNominals(parsedLF, sign, index);
+	                    compactedLF = HyloHelper.compact(parsedLF, index);
 	                    // get transformed version if needed
 	                    if (testItem.sign == null) {
-		                    LF compactedLF = HyloHelper.compact(parsedLF, index);
 		                    transformedParsedLF = grammar.transformLF(compactedLF); 
 	                    }
                     }
@@ -631,6 +663,54 @@ public class Regression {
             	}
             }
             
+            // n-best parses output
+            if (nbestparsePW != null) {
+                XMLOutputter outputter = new XMLOutputter();
+                outputter.setFormat(Format.getPrettyFormat());
+            	// header for item
+                String extras = "";
+                if (parsedComplete) extras += " complete=\"true\"";
+                String id = testItem.info;
+                if (id == null) id = "" + i;
+                nbestparsePW.println("<seg id=\"" + id + "\" str=\"" + xmlEscape(testItem.sentence) + "\"" + extras + ">");
+            	String tagend = (nbestincludelfs) ? ">" : "/>";
+            	// add best parse
+            	if (parseScore != null) { 
+            		double edgeScore = parseScores.get(0);
+                	String scores = "score=\"" + nf.format(parseScore.fscore) + "\" edge-score=\"" + nfE.format(edgeScore) + "\"";
+                	nbestparsePW.println("<best " + scores + tagend);
+                	if (nbestincludelfs) {
+                    	Element lfElt = grammar.makeLfElt(compactedLF);
+                    	nbestparsePW.println(outputter.outputString(lfElt));
+                    	nbestparsePW.println("</best>");                		
+                	}
+            	}
+            	// add remaining n-best 
+            	for (int k=1; k < parses.size(); k++) {
+                    Sign sign = parses.get(k);
+            		double edgeScore = parseScores.get(k);
+                    Category cat = sign.getCategory().copy();
+                    Nominal index = cat.getIndexNominal();
+                    LF parsedLFk = cat.getLF();
+                    index = HyloHelper.convertNominals(parsedLFk, sign, index);
+                    LF compactedLFk = HyloHelper.compact(parsedLFk, index);
+                    LF lfToScore = parsedLFk;
+                    if (testItem.sign != null) {
+                        lfToScore = grammar.transformLF(compactedLFk); 
+                    }
+                    EPsScorer.Results parseScoreK = EPsScorer.score(lfToScore, goldLF);
+                	String scores = "score=\"" + nf.format(parseScoreK.fscore) + "\" edge-score=\"" + nfE.format(edgeScore) + "\"";
+                	nbestparsePW.println("<next " + scores + tagend);
+                	if (nbestincludelfs) {
+                    	Element lfElt = grammar.makeLfElt(compactedLFk);
+                    	nbestparsePW.println(outputter.outputString(lfElt));
+                    	nbestparsePW.println("</next>");
+                	}
+            	}
+                // close item
+                nbestparsePW.println("</seg>");
+            }
+        
             // determine string to show for parse result
             String starForBadSentence = "";
             if (testItem.numOfParses == 0) starForBadSentence = "*";
@@ -765,6 +845,8 @@ public class Regression {
             
             // n-best realization output
             if (nbestrealPW != null) {
+                XMLOutputter outputter = new XMLOutputter();
+                outputter.setFormat(Format.getPrettyFormat());
             	// header for item
                 String extras = "";
                 if (gramcomplete) extras += " complete=\"true\"";
@@ -773,10 +855,28 @@ public class Regression {
                 if (id == null) id = "" + i;
             	nbestrealPW.println("<seg id=\"" + id + "\"" + extras + ">");
             	// add ref sentence
-            	nbestrealPW.println("<ref>" + norm_bleu(testItem.sentence) + "</ref>");
+            	String ref = (nbestnormbleu) ? norm_bleu(testItem.sentence) : xmlEscape(testItem.sentence); 
+            	nbestrealPW.println("<ref>" + ref + "</ref>");
             	// add best realization
             	String scores = "score=\"" + nf.format(score) + "\" edge-score=\"" + nfE.format(bestEdge.score) + "\"";
-            	nbestrealPW.println("<best " + scores + ">" + norm_bleu(bestRealization) + "</best>");
+            	String best = (nbestnormbleu) ? norm_bleu(bestRealization) : xmlEscape(bestRealization);
+            	if (!nbestincludelfs)
+            		nbestrealPW.println("<best " + scores + ">" + best + "</best>");
+            	else {
+            		nbestrealPW.println("<best " + scores + ">");
+            		nbestrealPW.println("<str>" + best + "</str>");
+                	Sign sign = bestEdge.getSign();
+                    Category cat = sign.getCategory().copy();
+                    Nominal index = cat.getIndexNominal();
+                    LF lf = cat.getLF();
+                	index = HyloHelper.convertNominalsToVars(lf, index);
+                    index = HyloHelper.convertNominals(lf, sign, index);
+                    LF lfc = HyloHelper.compact(lf, index);
+                	Element lfElt = grammar.makeLfElt(lfc);
+                	nbestrealPW.println(outputter.outputString(lfElt));
+            		nbestrealPW.println("</best>");
+            		
+            	}
                 // if complete, add remaining n-best
                 if (bestEdge.complete()) {
                     List<Edge> bestEdges = chart.bestEdges();
@@ -786,7 +886,23 @@ public class Regression {
                         double eScore = defaultNgramScorer.score(e.getSign(), false); // nb: use default n-gram precision score for reporting
                     	String eScores = " score=\"" + nf.format(eScore) + "\" edge-score=\"" + nfE.format(e.score) + "\"";
                     	// add next realization
-                    	nbestrealPW.println("<next" + eScores + ">" + norm_bleu(eSent) + "</next>");
+                    	String next = (nbestnormbleu) ? norm_bleu(eSent) : xmlEscape(eSent);
+                    	if (!nbestincludelfs)
+                    		nbestrealPW.println("<next" + eScores + ">" + next + "</next>");
+                    	else {
+                    		nbestrealPW.println("<next" + eScores + ">");
+                    		nbestrealPW.println("<str>" + next + "</str>");
+                        	Sign sign = e.getSign();
+                            Category cat = sign.getCategory().copy();
+                            Nominal index = cat.getIndexNominal();
+                            LF lf = cat.getLF();
+                        	index = HyloHelper.convertNominalsToVars(lf, index);
+                            index = HyloHelper.convertNominals(lf, sign, index);
+                            LF lfc = HyloHelper.compact(lf, index);
+                        	Element lfElt = grammar.makeLfElt(lfc);
+                        	nbestrealPW.println(outputter.outputString(lfElt));
+                    		nbestrealPW.println("</next>");
+                    	}
                     }
                 }
                 // close item
@@ -1382,7 +1498,8 @@ public class Regression {
 
         String usage = "java opennlp.ccg.test.Regression \n" + 
                        "  (-noparsing) (-norealization) (-even|-odd) (-gc) \n" + 
-                       "  (-nullscorer) (-depthfirst) (-exactmatches) (-aanfilter (<excfile>)) \n" +
+                       "  (-nullscorer) (-randomscorer) \n" + 
+                       "  (-depthfirst) (-exactmatches) (-aanfilter (<excfile>)) \n" +
                        "  (-scorer <scorerclass>) \n" +
                        "  (-parsescorer <scorerclass>) \n" +
                        "  (-extractor <extractorclass>) \n" +
@@ -1396,8 +1513,10 @@ public class Regression {
                        "  (-derivf <derivfactorsfile>) \n" +
                        "  (-2events <eventfile>) (-includegoldinevents) \n" +
                        "  (-2apml <apmldir>) (-bleu <bleufileprefix>) \n" +
-                       "  (-nbestrealfile <nbestrealfile>) (-realserdir <realserdir>) \n" + 
+                       "  (-nbestrealfile <nbestrealfile>) (-nbestnormbleu) (-realserdir <realserdir>) \n" + 
+                       "  (-nbestincludelfs) \n" +
                        "  (-rescorefile <rescorefile>) \n" + 
+                       "  (-nbestparsefile <nbestparsefile>) \n" + 
                        "  (-g <grammarfile>) (-s <statsfile>) (<regressionfile>|<regressiondir>)";
                        
         if (args.length > 0 && args[0].equals("-h")) {
@@ -1443,7 +1562,12 @@ public class Regression {
             if (args[i].equals("-even")) { tester.evenOnly = true; continue; }
             if (args[i].equals("-odd")) { tester.oddOnly = true; continue; }
             if (args[i].equals("-gc")) { tester.doGC = true; continue; }
-            if (args[i].equals("-nullscorer")) { tester.scorer = SignScorer.nullScorer; continue; }
+            if (args[i].equals("-nullscorer")) { 
+            	tester.scorer = SignScorer.nullScorer; tester.parseScorer = SignScorer.nullScorer; continue; 
+            }
+            if (args[i].equals("-randomscorer")) { 
+            	tester.scorer = SignScorer.randomScorer; tester.parseScorer = SignScorer.randomScorer; continue; 
+            }
             if (args[i].equals("-depthfirst")) { depthFirst = true; continue; }
             if (args[i].equals("-exactmatches")) { tester.exactMatches = true; continue; }
             if (args[i].equals("-aanfilter")) {
@@ -1477,8 +1601,11 @@ public class Regression {
             if (args[i].equals("-2apml")) { tester.apmldir = args[++i]; continue; }
             if (args[i].equals("-bleu")) { tester.bleufileprefix = args[++i]; continue; }
             if (args[i].equals("-nbestrealfile")) { tester.nbestrealfile = args[++i]; continue; }
+            if (args[i].equals("-nbestnormbleu")) { tester.nbestnormbleu = true; continue; }
             if (args[i].equals("-realserdir")) { tester.realserdir = args[++i]; continue; }
+            if (args[i].equals("-nbestincludelfs")) { tester.nbestincludelfs = true; continue; }
             if (args[i].equals("-rescorefile")) { tester.rescorefile = args[++i]; continue; }
+            if (args[i].equals("-nbestparsefile")) { tester.nbestparsefile = args[++i]; continue; }
             if (args[i].equals("-g")) { grammarfile = args[++i]; continue; }
             if (args[i].equals("-s")) { tester.statsfile = args[++i]; continue; }
             if (args[i].equals("-srilm")) { 
@@ -1574,7 +1701,7 @@ public class Regression {
             System.exit(0);
         }
         
-        // setup parse
+        // setup parser
         if (tester.doParsing) {
             tester.parser = new Parser(tester.grammar);
             // instantiate scorer, if any
@@ -1582,13 +1709,16 @@ public class Regression {
                 try {
                     System.out.println("Instantiating parsing sign scorer from class: " + parseScorerClass);
                     tester.parseScorer = (SignScorer) Class.forName(parseScorerClass).newInstance();
-                    tester.parser.setSignScorer(tester.parseScorer);
                     tester.showParseStats = true; // turn parsing stats on
                     System.out.println();
                 } catch (Exception exc) {
                     throw (RuntimeException) new RuntimeException().initCause(exc);
                 }
             }
+            // set parser scorer, if any
+            if (tester.parseScorer != null) tester.parser.setSignScorer(tester.parseScorer);
+            // also turn on parse stats if doing n-best output
+            if (tester.nbestparsefile != null) tester.showParseStats = true;
             // instantiate supertagger, if any
             if (supertaggerClass != null || stconfig != null) {
                 try {

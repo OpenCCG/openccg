@@ -193,6 +193,12 @@ public class Sign implements LexSemOrigin, Serializable {
     /** Returns whether the sign is lexical. */
     public boolean isLexical() { return _history.isEmpty(); }
     
+    /** Returns whether the sign is the result of a type-raising rule. */
+    public boolean isTypeRaised() {
+    	if (_history.isEmpty()) return false;
+    	return _history.ruleIsTypeRaising();
+    }
+    
     /** Sets the derivation history. */
     public void setDerivationHistory(DerivationHistory dh) {
         _history = dh;

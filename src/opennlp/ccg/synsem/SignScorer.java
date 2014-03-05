@@ -40,6 +40,11 @@ public interface SignScorer
         public double score(Sign sign, boolean complete) { return 0; }
     };
 
+    /** A scorer that returns the sign's derivational complexity, negated. */
+    public static SignScorer complexityScorer = new SignScorer() { 
+        public double score(Sign sign, boolean complete) { return -1 * sign.getDerivationHistory().complexity(); }
+    };
+
     /** A scorer that returns a random number in [0,1] for all signs. */
     public static SignScorer randomScorer = new SignScorer() { 
     	Random random = new Random();

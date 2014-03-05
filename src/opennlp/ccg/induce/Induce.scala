@@ -51,9 +51,17 @@ object Induce extends App {
   val rinfo = new RegressionInfo(grammar, new File(tb_fn))
   out.println("read " + rinfo.numberOfItems() + " items")
   
-  val item0 = rinfo.getItem(9)
 //  val item0 = rinfo.getItem(0)
-//  val item0 = rinfo.getItem(5) // 14
+//  val item0 = rinfo.getItem(4)
+//  val item0 = rinfo.getItem(5)
+//  val item0 = rinfo.getItem(7)
+//  val item0 = rinfo.getItem(9)
+//  val item0 = rinfo.getItem(12) //11
+//  val item0 = rinfo.getItem(14)
+//  val item0 = rinfo.getItem(16)
+//  val item0 = rinfo.getItem(19)
+//  val item0 = rinfo.getItem(26)
+  val item0 = rinfo.getItem(31)
   val fullwords = item0.fullWords;
   out.println("full words for first item:")
   out.println(fullwords)
@@ -80,7 +88,7 @@ object Induce extends App {
   val flattener = new Flattener()
   val preds = flattener.flatten(lf)
   HyloHelper.sort(preds)
-  val edgeFactory = new EdgeFactory(grammar, preds, SignScorer.nullScorer)
+  val edgeFactory = new EdgeFactory(grammar, preds, SignScorer.complexityScorer)
   for ((pred,i) <- preds.zipWithIndex) out.println(i + ": " + pred)
   out.println()
 
@@ -117,12 +125,18 @@ object Induce extends App {
     TreeNode(id, deps, kids)
   }
   
+  // returns the empty string for kids without a rel, ie nested nodes
+  def getKidRel(node:TreeNode, kid:TreeNode) = {
+    val dep = node.deps.find(dep => dep._2 == kid.id) getOrElse ("",-1)
+    dep._1
+  }
+  
   def printTree(node:TreeNode, indent:String="", rel:String="root"):Unit = {
     out.println(indent + "-" + rel + "-> " + node.id + " " + words.get(node.id))
     for (dep <- node.deps if !node.kids.exists(kid => kid.id == dep._2)) 
       out.println(indent + "  -" + dep._1 + "-> " + dep._2)
     for (kid <- node.kids) 
-      printTree(kid, indent+"  ", node.deps.find(dep => dep._2 == kid.id).get._1)
+      printTree(kid, indent+"  ", getKidRel(node, kid))
   }
 
   out.println("primary tree(s):")
@@ -163,27 +177,26 @@ object Induce extends App {
   out.println()
     
   // nb: could allow for some optional argrels, eg prp?
-  val argrels = List("sbj","obj","vc","prd","oprd","im","prp","pmod")
+  // nb: not including "im" when it's in lex entry for 'to'
+  val argrels = List("sbj","obj","vc","prd","oprd","prt","pmod","prp")
   val defaultcat = new AtomCat("np")
   
   case class EdgeSpan(edge:Edge, span:(Int,Int))
   
-  // adds arg cats to back or front of arg stack depending on rightward flag
+  // adds arg cats to back or front of arg stack, depending on direction, 
+  // and assuming args given in reverse order
   // if arg cat has arity > 1, also uses result of arg cat to allow 
   // for use of composition, eg 'to' s[to]\np/(s[b]\np) for arg 'see' s[b]\np/np 
-  // TODO special treatment for coord to enforce like categories?
   // nb: special treatment of balanced punctuation may be needed?
   def extendCat(cat:Category, argCat:Category, dep:(String,Int), rightward:Boolean) = {
     val (rel, id) = dep
     val catCopy = cat.copy()
-//    UnifyControl.reindex(catCopy)
     val args = if (catCopy.isInstanceOf[ComplexCat]) 
       catCopy.asInstanceOf[ComplexCat].getArgStack() 
       else new ArgStack()
     val argCatCopy = argCat.copy()
     argCatCopy.setLF(null)
     argCatCopy.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+id))
-//    UnifyControl.reindex(argCatCopy)
     if (rightward) args.add(new BasicArg(new Slash('/',">"), argCatCopy))
     else args.addFront(new BasicArg(new Slash('\\',"<"), argCatCopy))
     val headNom = catCopy.getIndexNominal().copy().asInstanceOf[Nominal]
@@ -208,39 +221,42 @@ object Induce extends App {
     else (retcat, None)
   }
 
-  // makes an edge for a coordinating conjunction using type of conjDepCat
-  // TODO complex cat coord
-  def makeConjCoordEdge(lexConjEdge:Edge, conjPredIdx:Int, coordPredIdx:Int,  
-		  				conjDepCat:Category, conjDep:(String,Int), coordDep:(String,Int), 
-		  				conjRightward:Boolean, coordRightward:Boolean) = {
-    val (conjRel, conjId) = conjDep
-    val (coordRel, coordId) = coordDep
+  // makes an edge for a coordinating conjunction using type of coord1DepCat
+  def makeConjCoordEdge(lexConjEdge:Edge, lexConjId:Int, coord1DepCat:Category, 
+		  				coord1PredIdx:Int, coord2PredIdx:Int, 
+		  				coord1Dep:(String,Int), coord2Dep:(String,Int)) = {
+    val (coord1Rel, coord1Id) = coord1Dep
+    val (coord2Rel, coord2Id) = coord2Dep
     val lexConjSign = lexConjEdge.getSign
     val lexConjCat = lexConjSign.getCategory
     val lf0 = lexConjCat.getLF.copy()
     val headNom = lexConjCat.getIndexNominal().copy().asInstanceOf[Nominal]
-    val conjDepRel = new Diamond(new ModeLabel(conjRel), new NominalAtom("w"+conjId))
-    val coordDepRel = new Diamond(new ModeLabel(coordRel), new NominalAtom("w"+coordId))
-    val lf1 = HyloHelper.append(lf0, new SatOp(headNom, conjDepRel))
-    val lf = HyloHelper.append(lf1, new SatOp(headNom, coordDepRel))
-    val conjDepCatCopy = conjDepCat.copy()
-    conjDepCatCopy.setLF(null)
-//    UnifyControl.reindex(conjDepCatCopy)
-    val coordDepCat = conjDepCat.copy()
-    coordDepCat.setLF(null)
-    coordDepCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+coordId))
-    // TODO reindexing necessary elsewhere?
-    UnifyControl.reindex(coordDepCat)
-    val resultCat = coordDepCat.copy()
-    val args = new ArgStack()
-    if (conjRightward) args.add(new BasicArg(new Slash('/',"*"), conjDepCatCopy))
-    else args.addFront(new BasicArg(new Slash('\\',"*"), conjDepCatCopy))
-    if (coordRightward) args.add(new BasicArg(new Slash('/',"*"), coordDepCat))
-    else args.addFront(new BasicArg(new Slash('\\',"*"), coordDepCat))
-    val coordCat = new ComplexCat(resultCat.asInstanceOf[TargetCat], args, lf)
+    val coord1DepRel = new Diamond(new ModeLabel(coord1Rel), new NominalAtom("w"+coord1Id))
+    val coord2DepRel = new Diamond(new ModeLabel(coord2Rel), new NominalAtom("w"+coord2Id))
+    val lf1 = HyloHelper.append(lf0, new SatOp(headNom, coord1DepRel))
+    val lf = HyloHelper.append(lf1, new SatOp(headNom, coord2DepRel))
+    val coord1DepCatCopy = coord1DepCat.copy()
+    coord1DepCatCopy.setLF(null)
+    UnifyControl.reindex(coord1DepCatCopy)
+    val coord2DepCat = coord1DepCatCopy.copy()
+    coord2DepCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+coord2Id))
+    UnifyControl.reindex(coord2DepCat)
+    val resultCat = coord2DepCat.copy()
+    resultCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+lexConjId))
+    UnifyControl.reindex(resultCat)
+    val args = if (resultCat.isInstanceOf[ComplexCat]) 
+      resultCat.asInstanceOf[ComplexCat].getArgStack() 
+      else new ArgStack()
+    args.add(new BasicArg(new Slash('\\',"*"), coord1DepCatCopy))
+    args.add(new BasicArg(new Slash('/',"*"), coord2DepCat))
+    val coordCat = if (resultCat.isInstanceOf[ComplexCat]) {
+      resultCat.setLF(lf)
+      resultCat.asInstanceOf[ComplexCat]      
+    }
+    else new ComplexCat(resultCat.asInstanceOf[TargetCat], args, lf)
     val coordBitSet = lexConjEdge.bitset.clone().asInstanceOf[BitSet]
-    coordBitSet.set(conjPredIdx)
-    coordBitSet.set(coordPredIdx)
+    coordBitSet.set(coord1PredIdx)
+    coordBitSet.set(coord2PredIdx)
     makeEdge(coordCat, lexConjSign, coordBitSet)
   }
   
@@ -387,36 +403,32 @@ object Induce extends App {
     val argDeps = for (dep <- node.deps if argrels.contains(dep._1)) yield dep
     val modDeps = for (dep <- node.deps if !argrels.contains(dep._1)) yield dep
     
-    // TODO conj deps
-    val conjDeps = for (dep <- node.deps if dep._1 == "conj") yield dep
-    if (conjDeps.size == 1 && argDeps.isEmpty) {
-      val conjDep = conjDeps.get(0)
-      val conjRightward = conjDep._2 > node.id
-      val conjDepKid = node.kids.find(kid => kid.id == conjDep._2).get
-      val conjPredIdx = relPredIdxs(node.id).get(conjDep).get
+    val coordDeps = for (dep <- node.deps if dep._1 == "coord1" || dep._1 == "coord2") yield dep
+    if (coordDeps.size == 2 && argDeps.isEmpty) {
+      val coord1Dep = coordDeps.get(0)
+      val coord1DepKid = node.kids.find(kid => kid.id == coord1Dep._2).get
+      val coord1PredIdx = relPredIdxs(node.id).get(coord1Dep).get
+      val coord2Dep = coordDeps.get(1)
+      val coord2PredIdx = relPredIdxs(node.id).get(coord2Dep).get
       // nb: assuming there is a lexical conj edge whose LF and bitset can be borrowed
       val lexConjEdge = edgesById(node.id).filter(edge => edge.getSign.getCategory.isInstanceOf[AtomCat]).get(0)
-      val parentId = parentIds(node.id)
-      val coordDep = ("coord",parentId)
-      val coordRightward = parentId > node.id
-      val coordPredIdx = relPredIdxs(parentId).get(("coord",node.id)).get
-      for (conjDepEdge <- edgesById(conjDepKid.id) if !conjDepEdge.getSign.isTypeRaised) {
-        val conjDepCat = conjDepEdge.getSign.getCategory
-        val coordEdge = makeConjCoordEdge(lexConjEdge, conjPredIdx, coordPredIdx, conjDepCat, conjDep, coordDep, conjRightward, coordRightward)
+      for (coord1DepEdge <- edgesById(coord1DepKid.id) if !coord1DepEdge.getSign.isTypeRaised) {
+        val coord1DepCat = coord1DepEdge.getSign.getCategory
+        val coordEdge = makeConjCoordEdge(lexConjEdge, node.id, coord1DepCat, coord1PredIdx, coord2PredIdx, coord1Dep, coord2Dep)
         out.println("new coord cat needed: " + coordEdge)
         edgesById(node.id) += coordEdge
       }
     }
-    else if (conjDeps.size > 0) {
-      out.println("**warning**, unexpected number of conj or arg deps!")
-      out.println("# conjDeps: " + conjDeps.size)
+    else if (coordDeps.size > 0) {
+      out.println("**warning**, unexpected number of coord or arg deps!")
+      out.println("# coordDeps: " + coordDeps.size)
       out.println("# argDeps: " + argDeps.size)
     }
     
     if (!argDeps.isEmpty) {
       val withArgs = new ListBuffer[Edge]()
       for (edge <- edgesById(node.id)) withArgs += edge
-      for (dep <- argDeps) {
+      for (dep <- argDeps.reverse) {
         val rightward = dep._2 > node.id
         val withNext = ListBuffer[Edge]()
         val nextKid = node.kids.find(kid => kid.id == dep._2)
@@ -427,10 +439,10 @@ object Induce extends App {
           val sign = edge.getSign
           if (nextKid.isEmpty) {
             // nb: don't actually know whether this should be right or left! (trying both)
-            val nextCatLs = extendCat(sign.getCategory, defaultcat, dep, false) 
-            makeAndAddEdges(nextCatLs, sign, nextBitSet, withNext)
             val nextCatRs = extendCat(sign.getCategory, defaultcat, dep, true) 
             makeAndAddEdges(nextCatRs, sign, nextBitSet, withNext)
+            val nextCatLs = extendCat(sign.getCategory, defaultcat, dep, false) 
+            makeAndAddEdges(nextCatLs, sign, nextBitSet, withNext)
           }
           else {
             for (next <- edgesById(nextKid.get.id) if !next.getSign.getDerivationHistory.ruleIsTypeRaising) {
@@ -459,7 +471,7 @@ object Induce extends App {
     
     // combine edges
     val chart = new ListBuffer[EdgeSpan]()
-    val agenda = new ListBuffer[EdgeSpan]()
+    val agenda = new PriorityQueue[EdgeSpan]()(Ordering.by(_.edge.score))
     
     val ids = (node.id :: node.kids.map(_.id)).sorted
     def adjacent(id1:Int, id2:Int) = { 
@@ -469,7 +481,7 @@ object Induce extends App {
     
     agenda ++= edgesById(node.id).map(EdgeSpan(_, (node.id,node.id)))
     for (kid <- node.kids) agenda ++= edgesById(kid.id).map(EdgeSpan(_, (kid.id,kid.id)))
-
+    
     // applies the rule instance and adds the results to the agenda
     def applyRuleInst(ruleInst:RuleInstance, next:EdgeSpan) = {
       val signs = Array(next.edge.getSign)
@@ -482,7 +494,7 @@ object Induce extends App {
 		out.println("derived: " + newEdge)
 		out.println("from rule inst: " + ruleInst)
 //		out.println("and: " + next.edge)
-		agenda.prepend(EdgeSpan(newEdge, (next.span._1,next.span._2)))
+		agenda += EdgeSpan(newEdge, (next.span._1,next.span._2))
 	  }
     }
     
@@ -530,7 +542,7 @@ object Induce extends App {
           val bitset = next.edge.bitset.clone().asInstanceOf[BitSet]
           val newEdge = edgeFactory.makeEdge(result,bitset)
           out.println("derived: " + newEdge)
-          agenda.prepend(EdgeSpan(newEdge, next.span))          
+          agenda += EdgeSpan(newEdge, next.span)          
         }
         // existing rule instances
         for { ruleInst <- edgeFactory.ruleInstances
@@ -560,7 +572,7 @@ object Induce extends App {
             val newEdge = edgeFactory.makeEdge(result,bitset) 
             out.println("derived: " + newEdge)
             val span = if (currentFirst) (current.span._1,next.span._2) else (next.span._1,current.span._2)
-            agenda.prepend(EdgeSpan(newEdge, span))
+            agenda += EdgeSpan(newEdge, span)
           }
         }
         // create and apply modifier unary rule instances
@@ -596,7 +608,7 @@ object Induce extends App {
     
     while (!agenda.isEmpty) {
       // take edge from agenda
-      val next = agenda.remove(0)
+      val next = agenda.dequeue() //.remove(0)
       // add edge to chart
 	  val actuallyAdded = addEdgeToChart(next)
 	  // do combos unless folded into an existing edge 
@@ -642,8 +654,6 @@ object Induce extends App {
 //  out.println("inferred rules: " + ruleMap.size)
 //  out.println(ruleMap)
   
-  // TODO abstract cats in best deriv lex items, save these and deriv's rules
-
   val rules_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/induced/rules.xml"
   out.println("saving rules to " + rules_fn)
   val updatedRules = new RuleGroup(grammar)

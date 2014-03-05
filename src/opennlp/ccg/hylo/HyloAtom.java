@@ -67,7 +67,18 @@ public abstract class HyloAtom extends HyloFormula {
         return toString();
     }
     
+    /**
+     * Returns a comparison of the names based on the numeric indexes if the names 
+     * are integers beyond the first character, otherwise returns the string comparison 
+     * of the names. 
+     */
     public int compareTo(HyloAtom ha) {
+    	try {
+    		int idx = Integer.parseInt(_name.substring(1));
+    		int idx2 = Integer.parseInt(ha._name.substring(1));
+    		return idx-idx2;
+    	}
+    	catch (NumberFormatException e) {}
         return _name.compareTo(ha._name);
     }
 

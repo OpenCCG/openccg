@@ -182,6 +182,9 @@ public class SatOp extends HyloFormula {
         // calc string
         boolean includeParens = !(_arg instanceof Op);
         StringBuffer sbuf = new StringBuffer();
+        if (indent.length() > 0) 
+        	// add newline if not at zero-indent
+        	sbuf.append('\n').append(indent);
         sbuf.append('@').append(nomStr); 
         if (includeParens) { sbuf.append('('); }
         sbuf.append(_arg.prettyPrint(newIndent));

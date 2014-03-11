@@ -275,7 +275,7 @@ public class Grammar {
         }
         // set up apml transformer 
         if (apmlTransformer == null) {
-            InputStream toApmlStr = ClassLoader.getSystemResourceAsStream("opennlp/ccg/grammar/to-apml.xsl");
+            InputStream toApmlStr = getClass().getClassLoader().getResourceAsStream("opennlp/ccg/grammar/to-apml.xsl");
             apmlTransformer = stf.newTransformer(new StreamSource(toApmlStr));
             // nb: DOCTYPE SYSTEM also specified in to-apml.xsl; including  
             //     redundant specification here to workaround omission of DOCTYPE with Linux 1.5 JVM

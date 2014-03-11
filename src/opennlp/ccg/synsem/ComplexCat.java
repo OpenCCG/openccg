@@ -200,8 +200,20 @@ public final class ComplexCat extends AbstractCat {
 		_args.setLast(c);
 	}
 
+    /** Returns the arity, ie the number of args. */
 	public int arity() {
 		return _args.size();
+	}
+
+    /** Returns the arity, recursively. */
+    public int arityRecursive() { 
+    	class AritySummer extends CategoryFcnAdapter {
+    		int sum = 0;
+    		public void forall(Category c) { sum += c.arity(); }
+    	};
+    	AritySummer aritySummer = new AritySummer();
+    	forall(aritySummer);
+		return aritySummer.sum;
 	}
 
 	public Category copy() {

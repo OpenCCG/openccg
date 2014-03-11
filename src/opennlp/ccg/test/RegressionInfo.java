@@ -18,7 +18,9 @@
 package opennlp.ccg.test;
 
 import opennlp.ccg.grammar.Grammar;
+import opennlp.ccg.hylo.*;
 import opennlp.ccg.synsem.*;
+import opennlp.ccgbank.extract.Testbed;
 
 import org.jdom.*;
 import org.jdom.input.*;
@@ -41,7 +43,7 @@ public class RegressionInfo {
     private TestItem[] testItems;
     
     /** Test item. */
-    public class TestItem {
+    public static class TestItem {
         /** The test sentence/phrase. */
         public String sentence;
         /** An alternative paraphrase to target, or null if none. */
@@ -262,6 +264,57 @@ public class RegressionInfo {
         
         // add sign to map
         signMap.put(id, sign);
+        
+        // save
+        FileOutputStream out = new FileOutputStream(file); 
+        grammar.serializeXml(doc, out);
+        out.close();
+        writeSerFile(signMap, file);
+    }
+    
+    /**
+     * Makes testbed items for the given signs and saves them to a file with the given name along 
+     * with the given ids, also including full-words and pred-info elements.
+     */
+    public static void writeTestbed(Grammar grammar, List<Sign> signs, List<String> ids, String filename) throws IOException {
+    	
+        // ensure dirs exist for filename
+        File file = new File(filename);
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists()) { parent.mkdirs(); }
+        
+        // create doc
+        Document doc = new Document();
+        Element root = new Element("regression");
+        doc.setRootElement(root);
+        
+        // make sign map and test items
+    	Map<String,Sign> signMap = new HashMap<String,Sign>();
+    	for (int i=0; i < signs.size(); i++) {
+    		String id = ids.get(i);
+    		Sign sign = signs.get(i);
+    		// add sign to map
+    		signMap.put(id, sign);
+        	String target = sign.getOrthography();
+        	// convert lf
+			Category cat = sign.getCategory();
+			Nominal index = cat.getIndexNominal();
+			LF flatLF = cat.getLF();
+			LF lf = HyloHelper.compactAndConvertNominals(flatLF, index, sign);
+			// make and add item
+            Element item = makeTestItem(grammar, target, 1, lf, id);
+            root.addContent(item);
+			// add parsed words as a separate element
+			Element fullWordsElt = new Element("full-words");
+			String fullWords = grammar.lexicon.tokenizer.format(sign.getWords());
+			fullWordsElt.addContent(fullWords);
+			item.addContent(fullWordsElt);
+			// add info about LF lexical preds as a separate element
+			Element predInfoElt = new Element("pred-info");
+			String predInfoText = Testbed.getPredInfo(flatLF);
+			predInfoElt.setAttribute("data", predInfoText);
+			item.addContent(predInfoElt);
+    	}
         
         // save
         FileOutputStream out = new FileOutputStream(file); 

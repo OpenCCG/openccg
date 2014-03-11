@@ -103,7 +103,14 @@ public final class AtomCat extends AbstractCat implements TargetCat {
         return type;
     }
 
+
+    /** Returns the arity, namely zero. */
+    public int arity() { return 0; }
     
+    /** Returns the arity, recursively, namely zero. */
+    public int arityRecursive() { return 0; }
+
+
     public Category copy() {
     	AtomCat retval = new AtomCat(type, _featStruc.copy(), (_lf == null) ? null : (LF) _lf.copy());
     	retval.fragCompletion = fragCompletion;

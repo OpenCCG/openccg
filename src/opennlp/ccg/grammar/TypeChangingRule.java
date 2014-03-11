@@ -64,7 +64,9 @@ public class TypeChangingRule extends AbstractRule implements LexSemOrigin {
     /** Returns an XML element representing the rule. */
     public Element toXml() {
     	Element retval = new Element("typechanging");
-    	retval.setAttribute("name", _name);
+    	String name = _name;
+    	if (name.indexOf(':') < 0) name += ":" + _arg.getSupertag() + "=>" + _result.getSupertag();
+    	retval.setAttribute("name", name);
     	Element argElt = new Element("arg");
     	retval.addContent(argElt);
     	argElt.addContent(_arg.toXml());

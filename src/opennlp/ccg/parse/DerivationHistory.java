@@ -123,13 +123,9 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
         plus the arities of the categories. */
     public int complexity() {
     	if (_complexity > 0) return _complexity;
-        int retval = (_output.getCategory() instanceof ComplexCat)
-        		? ((ComplexCat)_output.getCategory()).arity()
-        		: 0;
+        int retval = _output.getCategory().arity();
         if (_noHistory) { _complexity = retval; return retval; } 
         retval++;
-//        if (_noHistory) return 0;
-//        int retval = 1;
         String ruleName = _rule.name();
         if (ruleName.length() > 1 && (ruleName.charAt(0) == '>' || ruleName.charAt(0) == '<')) {
             if (ruleName.charAt(1) == 'T' || ruleName.charAt(1) == 'B' || ruleName.charAt(1) == 'S') {

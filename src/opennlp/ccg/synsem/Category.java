@@ -55,6 +55,13 @@ public interface Category extends Unifiable, Mutable, java.io.Serializable {
     public void setLF(LF lf);
     
 
+    /** Returns the arity. */
+    public int arity();
+    
+    /** Returns the arity, recursively. */
+    public int arityRecursive();
+
+    
     /**
      * Determines if this category is equal to another on the top level.
      * It does not check sub categories.

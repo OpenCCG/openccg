@@ -95,9 +95,10 @@ public class Flattener {
         if (lf instanceof SatOp) {
             // flatten arg with new current nominal
             SatOp satOp = (SatOp) lf;
+            SatOp dummyCurrentParent = makeDummySatOp(currentNominal);
             currentNominal = satOp.getNominal();
             SatOp dummyParent = makeDummySatOp(currentNominal);
-            addSatOp(dummyParent, parent, depth, alts, opts, lf);
+            addSatOp(dummyParent, dummyCurrentParent, depth, alts, opts, lf);
             flatten(satOp.getArg(), currentNominal, dummyParent, depth, alts, opts);
         }
         else if (lf instanceof Op) {

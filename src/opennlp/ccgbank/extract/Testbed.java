@@ -856,6 +856,15 @@ public class Testbed {
 		return predData.trim();
 	}
 	
+	/**
+	 * Returns the pred info string for the given LF (see extractPredInfo).
+	 */
+	public static String getPredInfo(LF lf) {
+		Map<String, String> predInfoMap = new HashMap<String, String>();
+		extractPredInfo(lf, predInfoMap);
+		return getPredInfo(predInfoMap);
+	}
+	
 	// escapes a string using DefaultTokenizer
 	private static String escape(String s) { return DefaultTokenizer.escape(s); }
 }

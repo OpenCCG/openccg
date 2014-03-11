@@ -213,10 +213,13 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
     }
     if (argCat.isInstanceOf[ComplexCat] && argCat.asInstanceOf[ComplexCat].arity() > 1) {
       val retcat2 = retcat.copy().asInstanceOf[ComplexCat]
+      UnifyControl.reindex(retcat2)
       val args2 = retcat2.getArgStack()
       val argCat2 = argCatCopy.asInstanceOf[ComplexCat].getResult()
-      if (rightward) args2.setLast(new BasicArg(new Slash('/',">"), argCat2))
-      else args2.set(0, new BasicArg(new Slash('\\',"<"), argCat2))
+      val argCat2Copy = argCat2.copy()
+      UnifyControl.reindex(argCat2Copy)
+      if (rightward) args2.setLast(new BasicArg(new Slash('/',">"), argCat2Copy))
+      else args2.set(0, new BasicArg(new Slash('\\',"<"), argCat2Copy))
       (retcat, Some(retcat2))
     }
     else (retcat, None)
@@ -364,7 +367,9 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
 	val retval = edgeFactory.makeRuleInstance(unaryRule, bitset)
 	if (headCatCopy.isInstanceOf[ComplexCat]) {
 	  val modCat2 = modCatCopy.copy()
+	  UnifyControl.reindex(modCat2)
 	  val headCat2 = headCatCopy.getTarget().copy()
+	  UnifyControl.reindex(headCat2)
 	  val argCat2 = headCat2.copy()
 	  val args2 = new ArgStack()
 	  val slash2 = slash.copy()

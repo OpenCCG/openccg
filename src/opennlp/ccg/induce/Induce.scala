@@ -16,34 +16,65 @@ import opennlp.ccg.realize._
 import plugins.MyGenSynScorer
 
 object Induce extends App {
-  
-  val sect = "24"
+
+  val openccghome = "/Users/mwhite/dev/github/openccg"
+  val working_dir = "/Users/mwhite/dev/hmmm/scala/convert_deps/out"
+    
+//  val partition = "dev"
+//  val partition = "train"
+//  val partition = "test"
+  val partition = "others"
+//  val partition = "24"
+
+  val sects = partition match {
+    case "dev" => Array("00")
+    case "train" => Array("02", "03", "04", "05", "06", 
+    		"07", "08", "09", "10", "11", 
+    		"12", "13", "14", "15", "16", 
+    		"17", "18", "19", "20", "21")
+    case "test" => Array("23")
+    case "others" => Array("01","22")
+    case _ => Array("24")
+  }
+
   val firstPass = true
 //  val firstPass = false
     
-  val log_fn = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/logs/inducecats." + sect + ".log"
+  val log_fn = working_dir + "/logs/inducecats." + partition + ".log"
   println("logging to " + log_fn)
   val out = new PrintWriter(new FileWriter(log_fn))
   
-  val working_dir = "/Users/mwhite/dev/hmmm/scala/convert_deps/out"
-
+  val grammarsdir = working_dir + "/grammars/" + partition
+  out.println("writing grammar to " + grammarsdir)
+  new File(grammarsdir).mkdirs()
+  out.println()
+  
+  // merge morph files, starting with init morph
+  val morphinit = working_dir + "/init/morph.xml"
+  val morphout = working_dir + "/morph.xml"
+  val xsltmerge = openccghome + "/ccgbank/templates/mergeMorph.xsl"
+  val initargs = Array("-IN",morphinit,"-XSL",xsltmerge,"-PARAM","newmorphfile",morphinit,"-OUT",morphout)
+  org.apache.xalan.xslt.Process.main(initargs)
+  val morphoutfile = new File(morphout)
+  val morphtmp = working_dir + "/morph.tmp.xml"
+  val morphtmpfile = new File(morphtmp)
+  for (sect <- sects) {
+    morphoutfile.renameTo(morphtmpfile)
+	val morphmerge = working_dir + "/grammars/" + sect + "/morph.xml"
+    out.println("merging morphs from " + morphmerge)
+    val cmdargs = Array("-IN",morphtmp,"-XSL",xsltmerge,"-PARAM","newmorphfile",morphmerge,"-OUT",morphout)
+    org.apache.xalan.xslt.Process.main(cmdargs)
+    morphtmpfile.delete()
+  }
+  out.println()
+  
   out.println("loading initial grammar")
   val grammar_fn = working_dir + "/grammar.xml"
   val grammar = new Grammar(grammar_fn)
   out.println()
 
-  val srcdir = working_dir + "/converted/" + sect
-  out.println("loading files from " + srcdir)
-  val outdir = working_dir + "/induced/" + sect
-  out.println("writing files to " + outdir)
-  new File(outdir).mkdirs()
-  val grammarsdir = working_dir + "/grammars/" + sect
-  out.println("writing grammars to " + grammarsdir)
-  new File(grammarsdir).mkdirs()
-  out.println()
-  
   val signScorer = if (firstPass) SignScorer.complexityScorer else {
-    val gensyn_dir = "/Users/mwhite/dev/hmmm/scala/convert_deps/out/induced/gensyn"
+    val gensyn_dir = working_dir + "/induced/gensyn"
     System.setProperty("gensyn.model.dir", gensyn_dir)
     out.println("loading generative syntactic model from " + gensyn_dir)
     val gensyn = new MyGenSynScorer()
@@ -114,7 +145,7 @@ object Induce extends App {
   var totalZeros = 0
   
   // induce derivations for file
-  def induceFile(fileid:String) = {
+  def induceFile(fileid:String, srcdir:String, outdir:String) = {
     
     // load testbed
     val tb_fn = srcdir + "/" + fileid + ".xml"
@@ -169,13 +200,22 @@ object Induce extends App {
     for (sign <- completeSigns) getLexItems(sign)
   }
   
-  val inputnames = new File(srcdir).listFiles.map(_.getName).filter(_.endsWith(".xml"))
-  val inputids = inputnames.map(fn => fn.substring(0, fn.lastIndexOf(".")))
-  for (fileid <- inputids) {
-    induceFile(fileid)
+  for (sect <- sects) {
+    val srcdir = working_dir + "/converted/" + sect
+    out.println("loading files from " + srcdir)
+    val outdir = working_dir + "/induced/" + sect
+    out.println("writing files to " + outdir)
+    new File(outdir).mkdirs()
+    out.println()
+    val inputnames = new File(srcdir).listFiles.map(_.getName).filter(_.endsWith(".xml"))
+    val inputids = inputnames.map(fn => fn.substring(0, fn.lastIndexOf(".")))
+    for (fileid <- inputids) {
+      induceFile(fileid, srcdir, outdir)
+    }
+//    induceFile(inputids(0), srcdir, outdir)
+    println()
+    out.println()
   }
-//  induceFile(inputids(0))
-  println()
 
   out.println("***** finished derivations")
   out.print("in total, derived " + totalBest + " edges with " + totalComplete + " complete signs ")

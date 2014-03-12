@@ -14,6 +14,7 @@ import opennlp.ccg.lexicon._
 import opennlp.ccg.test._
 import opennlp.ccg.realize._
 import plugins.MyGenSynScorer
+import opennlp.ccgbank.extract.Testbed
 
 object Induce extends App {
 
@@ -23,8 +24,8 @@ object Induce extends App {
 //  val partition = "dev"
 //  val partition = "train"
 //  val partition = "test"
-  val partition = "others"
-//  val partition = "24"
+//  val partition = "others"
+  val partition = "24"
 
   val sects = partition match {
     case "dev" => Array("00")
@@ -112,7 +113,7 @@ object Induce extends App {
     val hist = sign.getDerivationHistory
     if (!hist.isEmpty) {
       val rule = hist.getRule
-	  if (rule.isInstanceOf[TypeChangingRule]) bestRules += rule.name()
+	  if (rule.isInstanceOf[TypeChangingRule]) bestRules += rule.name
 	  for (child <- hist.getInputs) getTCRs(child)
     }
   }
@@ -145,7 +146,10 @@ object Induce extends App {
   var totalZeros = 0
   
   // induce derivations for file
-  def induceFile(fileid:String, srcdir:String, outdir:String) = {
+  def induceFile(fileid:String, srcdir:String, outdir:String,
+		  textPW:PrintWriter, factorsPW:PrintWriter, 
+		  combosPW:PrintWriter, combos:HashSet[String], 
+		  predsPW:PrintWriter) = {
     
     // load testbed
     val tb_fn = srcdir + "/" + fileid + ".xml"
@@ -160,14 +164,21 @@ object Induce extends App {
     val completeSigns = new ListBuffer[Sign]()
     val itemIds = new ListBuffer[String]()
     for (itemno <- 0 until rinfo.numberOfItems) {
+      textPW.println(rinfo.getItem(itemno).sentence)
       try {
         val inducer = new DerivationInducer(grammar, generalRules, ruleMap, rinfo, itemno, signScorer, out)
         val edge = inducer.getResult
         bestEdges += edge
         if (edge.complete) {
-          completeSigns += edge.getSign
+          val sign = edge.getSign
+          completeSigns += sign
           itemIds += inducer.getId
-          totalComplexity += edge.getSign.getDerivationHistory.complexity
+          factorsPW.println(grammar.lexicon.tokenizer.format(sign.getWords))
+          val newcombos = ListBuffer[String]()
+          Testbed.newCombos(sign, newcombos, combos)
+          for (combo <- newcombos) { combosPW.println(combo) }
+          predsPW.println(Testbed.getPredInfo(sign.getCategory.getLF))
+          totalComplexity += sign.getDerivationHistory.complexity
           if (edge.score == 0) 
             totalZeros += 1 
           else 
@@ -207,12 +218,32 @@ object Induce extends App {
     out.println("writing files to " + outdir)
     new File(outdir).mkdirs()
     out.println()
+    val textfn = working_dir + "/induced/info/text-" + sect + "-all"
+    out.println("writing text to " + textfn)
+    val textfile = new File(textfn)
+    textfile.getParentFile.mkdirs()
+    val textPW = new PrintWriter(new BufferedWriter(new FileWriter(textfile)))
+    val factorsfn = working_dir + "/induced/info/factors-" + sect + "-all"
+    out.println("writing factors to " + factorsfn)
+    val factorsPW = new PrintWriter(new BufferedWriter(new FileWriter(factorsfn)))
+    val combosfn = working_dir + "/induced/info/combos-" + sect + "-all"
+    out.println("writing combos to " + combosfn)
+    val combosPW = new PrintWriter(new BufferedWriter(new FileWriter(combosfn)))
+    val combos = new HashSet[String]()
+    val predsfn = working_dir + "/induced/info/preds-" + sect + "-all"
+    out.println("writing preds to " + predsfn)
+    val predsPW = new PrintWriter(new BufferedWriter(new FileWriter(predsfn)))
+    out.println()
     val inputnames = new File(srcdir).listFiles.map(_.getName).filter(_.endsWith(".xml"))
     val inputids = inputnames.map(fn => fn.substring(0, fn.lastIndexOf(".")))
     for (fileid <- inputids) {
-      induceFile(fileid, srcdir, outdir)
+      induceFile(fileid, srcdir, outdir, textPW, factorsPW, combosPW, combos, predsPW)
     }
-//    induceFile(inputids(0), srcdir, outdir)
+//    induceFile(inputids(0), srcdir, outdir, textPW, factorsPW, combosPW, combos, predsPW)
+    textPW.flush(); textPW.close()
+    factorsPW.flush(); factorsPW.close()
+    combosPW.flush(); combosPW.close()
+    predsPW.flush(); predsPW.close()
     println()
     out.println()
   }

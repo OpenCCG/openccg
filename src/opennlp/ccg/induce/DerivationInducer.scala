@@ -325,6 +325,8 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
 	UnifyControl.abstractNominals(resA)
 	val numOpt = ruleMap.get((argA,resA))
 	if (numOpt == None) {
+	  // nb: could use a supertag-based name, but it would not be unique b/c of LF rels
+//	  val name = argA.getSupertag + "=>" + resA.getSupertag
 	  val num = ruleMap.size
 	  val name = "tc"+num
 	  val lf = HyloHelper.firstEP(resA.getLF)

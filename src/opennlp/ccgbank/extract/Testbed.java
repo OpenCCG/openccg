@@ -760,12 +760,15 @@ public class Testbed {
 	// returns new combos for current sign
 	private List<String> newCombos() {
 		List<String> retval = new ArrayList<String>();
-		newCombos(sign, retval);
+		newCombos(sign, retval, combos);
 		return retval;
 	}
 
-	// recursively adds new combos for given sign
-	private void newCombos(Sign s, List<String> retval) {
+	/** 
+	 * Recursively adds new rule combos for given sign to the given list, 
+	 * checking first to see if the combo is in the given combos set.
+	 */
+	public static void newCombos(Sign s, List<String> retval, Set<String> combos) {
 		Sign[] inputs = s.getDerivationHistory().getInputs();
 		if (inputs != null) {
 			StringBuffer sb = new StringBuffer();
@@ -779,7 +782,7 @@ public class Testbed {
 				combos.add(combo);
 			}
 			for (int i = 0; i < inputs.length; i++) {
-				newCombos(inputs[i], retval);
+				newCombos(inputs[i], retval, combos);
 			}
 		}
 	}

@@ -15,7 +15,7 @@ import opennlp.ccg.test._
 import opennlp.ccg.realize._
 
 object Config {
-  val argrels = List("sbj","obj","vc","prd","oprd","prt","pmod","sub","prp")
+  val argrels = List("sbj","obj","iobj","vc","prd","oprd","prt","pmod","sub","prp")
   val optrels = List("sub","prp")
   val lexonlyrels = List("im")
   val defaultcat = new AtomCat("np")

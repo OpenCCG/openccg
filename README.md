@@ -18,6 +18,15 @@ This release also includes a broad English coverage grammar from the CCGBank and
 * For ccg2xml and other tools, Python version 2.4 to 2.7 (http://www.python.org)
 
 
+# Libraries
+
+If you're working with the latest source version from github, you'll need to download the external libraries from the latest release, as github discourages including binaries in their repos:
+
+* Download the latest release from sourceforge (https://sourceforge.net/projects/openccg/)
+* Unpack the archive and copy over the files from openccg/lib/.
+* Build the latest source as described further below
+
+
 # Configuring your environment variables
 
 The easiest thing to do is to set the environment variables JAVA_HOME and OPENCCG_HOME to the relevant locations on your system. Set JAVA_HOME to match the top level directory containing the Java installation you want to use.

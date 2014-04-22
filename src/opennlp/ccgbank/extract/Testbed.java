@@ -21,7 +21,6 @@
 package opennlp.ccgbank.extract;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 import opennlp.ccgbank.CCGBankTaskSources;
@@ -49,9 +48,8 @@ import org.jdom.output.XMLOutputter;
 public class Testbed {
 
 	// the grammar
-	// private Grammar grammar;
+	private Grammar grammar;
 	private Lexicon lexicon;
-
 	private RuleGroup rules;
 
 	// results of following deriv
@@ -87,8 +85,7 @@ public class Testbed {
 			CCGBankTaskTestbed testbed) throws IOException {
 		grammarFile = new File(targetDirectory, "grammar.xml");
 
-		Grammar grammar = new Grammar(grammarFile.toURI().toURL(), true);
-
+		this.grammar = new Grammar(grammarFile.toURI().toURL(), true);
 		this.lexicon = grammar.lexicon;
 		this.rules = grammar.rules;
 
@@ -103,16 +100,10 @@ public class Testbed {
 
 		ccgBankTaskTestbed.log("Creating test files:");
 
-		// load grammar
-		URL grammarURL = grammarFile.toURI().toURL();
-		ccgBankTaskTestbed.log("Loading grammar from URL: " + grammarURL);
-		Grammar grammar = new Grammar(grammarURL);
+		// config grammar
 		Tokenizer tokenizer = grammar.lexicon.tokenizer;
 		grammar.prefs.showFeats = true;
 		grammar.prefs.showSem = ccgBankTaskTestbed.isShowsSem();
-
-		this.lexicon = grammar.lexicon;
-		this.rules = grammar.rules;
 
 		// ensure test dir exists
 		File testDir = new File(targetDirectory, "test");
@@ -127,13 +118,13 @@ public class Testbed {
 		PrintWriter predsPW = null;
 		PrintWriter treePW = null;
 		File textFile = ccgBankTaskTestbed.getText();
-		File textscFile=new File(textFile.getParent()+"/"+textFile.getName().replaceFirst("text-","textsc-"));
 		File factorsFile = ccgBankTaskTestbed.getFactors();
 		File combosFile = ccgBankTaskTestbed.getCombos(); 
 		File predsFile = ccgBankTaskTestbed.getPreds(); 
 		File treeFile = ccgBankTaskTestbed.getTree();
 		
 		if (textFile != null) {
+			File textscFile=new File(textFile.getParent()+"/"+textFile.getName().replaceFirst("text-","textsc-"));
 			ccgBankTaskTestbed.log("Writing text to: " + textFile);
 			ccgBankTaskTestbed.log("Writing class-replaced text to: " + textscFile);
             textFile.getParentFile().mkdirs(); 
@@ -359,7 +350,7 @@ public class Testbed {
 	}
 
 	// recurse through deriv, returning signs
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SignHash followDerivR(Element derivElt) throws ParseException {
 		String eltName = derivElt.getName();
 		// follow deriv, applying combinatory rules
@@ -370,6 +361,17 @@ public class Testbed {
 			String simpleCat = derivElt.getAttributeValue("stag");
 			List childElts = derivElt.getChildren();
 			int numChildren = childElts.size();
+			if (numChildren == 0)
+				throw new ParseException(header
+						+ ": no child elements for TreeNode for cat: " + cat);
+			// if no cat element present, adjust list with an initial dummy node, 
+			// to avoid code changes in what follows
+			Element elt0 = (Element) childElts.get(0);
+			String elt0name = elt0.getName();
+			if (elt0name.equals("Treenode") || elt0name.equals("Leafnode")) {
+				childElts.add(0, new Element("dummy"));
+				numChildren++;
+			}
 			if (numChildren != 2 && numChildren != 3)
 				throw new ParseException(header
 						+ ": wrong number of child elements: " + numChildren
@@ -540,7 +542,8 @@ public class Testbed {
 
 					Word wTemp = s.getWords().get(0);
 					String morphClass = wTemp.getSemClass();
-					if (morphClass == null || morphClass.length() == 0)
+					// allow any class if no sem class given
+					if (morphClass == null || morphClass.length() == 0 || semClass.equals("NoClass"))
 						morphClass = "NoClass";
 
 					Category lexcat = s.getCategory();

@@ -535,22 +535,23 @@ public class Testbed {
 					semClass = "NoClass";
 
 				// add lex signs, filtered by supercat and rel, reindexed
-				// also check number with matching pos
+				// also check number with matching pos, match on no class
 				int matchPOS = 0;
+				boolean matchNoClass = false;
 				for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
 					Sign s = it.next();
 
 					Word wTemp = s.getWords().get(0);
 					String morphClass = wTemp.getSemClass();
-					// allow any class if no sem class given
-					if (morphClass == null || morphClass.length() == 0 || semClass.equals("NoClass"))
+					if (morphClass == null || morphClass.length() == 0)
 						morphClass = "NoClass";
 
 					Category lexcat = s.getCategory();
 					String supertag = lexcat.getSupertag();
 					LF lexLF = lexcat.getLF();
 
-					if ((!semClass.equals(morphClass))
+					// allow any class if no sem class given
+					if (!(semClass.equals("NoClass") || semClass.equals(morphClass))
 							|| !simpleCat.equals(supertag)
 							|| !containsPred(lexLF, rel)
 							|| !containsRoles(lexLF, roles)
@@ -560,16 +561,26 @@ public class Testbed {
 					}
 					else {
 						UnifyControl.reindex(lexcat);
-						if (s.getWords().get(0).getPOS().equals(pos))
+						if (wTemp.getPOS().equals(pos)) {
 							matchPOS++;
+							if (semClass.equals("NoClass") && morphClass.equals("NoClass"))
+								matchNoClass = true;
+						}
 					}
 				}
 				// filter by pos unless none match
 				if (matchPOS > 0) {
 					for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
 						Sign s = it.next();
-						if (!s.getWords().get(0).getPOS().equals(pos))
+						Word wTemp = s.getWords().get(0);
+						if (!wTemp.getPOS().equals(pos))
 							it.remove();
+						// filter by mismatched class if apropos
+						if (matchNoClass) {
+							String morphClass = wTemp.getSemClass();
+							if (morphClass != null && morphClass.length() != 0)
+								it.remove();
+						}
 					}
 				}
 				if (lexSigns.isEmpty())

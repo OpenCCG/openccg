@@ -573,8 +573,9 @@ public class Testbed {
 					for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
 						Sign s = it.next();
 						Word wTemp = s.getWords().get(0);
-						if (!wTemp.getPOS().equals(pos))
-							it.remove();
+						if (!wTemp.getPOS().equals(pos)) {
+							it.remove(); continue;
+						}
 						// filter by mismatched class if apropos
 						if (matchNoClass) {
 							String morphClass = wTemp.getSemClass();

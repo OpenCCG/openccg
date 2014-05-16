@@ -28,7 +28,6 @@ import opennlp.ccgbank.CCGBankTaskTestbed;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.grammar.RuleGroup;
 import opennlp.ccg.hylo.*;
-
 import opennlp.ccg.lexicon.*;
 import opennlp.ccg.parse.ParseException;
 import opennlp.ccg.synsem.*;
@@ -52,6 +51,9 @@ public class Testbed {
 	private Lexicon lexicon;
 	private RuleGroup rules;
 
+	// supertagger stand-in
+	private SupertaggerStandIn supertaggerStandIn = new SupertaggerStandIn();
+	
 	// results of following deriv
 	private Sign sign = null;
 
@@ -529,12 +531,15 @@ public class Testbed {
 				// nb: for now, need to ignore rel for non-VB pos
 				if (!pos.startsWith("VB"))
 					rel = null;
+				// lex lookup with required supertag
+				lexicon.setSupertagger(supertaggerStandIn);
+				supertaggerStandIn.setTag(simpleCat); 
 				SignHash lexSigns = lexicon.getSignsFromWord(w);
 
 				if (semClass == null || semClass.length() == 0)
 					semClass = "NoClass";
 
-				// add lex signs, filtered by supercat and rel, reindexed
+				// add lex signs, filtered by rel, reindexed
 				// also check number with matching pos, match on no class
 				int matchPOS = 0;
 				boolean matchNoClass = false;
@@ -547,16 +552,13 @@ public class Testbed {
 						morphClass = "NoClass";
 
 					Category lexcat = s.getCategory();
-					String supertag = lexcat.getSupertag();
 					LF lexLF = lexcat.getLF();
 
 					// allow any class if no sem class given
 					if (!(semClass.equals("NoClass") || semClass.equals(morphClass))
-							|| !simpleCat.equals(supertag)
 							|| !containsPred(lexLF, rel)
 							|| !containsRoles(lexLF, roles)
 							|| !containsRel(lexLF, indexRel, s)) {
-						//System.out.println("Mismatch: simpleCat is " + simpleCat + ", supertag is " + supertag);
 						it.remove();
 					}
 					else {
@@ -873,4 +875,26 @@ public class Testbed {
 	
 	// escapes a string using DefaultTokenizer
 	private static String escape(String s) { return DefaultTokenizer.escape(s); }
+	
+	// stands in for a supertagger during lex lookup
+	private static class SupertaggerStandIn implements SupertaggerAdapter {
+		// map for a single key
+		private Map<String,Double> map = new HashMap<String,Double>(2);
+		public Map<String,Double> getSupertags() { return map; }
+		
+		// set tag
+		void setTag(String tag) { map.clear(); map.put(tag, 1.0); }
+		
+		// dummy implementations
+		public void setIncludeGold(boolean includeGold) {}
+		public void resetBeta() {}
+		public void resetBetaToMax() {}
+		public void nextBeta() {}
+		public void previousBeta() {}
+		public boolean hasMoreBetas() { return false; }
+		public boolean hasLessBetas() { return false; }
+		public double[] getBetas() { return new double[]{1.0}; }
+		public void setBetas(double[] betas) {}
+		public double getCurrentBetaValue() { return 1.0; }
+	}
 }

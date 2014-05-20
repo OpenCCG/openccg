@@ -532,6 +532,7 @@ public class Testbed {
 				if (!pos.startsWith("VB"))
 					rel = null;
 				// lex lookup with required supertag
+				// NB: there's no guarantee of getting the right arg roles if the word-cat pair is observed 
 				lexicon.setSupertagger(supertaggerStandIn);
 				supertaggerStandIn.setTag(simpleCat); 
 				SignHash lexSigns = lexicon.getSignsFromWord(w);

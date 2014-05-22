@@ -19,7 +19,7 @@ bin/ccg_editor.py
 bin/Tree.py
 ccgbank/convert/
 ccgbank/data/novel/two-sents.dir/
-ccgbank/extract/
+ccgbank/extract/*
 !ccgbank/extract/grammar.xml
 !ccgbank/extract/*.xsl
 ccgbank/feats/hypertagger/

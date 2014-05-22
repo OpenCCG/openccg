@@ -23,7 +23,7 @@ This release also includes a broad English coverage grammar from the CCGBank and
 If you're working with the latest source version from github, you'll need to download the external libraries from the latest release, as github discourages including binaries in their repos:
 
 * Download the latest release from sourceforge (https://sourceforge.net/projects/openccg/)
-* Unpack the archive and copy over the files from openccg/lib/.
+* Unpack the archive and copy over the files from openccg/lib/, as well as openccg/ccgbank/bin/ner/NERApp.jar
 * Build the latest source as described further below
 
 

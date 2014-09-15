@@ -10,6 +10,7 @@
 *.3bo
 *.mod
 vocab.*
+!vocab.flm
 .project
 .classpath
 bin/ccg2xml.py

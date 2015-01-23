@@ -45,6 +45,7 @@ public class CompositeFilter<E> implements Filter<E> {
 	 * Creates a new composite filter made up of the specified filters.
 	 * @see #CompositeFilter(Collection)
 	 */
+	@SafeVarargs
 	public CompositeFilter(Filter<? super E>... edgeFilters) {
 		this(Arrays.asList(edgeFilters));
 	}

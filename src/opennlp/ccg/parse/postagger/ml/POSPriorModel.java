@@ -112,6 +112,7 @@ public class POSPriorModel extends ConditionalProbabilityTable {
         for (String posTag : allSupertags) {
             posVocab[cnt++] = posTag.intern();
         }
+        br.close();
     }
 
     /** Get the prior probability of this POS/word combo. */

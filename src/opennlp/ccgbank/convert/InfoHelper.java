@@ -88,6 +88,7 @@ public class InfoHelper{
 					bbnSpans.put(sentId,spanList);
 					
 				}
+				inp.close();
 			}
 		}
 		catch(IOException e){
@@ -120,7 +121,7 @@ public class InfoHelper{
 					quotedText=quotedText.trim();
 					quoteInfo.put(key,quotedText);
 				}
-				
+				inp.close();
 			}
 		}
 		catch(IOException e){
@@ -164,6 +165,7 @@ public class InfoHelper{
 						}
 					}
 				}
+				inp.close();
 			}
 		}
 		catch(IOException e){
@@ -191,7 +193,7 @@ public class InfoHelper{
 					String catId=treeParts[2];
 					treeInfo.put(key,catId);
 				}
-				
+				inp.close();
 			}
 
 		}
@@ -602,7 +604,7 @@ public class InfoHelper{
 					print_writer.print("\"/>");
 				print_writer.flush();
 			}
-			
+			print_writer.close();
 		}
 		catch (Exception e){
 			System.err.println ("Error writing info to file");

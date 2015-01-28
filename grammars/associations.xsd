@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 University of Edinburgh (Michael White) 
+$Revision: 1.9 $, $Date: 2004/12/07 12:00:39 $ 
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+  <xsd:annotation>
+  <xsd:documentation>
+    Schema for morph file.
+    
+    A morph file lists all the known word forms (morph items) together with 
+    their stems, parts of speech, semantic classes, associated macros, and 
+    excluded lexical categories.
+    
+    The part of speech is used to help determine the mapping between morph 
+    items and lexical categories.  A morph item is automatically associated 
+    with all open families with matching parts of speech.  With closed 
+    families, the morph item's stem must be listed as a family member, 
+    and the parts of speech must match.  It is also possible to exclude 
+    certain lexical category entries or families, by including the entry 
+    name, qualified entry name or family name in the morph item's list of 
+    excluded lexical categories.
+    
+    NB: A limitation of the current implementation is that the mapping between  
+    morph items and open families can only be done with the stem as the predicate; 
+    to use different predicates, closed families must be used.
+
+    Semantic classes may also be given, for n-gram ranking purposes, and for 
+    restricting the unification of nominals to compatible types, specified 
+    in the types file.  When a category is instantiated, the semantic class 
+    is assigned to the nominal var(s) for the proposition with the reserved name 
+    '[*DEFAULT*]'.  The types of all nominal vars are then propagated to all 
+    other nominal vars with the same name, throughout the category.
+
+    The macros are used to add features or semantic predications to a lexical 
+    category that depend on the particular morph item (e.g. tense, number, case, etc.).
+  </xsd:documentation>
+  </xsd:annotation>
+
+  <xsd:include schemaLocation="categories.xsd"/>
+  
+  <xsd:element name="Associations">
+    <xsd:annotation>
+    <xsd:documentation>
+      The root element, containing a list of associations and feature bundles.
+      Each feature bundle must have a unique name.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element ref="Association" maxOccurs="unbounded"/>
+        <xsd:element ref="FeatureBundle" minOccurs="0" maxOccurs="unbounded"/>
+      </xsd:sequence>
+      <xsd:attribute name="name" type="xsd:string"/>
+    </xsd:complexType>
+    <xsd:unique name="featureBundleNameUniqueness">
+      <xsd:selector xpath="FeatureBundle"/>
+      <xsd:field    xpath="@name"/>
+    </xsd:unique>
+  </xsd:element>
+
+  <xsd:element name="Association">
+    <xsd:annotation>
+    <xsd:documentation>
+      An association between a form of a grammatical unit, a term (i.e. lexical item), the conflated
+      functions of the grammatical unit, a class for the associated discourse entity, and
+      grammatical and semantic features. Excluded word categories (named categories) can
+      also be specified.
+
+      When the lexicogrammar is loaded, a cross-reference check is performed on the names in the
+      lists of associated feature bundles and excluded word categories.
+
+      The mode flag indicates that this association is mode dependent: for instance, it may be
+      phonetic such as tones, graphic such as fonts, or gestural such as a hand shape. When (multi-)
+      modal, the form should contain one or more mode-form pairs, with modes separated by hyphens
+      from forms and pairs separated by colons. When multiple modes are given, only the first one is
+      used for indexing purposes.
+
+      Multimodal forms must be specified in a very orderly fashion. Each form set must be disjoint
+      with all other form sets. If this precondition is observed, whenever a form matches a segment
+      of a character sequence, the mode shall be inferrable. This is extemely important because the
+      order in which multiple foms match a segment of character sequence is not predefined. 
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:attribute name="form"          type="token" use="required"/>
+      <xsd:attribute name="term"          type="token" use="required"/>
+      <xsd:attribute name="functions"     type="token" use="required"/>
+      <xsd:attribute name="entity-class"  type="token" use="required"/>
+      <xsd:attribute name="entity"        type="token"/>
+      <xsd:attribute name="features"      type="listOfFeatureBundleNames"/>
+      <xsd:attribute name="excluded"      type="listOfTokens"/>  
+      <xsd:attribute name="multimodality" type="xsd:boolean"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:element name="FeatureBundle">
+    <xsd:annotation>
+    <xsd:documentation>
+      A feature bundle with a set of grammatical features to add to the grammatical unit and a 
+      bundle of discourse-semantic entities to add to the semantic structure.
+
+      The features are given by a "Features" element, where the id is used to indicate the
+      grammatical unit to which features are to be added.
+
+      The semantic entities are given in an 'Discourse' element; at run time, these HLDS 
+      predications are flattened and added to any predications already present in the combinatory
+      category.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <!-- FIXME refer to features in categories -->
+        <xsd:element name="Features" minOccurs="0" maxOccurs="unbounded"/>
+        <xsd:element name="Discourse" type="hldsPreds" minOccurs="0" maxOccurs="unbounded" />
+      </xsd:sequence>
+      <xsd:attribute name="name" type="FeatureBundleName" use="required"/>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="FeatureBundleName">
+    <xsd:annotation>
+    <xsd:documentation>
+      Feature bundle names must start with @ and are followed by at least one non-whitespace
+      character.
+    </xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:string">
+      <xsd:pattern value="@\S+"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="listOfFeatureBundleNames">
+    <xsd:list itemType="FeatureBundleName"/>
+  </xsd:simpleType>
+
+</xsd:schema>
+

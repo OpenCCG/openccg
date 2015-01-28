@@ -16,7 +16,6 @@
 // License along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
-
 package opennlp.ccg.lexicon;
 
 import opennlp.ccg.grammar.*;
@@ -38,11 +37,11 @@ import gnu.trove.*;
  * Contains words and their associated categories and semantics.
  * Lookup can be filtered by plugging in a supertagger.
  * 
- *
- * @author      Gann Bierner
- * @author      Jason Baldridge
- * @author      Michael White
- * @version     $Revision: 1.78 $, $Date: 2011/10/31 02:01:06 $
+ * @author Gann Bierner
+ * @author Jason Baldridge
+ * @author Michael White
+ * @author Daniel Couto-Vale
+ * @version $Revision: 1.78 $, $Date: 2011/10/31 02:01:06 $
  */
 public class Lexicon { 
     
@@ -124,13 +123,17 @@ public class Lexicon {
     public void init(URL lexiconUrl, URL morphUrl) throws IOException {
         
     	List<Family> lexicon = null;
-        List<MorphItem> morph = null;
-        List<MacroItem> macroModel = null;
+        List<MorphItem> morphItems = null;
+        List<MacroItem> macroItems = null;
 
         // load category families (lexicon), morph forms and macros
         lexicon = getLexicon(lexiconUrl);
-        Pair<List<MorphItem>,List<MacroItem>> morphInfo = getMorph(morphUrl);
-        morph = morphInfo.a; macroModel = morphInfo.b;
+
+        // Load morph items and macro items
+        MorphLoader morphLoader = new MorphLoader();
+        Morph morph = morphLoader.loadMorph(morphUrl);
+        morphItems = morph.getMorphItems();
+        macroItems = morph.getMacroItems();
 
         // index words; also index stems to words, as default preds
         // store indexed coarticulation attrs too
@@ -138,7 +141,7 @@ public class Lexicon {
         _predToWords = new GroupMap<String,Word>();
         _coartAttrs = new HashSet<String>();
         _indexedCoartAttrs = new HashSet<String>();
-        for (MorphItem morphItem : morph) {
+        for (MorphItem morphItem : morphItems) {
             Word surfaceWord = morphItem.getSurfaceWord();
             _words.put(surfaceWord, morphItem);
             _predToWords.put(morphItem.getWord().getStem(), surfaceWord);
@@ -260,7 +263,7 @@ public class Lexicon {
         // nb: could just index MacroItem objects for feature structures too;
         //     this might be a bit cleaner, but life is short
         _macroItems = new HashMap<String, MacroItem>();
-        for (MacroItem mi : macroModel) {
+        for (MacroItem mi : macroItems) {
             String macName = mi.getName();
             FeatureStructure[] specs = mi.getFeatureStructures();
             for (int j=0; j < specs.length; j++) {
@@ -271,7 +274,7 @@ public class Lexicon {
         }
 
         // with morph items, check POS, macro names, excluded list for xref
-        for (MorphItem morphItem : morph) {
+        for (MorphItem morphItem : morphItems) {
             Word w = morphItem.getWord();
             if (!openlex && 
             	!_stems.containsKey(w.getStem() + w.getPOS()) &&
@@ -1142,42 +1145,6 @@ public class Lexicon {
             if (coartRels == null) return (pLook.coartRels == null);
             return coartRels.equals(pLook.coartRels);
         }
-    }
-
-    
-    //
-    // XML loading routines
-    //
-    
-	private class MorphScanner extends XmlScanner {
-    	List<MorphItem> morphItems = new ArrayList<MorphItem>();
-    	List<MacroItem> macroItems = new ArrayList<MacroItem>();
-    	public void handleElement(Element e) {
-            // create morph item
-			if (e.getName().equals("entry")) {
-                try { morphItems.add(new MorphItem(e)); }
-                catch (RuntimeException exc) {
-                    System.err.println("Skipping morph item: " + e.getAttributeValue("word"));
-                    System.err.println(exc.toString());
-                }
-            }
-            // create macro item
-			else if (e.getName().equals("macro")) {
-                try { macroItems.add(new MacroItem(e)); }
-                catch (RuntimeException exc) {
-                    System.err.println("Skipping macro item: " + e.getAttributeValue("name"));
-                    System.err.println(exc.toString());
-                }
-            }
-		}
-	};
-	
-    private Pair<List<MorphItem>,List<MacroItem>> getMorph(URL url) throws IOException {
-    	// scan XML
-    	MorphScanner morphScanner = new MorphScanner();
-    	morphScanner.parse(url);
-        // return morph and macro items
-        return new Pair<List<MorphItem>,List<MacroItem>>(morphScanner.morphItems, morphScanner.macroItems);
     }
     
 	private class LexiconScanner extends XmlScanner {

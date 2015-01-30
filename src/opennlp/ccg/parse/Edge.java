@@ -25,7 +25,7 @@ import java.text.*;
 
 /**
  * <p>
- * An edge is a wrapper for a sign, ie a sign together with a score, and
+ * An edge is a wrapper for a sign, i.e. a sign together with a score, and
  * optionally a list of alternative edges. A representative edge is an edge that
  * represents (stands in for) other edges with the same category (but different
  * LFs) during the chart construction process, stored in the list of alternative

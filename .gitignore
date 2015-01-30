@@ -13,6 +13,7 @@ vocab.*
 !vocab.flm
 .project
 .classpath
+.settings
 bin
 bin/ccg2xml.py
 bin/lex.py

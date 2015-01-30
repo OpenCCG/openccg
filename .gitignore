@@ -14,8 +14,7 @@ vocab.*
 .project
 .classpath
 .settings
-bin
-bin/*
+bin2
 bin/ccg2xml.py
 bin/lex.py
 bin/yacc.py

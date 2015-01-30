@@ -190,7 +190,7 @@ public class Parser
         // parse words
         parse(words);
     }
-    
+
     /**
      * Parses a list of words.
      */
@@ -382,7 +382,7 @@ public class Parser
     
     // initialize the chart
     private void initializeChart(List<SignHash> entries) {
-        chart = new Chart(entries.size(), rules);
+        chart = new ChartStd(entries.size(), rules);
         for (int i=0; i < entries.size(); i++) {
             SignHash wh = entries.get(i);
             for (Sign sign : wh.getSignsSorted()) {

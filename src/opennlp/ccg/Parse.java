@@ -32,7 +32,7 @@ import org.jdom.output.XMLOutputter;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.Nominal;
-import opennlp.ccg.lexicon.ParsingProduct;
+import opennlp.ccg.lexicon.ParseProduct;
 import opennlp.ccg.lexicon.Tokenizer;
 import opennlp.ccg.parse.ParseException;
 import opennlp.ccg.parse.Parser;
@@ -147,7 +147,7 @@ public class Parse {
         		// parse it
         		System.out.println(line);
 			parser.parse(line);
-			ParsingProduct product = parser.getProduct();
+			ParseProduct product = parser.getProduct();
 			List<Sign> result = product.getResult();
 			int numParses = Math.min(nbestListSize, result.size());
 			for (int i=0; i < numParses; i++) {

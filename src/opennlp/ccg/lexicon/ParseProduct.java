@@ -11,7 +11,7 @@ import opennlp.ccg.synsem.Sign;
  *
  * @author Daniel Couto-Vale
  */
-public class ParsingProduct {
+public class ParseProduct {
 
 	/**
 	 * The timestamp of parse start

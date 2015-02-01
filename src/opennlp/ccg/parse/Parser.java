@@ -126,7 +126,7 @@ public class Parser {
 	// flag for whether to glue fragments currently
 	private boolean gluingFragments = false;
 
-	private ParsingProduct product;
+	private ParseProduct product;
 
 	/** Constructor. */
 	public Parser(Grammar grammar) {
@@ -193,7 +193,7 @@ public class Parser {
 	 * Parses a list of words.
 	 */
 	public void parse(List<Word> words) throws ParseException {
-		product = new ParsingProduct();
+		product = new ParseProduct();
 		// set up timing: use limit from prefs unless explicitly set
 		Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
 		if (timeLimit >= 0)
@@ -496,7 +496,7 @@ public class Parser {
 		return new Pair<Sign, Boolean>(retval, (bestF == 1.0));
 	}
 
-	public final ParsingProduct getProduct() {
+	public final ParseProduct getProduct() {
 		return product;
 	}
 

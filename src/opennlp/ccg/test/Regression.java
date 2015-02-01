@@ -26,7 +26,7 @@ import java.util.prefs.Preferences;
 import opennlp.ccg.TextCCG;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.*;
-import opennlp.ccg.lexicon.ParsingProduct;
+import opennlp.ccg.lexicon.ParseProduct;
 import opennlp.ccg.lexicon.Tokenizer;
 import opennlp.ccg.lexicon.Word;
 import opennlp.ccg.ngrams.*;
@@ -503,7 +503,7 @@ public class Regression {
                 		parser.parse(testItem.sentence);
                 	}
                 	// retrieve results
-            		ParsingProduct product = parser.getProduct(); 
+            		ParseProduct product = parser.getProduct(); 
                     parses = product.getResult();
                     parseScores = product.getScores();
                     parsed = true;
@@ -531,7 +531,7 @@ public class Regression {
                     e.printStackTrace(System.err);
                 }
                  
-                ParsingProduct product = parser.getProduct();
+                ParseProduct product = parser.getProduct();
                 opennlp.ccg.parse.Chart chart = product.getChart();
                 // update parse stats
                 int count = chart != null ? chart.edgeCount() : 0;

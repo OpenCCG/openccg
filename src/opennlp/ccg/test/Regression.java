@@ -534,17 +534,17 @@ public class Regression {
                 ParseProduct product = parser.getProduct();
                 opennlp.ccg.parse.Chart chart = product.getChart();
                 // update parse stats
-                int count = chart != null ? chart.edgeCount() : 0;
+                int count = chart != null ? chart.getEdgeCount() : 0;
                 pTotalEdges += count;
                 if (count > pMaxEdges) pMaxEdges = count;
                 if (parsedComplete) {
                 	pTotalEdgesGood += count;
                 	if (count > pMaxEdgesGood) pMaxEdgesGood = count;
                 }
-                count = chart != null ? chart.unpackingEdgeCount() : 0;
+                count = chart != null ? chart.getUnpackingEdgeCount() : 0;
                 pTotalUnpackingEdges += count;
                 if (count > pMaxUnpackingEdges) pMaxUnpackingEdges = count;
-                int cellMax = chart.maxCellSize();
+                int cellMax = chart.getMaxCellSize();
                 pTotalCellMax += cellMax;
                 if (cellMax > pMaxCellMax) pMaxCellMax = cellMax;
                 if (parsedComplete) {

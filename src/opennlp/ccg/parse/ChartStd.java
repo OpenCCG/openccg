@@ -196,12 +196,12 @@ public class ChartStd implements Chart {
 	}
 
 	/** Sets the n-best pruning val. */
-	public void setPruneVal(int n) {
+	public void setPruneValue(int n) {
 		_pruneVal = n;
 	}
 
 	/** Sets the time limit. */
-	public void setTimeLimit(int timeLimit) {
+	public void setParseTimeLimit(int timeLimit) {
 		_timeLimit = timeLimit;
 	}
 
@@ -216,22 +216,22 @@ public class ChartStd implements Chart {
 	}
 
 	/** Sets the cell limit on non-lexical edges. */
-	public void setCellLimit(int cellLimit) {
+	public void setCellPruneValue(int cellLimit) {
 		_cellLimit = cellLimit;
 	}
 
 	/** Returns the edge count prior to unpacking. */
-	public int edgeCount() {
+	public int getEdgeCount() {
 		return _numEdges;
 	}
 
 	/** Returns the edge count while unpacking. */
-	public int unpackingEdgeCount() {
+	public int getUnpackingEdgeCount() {
 		return _numUnpackingEdges;
 	}
 
 	/** Returns the max cell size prior to unpacking. */
-	public int maxCellSize() {
+	public int getMaxCellSize() {
 		return _maxCellSize;
 	}
 
@@ -797,8 +797,8 @@ public class ChartStd implements Chart {
 		return sb.toString();
 	}
 
-	/** Prints the signs in the chart to System.out. */
-	public void printChart() {
+	@Override
+	public final void printTo(PrintStream out) {
 		int[] sizes = new int[_size];
 		int rows = 0;
 		for (int i = 0; i < _size; i++) {
@@ -827,47 +827,47 @@ public class ChartStd implements Chart {
 		}
 
 		int fullwidth = _size * (maxwidth + 3) - 1;
-		System.out.print(" ");
+		out.print(" ");
 		for (String w : words) {
-			System.out.print(w);
+			out.print(w);
 			int pad = (maxwidth + 3) - w.length();
 			for (int p = 0; p < pad; p++)
-				System.out.print(" ");
+				out.print(" ");
 		}
-		System.out.print("|");
-		System.out.println();
+		out.print("|");
+		out.println();
 		for (int p = 0; p < fullwidth; p++)
-			System.out.print("-");
-		System.out.print("| ");
-		System.out.println();
+			out.print("-");
+		out.print("| ");
+		out.println();
 
 		for (int i = 0, entry = sizes[0], e = 0; i < rows; i++) {
 			if (i == entry) {
-				System.out.print("|");
+				out.print("|");
 				for (int p = 0; p < fullwidth; p++)
-					System.out.print("-");
-				System.out.print("|");
-				System.out.println();
+					out.print("-");
+				out.print("|");
+				out.println();
 				entry += sizes[++e];
 			}
-			System.out.print("| ");
+			out.print("| ");
 
 			for (int j = 0; j < _size; j++) {
 				int pad = 1 + maxwidth;
 				if (toprint[i][j] != null) {
-					System.out.print(toprint[i][j]);
+					out.print(toprint[i][j]);
 					pad -= toprint[i][j].length();
 				}
 				for (int p = 0; p < pad; p++)
-					System.out.print(" ");
-				System.out.print("| ");
+					out.print(" ");
+				out.print("| ");
 			}
-			System.out.println();
+			out.println();
 		}
-		System.out.print("|");
+		out.print("|");
 		for (int p = 0; p < fullwidth; p++)
-			System.out.print("-");
-		System.out.print("| ");
-		System.out.println();
+			out.print("-");
+		out.print("| ");
+		out.println();
 	}
 }

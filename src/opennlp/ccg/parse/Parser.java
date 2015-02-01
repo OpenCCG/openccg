@@ -223,7 +223,7 @@ public class Parser {
 			if (debugParse) {
 				System.out.println(e);
 				System.out.println("Chart for failed parse:");
-				product.getChart().printChart();
+				product.getChart().printTo(System.out);
 			}
 			// rethrow
 			throw e;
@@ -355,7 +355,7 @@ public class Parser {
 					if (debugParse) {
 						System.out.println(e);
 						System.out.println("Chart for failed parse:");
-						product.getChart().printChart();
+						product.getChart().printTo(System.out);
 					}
 					// reset supertagger in lexicon, turn gluing off
 					grammar.lexicon.setSupertagger(null);
@@ -380,11 +380,11 @@ public class Parser {
 		Chart chart = product.getChart();
 		if (signScorer != null)
 			chart.setSignScorer(signScorer);
-		chart.setPruneVal(product.getPruneValue());
-		chart.setTimeLimit(product.getParseLimit());
+		chart.setPruneValue(product.getPruneValue());
+		chart.setParseTimeLimit(product.getParseLimit());
 		chart.setStartTime(product.getStartTime());
 		chart.setEdgeLimit(product.getEdgeLimit());
-		chart.setCellLimit(product.getCellPruneValue());
+		chart.setCellPruneValue(product.getCellPruneValue());
 		// do parsing
 		parse(entries.size());
 	}

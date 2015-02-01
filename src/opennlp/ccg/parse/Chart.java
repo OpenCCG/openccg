@@ -1,5 +1,6 @@
 package opennlp.ccg.parse;
 
+import java.io.PrintStream;
 import java.util.List;
 
 import opennlp.ccg.synsem.Sign;
@@ -12,25 +13,30 @@ import opennlp.ccg.synsem.SignScorer;
  */
 public interface Chart {
 
-	void printChart();
+	/**
+	 * Prints th signs in the chart to a print stream.
+	 * 
+	 * @param out the print stream
+	 */
+	void printTo(PrintStream out);
 
-	int edgeCount();
+	int getEdgeCount();
 
-	int unpackingEdgeCount();
+	int getUnpackingEdgeCount();
 
-	int maxCellSize();
+	int getMaxCellSize();
 
 	void setSignScorer(SignScorer signScorer);
 
-	void setPruneVal(int pruneValToUse);
+	void setPruneValue(int pruneValue);
 
-	void setTimeLimit(int timeLimitToUse);
+	void setParseTimeLimit(int parseTimeLimit);
 
 	void setStartTime(long startTime);
 
-	void setEdgeLimit(int edgeLimitToUse);
+	void setEdgeLimit(int edgeLimit);
 
-	void setCellLimit(int cellPruneValToUse);
+	void setCellPruneValue(int cellPruneValue);
 
 	/**
 	 * Insterts an edge for a given sign into cell (x,y)

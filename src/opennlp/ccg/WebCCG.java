@@ -120,7 +120,7 @@ public class WebCCG {
 		continue;
 	    try {
 		parser.parse(input);
-		List<Sign> parses = parser.getResult();
+		List<Sign> parses = parser.getProduct().getResult();
 		Sign[] results = new Sign[parses.size()];
 		parses.toArray(results);
 		int resLength = results.length;

@@ -21,6 +21,7 @@ package opennlp.ccg;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom.Document;
@@ -31,6 +32,7 @@ import org.jdom.output.XMLOutputter;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.Nominal;
+import opennlp.ccg.lexicon.ParsingProduct;
 import opennlp.ccg.lexicon.Tokenizer;
 import opennlp.ccg.parse.ParseException;
 import opennlp.ccg.parse.Parser;
@@ -145,9 +147,11 @@ public class Parse {
         		// parse it
         		System.out.println(line);
 			parser.parse(line);
-			int numParses = Math.min(nbestListSize, parser.getResult().size());
+			ParsingProduct product = parser.getProduct();
+			List<Sign> result = product.getResult();
+			int numParses = Math.min(nbestListSize, result.size());
 			for (int i=0; i < numParses; i++) {
-			    Sign thisParse = parser.getResult().get(i);
+			    Sign thisParse = result.get(i);
 			    // convert lf
 			    Category cat = thisParse.getCategory();
 			    LF convertedLF = null;

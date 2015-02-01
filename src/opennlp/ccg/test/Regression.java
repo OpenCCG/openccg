@@ -26,6 +26,7 @@ import java.util.prefs.Preferences;
 import opennlp.ccg.TextCCG;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.*;
+import opennlp.ccg.lexicon.ParsingProduct;
 import opennlp.ccg.lexicon.Tokenizer;
 import opennlp.ccg.lexicon.Word;
 import opennlp.ccg.ngrams.*;
@@ -502,8 +503,9 @@ public class Regression {
                 		parser.parse(testItem.sentence);
                 	}
                 	// retrieve results
-                    parses = parser.getResult();
-                    parseScores = parser.getScores();
+            		ParsingProduct product = parser.getProduct(); 
+                    parses = product.getResult();
+                    parseScores = product.getScores();
                     parsed = true;
                     parsedComplete = !parses.get(0).getCategory().isFragment();
                     // get LF of best parse, if needed
@@ -528,35 +530,37 @@ public class Regression {
                     System.err.println("Uncaught exception in parsing: " + testItem.sentence);
                     e.printStackTrace(System.err);
                 }
-                  
+                 
+                ParsingProduct product = parser.getProduct();
+                opennlp.ccg.parse.Chart chart = product.getChart();
                 // update parse stats
-                int count = parser.edgeCount();
+                int count = chart != null ? chart.edgeCount() : 0;
                 pTotalEdges += count;
                 if (count > pMaxEdges) pMaxEdges = count;
                 if (parsedComplete) {
                 	pTotalEdgesGood += count;
                 	if (count > pMaxEdgesGood) pMaxEdgesGood = count;
                 }
-                count = parser.unpackingEdgeCount();
+                count = chart != null ? chart.unpackingEdgeCount() : 0;
                 pTotalUnpackingEdges += count;
                 if (count > pMaxUnpackingEdges) pMaxUnpackingEdges = count;
-                int cellMax = parser.maxCellSize();
+                int cellMax = chart.maxCellSize();
                 pTotalCellMax += cellMax;
                 if (cellMax > pMaxCellMax) pMaxCellMax = cellMax;
                 if (parsedComplete) {
                 	pTotalCellMaxGood += cellMax;
                     if (cellMax > pMaxCellMaxGood) pMaxCellMaxGood = cellMax;
                 }
-                int time = parser.getLexTime();
+                int time = product.getLexTime();
                 pTotalLexTime += time;
                 if (time > pMaxLexTime) pMaxLexTime = time;
-                time = parser.getParseTime();
+                time = product.getParseTime();
                 pTotalParseTime += time;
                 if (time > pMaxParseTime) pMaxParseTime = time;
-                time = parser.getChartTime();
+                time = product.getChartTime();
                 pTotalChartTime += time;
                 if (time > pMaxChartTime) pMaxChartTime = time;
-                time = parser.getUnpackingTime();
+                time = product.getUnpackingTime();
                 pTotalUnpackingTime += time;
                 if (time > pMaxUnpackingTime) pMaxUnpackingTime = time;
                 double beta = parser.getSupertaggerBeta();

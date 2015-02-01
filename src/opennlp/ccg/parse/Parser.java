@@ -341,58 +341,6 @@ public class Parser {
 		}
 	}
 
-	/**
-	 * Returns the results of the parse.
-	 */
-	public List<Sign> getResult() {
-		return product.getResult();
-	}
-
-	/**
-	 * Returns the corresponding scores for the results of the parse.
-	 */
-	public List<Double> getScores() {
-		return product.getScores();
-	}
-
-	/** Returns the edge count prior to unpacking. */
-	public int edgeCount() {
-		return (product.getChart() != null) ? product.getChart().edgeCount() : 0;
-	}
-
-	/** Returns the edge count while unpacking. */
-	public int unpackingEdgeCount() {
-		return (product.getChart() != null) ? product.getChart().unpackingEdgeCount() : 0;
-	}
-
-	/** Returns the max cell size prior to unpacking. */
-	public int maxCellSize() {
-		return (product.getChart() != null) ? product.getChart().maxCellSize() : 0;
-	}
-
-	/** Returns the lexical lookup time for the latest parse. */
-	public int getLexTime() {
-		return product.getLexTime();
-	}
-
-	/**
-	 * Returns the overall parse time (but excluding lex lookup) for the latest
-	 * parse.
-	 */
-	public int getParseTime() {
-		return product.getParseTime();
-	}
-
-	/** Returns the time spent constructing the chart. */
-	public int getChartTime() {
-		return product.getChartTime();
-	}
-
-	/** Returns the time spent unpacking. */
-	public int getUnpackingTime() {
-		return product.getUnpackingTime();
-	}
-
 	/** Returns the supertagger's final beta value (or 0 if none). */
 	public double getSupertaggerBeta() {
 		return (supertagger != null) ? supertagger.getCurrentBetaValue() : 0;
@@ -546,6 +494,10 @@ public class Parser {
 			}
 		}
 		return new Pair<Sign, Boolean>(retval, (bestF == 1.0));
+	}
+
+	public final ParsingProduct getProduct() {
+		return product;
 	}
 
 }

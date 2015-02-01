@@ -580,7 +580,7 @@ public class Grammar {
         catch (ParseException pe) {
             return new ArrayList<Word>(0);
         }
-        List<Sign> parses = parser.getResult();
+        List<Sign> parses = parser.getProduct().getResult();
         // return words of first parse
         Sign sign = parses.get(0);
         return sign.getWords();

@@ -13,139 +13,155 @@ import opennlp.ccg.synsem.Sign;
  */
 public class ParsingProduct {
 
-	// Form recognition duration
-	private int lexTime = 0;
-
-	// Chart construction start time
+	/**
+	 * The timestamp of parse start
+	 */
 	private long startTime = 0;
 
-	// Current parse duration
+	/**
+	 * The duration of parse
+	 */
 	private int parseTime = 0;
 
-	// Current chart construction duration
+	/**
+	 * The duration of form recognition
+	 */
+	private int lexTime = 0;
+
+	/**
+	 * The duration of chart construction
+	 */
 	private int chartTime = 0;
 
-	// Current unpacking time
+	/**
+	 * The duration of supertag unpacking
+	 */
 	private int unpackingTime = 0;
 
-	// Current chart
+	/**
+	 * The chart
+	 */
 	private Chart chart = null;
 
-	// Current parse results
+	/**
+	 * The symbols
+	 */
 	private List<Sign> result = new ArrayList<Sign>();
 
-	// Current parse scores
+	/**
+	 * The symbol scores
+	 */
 	private List<Double> scores = new ArrayList<Double>();
 
 	/**
 	 * @return the lexTime
 	 */
-	public int getLexTime() {
+	public final int getLexTime() {
 		return lexTime;
 	}
 
 	/**
 	 * @param lexTime the lexTime to set
 	 */
-	public void setLexTime(int lexTime) {
+	public final void setLexTime(int lexTime) {
 		this.lexTime = lexTime;
 	}
 
 	/**
 	 * @return the startTime
 	 */
-	public long getStartTime() {
+	public final long getStartTime() {
 		return startTime;
 	}
 
 	/**
 	 * @param startTime the startTime to set
 	 */
-	public void setStartTime(long startTime) {
+	public final void setStartTime(long startTime) {
 		this.startTime = startTime;
 	}
 
 	/**
 	 * @return the parseTime
 	 */
-	public int getParseTime() {
+	public final int getParseTime() {
 		return parseTime;
 	}
 
 	/**
 	 * @param parseTime the parseTime to set
 	 */
-	public void setParseTime(int parseTime) {
+	public final void setParseTime(int parseTime) {
 		this.parseTime = parseTime;
 	}
 
 	/**
 	 * @return the chartTime
 	 */
-	public int getChartTime() {
+	public final int getChartTime() {
 		return chartTime;
 	}
 
 	/**
 	 * @param chartTime the chartTime to set
 	 */
-	public void setChartTime(int chartTime) {
+	public final void setChartTime(int chartTime) {
 		this.chartTime = chartTime;
 	}
 
 	/**
 	 * @return the unpackingTime
 	 */
-	public int getUnpackingTime() {
+	public final int getUnpackingTime() {
 		return unpackingTime;
 	}
 
 	/**
 	 * @param unpackingTime the unpackingTime to set
 	 */
-	public void setUnpackingTime(int unpackingTime) {
+	public final void setUnpackingTime(int unpackingTime) {
 		this.unpackingTime = unpackingTime;
 	}
 
 	/**
 	 * @return the chart
 	 */
-	public Chart getChart() {
+	public final Chart getChart() {
 		return chart;
 	}
 
 	/**
 	 * @param chart the chart to set
 	 */
-	public void setChart(Chart chart) {
+	public final void setChart(Chart chart) {
 		this.chart = chart;
 	}
 
 	/**
 	 * @return the result
 	 */
-	public List<Sign> getResult() {
+	public final List<Sign> getResult() {
 		return result;
 	}
 
 	/**
 	 * @param result the result to set
 	 */
-	public void setResult(List<Sign> result) {
+	public final void setResult(List<Sign> result) {
 		this.result = result;
 	}
 
 	/**
 	 * @return the scores
 	 */
-	public List<Double> getScores() {
+	public final List<Double> getScores() {
 		return scores;
 	}
 
 	/**
 	 * @param scores the scores to set
 	 */
-	public void setScores(List<Double> scores) {
+	public final void setScores(List<Double> scores) {
 		this.scores = scores;
 	}
 

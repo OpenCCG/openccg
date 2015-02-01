@@ -30,6 +30,7 @@ import java.text.*;
  * represents (stands in for) other edges with the same category (but different
  * LFs) during the chart construction process, stored in the list of alternative
  * edges; it is considered disjunctive when there is more than one alternative.
+ * 
  * Note that initially a representative edge will be in its list of
  * alternatives, but it can be removed during pruning.
  * </p>

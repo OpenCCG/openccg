@@ -419,7 +419,7 @@ public class Parser {
 			}
 		}
 		// glue fragments if apropos
-		if (gluingFragments && chart.cellIsEmpty(0, size - 1)) {
+		if (gluingFragments && chart.isEmpty(0, size - 1)) {
 			for (int j = 1; j < size; j++) {
 				for (int i = j - 1; i >= 0; i--) {
 					for (int k = i; k < j; k++) {

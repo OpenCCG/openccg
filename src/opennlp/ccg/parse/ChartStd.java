@@ -238,10 +238,20 @@ public class ChartStd implements Chart {
 	// -----------------------------------------------------------
 	// Chart construction
 
-	/**
-	 * Inserts a sign at the given cell (modulo pruning). Returns true if an
-	 * edge for the sign is added as a new equiv class.
-	 */
+	/** Returns the given cell (ensuring non-null). */
+	protected Cell get(int x, int y) {
+		if (_table[x][y] == null)
+			_table[x][y] = new Cell();
+		return _table[x][y];
+	}
+
+	/** Returns the signs for a given cell (ensuring non-null). */
+	protected SignHash getSigns(int x, int y) {
+		Cell cell = get(x, y);
+		return cell.getSigns();
+	}
+
+	@Override
 	public boolean insert(int x, int y, Sign w) {
 		Cell cell = get(x, y);
 		boolean retval = false;
@@ -268,26 +278,8 @@ public class ChartStd implements Chart {
 		return retval;
 	}
 
-	/** Returns the given cell (ensuring non-null). */
-	protected Cell get(int x, int y) {
-		if (_table[x][y] == null)
-			_table[x][y] = new Cell();
-		return _table[x][y];
-	}
-
-	/** Returns the signs for a given cell (ensuring non-null). */
-	protected SignHash getSigns(int x, int y) {
-		Cell cell = get(x, y);
-		return cell.getSigns();
-	}
-
-	/**
-	 * Inserts edges into (x,y) that result from applying unary rules to those
-	 * already in (x,y).
-	 * 
-	 * @throws ParseException
-	 */
-	public void insertCell(int x, int y) throws ParseException {
+	@Override
+	public final void insertCell(int x, int y) throws ParseException {
 		if (_table[x][y] == null)
 			return;
 		List<Sign> inputs = _table[x][y].getSignsSorted();
@@ -316,12 +308,7 @@ public class ChartStd implements Chart {
 		}
 	}
 
-	/**
-	 * Inserts edges into (x3,y3) resulting from combining those in (x1,y1) and
-	 * (x2,y2).
-	 * 
-	 * @throws ParseException
-	 */
+	@Override
 	public void insertCell(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException {
 		if (_table[x1][y1] == null)
 			return;
@@ -339,19 +326,14 @@ public class ChartStd implements Chart {
 		}
 	}
 
-	/**
-	 * Inserts fragmentary edges into (x3,y3), if non-empty, resulting from
-	 * combining those in (x1,y1) and (x2,y2) using the glue rule.
-	 * 
-	 * @throws ParseException
-	 */
+	@Override
 	public void insertCellFrag(int x1, int y1, int x2, int y2, int x3, int y3)
 			throws ParseException {
 		if (_table[x1][y1] == null)
 			return;
 		if (_table[x2][y2] == null)
 			return;
-		if (!cellIsEmpty(x3, y3))
+		if (!isEmpty(x3, y3))
 			return;
 		List<Sign> inputs1 = _table[x1][y1].getSignsSorted();
 		List<Sign> inputs2 = _table[x2][y2].getSignsSorted();
@@ -365,8 +347,12 @@ public class ChartStd implements Chart {
 		}
 	}
 
-	// check edge and time limit
-	private void checkLimits() throws ParseException {
+	/**
+	 * Checks limits
+	 * 
+	 * @throws ParseException if limits are exceeded
+	 */
+	private final void checkLimits() throws ParseException {
 		if (_edgeLimit > 0 && _numEdges > _edgeLimit) {
 			throw new ParseException(ParseException.EDGE_LIMIT_EXCEEDED);
 		}
@@ -378,8 +364,8 @@ public class ChartStd implements Chart {
 		}
 	}
 
-	/** Returns whether the given cell is empty. */
-	public boolean cellIsEmpty(int x, int y) {
+	@Override
+	public boolean isEmpty(int x, int y) {
 		Cell cell = get(x, y);
 		return cell.list.isEmpty();
 	}

@@ -108,21 +108,6 @@ public class Parser {
 	/** Edge limit. (Default is none.) */
 	protected int edgeLimit = -1;
 
-	// start time for chart construction
-	private long startTime = 0;
-
-	// lex lookup time
-	private int lexTime = 0;
-
-	// parse time
-	private int parseTime = 0;
-
-	// chart construction time
-	private int chartTime = 0;
-
-	// unpacking time
-	private int unpackingTime = 0;
-
 	// time limit to use
 	private int timeLimitToUse = NO_TIME_LIMIT;
 
@@ -138,17 +123,10 @@ public class Parser {
 	// lazy unpacking flag to use
 	private boolean lazyUnpackingToUse = true;
 
-	// current chart
-	private Chart chart = null;
-
-	// parse results
-	private ArrayList<Sign> result;
-
-	// parse scores
-	private ArrayList<Double> scores;
-
 	// flag for whether to glue fragments currently
 	private boolean gluingFragments = false;
+
+	private ParsingProduct product;
 
 	/** Constructor. */
 	public Parser(Grammar grammar) {
@@ -215,6 +193,7 @@ public class Parser {
 	 * Parses a list of words.
 	 */
 	public void parse(List<Word> words) throws ParseException {
+		product = new ParsingProduct();
 		// set up timing: use limit from prefs unless explicitly set
 		Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
 		if (timeLimit >= 0)
@@ -253,7 +232,7 @@ public class Parser {
 			for (Word w : words) {
 				entries.add(lexicon.getSignsFromWord(w));
 			}
-			lexTime = (int) (System.currentTimeMillis() - lexStartTime);
+			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));;
 			// do parsing
 			parseEntries(entries);
 		} catch (LexException e) {
@@ -268,7 +247,7 @@ public class Parser {
 			if (debugParse) {
 				System.out.println(e);
 				System.out.println("Chart for failed parse:");
-				chart.printChart();
+				product.getChart().printChart();
 			}
 			// rethrow
 			throw e;
@@ -301,7 +280,7 @@ public class Parser {
 					Word word = words.get(i);
 					entries.add(lexicon.getSignsFromWord(word));
 				}
-				lexTime = (int) (System.currentTimeMillis() - lexStartTime);
+				product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));;
 				// do parsing
 				parseEntries(entries);
 				// done
@@ -350,7 +329,7 @@ public class Parser {
 					if (debugParse) {
 						System.out.println(e);
 						System.out.println("Chart for failed parse:");
-						chart.printChart();
+						product.getChart().printChart();
 					}
 					// reset supertagger in lexicon, turn gluing off
 					grammar.lexicon.setSupertagger(null);
@@ -366,34 +345,34 @@ public class Parser {
 	 * Returns the results of the parse.
 	 */
 	public List<Sign> getResult() {
-		return result;
+		return product.getResult();
 	}
 
 	/**
 	 * Returns the corresponding scores for the results of the parse.
 	 */
 	public List<Double> getScores() {
-		return scores;
+		return product.getScores();
 	}
 
 	/** Returns the edge count prior to unpacking. */
 	public int edgeCount() {
-		return (chart != null) ? chart.edgeCount() : 0;
+		return (product.getChart() != null) ? product.getChart().edgeCount() : 0;
 	}
 
 	/** Returns the edge count while unpacking. */
 	public int unpackingEdgeCount() {
-		return (chart != null) ? chart.unpackingEdgeCount() : 0;
+		return (product.getChart() != null) ? product.getChart().unpackingEdgeCount() : 0;
 	}
 
 	/** Returns the max cell size prior to unpacking. */
 	public int maxCellSize() {
-		return (chart != null) ? chart.maxCellSize() : 0;
+		return (product.getChart() != null) ? product.getChart().maxCellSize() : 0;
 	}
 
 	/** Returns the lexical lookup time for the latest parse. */
 	public int getLexTime() {
-		return lexTime;
+		return product.getLexTime();
 	}
 
 	/**
@@ -401,17 +380,17 @@ public class Parser {
 	 * parse.
 	 */
 	public int getParseTime() {
-		return parseTime;
+		return product.getParseTime();
 	}
 
 	/** Returns the time spent constructing the chart. */
 	public int getChartTime() {
-		return chartTime;
+		return product.getChartTime();
 	}
 
 	/** Returns the time spent unpacking. */
 	public int getUnpackingTime() {
-		return unpackingTime;
+		return product.getUnpackingTime();
 	}
 
 	/** Returns the supertagger's final beta value (or 0 if none). */
@@ -421,14 +400,15 @@ public class Parser {
 
 	// parses from lex entries
 	private void parseEntries(List<SignHash> entries) throws ParseException {
-		startTime = System.currentTimeMillis();
+		product.setStartTime(System.currentTimeMillis());
 		// set up chart
 		initializeChart(entries);
+		Chart chart = product.getChart();
 		if (signScorer != null)
 			chart.setSignScorer(signScorer);
 		chart.setPruneVal(pruneValToUse);
 		chart.setTimeLimit(timeLimitToUse);
-		chart.setStartTime(startTime);
+		chart.setStartTime(product.getStartTime());
 		chart.setEdgeLimit(edgeLimitToUse);
 		chart.setCellLimit(cellPruneValToUse);
 		// do parsing
@@ -437,7 +417,7 @@ public class Parser {
 
 	// initialize the chart
 	private void initializeChart(List<SignHash> entries) {
-		chart = new ChartStd(entries.size(), rules);
+		Chart chart = new ChartStd(entries.size(), rules);
 		for (int i = 0; i < entries.size(); i++) {
 			SignHash wh = entries.get(i);
 			for (Sign sign : wh.getSignsSorted()) {
@@ -446,10 +426,12 @@ public class Parser {
 				chart.insert(i, i, sign);
 			}
 		}
+		product.setChart(chart);
 	}
 
 	// actual CKY parsing
 	private void parse(int size) throws ParseException {
+		Chart chart = product.getChart();
 		// fill in chart
 		for (int i = 0; i < size; i++) {
 			chart.insertCell(i, i);
@@ -472,17 +454,18 @@ public class Parser {
 				}
 			}
 		}
-		chartTime = (int) (System.currentTimeMillis() - startTime);
+		product.setChartTime((int) (System.currentTimeMillis() - product.getStartTime()));
 		// extract results
 		createResult(size);
-		parseTime = (int) (System.currentTimeMillis() - startTime);
-		unpackingTime = parseTime - chartTime;
+		product.setParseTime((int) (System.currentTimeMillis() - product.getStartTime()));
+		product.setUnpackingTime(product.getParseTime() - product.getChartTime());
 	}
 
 	// create answer ArrayList
 	private void createResult(int size) throws ParseException {
-		result = new ArrayList<Sign>();
-		scores = new ArrayList<Double>();
+		List<Sign> result = new ArrayList<Sign>();
+		List<Double> scores = new ArrayList<Double>();
+		Chart chart = product.getChart();
 		// unpack top
 		List<Edge> unpacked = (lazyUnpackingToUse) ? chart.lazyUnpack(0, size - 1) : chart.unpack(
 				0, size - 1);
@@ -495,13 +478,15 @@ public class Parser {
 		if (result.size() == 0) {
 			throw new ParseException("Unable to parse");
 		}
+		product.setResult(result);
+		product.setScores(scores);
 	}
 
 	// set parse time when giving up
 	private void setGiveUpTime() {
-		chartTime = (int) (System.currentTimeMillis() - startTime);
-		parseTime = chartTime;
-		unpackingTime = 0;
+		product.setChartTime((int) (System.currentTimeMillis() - product.getStartTime()));
+		product.setParseTime(product.getChartTime());
+		product.setUnpackingTime(0);
 	}
 
 	/**
@@ -545,6 +530,7 @@ public class Parser {
 	 */
 	public Pair<Sign, Boolean> oracleBest(LF goldLF) {
 		Sign retval = null;
+		List<Sign> result = product.getResult();
 		double bestF = 0.0;
 		for (Sign sign : result) {
 			Category cat = sign.getCategory().copy();

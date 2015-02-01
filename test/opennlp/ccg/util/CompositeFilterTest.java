@@ -14,8 +14,7 @@ public class CompositeFilterTest {
 	Integer target = 37;
 	Filter<Integer> lessThanFilter, greaterThanFilter;
 	CompositeFilter<Integer> bothFilter, equalToFilter;
-	
-	@SuppressWarnings("unchecked")
+
 	@Before
 	public void setUp() throws Exception {
 		visited = new VisitedFilter<Integer>();

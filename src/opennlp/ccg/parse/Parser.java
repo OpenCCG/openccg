@@ -108,21 +108,6 @@ public class Parser {
 	/** Edge limit. (Default is none.) */
 	protected int edgeLimit = -1;
 
-	// time limit to use
-	private int timeLimitToUse = NO_TIME_LIMIT;
-
-	// edge limit to use
-	private int edgeLimitToUse = NO_EDGE_LIMIT;
-
-	// pruning value to use
-	private int pruneValToUse = NO_PRUNING;
-
-	// pruning value to use
-	private int cellPruneValToUse = NO_PRUNING;
-
-	// lazy unpacking flag to use
-	private boolean lazyUnpackingToUse = true;
-
 	// flag for whether to glue fragments currently
 	private boolean gluingFragments = false;
 
@@ -176,53 +161,44 @@ public class Parser {
 	}
 
 	/**
-	 * Parses a string.
+	 * Parses a character sequence.
 	 *
-	 * @param characterSequence the character sequence
+	 * @param string the character sequence
 	 * @exception ParseException thrown if a parse can't be found for the entire
 	 *                string
 	 */
-	public void parse(String characterSequence) throws ParseException {
+	public void parse(String string) throws ParseException {
 		// tokenize
-		List<Word> words = lexicon.tokenizer.tokenize(characterSequence);
+		List<Word> words = lexicon.tokenizer.tokenize(string);
 		// parse words
 		parse(words);
 	}
 
 	/**
-	 * Parses a list of words.
+	 * Parses a list of words
+	 * 
+	 * @param words the list of words
+	 * @throws ParseException
 	 */
-	public void parse(List<Word> words) throws ParseException {
-		product = new ParseProduct();
-		// set up timing: use limit from prefs unless explicitly set
-		Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
-		if (timeLimit >= 0)
-			timeLimitToUse = timeLimit;
-		else
-			timeLimitToUse = prefs.getInt(PARSE_TIME_LIMIT, NO_TIME_LIMIT);
-		if (edgeLimit >= 0)
-			edgeLimitToUse = edgeLimit;
-		else
-			edgeLimitToUse = prefs.getInt(PARSE_EDGE_LIMIT, NO_EDGE_LIMIT);
-		if (pruneVal >= 0)
-			pruneValToUse = pruneVal;
-		else
-			pruneValToUse = prefs.getInt(PARSE_PRUNING_VALUE, NO_PRUNING);
-		if (cellPruneVal >= 0)
-			cellPruneValToUse = cellPruneVal;
-		else
-			cellPruneValToUse = prefs.getInt(PARSE_CELL_PRUNING_VALUE, NO_PRUNING);
-		if (lazyUnpacking != null)
-			lazyUnpackingToUse = lazyUnpacking;
-		else
-			lazyUnpackingToUse = prefs.getBoolean(PARSE_LAZY_UNPACKING, true);
-		
-		// supertagger case: iterative beta-best
+	public final void parse(List<Word> words) throws ParseException {
+		makeProduct();
+
+		// For supertagger, parse iterative beta-best
 		if (supertagger != null) {
-			parseWithSupertagger(words);
+			parseIterativeBetaBest(words);
 			return;
+		} else {
+			parseOnce(words);
 		}
-		// otherwise just once
+	}
+
+	/**
+	 * Parses a list of words
+	 * 
+	 * @param words the list of words
+	 * @throws ParseException
+	 */
+	private final void parseOnce(List<Word> words) throws ParseException {
 		try {
 			// init
 			long lexStartTime = System.currentTimeMillis();
@@ -232,7 +208,7 @@ public class Parser {
 			for (Word w : words) {
 				entries.add(lexicon.getSignsFromWord(w));
 			}
-			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));;
+			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
 			// do parsing
 			parseEntries(entries);
 		} catch (LexException e) {
@@ -254,8 +230,57 @@ public class Parser {
 		}
 	}
 
+	private final void makeProduct() {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		product = new ParseProduct();
+		product.setParseLimit(makeValueToUse(preferences, timeLimit, PARSE_TIME_LIMIT,
+				NO_TIME_LIMIT));
+		product.setEdgeLimit(makeValueToUse(preferences, edgeLimit, PARSE_EDGE_LIMIT, NO_EDGE_LIMIT));
+		product.setPruneValue(makeValueToUse(preferences, pruneVal, PARSE_PRUNING_VALUE, NO_PRUNING));
+		product.setCellPruneValue(makeValueToUse(preferences, cellPruneVal,
+				PARSE_CELL_PRUNING_VALUE, NO_PRUNING));
+		product.setLazyUnpacking(makeValueToUse(preferences, lazyUnpacking, PARSE_LAZY_UNPACKING,
+				true));
+	}
+
+	/**
+	 * Helper to choose value
+	 * 
+	 * @param preferences the preferences
+	 * @param value a given value
+	 * @param valueKey the value key in the preferences
+	 * @param valueDefault the value default
+	 * @return the value to use
+	 */
+	private final Boolean makeValueToUse(Preferences preferences, Boolean value, String valueKey,
+			Boolean valueDefault) {
+		if (value != null) {
+			return value;
+		} else {
+			return preferences.getBoolean(valueKey, valueDefault);
+		}
+	}
+
+	/**
+	 * Helper to choose value
+	 * 
+	 * @param preferences the preferences
+	 * @param value a given value
+	 * @param valueKey the value key in the preferences
+	 * @param valueDefault the value default
+	 * @return the value to use
+	 */
+	private final static int makeValueToUse(Preferences preferences, int value, String valueKey,
+			int valueDefault) {
+		if (value >= 0) {
+			return value;
+		} else {
+			return preferences.getInt(valueKey, valueDefault);
+		}
+	}
+
 	// iterative beta-best parsing
-	private void parseWithSupertagger(List<Word> words) throws ParseException {
+	private void parseIterativeBetaBest(List<Word> words) throws ParseException {
 		// set supertagger in lexicon
 		grammar.lexicon.setSupertagger(supertagger);
 		// ensure gluing off
@@ -280,7 +305,8 @@ public class Parser {
 					Word word = words.get(i);
 					entries.add(lexicon.getSignsFromWord(word));
 				}
-				product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));;
+				product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
+				;
 				// do parsing
 				parseEntries(entries);
 				// done
@@ -354,11 +380,11 @@ public class Parser {
 		Chart chart = product.getChart();
 		if (signScorer != null)
 			chart.setSignScorer(signScorer);
-		chart.setPruneVal(pruneValToUse);
-		chart.setTimeLimit(timeLimitToUse);
+		chart.setPruneVal(product.getPruneValue());
+		chart.setTimeLimit(product.getParseLimit());
 		chart.setStartTime(product.getStartTime());
-		chart.setEdgeLimit(edgeLimitToUse);
-		chart.setCellLimit(cellPruneValToUse);
+		chart.setEdgeLimit(product.getEdgeLimit());
+		chart.setCellLimit(product.getCellPruneValue());
 		// do parsing
 		parse(entries.size());
 	}
@@ -415,7 +441,7 @@ public class Parser {
 		List<Double> scores = new ArrayList<Double>();
 		Chart chart = product.getChart();
 		// unpack top
-		List<Edge> unpacked = (lazyUnpackingToUse) ? chart.lazyUnpack(0, size - 1) : chart.unpack(
+		List<Edge> unpacked = product.getLazyUnpacking() ? chart.lazyUnpack(0, size - 1) : chart.unpack(
 				0, size - 1);
 		// add signs for unpacked edges
 		for (Edge edge : unpacked) {

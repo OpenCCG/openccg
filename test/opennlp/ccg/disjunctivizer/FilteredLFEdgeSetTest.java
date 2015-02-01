@@ -31,7 +31,6 @@ public class FilteredLFEdgeSetTest extends LFBaseTest {
 	
 	LFEdge one, two, three;
 	
-	@SuppressWarnings("unchecked")
 	@Before
 	public void setUp() throws Exception {
 		super.setUp();

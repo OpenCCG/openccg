@@ -53,6 +53,16 @@ public class ParseProduct {
 	 */
 	private List<Double> scores = new ArrayList<Double>();
 
+	private int parseLimit;
+
+	private int edgeLimit;
+
+	private int pruneValue;
+
+	private int cellPruneValue;
+
+	private Boolean lazyUnpacking;
+
 	/**
 	 * @return the lexTime
 	 */
@@ -163,6 +173,64 @@ public class ParseProduct {
 	 */
 	public final void setScores(List<Double> scores) {
 		this.scores = scores;
+	}
+
+	/**
+	 * @param parseLimit the limit for parse duration
+	 */
+	public final void setParseLimit(int parseLimit) {
+		this.parseLimit = parseLimit;
+	}
+
+	/**
+	 * @param edgeLimit the limit for the number of edges
+	 */
+	public final void setEdgeLimit(int edgeLimit) {
+		this.edgeLimit = edgeLimit;
+	}
+
+	/**
+	 * @param pruneValue the prune value
+	 */
+	public final void setPruneValue(int pruneValue) {
+		this.pruneValue = pruneValue;
+	}
+
+	/**
+	 * @param cellPruneValue the cell prune value
+	 */
+	public final void setCellPruneValue(int cellPruneValue) {
+		this.cellPruneValue = cellPruneValue;
+	}
+
+	/**
+	 * @param lazyUnpacking the lazy unpacking
+	 */
+	public final void setLazyUnpacking(Boolean lazyUnpacking) {
+		this.lazyUnpacking = lazyUnpacking;
+	}
+
+	/**
+	 * @return the prune value
+	 */
+	public final int getPruneValue() {
+		return pruneValue;
+	}
+
+	public final int getParseLimit() {
+		return parseLimit;
+	}
+
+	public final int getEdgeLimit() {
+		return edgeLimit;
+	}
+
+	public final int getCellPruneValue() {
+		return cellPruneValue;
+	}
+
+	public final boolean getLazyUnpacking() {
+		return lazyUnpacking;
 	}
 
 }

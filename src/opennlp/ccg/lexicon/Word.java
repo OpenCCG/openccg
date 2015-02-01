@@ -26,11 +26,15 @@ import gnu.trove.*;
 
 /**
  * A Word object may either be a surface word or a full word.
+ * 
  * A surface word holds a surface form, an optional pitch accent, and an 
  * optional list of extra attribute-value pairs.
+ * 
  * A full word additionally contains a stem, part of speech, supertag and semantic class.
+ * 
  * A word may be a multiword consisting of multiple orthographic words, 
  * typically separated by underscores in the surface form.
+ * 
  * For efficient storage and equality checking, Word objects are interned by 
  * the factory methods of the configured WordFactory.
  *

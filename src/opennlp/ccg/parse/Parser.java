@@ -237,6 +237,7 @@ public class Parser {
 			lazyUnpackingToUse = lazyUnpacking;
 		else
 			lazyUnpackingToUse = prefs.getBoolean(PARSE_LAZY_UNPACKING, true);
+		
 		// supertagger case: iterative beta-best
 		if (supertagger != null) {
 			parseWithSupertagger(words);

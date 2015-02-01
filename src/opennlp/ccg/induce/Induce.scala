@@ -240,6 +240,7 @@ object Induce extends App {
       induceFile(fileid, srcdir, outdir, textPW, factorsPW, combosPW, combos, predsPW)
     }
 //    induceFile(inputids(0), srcdir, outdir, textPW, factorsPW, combosPW, combos, predsPW)
+//    induceFile("wsj_2402", srcdir, outdir, textPW, factorsPW, combosPW, combos, predsPW)
     textPW.flush(); textPW.close()
     factorsPW.flush(); factorsPW.close()
     combosPW.flush(); combosPW.close()

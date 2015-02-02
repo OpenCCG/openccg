@@ -105,27 +105,6 @@ public class ChartCompleterImp implements ChartCompleter {
 	/**
 	 * Constructor
 	 * 
-	 * @param rules the rules of annotation
-	 * @param size the size of the chart
-	 */
-	public ChartCompleterImp(RuleGroup rules, int size) {
-		this(rules, new SparseChart(size));
-	}
-
-	/**
-	 * Constructor
-	 * 
-	 * @param rules the rules for annotation
-	 * @param file the file with the chart
-	 * @throws IOException
-	 */
-	public ChartCompleterImp(RuleGroup rules, File file) throws IOException {
-		this(rules, new DenseChart(file));
-	}
-
-	/**
-	 * Constructor
-	 * 
 	 * @param rules the rules for annotation
 	 * @param chart the chart
 	 */

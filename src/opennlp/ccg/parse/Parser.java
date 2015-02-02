@@ -213,7 +213,7 @@ public class Parser {
 			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
 			// do parsing
 			product.setStartTime(System.currentTimeMillis());
-			product.setChart(buildChart(entries));
+			product.setChart(buildChartCompleter(entries));
 			parseEntries(product.getChartCompleter());
 		} catch (LexException e) {
 			setGiveUpTime();
@@ -315,7 +315,7 @@ public class Parser {
 
 				// set up chart
 				product.setStartTime(System.currentTimeMillis());
-				product.setChart(buildChart(entries));
+				product.setChart(buildChartCompleter(entries));
 				parseEntries(product.getChartCompleter());
 				// done
 				done = true;
@@ -397,20 +397,22 @@ public class Parser {
 	/**
 	 * Builds a chart for a particular sequence of associations.
 	 * 
-	 * @param entries the entries to build
+	 * @param symbolHashes the entries to build
 	 * @return the chart
 	 */
-	private final ChartCompleter buildChart(List<SymbolHash> entries) {
-		ChartCompleter chart = new ChartCompleterImp(rules, entries.size());
-		for (int i = 0; i < entries.size(); i++) {
-			SymbolHash signHash = entries.get(i);
-			for (Symbol sign : signHash.getSignsSorted()) {
-				Category category = sign.getCategory();
+	private final ChartCompleter buildChartCompleter(List<SymbolHash> symbolHashes) {
+		Chart chart = new SparseChart(symbolHashes.size());
+		ChartCompleter chartCompleter = new ChartCompleterImp(rules, chart);
+		int x1 = 0;
+		int x2 = 0;
+		for (SymbolHash symbolHash : symbolHashes) {
+			for (Symbol symbol : symbolHash.getSignsSorted()) {
+				Category category = symbol.getCategory();
 				UnifyControl.reindex(category);
-				chart.annotateForm(i, i, sign);
+				chartCompleter.annotateForm(x1++, x2++, symbol);
 			}
 		}
-		return chart;
+		return chartCompleter;
 	}
 
 	/**

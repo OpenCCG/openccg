@@ -178,11 +178,11 @@ public abstract class AbstractRule implements Rule, Serializable {
     protected void appendLFs(Category cat1, Category cat2, Category result, Substitution sub) 
         throws UnifyFailure
     {
-        LF lf = HyloHelper.append(cat1.getLF(), cat2.getLF());
+        LF lf = HyloHelper.getInstance().append(cat1.getLF(), cat2.getLF());
         if (lf != null) {
             lf = (LF) lf.fill(sub);
-            HyloHelper.sort(lf);
-            HyloHelper.check(lf);
+            HyloHelper.getInstance().sort(lf);
+            HyloHelper.getInstance().check(lf);
         }
         result.setLF(lf);
     }

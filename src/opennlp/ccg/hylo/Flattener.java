@@ -294,7 +294,7 @@ public class Flattener {
             if (nomPred != null) 
             	propAltsOptsChunks(nomPred, alts2, opts2, chunks2);
         }
-        Nominal nom2 = HyloHelper.getSecondaryNominal(satOp);
+        Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(satOp);
         if (nom2 != null && nom2.isShared()) {
             SatOp nom2Pred = nomMap.get(nom2); 
             if (nom2Pred != null) 

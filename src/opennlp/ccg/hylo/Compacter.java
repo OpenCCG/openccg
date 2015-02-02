@@ -40,7 +40,7 @@ public class Compacter {
      */
     static LF compact(LF lf, Nominal root) {
         // get preds, make copies
-        List<SatOp> preds = HyloHelper.getPreds(lf);
+        List<SatOp> preds = HyloHelper.getInstance().getPreds(lf);
         for (int i=0; i < preds.size(); i++) {
             SatOp pred = preds.get(i);
             preds.set(i, (SatOp) pred.copy());
@@ -55,9 +55,9 @@ public class Compacter {
         for (int i = 0; i < preds.size(); i++) {
             SatOp pred = preds.get(i);
             // get principal nominal as nom1
-            Nominal nom1 = HyloHelper.getPrincipalNominal(pred);
+            Nominal nom1 = HyloHelper.getInstance().getPrincipalNominal(pred);
             // get secondary nominal
-            Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+            Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
             // skip if none or nom2 equal to root
             if (nom2 == null) continue;
             if (root != null && nom2.equals(root)) continue;
@@ -120,7 +120,7 @@ public class Compacter {
         }
         
         // ensure sorted
-        HyloHelper.sort(preds);
+        HyloHelper.getInstance().sort(preds);
         
         // combine preds on same nominal
         // also: gather any duplicate preds 
@@ -288,7 +288,7 @@ public class Compacter {
             // check for nom2, and that requiredParent constraint met
             if (arg.equals(nom2) && (requiredParent == null || requiredParent.equals(currentParent))) {
                 // make substitution
-                d.setArg(HyloHelper.append(arg, satOp2.getArg()));
+                d.setArg(HyloHelper.getInstance().append(arg, satOp2.getArg()));
                 return true;
             }
             else {

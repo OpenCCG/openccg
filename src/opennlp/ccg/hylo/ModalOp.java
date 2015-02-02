@@ -45,11 +45,11 @@ public abstract class ModalOp extends HyloFormula {
         if (atomLabel == null) atomLabel = e.getAttributeValue("m");
         if (atomLabel != null) {
             _mode = new ModeLabel(atomLabel);
-            _arg = HyloHelper.getLF_FromChildren(e);
+            _arg = HyloHelper.getInstance().getLF_FromChildren(e);
         } else {
             List<Element> children = e.getChildren();
-            _mode = (Mode)HyloHelper.getLF((Element)children.get(0));
-            _arg = HyloHelper.getLF((Element)children.get(1));
+            _mode = (Mode)HyloHelper.getInstance().getLF((Element)children.get(0));
+            _arg = HyloHelper.getInstance().getLF((Element)children.get(1));
         }
     }
     

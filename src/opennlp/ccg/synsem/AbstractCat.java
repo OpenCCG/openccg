@@ -71,7 +71,7 @@ public abstract class AbstractCat implements Category, Serializable {
     public AbstractCat(Element elt) {
         Element lfElt = elt.getChild("lf");
         if (lfElt != null) {
-            _lf = HyloHelper.flattenLF(HyloHelper.getLF(lfElt));
+            _lf = HyloHelper.getInstance().flattenLF(HyloHelper.getInstance().getLF(lfElt));
         }
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractCat implements Category, Serializable {
      * Uses {@link HyloHelper#toXml(LF)}.
      */
     public void toXml(Element catElt) {
-    	if (_lf != null) catElt.addContent(HyloHelper.toXml(_lf));
+    	if (_lf != null) catElt.addContent(HyloHelper.getInstance().toXml(_lf));
     }
 
     // during deserialization, intern computed supertag, and ensure varmap recomputed

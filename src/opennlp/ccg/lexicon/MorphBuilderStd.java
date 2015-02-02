@@ -130,7 +130,7 @@ public class MorphBuilderStd implements MorphBuilder {
 			List<Element> predElts = lfElt.getChildren();
 			preds = new LF[predElts.size()];
 			for (int i = 0; i < predElts.size(); i++) {
-				preds[i] = HyloHelper.getLF(predElts.get(i));
+				preds[i] = HyloHelper.getInstance().getLF(predElts.get(i));
 			}
 		}
 		morph.getMacroItems().add(new MacroItem(name, featStrucs, preds));

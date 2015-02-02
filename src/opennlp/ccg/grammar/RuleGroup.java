@@ -26,6 +26,7 @@ import opennlp.ccg.util.*;
 
 import org.jdom.*;
 import org.jdom.output.*;
+
 import gnu.trove.*;
 
 import java.io.*;
@@ -261,7 +262,7 @@ public class RuleGroup implements Serializable {
         Category result = CatReader.getCat(resultCatElt);
         LF firstEP = null;
         if (lfElt != null) {
-            firstEP = HyloHelper.firstEP(HyloHelper.getLF(lfElt));
+            firstEP = HyloHelper.getInstance().firstEP(HyloHelper.getInstance().getLF(lfElt));
         }
         
         grammar.lexicon.propagateTypes(result, arg);
@@ -367,12 +368,12 @@ public class RuleGroup implements Serializable {
     private void index(TypeChangingRule rule) {
         LF firstEP = rule.getFirstEP();
         if (firstEP == null) { return; }
-        String pred = HyloHelper.getLexPred(firstEP);
+        String pred = HyloHelper.getInstance().getLexPred(firstEP);
         if (pred != null) { 
             predsToRules.put(pred, rule); 
             return; 
         }
-        String rel = HyloHelper.getRel(firstEP);
+        String rel = HyloHelper.getInstance().getRel(firstEP);
         if (rel != null) { 
             relsToRules.put(rel, rule);
         }

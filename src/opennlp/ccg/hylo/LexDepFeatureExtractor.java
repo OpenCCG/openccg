@@ -427,7 +427,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 			def = Boolean.TRUE;
 			// get sem feats
 			Nominal npNom = npSign.getCategory().getIndexNominal();
-			List<SatOp> semFeats = HyloHelper.getSemFeatsForHead(npNom, npSign.getCategory().getLF());
+			List<SatOp> semFeats = HyloHelper.getInstance().getSemFeatsForHead(npNom, npSign.getCategory().getLF());
 			// check for <det>nil
 			for (SatOp feat : semFeats) {
 				if (isIndefFeat(feat)) {
@@ -485,7 +485,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	 * The default implementation tests for &lt:det&gt;nil.
 	 */
 	protected boolean isIndefFeat(SatOp feat) {
-		return HyloHelper.getRel(feat).equals("det") && "nil".equals(HyloHelper.getVal(feat));
+		return HyloHelper.getInstance().getRel(feat).equals("det") && "nil".equals(HyloHelper.getInstance().getVal(feat));
 	}
 	
 	/**

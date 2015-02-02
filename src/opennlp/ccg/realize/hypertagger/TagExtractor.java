@@ -103,7 +103,7 @@ public abstract class TagExtractor {
 		}
 		/*
 		public boolean isLexPred() {
-			return HyloHelper.isLexPred(data);
+			return HyloHelper.getInstance().isLexPred(data);
 		}*/
 		public LfGraphNode findNode(BitSet b) {
 			// intended to be run from the root node; only searches
@@ -286,8 +286,8 @@ public abstract class TagExtractor {
 	public void setLF(LF lf) throws FeatureExtractionException {
 		LFID++;
 		// experimental
-		HyloHelper.convertNominals(lf);
-		setLF(HyloHelper.getPreds(lf));
+		HyloHelper.getInstance().convertNominals(lf);
+		setLF(HyloHelper.getInstance().getPreds(lf));
 	}
 	
 	/** This method takes an LF and extracts its features, changing the internal state

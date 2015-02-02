@@ -97,8 +97,8 @@ public class Realizer
      * LF chunks along the way.
      */
     public static LF getLfFromElt(Element lfElt) {
-        HyloHelper.processChunks(lfElt);
-        LF lf = HyloHelper.getLF(lfElt);
+        HyloHelper.getInstance().processChunks(lfElt);
+        LF lf = HyloHelper.getInstance().getLF(lfElt);
         return lf;
     }
 
@@ -136,7 +136,7 @@ public class Realizer
      * within the overall time or edge limit.
      */
     public Edge realize(LF lf, SignScorer signScorer, int timeLimitMS, boolean waitForCompleteEdge) {
-        List<SatOp> preds = HyloHelper.flatten(lf);
+        List<SatOp> preds = HyloHelper.getInstance().flatten(lf);
         SignScorer scorerToUse = (signScorer != null) 
             ? signScorer : SignScorer.nullScorer;
         PruningStrategy strategyToUse = (pruningStrategy != null) 

@@ -514,8 +514,8 @@ public class Regression {
 	                    Category cat = sign.getCategory().copy();
 	                    Nominal index = cat.getIndexNominal();
 	                    parsedLF = cat.getLF();
-	                    index = HyloHelper.convertNominals(parsedLF, sign, index);
-	                    compactedLF = HyloHelper.compact(parsedLF, index);
+	                    index = HyloHelper.getInstance().convertNominals(parsedLF, sign, index);
+	                    compactedLF = HyloHelper.getInstance().compact(parsedLF, index);
 	                    // get transformed version if needed
 	                    if (testItem.sign == null) {
 		                    transformedParsedLF = grammar.transformLF(compactedLF); 
@@ -590,7 +590,7 @@ public class Regression {
                     Category cat = testItem.sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     goldLF = cat.getLF();
-                    index = HyloHelper.convertNominals(goldLF, testItem.sign, index);
+                    index = HyloHelper.getInstance().convertNominals(goldLF, testItem.sign, index);
                 }
                 else {
                 	// otherwise use test item LF
@@ -696,8 +696,8 @@ public class Regression {
                     Category cat = sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     LF parsedLFk = cat.getLF();
-                    index = HyloHelper.convertNominals(parsedLFk, sign, index);
-                    LF compactedLFk = HyloHelper.compact(parsedLFk, index);
+                    index = HyloHelper.getInstance().convertNominals(parsedLFk, sign, index);
+                    LF compactedLFk = HyloHelper.getInstance().compact(parsedLFk, index);
                     LF lfToScore = parsedLFk;
                     if (testItem.sign != null) {
                         lfToScore = grammar.transformLF(compactedLFk); 
@@ -749,7 +749,7 @@ public class Regression {
                 Sign sign = testItem.sign;
                 Category cat = sign.getCategory().copy();
                 Nominal index = cat.getIndexNominal();
-                LF convertedLF = HyloHelper.compactAndConvertNominals(cat.getLF(), index, sign);
+                LF convertedLF = HyloHelper.getInstance().compactAndConvertNominals(cat.getLF(), index, sign);
                 inputLF = grammar.transformLF(convertedLF);
             }
             // otherwise use first parse
@@ -873,9 +873,9 @@ public class Regression {
                     Category cat = sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     LF lf = cat.getLF();
-                	index = HyloHelper.convertNominalsToVars(lf, index);
-                    index = HyloHelper.convertNominals(lf, sign, index);
-                    LF lfc = HyloHelper.compact(lf, index);
+                	index = HyloHelper.getInstance().convertNominalsToVars(lf, index);
+                    index = HyloHelper.getInstance().convertNominals(lf, sign, index);
+                    LF lfc = HyloHelper.getInstance().compact(lf, index);
                 	Element lfElt = grammar.makeLfElt(lfc);
                 	nbestrealPW.println(outputter.outputString(lfElt));
             		nbestrealPW.println("</best>");
@@ -900,9 +900,9 @@ public class Regression {
                             Category cat = sign.getCategory().copy();
                             Nominal index = cat.getIndexNominal();
                             LF lf = cat.getLF();
-                        	index = HyloHelper.convertNominalsToVars(lf, index);
-                            index = HyloHelper.convertNominals(lf, sign, index);
-                            LF lfc = HyloHelper.compact(lf, index);
+                        	index = HyloHelper.getInstance().convertNominalsToVars(lf, index);
+                            index = HyloHelper.getInstance().convertNominals(lf, sign, index);
+                            LF lfc = HyloHelper.getInstance().compact(lf, index);
                         	Element lfElt = grammar.makeLfElt(lfc);
                         	nbestrealPW.println(outputter.outputString(lfElt));
                     		nbestrealPW.println("</next>");

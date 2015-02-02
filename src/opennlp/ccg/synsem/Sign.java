@@ -34,14 +34,15 @@ import java.util.*;
 /**
  * A CCG sign, consisting of a list of words paired with a category. Signs may
  * contain arbitrary data objects which are ignored in equality checking.
- * Non-serializable data objects are filtered during serialization.
+ * 
+ * WARNING: Non-serializable data objects are filtered during serialization.
  *
  * @author Jason Baldridge
  * @author Michael White
  * @author Daniel Couto-Vale
  * @version $Revision: 1.44 $, $Date: 2011/08/27 19:27:01 $
  */
-public class Sign implements LexSemOrigin, Serializable {
+public class Sign implements EntityRealizer, Serializable {
 
 	private static final long serialVersionUID = 1072712272514007274L;
 
@@ -196,14 +197,14 @@ public class Sign implements LexSemOrigin, Serializable {
 		Category copyCat = cat.shallowCopy();
 		LF lf = null;
 		for (int i = 0; i < inputs.length; i++) {
-			lf = HyloHelper.append(lf, inputs[i].getCategory().getLF());
+			lf = HyloHelper.getInstance().append(lf, inputs[i].getCategory().getLF());
 		}
 		if (rule instanceof TypeChangingRule) {
 			TypeChangingRule tcr = (TypeChangingRule) rule;
-			lf = HyloHelper.append(lf, tcr.getResult().getLF());
+			lf = HyloHelper.getInstance().append(lf, tcr.getResult().getLF());
 		}
 		if (lf != null) {
-			HyloHelper.sort(lf);
+			HyloHelper.getInstance().sort(lf);
 		}
 		copyCat.setLF(lf);
 		return new Sign(copyCat, inputs, rule, lexHead);
@@ -541,8 +542,8 @@ public class Sign implements LexSemOrigin, Serializable {
 	/**
 	 * Sets the origin of the elementary predications.
 	 */
-	public final void setOrigin() {
-		HyloHelper.setOrigin(category.getLF(), this);
+	public final void indexAsEntityRealizer() {
+		HyloHelper.getInstance().setOrigin(category.getLF(), this);
 	}
 
 	/**
@@ -615,7 +616,7 @@ public class Sign implements LexSemOrigin, Serializable {
 			return udeps.unfilledDeps;
 		// lex case: calculate, store and return
 		if (isIndexed()) {
-			List<LexDependency> unfilledDeps = HyloHelper.getUnfilledLexDeps(category.getLF());
+			List<LexDependency> unfilledDeps = HyloHelper.getInstance().getUnfilledLexDeps(category.getLF());
 			addData(new UnfilledDeps(unfilledDeps));
 			return unfilledDeps;
 		}
@@ -642,7 +643,7 @@ public class Sign implements LexSemOrigin, Serializable {
 			unfilledDeps.addAll(inputs[i].getUnfilledDeps());
 		}
 		// calculate filled deps
-		List<LexDependency> filledDeps = HyloHelper
+		List<LexDependency> filledDeps = HyloHelper.getInstance()
 				.getFilledLexDeps(unfilledDeps, category.getLF());
 		// store filled and unfilled, returning filled
 		addData(new UnfilledDeps(unfilledDeps));

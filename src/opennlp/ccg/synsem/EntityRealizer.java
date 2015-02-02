@@ -19,28 +19,30 @@
 package opennlp.ccg.synsem;
 
 /**
- * An interface for items which introduce lexical semantics, covering 
- * (lexical) signs and unary type changing rules.
+ * An interface for grammatical units that realise rhetorico-semantic entities,
+ * including both (overt) indexed signs and (covert) unary type changing rules.
  *
- * @author      Michael White
- * @version     $Revision: 1.2 $, $Date: 2008/01/03 21:30:12 $
+ * @author Michael White
+ * @author Daniel Couto-Vale
+ * @version $Revision: 1.2 $, $Date: 2008/01/03 21:30:12 $
  */
-public interface LexSemOrigin {
-	
-    /**
-     * Returns the supertag.
-     */
-    public String getSupertag();
-    
-    /**
-     * Returns the POS tag. 
-     * For unary type changing rules, the constant TypeChangingRule.POS_STRING is 
-     * always returned.
-     */
-    public String getPOS();
-    
-    /**
-     * Sets the origin of the elementary predications.
-     */
-    public void setOrigin();
+public interface EntityRealizer {
+
+	/**
+	 * @return the supertag
+	 */
+	public String getSupertag();
+
+	/**
+	 * WARNING: For unary type changing rules, TypeChangingRule.POS_STRING is
+	 * returned.
+	 * 
+	 * @return the POS tag.
+	 */
+	public String getPOS();
+
+	/**
+	 * Sets the origin of the elementary predications.
+	 */
+	public void indexAsEntityRealizer();
 }

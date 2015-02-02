@@ -284,7 +284,7 @@ public class EdgeFactory
 		// set missing lex preds flag
 		for (int i = retval.nextSetBit(0); i >= 0; i = retval.nextSetBit(i+1)) {
 			SatOp pred = preds.get(i);
-			if (HyloHelper.isLexPred(pred) || HyloHelper.isAttrPred(pred)) {
+			if (HyloHelper.getInstance().isLexPred(pred) || HyloHelper.getInstance().isAttrPred(pred)) {
 				hasUncoveredPreds =  true; break;
 			}
 		}
@@ -421,10 +421,10 @@ public class EdgeFactory
     private void extractLabeledNominals() {
         for (Iterator<SatOp> it = preds.iterator(); it.hasNext(); ) {
         	SatOp pred = it.next();
-            if (!HyloHelper.isAttrPred(pred)) continue;
-            Nominal nom1 = HyloHelper.getPrincipalNominal(pred);
+            if (!HyloHelper.getInstance().isAttrPred(pred)) continue;
+            Nominal nom1 = HyloHelper.getInstance().getPrincipalNominal(pred);
             if (!(nom1 instanceof NominalAtom)) continue;
-            String rel = HyloHelper.getRel(pred);
+            String rel = HyloHelper.getInstance().getRel(pred);
             if (rel == null || !rel.equals("mark")) continue;
             labeledNominals.add(nom1);
             it.remove();
@@ -434,8 +434,8 @@ public class EdgeFactory
     // lists the nominals in the preds
     private void listNominals() {
     	for (SatOp pred : preds) {
-            Nominal nom1 = HyloHelper.getPrincipalNominal(pred);
-            Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+            Nominal nom1 = HyloHelper.getInstance().getPrincipalNominal(pred);
+            Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
             if (nom1 instanceof NominalAtom && !nominals.containsKey(nom1)) { 
                 nominals.put(nom1, nominals.size()); 
             }
@@ -506,18 +506,18 @@ public class EdgeFactory
     private void listPairedNominals() {
         for (int i=0; i < preds.size(); i++) {
         	SatOp pred = preds.get(i);
-            if (!"tup".equals(HyloHelper.getLexPred(pred))) continue;
-            Nominal tupNom = HyloHelper.getPrincipalNominal(pred);
+            if (!"tup".equals(HyloHelper.getInstance().getLexPred(pred))) continue;
+            Nominal tupNom = HyloHelper.getInstance().getPrincipalNominal(pred);
             Nominal nom1 = null;
             Nominal nom2 = null;
             for (int j = i+1; j < preds.size(); j++) {
             	SatOp predJ = preds.get(j);
-                if (!tupNom.equals(HyloHelper.getPrincipalNominal(predJ))) break;
-                if ("Item1".equals(HyloHelper.getRel(predJ))) {
-                    nom1 = HyloHelper.getSecondaryNominal(predJ);
+                if (!tupNom.equals(HyloHelper.getInstance().getPrincipalNominal(predJ))) break;
+                if ("Item1".equals(HyloHelper.getInstance().getRel(predJ))) {
+                    nom1 = HyloHelper.getInstance().getSecondaryNominal(predJ);
                 }
-                if ("Item2".equals(HyloHelper.getRel(predJ))) {
-                    nom2 = HyloHelper.getSecondaryNominal(predJ);
+                if ("Item2".equals(HyloHelper.getInstance().getRel(predJ))) {
+                    nom2 = HyloHelper.getInstance().getSecondaryNominal(predJ);
                 }
             }
             if (nom1 == null || nom2 == null) {
@@ -540,23 +540,23 @@ public class EdgeFactory
     private void addBoundVarNominals() {
         for (int i=0; i < preds.size(); i++) {
         	SatOp pred = preds.get(i);
-            String rel = HyloHelper.getRel(pred);
+            String rel = HyloHelper.getInstance().getRel(pred);
             if (rel == null || !rel.equals("BoundVar")) continue;
-            Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+            Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
             if (!(nom2 instanceof NominalAtom)) continue;
             boundVarNominals.add(nom2);
             // check if nom2 is a tuple
             for (int j = 0; j < preds.size(); j++) {
             	SatOp predJ = preds.get(j);
-                if (!nom2.equals(HyloHelper.getPrincipalNominal(predJ))) continue;
-                if (!"tup".equals(HyloHelper.getLexPred(predJ))) continue;
+                if (!nom2.equals(HyloHelper.getInstance().getPrincipalNominal(predJ))) continue;
+                if (!"tup".equals(HyloHelper.getInstance().getLexPred(predJ))) continue;
                 // if so, add paired items as bound vars too
                 for (int k = j+1; k < preds.size(); k++) {
                 	SatOp predK = preds.get(k);
-                    if (!nom2.equals(HyloHelper.getPrincipalNominal(predK))) break;
-                    String relK = HyloHelper.getRel(predK);
+                    if (!nom2.equals(HyloHelper.getInstance().getPrincipalNominal(predK))) break;
+                    String relK = HyloHelper.getInstance().getRel(predK);
                     if ("Item1".equals(relK) || "Item2".equals(relK)) {
-                        Nominal nom2K = HyloHelper.getSecondaryNominal(predK);
+                        Nominal nom2K = HyloHelper.getInstance().getSecondaryNominal(predK);
                         if (!(nom2K instanceof NominalAtom)) continue;
                         boundVarNominals.add(nom2K);
                     }
@@ -599,10 +599,10 @@ public class EdgeFactory
     // a rel pred is indexed by atom<rel> and <rel>atom2
     // an attr pred is indexed by atom<rel>
     private static String[] predKeys(LF pred) {
-        Nominal nom = HyloHelper.getPrincipalNominal(pred);
-        String lexPred = HyloHelper.getLexPred(pred);
-        String rel = HyloHelper.getRel(pred);
-        Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+        Nominal nom = HyloHelper.getInstance().getPrincipalNominal(pred);
+        String lexPred = HyloHelper.getInstance().getLexPred(pred);
+        String rel = HyloHelper.getInstance().getRel(pred);
+        Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
         List<String> keys = new ArrayList<String>(2);
         if (nom instanceof NominalAtom && lexPred != null) 
             keys.add(nom.toString() + "(" + lexPred + ")");
@@ -750,12 +750,12 @@ public class EdgeFactory
     // NB: assumes that preds are sorted by their principal nominals, with the lex pred first
     private List<String> getCoartRels(int predIndex) {
     	SatOp pred = preds.get(predIndex);
-        Nominal nom = HyloHelper.getPrincipalNominal(pred);
+        Nominal nom = HyloHelper.getInstance().getPrincipalNominal(pred);
         List<String> retval = null;
         for (int i = predIndex+1; i < preds.size(); i++) {
         	SatOp relPred = preds.get(i);
-            if (!nom.equals(HyloHelper.getPrincipalNominal(relPred))) break;
-            String rel = HyloHelper.getRel(relPred);
+            if (!nom.equals(HyloHelper.getInstance().getPrincipalNominal(relPred))) break;
+            String rel = HyloHelper.getInstance().getRel(relPred);
             if (rel != null && grammar.lexicon.isCoartRel(rel)) { 
                 if (retval == null) retval = new ArrayList<String>(3);
                 retval.add(rel);
@@ -787,8 +787,8 @@ public class EdgeFactory
         // and similarly for type changing rules
         for (int i=0; i < preds.size(); i++) {
         	SatOp pred = preds.get(i);
-            String key = HyloHelper.getLexPred(pred);
-            String rel = HyloHelper.getRel(pred);
+            String key = HyloHelper.getInstance().getLexPred(pred);
+            String rel = HyloHelper.getInstance().getRel(pred);
             // skip if no lex pred or indexed rel (not expected)
             if (key == null && rel == null) continue;
             // update hypertagger for beta-best lookup
@@ -913,7 +913,7 @@ public class EdgeFactory
             featureLicenser.indexSemanticallyNullWords(filledCat);
             // update lex origins for new sign
             Sign newSign = new Sign(words, filledCat);
-            newSign.setOrigin();
+            newSign.indexAsEntityRealizer();
             // and add new edge
             List<List<Alt>> activeLfAlts = getActiveLfAlts(lfAlts, bitset);
             retval.add(makeEdge(newSign, bitset, activeLfAlts));
@@ -964,7 +964,7 @@ public class EdgeFactory
 
         // unify with indexed pred
         UnifyControl.reindex(cat, cat2); 
-        List<SatOp> lfPreds = HyloHelper.getPreds(cat.getLF());
+        List<SatOp> lfPreds = HyloHelper.getInstance().getPreds(cat.getLF());
         Substitution subst = null;
         SatOp indexedPred = preds.get(predIndex);
         int lfPredIndex = -1;
@@ -1018,7 +1018,7 @@ public class EdgeFactory
                     if (indices != null) matchingPredIndices.addAll(indices);
                 }
                 if (matchingPredIndices.isEmpty()) {
-                	if (useRelaxedRelationMatching && HyloHelper.isRelPred(lfPred)) continue; // skip
+                	if (useRelaxedRelationMatching && HyloHelper.getInstance().isRelPred(lfPred)) continue; // skip
                 	else return null; // fail
                 }
                 // try extending each subst/bitset: 
@@ -1056,7 +1056,7 @@ public class EdgeFactory
                     }
                 }
                 if (retval.isEmpty()) {
-                	if (useRelaxedRelationMatching && HyloHelper.isRelPred(lfPred)) {
+                	if (useRelaxedRelationMatching && HyloHelper.getInstance().isRelPred(lfPred)) {
                 		retval.addAll(prev);
                 		continue; // skip
                 	}

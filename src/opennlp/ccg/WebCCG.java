@@ -25,10 +25,6 @@ import opennlp.ccg.util.*;
 import opennlp.ccg.synsem.*;
 //import opennlp.ccg.realize.*;
 import opennlp.ccg.hylo.*;
-//import opennlp.ccg.ngrams.*;
-//import opennlp.ccg.test.*;
-
-//import org.jdom.*;
 
 import java.io.*;
 import java.net.*;
@@ -148,7 +144,7 @@ public class WebCCG {
 		    if (cat.getLF() != null) {
 			cat = cat.copy();
 			Nominal index = cat.getIndexNominal(); 
-			convertedLF = HyloHelper.compactAndConvertNominals(cat.getLF(), index, results[i]);
+			convertedLF = HyloHelper.getInstance().compactAndConvertNominals(cat.getLF(), index, results[i]);
 			cat.setLF(null);
 		    }
 		    String parseNum = (resLength == 1) ? "Parse: " : ("Parse "+(i+1)+": "); 

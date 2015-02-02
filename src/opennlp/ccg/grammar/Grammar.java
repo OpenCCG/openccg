@@ -36,6 +36,7 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.stream.*;
 import javax.xml.transform.sax.*;
+
 import java.io.*;
 import java.net.URL;
 import java.util.*;
@@ -419,7 +420,7 @@ public class Grammar {
         Document doc = new Document();
         Element root = new Element("xml");
         doc.setRootElement(root);
-        root.addContent(HyloHelper.toXml(lf));
+        root.addContent(HyloHelper.getInstance().toXml(lf));
         Element targetElt = new Element("target");
         targetElt.addContent(target);
         root.addContent(targetElt);
@@ -484,7 +485,7 @@ public class Grammar {
     public synchronized Element makeLfElt(LF lf) throws IOException { 
         // make doc with LF in it
         Document lfDoc = new Document();
-        lfDoc.setRootElement(HyloHelper.toXml(lf));
+        lfDoc.setRootElement(HyloHelper.getInstance().toXml(lf));
         // apply to-XML transformations
         try {
             // do setup and get source

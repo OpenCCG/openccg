@@ -75,8 +75,8 @@ public class EPsScorer {
 	 */
 	public static Results score(LF lf, LF goldLF) {
 		// get EPs
-		List<SatOp> eps = HyloHelper.flatten(lf);
-		List<SatOp> goldEPs = HyloHelper.flatten(goldLF);
+		List<SatOp> eps = HyloHelper.getInstance().flatten(lf);
+		List<SatOp> goldEPs = HyloHelper.getInstance().flatten(goldLF);
 		Set<SatOp> epsSet = new HashSet<SatOp>(eps);
 		Set<SatOp> goldEPsSet = new HashSet<SatOp>(goldEPs);
 		// get unlabeled deps
@@ -95,7 +95,7 @@ public class EPsScorer {
 		int recalled = 0, depsRecalled = 0, unlabeledDepsRecalled = 0;
 		int goldDeps = goldUnlabeledDepsSet.size();
 		for (SatOp ep : goldEPs) {
-			boolean isdep = HyloHelper.isRelPred(ep);
+			boolean isdep = HyloHelper.getInstance().isRelPred(ep);
 			if (epsSet.contains(ep)) {
 				recalled++;
 				if (isdep) depsRecalled++;
@@ -109,7 +109,7 @@ public class EPsScorer {
 		int precise = 0, depsPrecise = 0, unlabeledDepsPrecise = 0;
 		int lfDeps = unlabeledDepsSet.size();
 		for (SatOp ep : eps) {
-			boolean isdep = HyloHelper.isRelPred(ep);
+			boolean isdep = HyloHelper.getInstance().isRelPred(ep);
 			if (goldEPsSet.contains(ep)) {
 				precise++;
 				if (isdep) depsPrecise++;
@@ -129,10 +129,10 @@ public class EPsScorer {
 
 	// returns an unlabeled dependency as a pair of nominals, or null if the ep is not relational
 	private static Pair<Nominal,Nominal> getDep(SatOp ep) {
-		if (HyloHelper.isRelPred(ep)) {
+		if (HyloHelper.getInstance().isRelPred(ep)) {
 			// put nominals in canonical order, so that direction of dependency doesn't matter
-			Nominal n1 = HyloHelper.getPrincipalNominal(ep);
-			Nominal n2 = HyloHelper.getSecondaryNominal(ep);
+			Nominal n1 = HyloHelper.getInstance().getPrincipalNominal(ep);
+			Nominal n2 = HyloHelper.getInstance().getSecondaryNominal(ep);
 			if (n1.compareTo(n2) <= 0) return new Pair<Nominal,Nominal>(n1, n2);
 			else return new Pair<Nominal,Nominal>(n2, n1);
 		}

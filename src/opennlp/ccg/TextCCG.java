@@ -561,7 +561,7 @@ public class TextCCG {
                             cat = cat.copy();
                             Nominal index = cat.getIndexNominal(); 
                             Sign rootSign = results[i]; // could add a switch here for naming convention
-                            convertedLF = HyloHelper.compactAndConvertNominals(cat.getLF(), index, rootSign);
+                            convertedLF = HyloHelper.getInstance().compactAndConvertNominals(cat.getLF(), index, rootSign);
                             lastLFs[i] = convertedLF; 
                             cat.setLF(null);
                         }

@@ -125,7 +125,7 @@ public class MorphBuilderSfl implements MorphBuilder {
 			List<Element> entityElements = discourseElement.getChildren();
 			entities = new LF[entityElements.size()];
 			for (int i = 0; i < entityElements.size(); i++) {
-				entities[i] = HyloHelper.getLF(entityElements.get(i));
+				entities[i] = HyloHelper.getInstance().getLF(entityElements.get(i));
 			}
 		}
 		morph.getMacroItems().add(new MacroItem(name, featuress, entities));

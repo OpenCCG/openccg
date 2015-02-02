@@ -33,7 +33,7 @@ import org.jdom.Element;
  * @author      Michael White
  * @version $Revision: 1.12 $, $Date: 2009/11/30 20:36:16 $
  **/
-public class TypeChangingRule extends AbstractRule implements LexSemOrigin {
+public class TypeChangingRule extends AbstractRule implements EntityRealizer {
 	
 	private static final long serialVersionUID = -2654945192870162776L;
 
@@ -58,7 +58,7 @@ public class TypeChangingRule extends AbstractRule implements LexSemOrigin {
     /** Constructor. */
     public TypeChangingRule(Category arg, Category result, String name, LF firstEP) {
         _arg = arg; _result = result; _name = name.intern(); _firstEP = firstEP;
-        setOrigin();
+        indexAsEntityRealizer();
     }
 
     /** Returns an XML element representing the rule. */
@@ -151,6 +151,6 @@ public class TypeChangingRule extends AbstractRule implements LexSemOrigin {
     /**
      * Sets the origin of the elementary predications.
      */
-    public void setOrigin() { HyloHelper.setOrigin(_result.getLF(), this); }
+    public void indexAsEntityRealizer() { HyloHelper.getInstance().setOrigin(_result.getLF(), this); }
 }
 

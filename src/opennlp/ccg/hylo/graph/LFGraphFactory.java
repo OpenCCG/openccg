@@ -18,11 +18,6 @@
 
 package opennlp.ccg.hylo.graph;
 
-import static opennlp.ccg.hylo.HyloHelper.isAttrPred;
-import static opennlp.ccg.hylo.HyloHelper.isElementaryPredication;
-import static opennlp.ccg.hylo.HyloHelper.isLexPred;
-import static opennlp.ccg.hylo.HyloHelper.isRelPred;
-
 import java.util.List;
 import java.util.Map;
 
@@ -128,13 +123,13 @@ public class LFGraphFactory {
 		Map<Nominal,Nominal> ancestorMap = f.getHighestParentMap();
 		
 		for(SatOp so : satOps) { // first pass adds vertices
-			if(isLexPred(so)) {
+			if(HyloHelper.getInstance().isLexPred(so)) {
 				g.addVertex(new LFVertex(so.getNominal(), (Proposition)so.getArg()));
 			}
 		}
 		
 		for(SatOp so : satOps) { // second pass adds edges and attributes, sets highest parent (if any)
-			if(isElementaryPredication(so)) {
+			if(HyloHelper.getInstance().isElementaryPredication(so)) {
 				Nominal soNom = so.getNominal();
 				LFVertex source = g.findVertexByNominal(soNom);
 				
@@ -144,13 +139,13 @@ public class LFGraphFactory {
 					g.addVertex(source);
 				}
 				
-				if(isLexPred(so)) {
+				if(HyloHelper.getInstance().isLexPred(so)) {
 					Nominal parent = ancestorMap.get(source.nominal);
 					if(parent != null) {
 						g.highestAncestorMap.put(source, g.findVertexByNominal(parent));
 					}
 				}
-				else if(isRelPred(so)) {
+				else if(HyloHelper.getInstance().isRelPred(so)) {
 					Diamond d = (Diamond)so.getArg();
 					
 					Nominal dArg = (Nominal)d.getArg();
@@ -163,7 +158,7 @@ public class LFGraphFactory {
 					
 					g.addLabeledEdge(source, target, LFEdgeLabel.forMode(d.getMode()));
 				}
-				else if(isAttrPred(so)) {
+				else if(HyloHelper.getInstance().isAttrPred(so)) {
 					Diamond d = (Diamond)so.getArg();
 					source.addAttribute(d.getMode(), (Proposition)d.getArg());
 				}

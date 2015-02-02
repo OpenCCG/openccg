@@ -524,7 +524,7 @@ public class Parser {
 			Nominal index = cat.getIndexNominal();
 			LF parsedLF = cat.getLF();
 			if (parsedLF != null) {
-				index = HyloHelper.convertNominals(parsedLF, sign, index);
+				index = HyloHelper.getInstance().convertNominals(parsedLF, sign, index);
 				EPsScorer.Results score = EPsScorer.score(parsedLF, goldLF);
 				if (score.fscore > bestF) {
 					retval = sign;

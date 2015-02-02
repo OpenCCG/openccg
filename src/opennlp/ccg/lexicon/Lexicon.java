@@ -801,7 +801,7 @@ public class Lexicon {
 
 	        // set origin and lexprob
 	        Sign sign = new Sign(new SingletonList<Word>(word), cat);
-	        sign.setOrigin();
+	        sign.indexAsEntityRealizer();
 	        //if (lexprob != null) {
 	        //	sign.addData(new SupertaggerAdapter.LexLogProb((float) Math.log10(lexprob)));
 	        //}

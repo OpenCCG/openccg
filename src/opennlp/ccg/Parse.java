@@ -161,7 +161,7 @@ public class Parse {
 				LF flatLF = cat.getLF();
 				cat = cat.copy();
 				Nominal index = cat.getIndexNominal(); 
-				convertedLF = HyloHelper.compactAndConvertNominals(flatLF, index, thisParse);
+				convertedLF = HyloHelper.getInstance().compactAndConvertNominals(flatLF, index, thisParse);
 				// get pred info
 				predInfoMap.clear();
 				Testbed.extractPredInfo(flatLF, predInfoMap);

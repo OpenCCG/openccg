@@ -318,7 +318,7 @@ public class Testbed {
 					index = cat.getIndexNominal();
 					flatLF = cat.getLF();
 					if (flatLF != null) {
-						lf = HyloHelper.compactAndConvertNominals(flatLF, index, sign);
+						lf = HyloHelper.getInstance().compactAndConvertNominals(flatLF, index, sign);
 						// Break when the first single rooted LF is encountered
 						if (lf instanceof SatOp) {
 							matchSRLF++;
@@ -335,7 +335,7 @@ public class Testbed {
 					cat = sign.getCategory();
 					index = cat.getIndexNominal();
 					flatLF = cat.getLF();
-					if (flatLF != null) lf = HyloHelper.compactAndConvertNominals(flatLF, index, sign);
+					if (flatLF != null) lf = HyloHelper.getInstance().compactAndConvertNominals(flatLF, index, sign);
 				}
 
 				if (flatLF != null) {
@@ -676,9 +676,9 @@ public class Testbed {
 			return true;
 		if (lf == null)
 			return false;
-		for (SatOp satOp : HyloHelper.getPreds(lf)) {
-			if (HyloHelper.isLexPred(satOp)) {
-				if (HyloHelper.getLexPred(satOp).equals(pred))
+		for (SatOp satOp : HyloHelper.getInstance().getPreds(lf)) {
+			if (HyloHelper.getInstance().isLexPred(satOp)) {
+				if (HyloHelper.getInstance().getLexPred(satOp).equals(pred))
 					return true;
 			}
 		}
@@ -697,9 +697,9 @@ public class Testbed {
 		String[] rolesArray = roles.split("\\s+");
 		// get roles in LF
 		rolesSet.clear();
-		for (SatOp satOp : HyloHelper.getPreds(lf)) {
-			if (HyloHelper.isRelPred(satOp)) {
-				rolesSet.add(HyloHelper.getRel(satOp));
+		for (SatOp satOp : HyloHelper.getInstance().getPreds(lf)) {
+			if (HyloHelper.getInstance().isRelPred(satOp)) {
+				rolesSet.add(HyloHelper.getInstance().getRel(satOp));
 			}
 		}
 		// check presence of roles in LF
@@ -816,11 +816,11 @@ public class Testbed {
 	public static void extractPredInfo(LF lf, Map<String,String> predInfoMap) {
 
 		String predData = "";
-		List<SatOp> preds = HyloHelper.getPreds(lf);
+		List<SatOp> preds = HyloHelper.getInstance().getPreds(lf);
 
 		for (SatOp pred : preds) {
 
-			String lexPred = HyloHelper.getLexPred(pred);
+			String lexPred = HyloHelper.getInstance().getLexPred(pred);
 			if (lexPred == null)
 				continue;
 

@@ -492,7 +492,7 @@ public class Parser {
 	// recurses through derivation, adding lex log probs to lexical signs
 	private void addSupertaggerLogProbs(Sign gold, Sign current) {
 		// lookup and add log prob for lex sign
-		if (current.isLexical()) {
+		if (current.isIndexed()) {
 			supertagger.setWord(gold.wordIndex(current));
 			Map<String, Double> stags = supertagger.getSupertags();
 			Double lexprob = stags.get(current.getSupertag());

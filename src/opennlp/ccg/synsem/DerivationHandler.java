@@ -61,7 +61,7 @@ abstract public class DerivationHandler<T> {
 		T retval = checkCache(sign); 
 		if (retval != null) return retval;
 		// lexical case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			retval = lexStep(sign);
 			cache(sign, retval); 
 			return retval; 

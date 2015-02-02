@@ -86,7 +86,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	protected int _edgeLimit = 0;
 
 	/** The cell limit on non-lexical edges (0 if none). */
-	protected int _cellLimit = 0;
+	protected int cellLimit = 0;
 
 	/** Constructor. */
 	public ChartCompleterStd(int size, RuleGroup _R) {
@@ -122,7 +122,7 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	/** Sets the cell limit on non-lexical edges. */
 	public void setCellPruneValue(int cellLimit) {
-		_cellLimit = cellLimit;
+		this.cellLimit = cellLimit;
 	}
 
 	/** Returns the edge count prior to unpacking. */
@@ -146,7 +146,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	/** Returns the given cell (ensuring non-null). */
 	protected Cell get(int x, int y) {
 		if (_table[x][y] == null)
-			_table[x][y] = new Cell(_cellLimit, edgeComparator);
+			_table[x][y] = new Cell(cellLimit, edgeComparator);
 		return _table[x][y];
 	}
 
@@ -157,19 +157,20 @@ public class ChartCompleterStd implements ChartCompleter {
 	}
 
 	@Override
-	public boolean insert(int x, int y, Sign w) {
-		Cell cell = get(x, y);
+	public boolean insert(int x, int y, Sign symbol) {
+		Cell form = get(x, y);
 		boolean retval = false;
 		// make edge
-		Edge edge = new Edge(w);
-		if (w.isLexical())
+		Edge edge = new Edge(symbol);
+		if (symbol.isIndexed()) {
 			edge.setWordPos(x);
+		}
 		// get representative edge
-		Edge rep = cell.get(edge);
+		Edge rep = form.get(edge);
 		// if none, add as representative
 		if (rep == null) {
 			edge.initAltEdges();
-			retval = cell.add(edge);
+			retval = form.add(edge);
 		}
 		// otherwise add as an alternative
 		else {
@@ -177,8 +178,8 @@ public class ChartCompleterStd implements ChartCompleter {
 		}
 		// update edge count, max cell size
 		_numEdges++;
-		if (cell.size() > _maxCellSize)
-			_maxCellSize = cell.size();
+		if (form.size() > _maxCellSize)
+			_maxCellSize = form.size();
 		// done
 		return retval;
 	}

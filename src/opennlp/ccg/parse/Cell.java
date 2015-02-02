@@ -62,16 +62,19 @@ public class Cell implements Serializable {
 		// convert index to insertion point
 		index = Math.abs(index) - 1;
 		// if somehow negative, use last position
-		if (index < 0)
+		if (index < 0) {
 			index = list.size();
+		}
 		// check if last and at limit
-		boolean limitActive = limit > 0 && !edge.sign.isLexical();
-		if (limitActive && index >= limit)
+		boolean limitActive = limit > 0 && edge.sign.isDerived();
+		if (limitActive && index >= limit) {
 			return false;
+		}
 		// otherwise add edge
 		list.add(index, edge);
-		if (map != null)
+		if (map != null) {
 			map.put(edge, edge);
+		}
 		// remove last if over limit
 		if (limitActive && list.size() > limit) {
 			Edge last = list.remove(list.size() - 1);

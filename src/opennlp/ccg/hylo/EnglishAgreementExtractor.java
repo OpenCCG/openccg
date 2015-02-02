@@ -177,7 +177,7 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 		// check for existing map, otherwise make one
 		if (getFeatureMap(sign) != null) return;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			currentMap = new FeatureMap(0);
 		}
 		// non-terminal

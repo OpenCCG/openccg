@@ -259,7 +259,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 		// check for existing map, otherwise make one
 		if (getFeatureMap(sign) != null) return;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			currentSign = sign;
 			currentMap = new FeatureMap(0);
 			//inc(lexExtractors);
@@ -461,7 +461,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	 */
 	protected Sign getSignOrChildSignAsNP(Sign sign) {
 		if (isNP(sign)) return sign;
-		if (sign.isLexical()) return null;
+		if (sign.isIndexed()) return null;
 		Sign[] inputs = sign.getDerivationHistory().getInputs();
         for (int i = 0; i < inputs.length; i++) {
         	if (isNP(inputs[i])) return inputs[i];
@@ -537,7 +537,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 		if (lengths != null) return lengths;
 		int wordlen = 0, punctlen = 0, verblen = 0;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			for (Word w: sign.getWords()) {
 				wordlen++;
 				if (isPunct(w)) punctlen++;

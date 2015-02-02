@@ -63,7 +63,7 @@ public class LexLogProbFeatureExtractor implements FeatureExtractor, SignScorer 
 		// otherwise calculate and store one
 		float logprob = 0;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			// just use zero if not already there
 		}
 		// non-terminal

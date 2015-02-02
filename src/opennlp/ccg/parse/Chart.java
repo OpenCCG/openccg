@@ -14,6 +14,13 @@ import opennlp.ccg.synsem.SignScorer;
 public interface Chart {
 
 	/**
+	 * The size of the chart
+	 * 
+	 * @return the size
+	 */
+	int getSize();
+
+	/**
 	 * Prints th signs in the chart to a print stream.
 	 * 
 	 * @param out the print stream

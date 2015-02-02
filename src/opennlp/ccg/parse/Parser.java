@@ -210,7 +210,9 @@ public class Parser {
 			}
 			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
 			// do parsing
-			parseEntries(entries);
+			product.setStartTime(System.currentTimeMillis());
+			product.setChart(buildChart(entries));
+			parseEntries(product.getChart());
 		} catch (LexException e) {
 			setGiveUpTime();
 			String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
@@ -308,7 +310,11 @@ public class Parser {
 				product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
 				;
 				// do parsing
-				parseEntries(entries);
+				
+				// set up chart
+				product.setStartTime(System.currentTimeMillis());
+				product.setChart(buildChart(entries));
+				parseEntries(product.getChart());
 				// done
 				done = true;
 				// reset supertagger in lexicon, turn gluing off
@@ -373,37 +379,44 @@ public class Parser {
 	}
 
 	// parses from lex entries
-	private void parseEntries(List<SignHash> entries) throws ParseException {
-		product.setStartTime(System.currentTimeMillis());
-		// set up chart
-		initializeChart(entries);
-		Chart chart = product.getChart();
-		if (signScorer != null)
+	private void parseEntries(Chart chart) throws ParseException {
+		if (signScorer != null) {
 			chart.setSignScorer(signScorer);
+		}
 		chart.setPruneValue(product.getPruneValue());
 		chart.setParseTimeLimit(product.getParseLimit());
 		chart.setStartTime(product.getStartTime());
 		chart.setEdgeLimit(product.getEdgeLimit());
 		chart.setCellPruneValue(product.getCellPruneValue());
 		// do parsing
-		parse(entries.size());
+		parse(chart.getSize());
 	}
 
-	// initialize the chart
-	private void initializeChart(List<SignHash> entries) {
+	/**
+	 * Builds a chart for a particular sequence of associations.
+	 * 
+	 * @param entries the entries to build
+	 * @return the chart
+	 */
+	private final Chart buildChart(List<SignHash> entries) {
 		Chart chart = new ChartStd(entries.size(), rules);
 		for (int i = 0; i < entries.size(); i++) {
-			SignHash wh = entries.get(i);
-			for (Sign sign : wh.getSignsSorted()) {
-				Category cat = sign.getCategory();
-				UnifyControl.reindex(cat);
+			SignHash signHash = entries.get(i);
+			for (Sign sign : signHash.getSignsSorted()) {
+				Category category = sign.getCategory();
+				UnifyControl.reindex(category);
 				chart.insert(i, i, sign);
 			}
 		}
-		product.setChart(chart);
+		return chart;
 	}
 
-	// actual CKY parsing
+	/**
+	 * Parse using the Cocke–Younger–Kasami (CKY) algorithm
+	 * 
+	 * @param size the size of the chart
+	 * @throws ParseException
+	 */
 	private void parse(int size) throws ParseException {
 		Chart chart = product.getChart();
 		// fill in chart

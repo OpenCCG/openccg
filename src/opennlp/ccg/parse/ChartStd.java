@@ -184,9 +184,9 @@ public class ChartStd implements Chart {
 	protected int _cellLimit = 0;
 
 	/** Constructor. */
-	public ChartStd(int s, RuleGroup _R) {
+	public ChartStd(int size, RuleGroup _R) {
 		_rules = _R;
-		_size = s;
+		_size = size;
 		_table = new Cell[_size][_size];
 	}
 
@@ -869,5 +869,10 @@ public class ChartStd implements Chart {
 			out.print("-");
 		out.print("| ");
 		out.println();
+	}
+
+	@Override
+	public int getSize() {
+		return _size;
 	}
 }

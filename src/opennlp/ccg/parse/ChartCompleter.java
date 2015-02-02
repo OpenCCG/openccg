@@ -7,7 +7,14 @@ import opennlp.ccg.synsem.Sign;
 import opennlp.ccg.synsem.SignScorer;
 
 /**
- * A chart constructor.
+ * A chart completer.
+ * 
+ * The x coordinate is the index of the last atom of a given form.
+ * The y coordinate is the number of hops between atoms of a given form.
+ * 
+ * This means that, if we tokenize the input string into word tokens, our atoms shall be words.
+ * However, if we recognize forms in the input string instead of chopping it into 
+ * we segment
  * 
  * @author Daniel Couto-Vale
  */
@@ -46,7 +53,7 @@ public interface ChartCompleter {
 	void setCellPruneValue(int cellPruneValue);
 
 	/**
-	 * Insterts an edge for a given sign into cell (x,y).
+	 * Associates form (x,y) with an edge for a given sign.
 	 * 
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -56,17 +63,18 @@ public interface ChartCompleter {
 	boolean insert(int x, int y, Sign sign);
 
 	/**
-	 * Inserts edges into cell (x,y) that result from applying unary rules to those already there.
+	 * Associates form (x,y) with edges that result from applying unary rules to those already
+	 * associated with it.
 	 * 
 	 * @param x the x coordinate
 	 * @param y the y coordinate
 	 * @throws ParseException
 	 */
-	void insertCell(int x, int y) throws ParseException;
+	void applyUnaryRules(int x, int y) throws ParseException;
 
 	/**
-	 * Inserts edges into cell (x3,y3) that result from combining those in cell (x1,y1) with those
-	 * in cell (x2,y2).
+	 * Associates form (x3,y3) with edges that result from combining the edges of form (x1,y1) with
+	 * those of form (x2,y2).
 	 * 
 	 * @param x1 the x1 coordinate
 	 * @param y1 the y1 coordinate
@@ -79,8 +87,8 @@ public interface ChartCompleter {
 	void insertCell(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException;
 
 	/**
-	 * Inserts fragmentary edges into cell (x3,y3), if it is non-empty, that result from combining
-	 * those in cell (x1,y1) with those in cell (x2,y2) using the glue rule.
+	 * Associates cell (x3,y3) with fragmentary edges, if it is non-empty, that result from
+	 * combining the edges of form (x1,y1) with those in cell (x2,y2) using the glue rule.
 	 * 
 	 * @param x1 the x1 coordinate
 	 * @param y1 the y1 coordinate
@@ -93,7 +101,7 @@ public interface ChartCompleter {
 	void insertCellFrag(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException;
 
 	/**
-	 * Returns if cell (x,y) is empty, i.e. has no edges.
+	 * Checks whether form (x,y) has no associated edge.
 	 * 
 	 * @param x the x coordinate
 	 * @param y the y coordinate

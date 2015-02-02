@@ -421,14 +421,14 @@ public class Parser {
 		ChartCompleter chart = product.getChart();
 		// fill in chart
 		for (int i = 0; i < size; i++) {
-			chart.insertCell(i, i);
+			chart.applyUnaryRules(i, i);
 		}
 		for (int j = 1; j < size; j++) {
 			for (int i = j - 1; i >= 0; i--) {
 				for (int k = i; k < j; k++) {
 					chart.insertCell(i, k, k + 1, j, i, j);
 				}
-				chart.insertCell(i, j);
+				chart.applyUnaryRules(i, j);
 			}
 		}
 		// glue fragments if apropos

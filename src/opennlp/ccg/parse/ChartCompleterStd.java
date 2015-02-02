@@ -196,7 +196,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	}
 
 	@Override
-	public final void insertCell(int x, int y) throws ParseException {
+	public final void applyUnaryRules(int x, int y) throws ParseException {
 		if (chart.getForm(x, y) == null)
 			return;
 		List<Sign> inputs = chart.getForm(x, y).getSignsSorted();

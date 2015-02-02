@@ -60,13 +60,13 @@ public class DenseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final Cell getForm(int end, int hops) {
-		return table[end][hops];
+	public final Cell getForm(int first, int last) {
+		return table[first][last];
 	}
 
 	@Override
-	public final void setForm(int end, int hops, Cell form) {
-		table[end][hops] = form;
+	public final void setForm(int first, int last, Cell form) {
+		table[first][last] = form;
 	}
 
 	@Override

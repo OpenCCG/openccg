@@ -55,76 +55,76 @@ public interface ChartCompleter {
 	/**
 	 * Associates form (x,y) with an edge for a given sign.
 	 * 
-	 * @param x the x coordinate
-	 * @param y the y coordinate
+	 * @param x1 the x1 coordinate
+	 * @param x2 the y2 coordinate
 	 * @param sign the sign to insert
 	 * @return <code>true</code> if an edge is inserted and <code>false</code> otherwise
 	 */
-	boolean insert(int x, int y, Sign sign);
+	boolean annotateForm(int x1, int x2, Sign sign);
 
 	/**
 	 * Associates form (x,y) with edges that result from applying unary rules to those already
 	 * associated with it.
 	 * 
-	 * @param x the x coordinate
-	 * @param y the y coordinate
+	 * @param x1 the x1 coordinate
+	 * @param x2 the x2 coordinate
 	 * @throws ParseException
 	 */
-	void applyUnaryRules(int x, int y) throws ParseException;
+	void annotateForm(int x1, int x2) throws ParseException;
 
 	/**
-	 * Associates form (x3,y3) with edges that result from combining the edges of form (x1,y1) with
-	 * those of form (x2,y2).
+	 * Associates form (z1,z2) with edges that result from combining the edges of form (x1,x2) with
+	 * those of form (y1,y2).
 	 * 
 	 * @param x1 the x1 coordinate
-	 * @param y1 the y1 coordinate
 	 * @param x2 the x2 coordinate
+	 * @param y1 the y1 coordinate
 	 * @param y2 the y2 coordinate
-	 * @param x3 the x3 coordinate
-	 * @param y3 the y3 coordinate
+	 * @param z1 the z1 coordinate
+	 * @param z2 the z2 coordinate
 	 * @throws ParseException
 	 */
-	void insertCell(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException;
+	void combineForms(int x1, int x2, int y1, int y2, int z1, int z2) throws ParseException;
 
 	/**
-	 * Associates cell (x3,y3) with fragmentary edges, if it is non-empty, that result from
-	 * combining the edges of form (x1,y1) with those in cell (x2,y2) using the glue rule.
+	 * Associates cell (z1,z2) with fragmentary edges, if it is non-empty, that result from
+	 * combining the edges of form (x1,x2) with those in cell (y1,y2) using the glue rule.
 	 * 
 	 * @param x1 the x1 coordinate
-	 * @param y1 the y1 coordinate
 	 * @param x2 the x2 coordinate
+	 * @param y1 the y1 coordinate
 	 * @param y2 the y2 coordinate
-	 * @param x3 the x3 coordinate
-	 * @param y3 the y3 coordinate
+	 * @param z1 the z1 coordinate
+	 * @param z2 the z2 coordinate
 	 * @throws ParseException
 	 */
-	void insertCellFrag(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException;
+	void glueForms(int x1, int x2, int y1, int y2, int z1, int z2) throws ParseException;
 
 	/**
 	 * Checks whether form (x,y) has no associated edge.
 	 * 
-	 * @param x the x coordinate
-	 * @param y the y coordinate
+	 * @param x1 the x1 coordinate
+	 * @param x2 the x2 coordinate
 	 * @return <code>true</code> if the cell is empty and <code>false</code> otherwise
 	 */
-	boolean isEmpty(int x, int y);
+	boolean isEmpty(int x1, int x2);
 
 	/**
 	 * Gets whether it is lazy unpack.
 	 * 
-	 * @param x the x coordinate
-	 * @param y the y coordinate
+	 * @param x1 the x1 coordinate
+	 * @param x2 the x2 coordinate
 	 * @return the edges
 	 */
-	List<Edge> lazyUnpack(int x, int y);
+	List<Edge> lazyUnpack(int x1, int x2);
 
 	/**
 	 * Gets whether it is unpack.
 	 * 
-	 * @param x the x coordinate
-	 * @param y the y coordinate
+	 * @param x1 the x1 coordinate
+	 * @param x2 the x2 coordinate
 	 * @return the edges
 	 */
-	List<Edge> unpack(int x, int y);
+	List<Edge> unpack(int x1, int x2);
 
 }

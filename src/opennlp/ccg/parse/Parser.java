@@ -405,7 +405,7 @@ public class Parser {
 			for (Sign sign : signHash.getSignsSorted()) {
 				Category category = sign.getCategory();
 				UnifyControl.reindex(category);
-				chart.insert(i, i, sign);
+				chart.annotateForm(i, i, sign);
 			}
 		}
 		return chart;
@@ -419,16 +419,22 @@ public class Parser {
 	 */
 	private void parse(int size) throws ParseException {
 		ChartCompleter chart = product.getChart();
-		// fill in chart
+
+		// Fill in chart
 		for (int i = 0; i < size; i++) {
-			chart.applyUnaryRules(i, i);
+			chart.annotateForm(i, i);
 		}
-		for (int j = 1; j < size; j++) {
-			for (int i = j - 1; i >= 0; i--) {
-				for (int k = i; k < j; k++) {
-					chart.insertCell(i, k, k + 1, j, i, j);
+
+		// Combine forms
+		for (int y2 = 1; y2 < size; y2++) {
+			for (int x1 = y2 - 1; x1 >= 0; x1--) {
+				for (int y1 = x1; y1 < y2; y1++) {
+					int x2 = y1 + 1;
+					int x3 = x1;
+					int y3 = y2;
+					chart.combineForms(x1, y1, x2, y2, x3, y3);
 				}
-				chart.applyUnaryRules(i, j);
+				chart.annotateForm(x1, y2);
 			}
 		}
 		// glue fragments if apropos
@@ -436,7 +442,7 @@ public class Parser {
 			for (int j = 1; j < size; j++) {
 				for (int i = j - 1; i >= 0; i--) {
 					for (int k = i; k < j; k++) {
-						chart.insertCellFrag(i, k, k + 1, j, i, j);
+						chart.glueForms(i, k, k + 1, j, i, j);
 					}
 				}
 			}

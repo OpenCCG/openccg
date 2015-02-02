@@ -11,26 +11,25 @@ package opennlp.ccg.parse;
 public interface Chart {
 
 	/**
-	 * Gets the form ending at a end position and with a given hops
+	 * Gets the form starting at the first position and ending at the last position
 	 * 
-	 * @param end the end position 
-	 * @param hops the hops between characters/words in the forms
-	 * @return the forms ending at the end position and with a given hops
+	 * @param first the first position of the form 
+	 * @param last the last position of the form
+	 * @return the forms starting at the first position and ending at the last position
 	 */
-	Cell getForm(int end, int hops);
-
+	Cell getForm(int first, int last);
 
 	/**
 	 * Sets a form token ending at a end position and with a given hops 
 	 * 
-	 * @param end the end position 
-	 * @param hops the hops between characters/words in the forms
+	 * @param first the first position of the form 
+	 * @param last the last position of the form
 	 * @param form the form to set
 	 */
-	void setForm(int end, int hops, Cell form);
+	void setForm(int first, int last, Cell form);
 
 	/**
-	 * @return the size of the chart
+	 * @return the number of positions in the chart
 	 */
 	int getSize();
 

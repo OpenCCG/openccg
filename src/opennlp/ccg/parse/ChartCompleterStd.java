@@ -94,7 +94,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	public ChartCompleterStd(int size, RuleGroup _R) {
 		_rules = _R;
 		_size = size;
-		chart = new DenseChart(size);
+		chart = new SparseChart(size);
 	}
 
 	/** Sets the sign scorer. */
@@ -168,7 +168,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	}
 
 	@Override
-	public boolean insert(int x, int y, Sign symbol) {
+	public boolean annotateForm(int x, int y, Sign symbol) {
 		Cell form = makeForm(x, y);
 		boolean retval = false;
 		// make edge
@@ -196,10 +196,10 @@ public class ChartCompleterStd implements ChartCompleter {
 	}
 
 	@Override
-	public final void applyUnaryRules(int x, int y) throws ParseException {
-		if (chart.getForm(x, y) == null)
+	public final void annotateForm(int x1, int x2) throws ParseException {
+		if (chart.getForm(x1, x2) == null)
 			return;
-		List<Sign> inputs = chart.getForm(x, y).getSignsSorted();
+		List<Sign> inputs = chart.getForm(x1, x2).getSignsSorted();
 		List<Sign> nextInputs = new ArrayList<Sign>(inputs.size());
 		// repeat until no more inputs
 		while (inputs.size() > 0) {
@@ -211,7 +211,7 @@ public class ChartCompleterStd implements ChartCompleter {
 					// check for unary rule cycle; skip result if found
 					if (!result.getDerivationHistory().containsCycle()) {
 						// insert result
-						boolean newEdgeClass = insert(x, y, result);
+						boolean newEdgeClass = annotateForm(x1, x2, result);
 						// add to next inputs if it yielded a new equiv class
 						if (newEdgeClass)
 							nextInputs.add(result);
@@ -226,7 +226,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	}
 
 	@Override
-	public void insertCell(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException {
+	public void combineForms(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException {
 		if (chart.getForm(x1, y1) == null)
 			return;
 		if (chart.getForm(x2, y2) == null)
@@ -238,13 +238,13 @@ public class ChartCompleterStd implements ChartCompleter {
 				checkLimits();
 				List<Sign> results = _rules.applyBinaryRules(sign1, sign2);
 				for (Sign result : results)
-					insert(x3, y3, result);
+					annotateForm(x3, y3, result);
 			}
 		}
 	}
 
 	@Override
-	public void insertCellFrag(int x1, int y1, int x2, int y2, int x3, int y3)
+	public void glueForms(int x1, int y1, int x2, int y2, int x3, int y3)
 			throws ParseException {
 		if (chart.getForm(x1, y1) == null)
 			return;
@@ -259,7 +259,7 @@ public class ChartCompleterStd implements ChartCompleter {
 				checkLimits();
 				List<Sign> results = _rules.applyGlueRule(sign1, sign2);
 				for (Sign result : results)
-					insert(x3, y3, result);
+					annotateForm(x3, y3, result);
 			}
 		}
 	}

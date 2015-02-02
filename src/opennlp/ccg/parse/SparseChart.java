@@ -77,28 +77,28 @@ public class SparseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final Cell getForm(int end, int hops) {
-		if (end - hops < 0 || end >= size) {
+	public final Cell getForm(int first, int last) {
+		if (first < 0 || last >= size || first > last) {
 			throw new ArrayIndexOutOfBoundsException();
 		}
-		Map<Integer, Cell> formMap = formMapMap.get(end);
+		Map<Integer, Cell> formMap = formMapMap.get(first);
 		if (formMap == null) {
 			return null;
 		}
-		return formMap.get(hops);
+		return formMap.get(last);
 	}
 
 	@Override
-	public final void setForm(int end, int hops, Cell form) {
-		if (end - hops < 0 || end >= size) {
+	public final void setForm(int first, int last, Cell form) {
+		if (first < 0 || last >= size || first > last) {
 			throw new ArrayIndexOutOfBoundsException();
 		}
-		Map<Integer, Cell> formMap = formMapMap.get(end);
+		Map<Integer, Cell> formMap = formMapMap.get(first);
 		if (formMap == null) {
 			formMap = new HashMap<Integer, Cell>();
-			formMapMap.put(end, formMap);
+			formMapMap.put(first, formMap);
 		}
-		formMap.put(hops, form);
+		formMap.put(last, form);
 	}
 
 	@Override

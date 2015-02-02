@@ -1,7 +1,6 @@
 package opennlp.ccg.parse;
 
 import java.io.PrintStream;
-import java.util.List;
 
 /**
  * A chart.
@@ -14,43 +13,35 @@ import java.util.List;
 public interface Chart {
 
 	/**
-	 * Gets all forms
+	 * Gets the form ending at a end position and with a given length
 	 * 
-	 * @return the forms
-	 */
-	List<Cell> getForms();
-
-	/**
-	 * Gets all forms starting at a start position
-	 * 
-	 * @param start the start position
-	 * @return the forms starting at the start position
-	 */
-	List<Cell> getForms(int start);
-
-	/**
-	 * Gets all forms starting at a start position and with a given length
-	 * 
-	 * @param start the start position 
+	 * @param end the end position 
 	 * @param length the length of the forms
-	 * @return the forms starting at the start position and with a given length
+	 * @return the forms ending at the end position and with a given length
 	 */
-	List<Cell> getForms(int start, int length);
+	Cell getForm(int end, int length);
+
 
 	/**
-	 * Intantiates a form that realises a grammatical unit
-	 *  
-	 * @param edge the grammatical unit
-	 * @param start the start position of the form
-	 * @param length the length of the form 
+	 * Sets a form token ending at a end position and with a given length 
+	 * 
+	 * @param end the end position 
+	 * @param length the length of the forms
+	 * @param form the form to set
 	 */
-	void makeForm(Edge edge, int start, int length);
+	void setForm(int end, int length, Cell form);
+
 
 	/**
-	 * Prints to the output stream
+	 * Prints the chart to the output stream
 	 * 
 	 * @param out the output stream
 	 */
 	void print(PrintStream out);
+
+	/**
+	 * @return the size of the chart
+	 */
+	int getSize();
 
 }

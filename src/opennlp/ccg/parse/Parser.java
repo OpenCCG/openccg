@@ -225,7 +225,7 @@ public class Parser {
 			if (debugParse) {
 				System.out.println(e);
 				System.out.println("Chart for failed parse:");
-				product.getChart().printTo(System.out);
+				product.getChart().print(System.out);
 			}
 			// rethrow
 			throw e;
@@ -361,7 +361,7 @@ public class Parser {
 					if (debugParse) {
 						System.out.println(e);
 						System.out.println("Chart for failed parse:");
-						product.getChart().printTo(System.out);
+						product.getChart().print(System.out);
 					}
 					// reset supertagger in lexicon, turn gluing off
 					grammar.lexicon.setSupertagger(null);

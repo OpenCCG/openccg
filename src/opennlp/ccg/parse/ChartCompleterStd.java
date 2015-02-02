@@ -52,9 +52,6 @@ public class ChartCompleterStd implements ChartCompleter {
 		}
 	};
 
-	/** The chart. */
-	protected Cell[][] _table;
-
 	/** Its size. */
 	protected int _size;
 
@@ -88,11 +85,16 @@ public class ChartCompleterStd implements ChartCompleter {
 	/** The cell limit on non-lexical edges (0 if none). */
 	protected int cellLimit = 0;
 
+	/**
+	 * The chart to build.
+	 */
+	private Chart chart;
+
 	/** Constructor. */
 	public ChartCompleterStd(int size, RuleGroup _R) {
 		_rules = _R;
 		_size = size;
-		_table = new Cell[_size][_size];
+		chart = new ChartStd(size);
 	}
 
 	/** Sets the sign scorer. */
@@ -143,22 +145,31 @@ public class ChartCompleterStd implements ChartCompleter {
 	// -----------------------------------------------------------
 	// Chart construction
 
-	/** Returns the given cell (ensuring non-null). */
-	protected Cell get(int x, int y) {
-		if (_table[x][y] == null)
-			_table[x][y] = new Cell(cellLimit, edgeComparator);
-		return _table[x][y];
+	/**
+	 * Makes a form starting at a start position with a given length.
+	 * 
+	 * @param end the end position of the form
+	 * @param length the length of the form
+	 * @return the form starting at the start position with the given length
+	 */
+	protected Cell makeForm(int end, int length) {
+		if (chart.getForm(end, length) == null) {
+			chart.setForm(end, length, new Cell(cellLimit, edgeComparator));
+		}
+		return chart.getForm(end, length);
 	}
 
-	/** Returns the signs for a given cell (ensuring non-null). */
+	/**
+	 * Gets signs for a given cell (ensuring non-null).
+	 */
 	protected SignHash getSigns(int x, int y) {
-		Cell cell = get(x, y);
+		Cell cell = makeForm(x, y);
 		return cell.getSigns();
 	}
 
 	@Override
 	public boolean insert(int x, int y, Sign symbol) {
-		Cell form = get(x, y);
+		Cell form = makeForm(x, y);
 		boolean retval = false;
 		// make edge
 		Edge edge = new Edge(symbol);
@@ -186,9 +197,9 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	@Override
 	public final void insertCell(int x, int y) throws ParseException {
-		if (_table[x][y] == null)
+		if (chart.getForm(x, y) == null)
 			return;
-		List<Sign> inputs = _table[x][y].getSignsSorted();
+		List<Sign> inputs = chart.getForm(x, y).getSignsSorted();
 		List<Sign> nextInputs = new ArrayList<Sign>(inputs.size());
 		// repeat until no more inputs
 		while (inputs.size() > 0) {
@@ -216,12 +227,12 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	@Override
 	public void insertCell(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException {
-		if (_table[x1][y1] == null)
+		if (chart.getForm(x1, y1) == null)
 			return;
-		if (_table[x2][y2] == null)
+		if (chart.getForm(x2, y2) == null)
 			return;
-		List<Sign> inputs1 = _table[x1][y1].getSignsSorted();
-		List<Sign> inputs2 = _table[x2][y2].getSignsSorted();
+		List<Sign> inputs1 = chart.getForm(x1, y1).getSignsSorted();
+		List<Sign> inputs2 = chart.getForm(x2, y2).getSignsSorted();
 		for (Sign sign1 : inputs1) {
 			for (Sign sign2 : inputs2) {
 				checkLimits();
@@ -235,14 +246,14 @@ public class ChartCompleterStd implements ChartCompleter {
 	@Override
 	public void insertCellFrag(int x1, int y1, int x2, int y2, int x3, int y3)
 			throws ParseException {
-		if (_table[x1][y1] == null)
+		if (chart.getForm(x1, y1) == null)
 			return;
-		if (_table[x2][y2] == null)
+		if (chart.getForm(x2, y2) == null)
 			return;
 		if (!isEmpty(x3, y3))
 			return;
-		List<Sign> inputs1 = _table[x1][y1].getSignsSorted();
-		List<Sign> inputs2 = _table[x2][y2].getSignsSorted();
+		List<Sign> inputs1 = chart.getForm(x1, y1).getSignsSorted();
+		List<Sign> inputs2 = chart.getForm(x2, y2).getSignsSorted();
 		for (Sign sign1 : inputs1) {
 			for (Sign sign2 : inputs2) {
 				checkLimits();
@@ -272,7 +283,7 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	@Override
 	public boolean isEmpty(int x, int y) {
-		Cell cell = get(x, y);
+		Cell cell = makeForm(x, y);
 		return cell.list.isEmpty();
 	}
 
@@ -281,7 +292,7 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	/** Unpacks the edges in the given cell as an n-best list. */
 	public List<Edge> unpack(int x, int y) {
-		Cell cell = get(x, y);
+		Cell cell = makeForm(x, y);
 		// recursively unpack each edge
 		@SuppressWarnings("unchecked")
 		Set<Edge> unpacked = new THashSet(new TObjectIdentityHashingStrategy());
@@ -443,7 +454,7 @@ public class ChartCompleterStd implements ChartCompleter {
 		if (_pruneVal <= 0)
 			return unpack(x, y);
 		// recursively sort edge alts
-		Cell cell = get(x, y);
+		Cell cell = makeForm(x, y);
 		// make top-level candidate list and derivs map
 		List<Candidate> topcands = new ArrayList<Candidate>(_pruneVal);
 		Map<Edge, List<Edge>> derivsmap = new THashMap(new TObjectIdentityHashingStrategy());
@@ -667,26 +678,15 @@ public class ChartCompleterStd implements ChartCompleter {
 	public void saveChartEntries(File file) throws IOException {
 		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(
 				new FileOutputStream(file)));
-		out.writeObject(_table);
+		out.writeObject(chart);
 		out.flush();
 		out.close();
 	}
 
 	/** Loads the chart entries from the given file. */
 	public void loadChartEntries(File file) throws IOException {
-		ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(
-				file)));
-		try {
-			// read entries
-			_table = (Cell[][]) in.readObject();
-			// restore size, unpacking edge count
-			_size = _table.length;
-			_numUnpackingEdges = 0;
-		} catch (ClassNotFoundException e) {
-			in.close();
-			throw (RuntimeException) new RuntimeException().initCause(e);
-		}
-		in.close();
+		chart = new ChartStd(file);
+		_numUnpackingEdges = 0;
 	}
 
 	// -----------------------------------------------------------
@@ -696,7 +696,7 @@ public class ChartCompleterStd implements ChartCompleter {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < _size; i++) {
 			for (int j = 0; j < _size; j++) {
-				sb.append(get(i, j).size()).append('\t');
+				sb.append(makeForm(i, j).size()).append('\t');
 			}
 			sb.append('\n');
 		}
@@ -704,77 +704,8 @@ public class ChartCompleterStd implements ChartCompleter {
 	}
 
 	@Override
-	public final void printTo(PrintStream out) {
-		int[] sizes = new int[_size];
-		int rows = 0;
-		for (int i = 0; i < _size; i++) {
-			for (int j = i; j < _size; j++)
-				if (get(i, j).size() > sizes[i])
-					sizes[i] = get(i, j).size();
-			rows += sizes[i];
-		}
-
-		String[][] toprint = new String[rows][_size];
-		String[] words = new String[_size];
-		int maxwidth = 0;
-
-		for (int i = 0, row = 0; i < _size; row += sizes[i++]) {
-			for (int j = 0; j < _size; j++)
-				for (int s = 0; s < sizes[i]; s++) {
-					SignHash cell = getSigns(i, j);
-					if (i == j)
-						words[i] = cell.asSignSet().iterator().next().getOrthography();
-					if (cell.size() >= s + 1) {
-						toprint[row + s][j] = ((Sign) cell.toArray()[s]).getCategory().toString();
-						if (toprint[row + s][j].length() > maxwidth)
-							maxwidth = toprint[row + s][j].length();
-					}
-				}
-		}
-
-		int fullwidth = _size * (maxwidth + 3) - 1;
-		out.print(" ");
-		for (String w : words) {
-			out.print(w);
-			int pad = (maxwidth + 3) - w.length();
-			for (int p = 0; p < pad; p++)
-				out.print(" ");
-		}
-		out.print("|");
-		out.println();
-		for (int p = 0; p < fullwidth; p++)
-			out.print("-");
-		out.print("| ");
-		out.println();
-
-		for (int i = 0, entry = sizes[0], e = 0; i < rows; i++) {
-			if (i == entry) {
-				out.print("|");
-				for (int p = 0; p < fullwidth; p++)
-					out.print("-");
-				out.print("|");
-				out.println();
-				entry += sizes[++e];
-			}
-			out.print("| ");
-
-			for (int j = 0; j < _size; j++) {
-				int pad = 1 + maxwidth;
-				if (toprint[i][j] != null) {
-					out.print(toprint[i][j]);
-					pad -= toprint[i][j].length();
-				}
-				for (int p = 0; p < pad; p++)
-					out.print(" ");
-				out.print("| ");
-			}
-			out.println();
-		}
-		out.print("|");
-		for (int p = 0; p < fullwidth; p++)
-			out.print("-");
-		out.print("| ");
-		out.println();
+	public final void print(PrintStream out) {
+		chart.print(out);
 	}
 
 	@Override

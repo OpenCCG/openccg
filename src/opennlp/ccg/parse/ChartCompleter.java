@@ -25,7 +25,7 @@ public interface ChartCompleter {
 	 * 
 	 * @param out the print stream
 	 */
-	void printTo(PrintStream out);
+	void print(PrintStream out);
 
 	int getEdgeCount();
 

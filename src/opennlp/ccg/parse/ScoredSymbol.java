@@ -25,8 +25,8 @@ import java.text.*;
 
 /**
  * <p>
- * A scored symbol is a wrapper for a symbol, i.e. a symbol annotated with a score, and
- * optionally a list of alternative scored symbols.
+ * A scored symbol is a symbol annotated with a score and, optionally, with a list of alternative
+ * scored symbols.
  * 
  * A representative scored symbol is a scored symbol that stands in for other scored symbols.
  * It has the same category but different rhetorico-semantic entities (LFs).

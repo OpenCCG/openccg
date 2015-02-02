@@ -46,34 +46,60 @@ import java.text.*;
  */
 public class ScoredSymbol implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	/**
+	 * Generated serial version UID
+	 */
+	private static final long serialVersionUID = -4998260616580204169L;
 
-	/** Class for storing back-refs from signs. */
-	public static class EdgeRef implements Serializable {
-		private static final long serialVersionUID = 1L;
-		/** The edge. */
+	/** 
+	 * A holder of a scored symbol.
+	 */
+	public static class ScoredSymbolHolder implements Serializable {
+
+		/**
+		 * Generated serial version UID
+		 */
+		private static final long serialVersionUID = -5600090138895781778L;
+		
+		/**
+		 * The scored symbol held
+		 */
 		public final ScoredSymbol scoredSymbol;
 
-		/** Constructor. */
-		public EdgeRef(ScoredSymbol scoredSymbol) {
+		/**
+		 * Constructor
+		 * 
+		 * @param scoredSymbol the scored symbol to hold
+		 */
+		public ScoredSymbolHolder(ScoredSymbol scoredSymbol) {
 			this.scoredSymbol = scoredSymbol;
 		}
+
 	}
 
-	/** Returns the edge associated with this sign, or null if none. */
-	public static ScoredSymbol getScoredSymbol(Symbol symbol) {
-		EdgeRef eref = (EdgeRef) symbol.getData(EdgeRef.class);
-		return (eref != null) ? eref.scoredSymbol : null;
+	/**
+	 * Recovers a scored symbol for a symbol
+	 * 
+	 * @param symbol the symbol to recover a scored symbol for
+	 * @return the scored symbol if any
+	 */
+	public final static ScoredSymbol recoverScoredSymbol(Symbol symbol) {
+		ScoredSymbolHolder holder = (ScoredSymbolHolder) symbol.getData(ScoredSymbolHolder.class);
+		return (holder != null) ? holder.scoredSymbol : null;
 	}
 
-	/** The sign. */
+	/**
+	 * The symbol.
+	 */
 	protected Symbol symbol;
 
 	/** The edge score. */
 	protected double score;
 
-	/** Word position, for lexical edges (otherwise -1). */
-	protected int wordPos = -1;
+	/**
+	 * The x1 position
+	 */
+	protected int x1 = -1;
 
 	/** The alternative scored symbols (none initially). */
 	protected List<ScoredSymbol> alternatives = null;
@@ -90,7 +116,7 @@ public class ScoredSymbol implements Serializable {
 	public ScoredSymbol(Symbol sign, double score) {
 		this.symbol = sign;
 		this.score = score;
-		sign.addData(new EdgeRef(this));
+		sign.addData(new ScoredSymbolHolder(this));
 	}
 
 	/** Returns the sign. */
@@ -106,16 +132,6 @@ public class ScoredSymbol implements Serializable {
 	/** Sets the score. */
 	public void setScore(double score) {
 		this.score = score;
-	}
-
-	/** Returns the word position of a lexical edge (otherwise -1). */
-	public int getWordPos() {
-		return wordPos;
-	}
-
-	/** Sets the word position of a lexical edge. */
-	public void setWordPos(int pos) {
-		wordPos = pos;
 	}
 
 	/** Returns whether this edge is a representative. */
@@ -171,7 +187,7 @@ public class ScoredSymbol implements Serializable {
 				Symbol[] inputs = alt.symbol.getDerivationHistory().getInputs();
 				if (inputs != null) {
 					for (Symbol s : inputs)
-						getScoredSymbol(s).restoreAltEdges();
+						recoverScoredSymbol(s).restoreAltEdges();
 				}
 			}
 		}

@@ -39,8 +39,8 @@ public class Form implements Serializable {
 
 		public int computeHashCode(Object o) {
 			Symbol sign = ((ScoredSymbol) o).symbol;
-			int headpos = ScoredSymbol.getScoredSymbol(sign.getLexHead()).wordPos;
-			return 31 * headpos + sign.getCategory().hashCodeNoLF();
+			int x1 = ScoredSymbol.recoverScoredSymbol(sign.getLexHead()).x1;
+			return 31 * x1 + sign.getCategory().hashCodeNoLF();
 			// return 31*headpos + sign.getCategory().hashCodeNoLF() +
 			// 17*sign.getUnfilledDeps().hashCode();
 		}
@@ -50,8 +50,8 @@ public class Form implements Serializable {
 				return false;
 			Symbol sign1 = ((ScoredSymbol) o1).symbol;
 			Symbol sign2 = ((ScoredSymbol) o2).symbol;
-			return ScoredSymbol.getScoredSymbol(sign1.getLexHead()).wordPos == ScoredSymbol
-					.getScoredSymbol(sign2.getLexHead()).wordPos
+			return ScoredSymbol.recoverScoredSymbol(sign1.getLexHead()).x1 == ScoredSymbol
+					.recoverScoredSymbol(sign2.getLexHead()).x1
 					&& sign1.getCategory().equalsNoLF(sign2.getCategory());
 			// && sign1.getUnfilledDeps().equals(sign2.getUnfilledDeps());
 		}
@@ -165,4 +165,5 @@ public class Form implements Serializable {
 	public final List<ScoredSymbol> getScoredSymbols() {
 		return scoredSymbols;
 	}
+
 }

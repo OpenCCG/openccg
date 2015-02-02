@@ -174,7 +174,7 @@ public class ChartCompleterImp implements ChartCompleter {
 		// make scoredSymbol
 		ScoredSymbol scoredSymbol = new ScoredSymbol(symbol);
 		if (symbol.isIndexed()) {
-			scoredSymbol.setWordPos(x1);
+			scoredSymbol.x1 = x1;
 		}
 		// get representative scoredSymbol
 		ScoredSymbol rep = form.get(scoredSymbol);
@@ -372,7 +372,7 @@ public class ChartCompleterImp implements ChartCompleter {
 		// otherwise recursively unpack
 		ScoredSymbol[] inputEdges = new ScoredSymbol[inputSigns.length];
 		for (int i = 0; i < inputSigns.length; i++) {
-			inputEdges[i] = ScoredSymbol.getScoredSymbol(inputSigns[i]);
+			inputEdges[i] = ScoredSymbol.recoverScoredSymbol(inputSigns[i]);
 			unpack(inputEdges[i], unpacked, startedUnpacking);
 		}
 		// then make scoredSymbols for new combos, using same rule, and add to merged
@@ -613,7 +613,7 @@ public class ChartCompleterImp implements ChartCompleter {
 			ScoredSymbol[] inputReps = new ScoredSymbol[inputs.length];
 			int[] indices = new int[inputs.length];
 			for (int i = 0; i < inputs.length; i++) {
-				inputReps[i] = ScoredSymbol.getScoredSymbol(inputs[i]);
+				inputReps[i] = ScoredSymbol.recoverScoredSymbol(inputs[i]);
 				indices[i] = 0;
 			}
 			ScoredSymbol e = getEdgeForIndices(alt, inputReps, indices, derivsmap);

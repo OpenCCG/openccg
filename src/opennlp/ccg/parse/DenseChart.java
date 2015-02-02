@@ -26,7 +26,7 @@ public class DenseChart implements Chart, Serializable {
 	/**
 	 * The data structure.
 	 */
-	private final Cell[][] table;
+	private final Form[][] table;
 
 	/**
 	 * Constructor
@@ -34,7 +34,7 @@ public class DenseChart implements Chart, Serializable {
 	 * @param size the size of the table
 	 */
 	public DenseChart(int size) {
-		table = new Cell[size][size];
+		table = new Form[size][size];
 	}
 
 	/**
@@ -49,7 +49,7 @@ public class DenseChart implements Chart, Serializable {
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		ObjectInputStream ois = new ObjectInputStream(bis);
 		try {
-			table = (Cell[][]) ois.readObject();
+			table = (Form[][]) ois.readObject();
 		} catch (ClassNotFoundException e) {
 			throw (RuntimeException) new RuntimeException().initCause(e);
 		} finally {
@@ -60,12 +60,12 @@ public class DenseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final Cell getForm(int first, int last) {
+	public final Form getForm(int first, int last) {
 		return table[first][last];
 	}
 
 	@Override
-	public final void setForm(int first, int last, Cell form) {
+	public final void setForm(int first, int last, Form form) {
 		table[first][last] = form;
 	}
 

@@ -54,7 +54,7 @@ public class Converter {
 	 * a root sign is given, otherwise using lexical propositions; 
 	 * returns the converted nominal root. 
 	 */
-	static Nominal convertNominals(LF lf, Sign root, Nominal nominalRoot) {
+	static Nominal convertNominals(LF lf, Symbol root, Nominal nominalRoot) {
 		// check preference for naming with word positions; set root to null if false
         Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
         boolean useWordPositions = prefs.getBoolean(USE_WORD_POSITIONS_FOR_ATOM_CONVERSION, true);
@@ -73,15 +73,15 @@ public class Converter {
     }
 
     // recurse through lf, converting nominals
-    private void convertNoms(LF lf, Sign root) {
+    private void convertNoms(LF lf, Symbol root) {
         if (lf instanceof SatOp) {
             SatOp satOp = (SatOp) lf;
             // try finding word index of lex origin in root sign
             int wordIndex = -1;
             if (root != null) {
 	            EntityRealizer origin = satOp.getOrigin();
-	            if (origin instanceof Sign) {
-	            	Sign lexSign = (Sign) origin;
+	            if (origin instanceof Symbol) {
+	            	Symbol lexSign = (Symbol) origin;
 	            	// make sure it's not dominated by another lex pred
 	            	// nb: also need to check for special pred 'elem', which isn't 
 	            	// dominated in sample flights grammar
@@ -181,7 +181,7 @@ public class Converter {
     //
     
     // returns true if the EP for the lexPred is dominated by another lex pred
-    private static boolean lexDominated(String lexPred, Sign lexSign) {
+    private static boolean lexDominated(String lexPred, Symbol lexSign) {
     	Category cat = lexSign.getCategory();
     	LF lf = cat.getLF();
     	Nominal index = cat.getIndexNominal();

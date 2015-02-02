@@ -416,9 +416,9 @@ public class RuleGroup implements Serializable {
     
     
     /** Applies the unary rules to the given input sign, returning the list of results. */
-    public List<Sign> applyUnaryRules(Sign input) {
-    	Sign[] inputs = { input };
-        List<Sign> results = new ArrayList<Sign>(2);
+    public List<Symbol> applyUnaryRules(Symbol input) {
+    	Symbol[] inputs = { input };
+        List<Symbol> results = new ArrayList<Symbol>(2);
         String supertag = input.getCategory().getSupertag();
         // check whether dynamic combos update required, or whether rules can be skipped
         boolean dynamicCombosUpdate = false;
@@ -472,9 +472,9 @@ public class RuleGroup implements Serializable {
     }
     
     /** Applies the binary rules to the given input signs, returning the list of results. */
-    public List<Sign> applyBinaryRules(Sign input1, Sign input2) {
-    	Sign[] inputs = { input1, input2 };
-        List<Sign> results = new ArrayList<Sign>(2);
+    public List<Symbol> applyBinaryRules(Symbol input1, Symbol input2) {
+    	Symbol[] inputs = { input1, input2 };
+        List<Symbol> results = new ArrayList<Symbol>(2);
 		String supertag1 = input1.getCategory().getSupertag();
 		String supertag2 = input2.getCategory().getSupertag();
         // check whether dynamic combos update required, or whether rules can be skipped
@@ -530,16 +530,16 @@ public class RuleGroup implements Serializable {
     
     
     /** Applies the glue rule to the given input signs, returning the list of results. */
-    public List<Sign> applyGlueRule(Sign input1, Sign input2) {
-    	Sign[] inputs = { input1, input2 };
-        List<Sign> results = new ArrayList<Sign>(1);
+    public List<Symbol> applyGlueRule(Symbol input1, Symbol input2) {
+    	Symbol[] inputs = { input1, input2 };
+        List<Symbol> results = new ArrayList<Symbol>(1);
     	glueRule.applyRule(inputs, results);
         return results;
     }
 
     
     /** Applies the coarticulation to the given sign, adding the result (if any) to the given ones. */
-    public void applyCoart(Sign lexSign, Sign coartSign, List<Sign> results) {
+    public void applyCoart(Symbol lexSign, Symbol coartSign, List<Symbol> results) {
 
         Category[] cats = new Category[] { lexSign.getCategory(), coartSign.getCategory() }; 
 
@@ -550,7 +550,7 @@ public class RuleGroup implements Serializable {
             for (Iterator<Category> it = resultCats.iterator(); it.hasNext();) {
                 Category catResult = it.next();
                 bapp.distributeTargetFeatures(catResult);
-                Sign sign = Sign.createCoartSign(catResult, lexSign, coartSign);
+                Symbol sign = Symbol.createCoartSign(catResult, lexSign, coartSign);
                 results.add(sign);
             }
         } catch (UnifyFailure uf) {}

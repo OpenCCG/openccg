@@ -54,13 +54,13 @@ public class SyntacticFeatureExtractor implements FeatureExtractor {
 	protected FeatureMap currentMap = null;
 	
 	/** Current sign (for extracting features). */
-	protected Sign currentSign = null;
+	protected Symbol currentSign = null;
 	
 	/** Current input signs (for extracting features). */
-	protected Sign[] currentInputs = null;
+	protected Symbol[] currentInputs = null;
 	
 	/** Current sibling (for extracting features). */
-	protected Sign currentSibling = null;
+	protected Symbol currentSibling = null;
 	
 	/** Current words (for extracting features). */
 	protected List<Word> currentWords = null;
@@ -123,13 +123,13 @@ public class SyntacticFeatureExtractor implements FeatureExtractor {
 	
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		addFeatures(sign, complete);
 		return getFeatureMap(sign);
 	}
 	
 	/** Recursively adds features to the feature map for the given sign, if not already present. */
-	protected void addFeatures(Sign sign, boolean complete) {
+	protected void addFeatures(Symbol sign, boolean complete) {
 		// check for existing map, otherwise make one
 		if (getFeatureMap(sign) != null) return;
 		// lex case
@@ -140,9 +140,9 @@ public class SyntacticFeatureExtractor implements FeatureExtractor {
 		}
 		// non-terminal
 		else {
-			Sign[] inputs = sign.getDerivationHistory().getInputs();
+			Symbol[] inputs = sign.getDerivationHistory().getInputs();
 			// first recurse
-			for (Sign child : inputs) addFeatures(child, false);
+			for (Symbol child : inputs) addFeatures(child, false);
 			// use input maps in making current map
 			currentSign = sign;
 			currentInputs = inputs;
@@ -167,12 +167,12 @@ public class SyntacticFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Stores the current feature map as a data object in the given sign. */
-	protected void storeFeatureMap(Sign sign) {
+	protected void storeFeatureMap(Symbol sign) {
 		sign.addData(new FeatureMapWrapper(currentMap));
 	}
 	
 	/** Returns the feature map for this extractor from the given sign (null if none). */
-	protected FeatureMap getFeatureMap(Sign sign) {
+	protected FeatureMap getFeatureMap(Symbol sign) {
 		FeatureMapWrapper fmw = (FeatureMapWrapper)sign.getData(FeatureMapWrapper.class);
 		return (fmw != null) ? fmw.featureMap : null;
 	}
@@ -188,7 +188,7 @@ public class SyntacticFeatureExtractor implements FeatureExtractor {
 	}
 
 	/** Returns the sibling sign from among the two inputs. */
-	protected Sign sibling(Sign sign, Sign[] inputs) {
+	protected Symbol sibling(Symbol sign, Symbol[] inputs) {
 		if (sign.getLexHead() == inputs[0].getLexHead()) return inputs[1];
 		else return inputs[0];
 	}

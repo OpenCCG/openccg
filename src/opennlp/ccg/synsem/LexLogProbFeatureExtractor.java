@@ -50,12 +50,12 @@ public class LexLogProbFeatureExtractor implements FeatureExtractor, SignScorer 
 	}
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		return lexLogProbVector(getLexLogProb(sign, complete));
 	}
 	
 	/** Recursively gets lex log prob total for the given sign, if not already present. */
-	protected float getLexLogProb(Sign sign, boolean complete) {
+	protected float getLexLogProb(Symbol sign, boolean complete) {
 		// check for stored log prob 
 		SupertaggerAdapter.LexLogProb lexlogprob = 
 			(SupertaggerAdapter.LexLogProb) sign.getData(SupertaggerAdapter.LexLogProb.class);
@@ -69,7 +69,7 @@ public class LexLogProbFeatureExtractor implements FeatureExtractor, SignScorer 
 		// non-terminal
 		else {
 			// use input totals to calculate current one
-			Sign[] inputs = sign.getDerivationHistory().getInputs();
+			Symbol[] inputs = sign.getDerivationHistory().getInputs();
 			if (inputs.length == 1) 
 				logprob = getLexLogProb(inputs[0], false);
 			else if (inputs.length == 2) 
@@ -91,7 +91,7 @@ public class LexLogProbFeatureExtractor implements FeatureExtractor, SignScorer 
      * Returns a score for the given sign and completeness flag; 
      * specifically, returns the lex log prob total for the sign.
      */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
     	return getLexLogProb(sign, complete);
     }
 }

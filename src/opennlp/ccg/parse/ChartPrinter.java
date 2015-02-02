@@ -2,8 +2,8 @@ package opennlp.ccg.parse;
 
 import java.io.PrintStream;
 
-import opennlp.ccg.synsem.Sign;
-import opennlp.ccg.synsem.SignHash;
+import opennlp.ccg.synsem.Symbol;
+import opennlp.ccg.synsem.SymbolHash;
 
 public class ChartPrinter {
 
@@ -29,17 +29,17 @@ public class ChartPrinter {
 		for (int i = 0, row = 0; i < chart.getSize(); row += sizes[i++]) {
 			for (int j = 0; j < chart.getSize(); j++) {
 				for (int s = 0; s < sizes[i]; s++) {
-					SignHash symbols;
+					SymbolHash symbols;
 					if (chart.getForm(i, j) == null) {
-						symbols = new SignHash();
+						symbols = new SymbolHash();
 					} else {
-						symbols = chart.getForm(i, j).getSigns();
+						symbols = chart.getForm(i, j).getSymbols();
 					}
 					if (i == j) {
 						words[i] = symbols.asSignSet().iterator().next().getOrthography();
 					}
 					if (symbols.size() >= s + 1) {
-						toprint[row + s][j] = ((Sign) symbols.toArray()[s]).getCategory().toString();
+						toprint[row + s][j] = ((Symbol) symbols.toArray()[s]).getCategory().toString();
 						if (toprint[row + s][j].length() > maxwidth)
 							maxwidth = toprint[row + s][j].length();
 					}

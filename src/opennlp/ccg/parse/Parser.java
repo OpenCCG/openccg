@@ -206,7 +206,7 @@ public class Parser {
 			long lexStartTime = System.currentTimeMillis();
 			UnifyControl.startUnifySequence();
 			// get entries for each word
-			List<SignHash> entries = new ArrayList<SignHash>(words.size());
+			List<SymbolHash> entries = new ArrayList<SymbolHash>(words.size());
 			for (Word w : words) {
 				entries.add(lexicon.getSignsFromWord(w));
 			}
@@ -302,7 +302,7 @@ public class Parser {
 				long lexStartTime = System.currentTimeMillis();
 				UnifyControl.startUnifySequence();
 				// get filtered entries for each word
-				List<SignHash> entries = new ArrayList<SignHash>(words.size());
+				List<SymbolHash> entries = new ArrayList<SymbolHash>(words.size());
 				supertagger.mapWords(words);
 				for (int i = 0; i < words.size(); i++) {
 					supertagger.setWord(i);
@@ -400,11 +400,11 @@ public class Parser {
 	 * @param entries the entries to build
 	 * @return the chart
 	 */
-	private final ChartCompleter buildChart(List<SignHash> entries) {
+	private final ChartCompleter buildChart(List<SymbolHash> entries) {
 		ChartCompleter chart = new ChartCompleterImp(entries.size(), rules);
 		for (int i = 0; i < entries.size(); i++) {
-			SignHash signHash = entries.get(i);
-			for (Sign sign : signHash.getSignsSorted()) {
+			SymbolHash signHash = entries.get(i);
+			for (Symbol sign : signHash.getSignsSorted()) {
 				Category category = sign.getCategory();
 				UnifyControl.reindex(category);
 				chart.annotateForm(i, i, sign);
@@ -464,15 +464,15 @@ public class Parser {
 
 	// create answer ArrayList
 	private void createResult(int size) throws ParseException {
-		List<Sign> symbols = new ArrayList<Sign>();
+		List<Symbol> symbols = new ArrayList<Symbol>();
 		List<Double> scores = new ArrayList<Double>();
 		ChartCompleter chartCompleter = product.getChartCompleter();
 		// unpack top
-		List<Edge> edges = product.getLazyUnpacking() ? chartCompleter.lazyUnpack(0, size - 1)
+		List<ScoredSymbol> edges = product.getLazyUnpacking() ? chartCompleter.lazyUnpack(0, size - 1)
 				: chartCompleter.unpack(0, size - 1);
 		// add signs for unpacked edges
-		for (Edge edge : edges) {
-			symbols.add(edge.sign);
+		for (ScoredSymbol edge : edges) {
+			symbols.add(edge.symbol);
 			scores.add(edge.score);
 		}
 		// check non-empty
@@ -494,7 +494,7 @@ public class Parser {
 	 * Adds the supertagger log probs to the lexical signs of the gold standard
 	 * parse.
 	 */
-	public void addSupertaggerLogProbs(Sign gold) {
+	public void addSupertaggerLogProbs(Symbol gold) {
 		List<Word> words = gold.getWords();
 		supertagger.mapWords(words);
 		addSupertaggerLogProbs(gold, gold);
@@ -504,7 +504,7 @@ public class Parser {
 	}
 
 	// recurses through derivation, adding lex log probs to lexical signs
-	private void addSupertaggerLogProbs(Sign gold, Sign current) {
+	private void addSupertaggerLogProbs(Symbol gold, Symbol current) {
 		// lookup and add log prob for lex sign
 		if (current.isIndexed()) {
 			supertagger.setWord(gold.wordIndex(current));
@@ -516,8 +516,8 @@ public class Parser {
 		}
 		// otherwise recurse
 		else {
-			Sign[] inputs = current.getDerivationHistory().getInputs();
-			for (Sign s : inputs)
+			Symbol[] inputs = current.getDerivationHistory().getInputs();
+			for (Symbol s : inputs)
 				addSupertaggerLogProbs(gold, s);
 		}
 	}
@@ -529,11 +529,11 @@ public class Parser {
 	 * be better to return the forest oracle, but the nominal conversion would
 	 * be tricky to do correctly.
 	 */
-	public Pair<Sign, Boolean> oracleBest(LF goldLF) {
-		Sign retval = null;
-		List<Sign> result = product.getResult();
+	public Pair<Symbol, Boolean> oracleBest(LF goldLF) {
+		Symbol retval = null;
+		List<Symbol> result = product.getResult();
 		double bestF = 0.0;
-		for (Sign sign : result) {
+		for (Symbol sign : result) {
 			Category cat = sign.getCategory().copy();
 			Nominal index = cat.getIndexNominal();
 			LF parsedLF = cat.getLF();
@@ -546,7 +546,7 @@ public class Parser {
 				}
 			}
 		}
-		return new Pair<Sign, Boolean>(retval, (bestF == 1.0));
+		return new Pair<Symbol, Boolean>(retval, (bestF == 1.0));
 	}
 
 	public final ParseProduct getProduct() {

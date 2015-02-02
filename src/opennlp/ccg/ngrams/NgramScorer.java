@@ -18,7 +18,7 @@
 
 package opennlp.ccg.ngrams;
 
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.synsem.SignScorer;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.lexicon.*;
@@ -123,7 +123,7 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
     protected Map<List<Word>,Float> cachedLogProbs = null;
     
     /** Reference to current sign to score. */
-    protected Sign signToScore = null;
+    protected Symbol signToScore = null;
     
     /** Reusable list of words to score. */
     protected List<Word> wordsToScore = new ArrayList<Word>();
@@ -161,7 +161,7 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
      * Otherwise, sets <code>signToScore</code>, calls <code>prepareToScoreWords</code>, 
      * and then returns the result of <code>logprob()</code> converted to a probability.
      */
-    public synchronized double score(Sign sign, boolean complete) {
+    public synchronized double score(Symbol sign, boolean complete) {
     	return convertToProb(logprob(sign, complete));
     }
     
@@ -175,7 +175,7 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
      * Otherwise, sets <code>signToScore</code>, calls <code>prepareToScoreWords</code>, 
      * and then returns the result of <code>logProb()</code>.
      */
-    public synchronized double logprob(Sign sign, boolean complete) {
+    public synchronized double logprob(Symbol sign, boolean complete) {
         List<Word> words = sign.getWords(); 
         if (words == null) return 0;
         if (!complete) { // check cache
@@ -253,7 +253,7 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
     
     
     /** Returns a feature map with counts of each ngram for the given sign and completness flag. */
-    public FeatureMap extractFeatureMap(Sign sign, boolean complete) {
+    public FeatureMap extractFeatureMap(Symbol sign, boolean complete) {
     	FeatureMap featmap = new FeatureMap();
     	// do setup as with scoring
         List<Word> words = sign.getWords(); 
@@ -281,7 +281,7 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
 	 * The default implementation returns the log prob as 
 	 * the value of a feature named '$ngram' plus the counts of each ngram.
      */
-    public FeatureVector extractLogProbs(Sign sign, boolean complete) {
+    public FeatureVector extractLogProbs(Symbol sign, boolean complete) {
     	FeatureList retval = new FeatureList(1);
 		Alphabet.Feature f = alphabet.index("$ngram");
 		if (f != null) retval.add(f, (float)logprob(sign, complete));
@@ -293,7 +293,7 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
 	 * The default implementation returns the log prob as 
 	 * the value of a feature named '$ngram' plus the counts of each ngram.
 	 */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		FeatureVector logprob = extractLogProbs(sign, complete);
 		if (useNgramFeatures) {
 			FeatureMap map = extractFeatureMap(sign, complete);
@@ -351,9 +351,9 @@ public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtr
         float logProbTotal = 0;
         int numCached = 0;
         if (!tagsAdded && signToScore != null) { // check cache for initial words
-            Sign[] inputs = signToScore.getDerivationHistory().getInputs();
+            Symbol[] inputs = signToScore.getDerivationHistory().getInputs();
             if (inputs != null) {
-                Sign initialSign = (!reverse) ? inputs[0] : inputs[inputs.length-1];
+                Symbol initialSign = (!reverse) ? inputs[0] : inputs[inputs.length-1];
                 List<Word> initialWords = initialSign.getWords();
                 Float logprob = getCachedLogProb(initialWords);
                 if (logprob != null) {

@@ -21,7 +21,7 @@ package opennlp.ccg.ngrams;
 import java.util.*;
 
 import opennlp.ccg.perceptron.*;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.lexicon.Word;
 
 /**
@@ -131,7 +131,7 @@ public class LinearNgramScorerCombo extends NgramScorer implements FeatureExtrac
 	 * The interpolated log prob is also returned as a feature '$ngram' if 
 	 * the flag for including the interpolated log prob as a feature is set (the default).
      */
-    public FeatureVector extractLogProbs(Sign sign, boolean complete) {
+    public FeatureVector extractLogProbs(Symbol sign, boolean complete) {
 		FeatureList retval = new FeatureList(models.length+1);
 		if (useInterpLogProb) {
 	        Alphabet.Feature f = alphabet.index("$ngram");

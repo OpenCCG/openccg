@@ -19,7 +19,7 @@
 package opennlp.ccg.realize;
 
 import opennlp.ccg.lexicon.Word;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 
 import gnu.trove.THashSet;
 import gnu.trove.TObjectIdentityHashingStrategy;
@@ -58,7 +58,7 @@ public class LexicalDiversityPruningStrategy extends DiversityPruningStrategy
     
     /** Returns true iff the given signs are not compellingly different.
         In particular, returns true iff the set of relevant open class stems are the same. */
-    public boolean notCompellinglyDifferent(Sign sign1, Sign sign2) {
+    public boolean notCompellinglyDifferent(Symbol sign1, Symbol sign2) {
     	stemsSeen.clear();
     	for (Word w : sign1.getWords()) {
     		if (posValsToUse.contains(w.getPOS())) stemsSeen.add(w.getStem());

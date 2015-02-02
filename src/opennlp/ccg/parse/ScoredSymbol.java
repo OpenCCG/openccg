@@ -25,20 +25,26 @@ import java.text.*;
 
 /**
  * <p>
- * An edge is a wrapper for a sign, i.e. a sign together with a score, and
- * optionally a list of alternative edges. A representative edge is an edge that
- * represents (stands in for) other edges with the same category (but different
- * LFs) during the chart construction process, stored in the list of alternative
- * edges; it is considered disjunctive when there is more than one alternative.
+ * A scored symbol is a wrapper for a symbol, i.e. a symbol annotated with a score, and
+ * optionally a list of alternative scored symbols.
  * 
- * Note that initially a representative edge will be in its list of
- * alternatives, but it can be removed during pruning.
+ * A representative scored symbol is a scored symbol that stands in for other scored symbols.
+ * It has the same category but different rhetorico-semantic entities (LFs).
+ * The represented scored symbols are stored in the list of alternative scored symbols during
+ * chart construction. The representative scored symbol is considered disjunctive when there is
+ * more than one alternatives to it.
+ * 
+ * WARNING: A representative scored symbol will initially be present in its list of alternatives,
+ * but this may not be the case all the way through chart construction. This is the case because
+ * the representative scored symbol as any other alternative may be removed from the list of
+ * alternatives through pruning.
  * </p>
  *
  * @author Michael White
+ * @author Daniel Couto-Vale
  * @version $Revision: 1.4 $, $Date: 2009/12/22 22:19:00 $
  */
-public class Edge implements Serializable {
+public class ScoredSymbol implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -46,22 +52,22 @@ public class Edge implements Serializable {
 	public static class EdgeRef implements Serializable {
 		private static final long serialVersionUID = 1L;
 		/** The edge. */
-		public final Edge edge;
+		public final ScoredSymbol scoredSymbol;
 
 		/** Constructor. */
-		public EdgeRef(Edge edge) {
-			this.edge = edge;
+		public EdgeRef(ScoredSymbol scoredSymbol) {
+			this.scoredSymbol = scoredSymbol;
 		}
 	}
 
 	/** Returns the edge associated with this sign, or null if none. */
-	public static Edge getEdge(Sign sign) {
-		EdgeRef eref = (EdgeRef) sign.getData(EdgeRef.class);
-		return (eref != null) ? eref.edge : null;
+	public static ScoredSymbol getScoredSymbol(Symbol symbol) {
+		EdgeRef eref = (EdgeRef) symbol.getData(EdgeRef.class);
+		return (eref != null) ? eref.scoredSymbol : null;
 	}
 
 	/** The sign. */
-	protected Sign sign;
+	protected Symbol symbol;
 
 	/** The edge score. */
 	protected double score;
@@ -69,27 +75,27 @@ public class Edge implements Serializable {
 	/** Word position, for lexical edges (otherwise -1). */
 	protected int wordPos = -1;
 
-	/** The alternative edges (none initially). */
-	protected List<Edge> altEdges = null;
+	/** The alternative scored symbols (none initially). */
+	protected List<ScoredSymbol> alternatives = null;
 
 	/** Saved list of alternative edges, for restoring chart after unpacking. */
-	protected transient List<Edge> savedAltEdges = null;
+	protected transient List<ScoredSymbol> savedAltEdges = null;
 
 	/** Constructor (score defaults to 0.0). */
-	public Edge(Sign sign) {
+	public ScoredSymbol(Symbol sign) {
 		this(sign, 0.0);
 	}
 
 	/** Constructor with score. */
-	public Edge(Sign sign, double score) {
-		this.sign = sign;
+	public ScoredSymbol(Symbol sign, double score) {
+		this.symbol = sign;
 		this.score = score;
 		sign.addData(new EdgeRef(this));
 	}
 
 	/** Returns the sign. */
-	public Sign getSign() {
-		return sign;
+	public Symbol getSign() {
+		return symbol;
 	}
 
 	/** Returns the score. */
@@ -114,20 +120,20 @@ public class Edge implements Serializable {
 
 	/** Returns whether this edge is a representative. */
 	public boolean isRepresentative() {
-		return altEdges != null;
+		return alternatives != null;
 	}
 
 	/** Returns whether this edge is disjunctive. */
 	public boolean isDisjunctive() {
-		return altEdges != null && altEdges.size() > 1;
+		return alternatives != null && alternatives.size() > 1;
 	}
 
 	/** Returns the list of alt edges, or the empty list if none. */
-	public List<Edge> getAltEdges() {
-		if (altEdges == null)
+	public List<ScoredSymbol> getAltEdges() {
+		if (alternatives == null)
 			return Collections.emptyList();
 		else
-			return altEdges;
+			return alternatives;
 	}
 
 	/**
@@ -142,30 +148,30 @@ public class Edge implements Serializable {
 	 */
 	public void initAltEdges(int capacity) {
 		// check uninitialized
-		if (altEdges != null)
+		if (alternatives != null)
 			throw new RuntimeException("Alt edges already initialized!");
-		altEdges = new ArrayList<Edge>(capacity);
-		altEdges.add(this);
+		alternatives = new ArrayList<ScoredSymbol>(capacity);
+		alternatives.add(this);
 	}
 
 	/** Replaces the alt edges, saving the current ones for later restoration. */
-	public void replaceAltEdges(List<Edge> newAlts) {
-		savedAltEdges = altEdges;
-		altEdges = newAlts;
+	public void replaceAltEdges(List<ScoredSymbol> newAlts) {
+		savedAltEdges = alternatives;
+		alternatives = newAlts;
 	}
 
 	/** Recursively restores saved alt edges, if any. */
 	public void restoreAltEdges() {
 		if (savedAltEdges != null) {
 			// restore
-			altEdges = savedAltEdges;
+			alternatives = savedAltEdges;
 			savedAltEdges = null;
 			// recurse
-			for (Edge alt : altEdges) {
-				Sign[] inputs = alt.sign.getDerivationHistory().getInputs();
+			for (ScoredSymbol alt : alternatives) {
+				Symbol[] inputs = alt.symbol.getDerivationHistory().getInputs();
 				if (inputs != null) {
-					for (Sign s : inputs)
-						getEdge(s).restoreAltEdges();
+					for (Symbol s : inputs)
+						getScoredSymbol(s).restoreAltEdges();
 				}
 			}
 		}
@@ -176,7 +182,7 @@ public class Edge implements Serializable {
 	 * the score are not considered.)
 	 */
 	public int hashCode() {
-		return sign.hashCode() * 23;
+		return symbol.hashCode() * 23;
 	}
 
 	/**
@@ -184,7 +190,7 @@ public class Edge implements Serializable {
 	 * (Alternatives and the score are not considered.)
 	 */
 	public int surfaceWordHashCode() {
-		return sign.surfaceWordHashCode() * 23;
+		return symbol.surfaceWordHashCode() * 23;
 	}
 
 	/**
@@ -194,10 +200,10 @@ public class Edge implements Serializable {
 	public boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (!(obj instanceof Edge))
+		if (!(obj instanceof ScoredSymbol))
 			return false;
-		Edge edge = (Edge) obj;
-		return sign.equals(edge.sign);
+		ScoredSymbol edge = (ScoredSymbol) obj;
+		return symbol.equals(edge.symbol);
 	}
 
 	/**
@@ -207,10 +213,10 @@ public class Edge implements Serializable {
 	public boolean surfaceWordEquals(Object obj) {
 		if (obj == this)
 			return true;
-		if (!(obj instanceof Edge))
+		if (!(obj instanceof ScoredSymbol))
 			return false;
-		Edge edge = (Edge) obj;
-		return sign.surfaceWordEquals(edge.sign);
+		ScoredSymbol edge = (ScoredSymbol) obj;
+		return symbol.surfaceWordEquals(edge.symbol);
 	}
 
 	/**
@@ -223,7 +229,7 @@ public class Edge implements Serializable {
 			sbuf.append("[" + nf3.format(score) + "] ");
 		else
 			sbuf.append("[" + nfE.format(score) + "] ");
-		sbuf.append(sign.toString());
+		sbuf.append(symbol.toString());
 		return sbuf.toString();
 	}
 

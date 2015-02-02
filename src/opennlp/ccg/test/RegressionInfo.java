@@ -59,7 +59,7 @@ public class RegressionInfo {
 		/** The gold std nominal id name & supertag for LF predicates. @deprecated Should use fullWords. */
 		public String predInfo = null;
 		/** The gold standard derivation. */
-		public Sign sign = null;
+		public Symbol sign = null;
 		/** Returns the id from info, without prefixed "ID=" if present. */
 		public String getId() {
 			if (info == null) return null;
@@ -79,7 +79,7 @@ public class RegressionInfo {
         this.grammar = grammar;
         SAXBuilder builder = new SAXBuilder();
         try {
-        	Map<String,Sign> signMap = readSerStream(serStream);
+        	Map<String,Symbol> signMap = readSerStream(serStream);
             Document doc = builder.build(istr);
             Element root = doc.getRootElement();
             List<Element> items = root.getChildren("item");
@@ -130,17 +130,17 @@ public class RegressionInfo {
     
     /** Reads in a map of info keys and gold standard signs from the given stream, or returns null if the stream is null. */
     @SuppressWarnings("unchecked")
-	public static Map<String,Sign> readSerStream(ObjectInputStream serStream) throws IOException {
+	public static Map<String,Symbol> readSerStream(ObjectInputStream serStream) throws IOException {
     	if (serStream == null) return null;
     	try {
-			return (Map<String,Sign>) serStream.readObject();
+			return (Map<String,Symbol>) serStream.readObject();
 		} catch (ClassNotFoundException e) {
             throw (RuntimeException) new RuntimeException().initCause(e);
 		}
     }
     
     /** Writes the map of info keys and gold standard signs to the corresponding .ser file. */
-    public static void writeSerFile(Map<String,Sign> signMap, File regressionFile) throws FileNotFoundException, IOException {
+    public static void writeSerFile(Map<String,Symbol> signMap, File regressionFile) throws FileNotFoundException, IOException {
     	File serFile = serFile(regressionFile);
     	ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(serFile));
     	oos.writeObject(signMap);
@@ -215,7 +215,7 @@ public class RegressionInfo {
      * as a test item to the testbed with the given filename, applying the configured to-XML
      * transformations.
      */
-    public static void addToTestbed(Grammar grammar, Sign sign, int numParses, LF lf, String filename) throws IOException { 
+    public static void addToTestbed(Grammar grammar, Symbol sign, int numParses, LF lf, String filename) throws IOException { 
 
         // ensure dirs exist for filename
         File file = new File(filename);
@@ -244,8 +244,8 @@ public class RegressionInfo {
         }
         
         // load or make sign map
-    	Map<String,Sign> signMap = readSerStream(serStream(file));
-    	if (signMap == null) signMap = new HashMap<String,Sign>();
+    	Map<String,Symbol> signMap = readSerStream(serStream(file));
+    	if (signMap == null) signMap = new HashMap<String,Symbol>();
         
     	// find unique id
     	int count = 0;

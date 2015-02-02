@@ -18,7 +18,7 @@
 
 package opennlp.ccg.realize;
 
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 
 import java.util.*;
 
@@ -46,7 +46,7 @@ abstract public class DiversityPruningStrategy extends NBestPruningStrategy
     protected THashSet keepers = new THashSet(new TObjectIdentityHashingStrategy());
     
     /** Returns true iff the given signs are not compellingly different. */
-    abstract public boolean notCompellinglyDifferent(Sign sign1, Sign sign2);
+    abstract public boolean notCompellinglyDifferent(Symbol sign1, Symbol sign2);
     
     /**
      * Returns a (possibly empty) list of edges pruned 

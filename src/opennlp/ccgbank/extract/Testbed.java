@@ -55,7 +55,7 @@ public class Testbed {
 	private SupertaggerStandIn supertaggerStandIn = new SupertaggerStandIn();
 	
 	// results of following deriv
-	private Sign sign = null;
+	private Symbol sign = null;
 
 	private LF lf = null;
 
@@ -180,7 +180,7 @@ public class Testbed {
 				Document outDoc = new Document();
 				Element outRoot = new Element("regression");
 				outDoc.setRootElement(outRoot);
-				Map<String,Sign> signMap = new HashMap<String,Sign>();
+				Map<String,Symbol> signMap = new HashMap<String,Symbol>();
 
 				// loop through derivations, making test items
 				List derivElts = inRoot.getChildren();
@@ -303,10 +303,10 @@ public class Testbed {
 			LF flatLF = null;
 
 			// recurse through deriv
-			SignHash signs = followDerivR(derivElt);
+			SymbolHash signs = followDerivR(derivElt);
 			// set results, using first available sign (ie some arbitrary one)
 			if (!signs.isEmpty()) {
-				Iterator<Sign> iter = signs.asSignSet().iterator();
+				Iterator<Symbol> iter = signs.asSignSet().iterator();
 				// System.out.println("Processing file no: "+header);
 				// Count of single rooted LFs produced by the constrained parser
 				int matchSRLF = 0;
@@ -353,7 +353,7 @@ public class Testbed {
 
 	// recurse through deriv, returning signs
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private SignHash followDerivR(Element derivElt) throws ParseException {
+	private SymbolHash followDerivR(Element derivElt) throws ParseException {
 		String eltName = derivElt.getName();
 		// follow deriv, applying combinatory rules
 		// nb: no checks made for intended deriv!
@@ -379,14 +379,14 @@ public class Testbed {
 						+ ": wrong number of child elements: " + numChildren
 						+ " for cat: " + cat);
 			Element firstInputElt = (Element) childElts.get(1);
-			SignHash firstSigns = followDerivR(firstInputElt);
-			SignHash retval = new SignHash();
+			SymbolHash firstSigns = followDerivR(firstInputElt);
+			SymbolHash retval = new SymbolHash();
 			// unary case
 			if (numChildren == 2) {
 				// apply rules
-				for (Sign s : firstSigns.asSignSet()) {
-					List<Sign> results = rules.applyUnaryRules(s);
-					for (Sign rSign : results)
+				for (Symbol s : firstSigns.asSignSet()) {
+					List<Symbol> results = rules.applyUnaryRules(s);
+					for (Symbol rSign : results)
 						retval.insert(rSign);
 				}
 				// caution/warn upon failure
@@ -398,12 +398,12 @@ public class Testbed {
 						ccgBankTaskTestbed.log("Caution for " + header + ": " + msg);
 					if (ccgBankTaskTestbed.isDebugDerivations()) {
 						ccgBankTaskTestbed.log(header + ": derivation stymied; inputs: ");
-						for (Sign s : firstSigns.asSignSet()) {
+						for (Symbol s : firstSigns.asSignSet()) {
 							ccgBankTaskTestbed.log(s.toString());
 						}
 						if (!noResults) {
 							ccgBankTaskTestbed.log("Outputs: ");
-							for (Sign s : retval.asSignSet())
+							for (Symbol s : retval.asSignSet())
 								ccgBankTaskTestbed.log(s.toString());
 						}
 					}
@@ -414,12 +414,12 @@ public class Testbed {
 			// binary case
 			else if (numChildren == 3) {
 				Element secondInputElt = (Element) childElts.get(2);
-				SignHash secondSigns = followDerivR(secondInputElt);
+				SymbolHash secondSigns = followDerivR(secondInputElt);
 				// apply rules
-				for (Sign sign1 : firstSigns.asSignSet()) {
-					for (Sign sign2 : secondSigns.asSignSet()) {
-						List<Sign> results = rules.applyBinaryRules(sign1, sign2);
-						for (Sign rSign : results)
+				for (Symbol sign1 : firstSigns.asSignSet()) {
+					for (Symbol sign2 : secondSigns.asSignSet()) {
+						List<Symbol> results = rules.applyBinaryRules(sign1, sign2);
+						for (Symbol rSign : results)
 							retval.insert(rSign);
 					}
 				}
@@ -441,16 +441,16 @@ public class Testbed {
 						ccgBankTaskTestbed.log("Caution for " + header + ": " + msg);
 					if (ccgBankTaskTestbed.isDebugDerivations()) {
 						ccgBankTaskTestbed.log(header + ": derivation stymied; first inputs: ");
-						for (Sign sign1 : firstSigns.asSignSet()) {
+						for (Symbol sign1 : firstSigns.asSignSet()) {
 							ccgBankTaskTestbed.log(sign1.toString());
 						}
 						ccgBankTaskTestbed.log("Second inputs: ");
-						for (Sign sign2 : secondSigns.asSignSet()) {
+						for (Symbol sign2 : secondSigns.asSignSet()) {
 							ccgBankTaskTestbed.log(sign2.toString());
 						}
 						if (!noResults) {
 							ccgBankTaskTestbed.log("Outputs: ");
-							for (Sign s : retval.asSignSet())
+							for (Symbol s : retval.asSignSet())
 								ccgBankTaskTestbed.log(s.toString());
 						}
 					}
@@ -462,7 +462,7 @@ public class Testbed {
 			// Store cat ids of tree nodes for printing to aux files
 			if (treeInfoFlag) {
 
-				for (Sign s : retval.asSignSet()) {
+				for (Symbol s : retval.asSignSet()) {
 
 					Hashtable<String, String> idConvTally = new Hashtable<String, String>();
 					Hashtable<String, Integer> freqTally = new Hashtable<String, Integer>();
@@ -535,7 +535,7 @@ public class Testbed {
 				// NB: there's no guarantee of getting the right arg roles if the word-cat pair is observed 
 				lexicon.setSupertagger(supertaggerStandIn);
 				supertaggerStandIn.setTag(simpleCat); 
-				SignHash lexSigns = lexicon.getSignsFromWord(w);
+				SymbolHash lexSigns = lexicon.getSignsFromWord(w);
 
 				if (semClass == null || semClass.length() == 0)
 					semClass = "NoClass";
@@ -544,8 +544,8 @@ public class Testbed {
 				// also check number with matching pos, match on no class
 				int matchPOS = 0;
 				boolean matchNoClass = false;
-				for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
-					Sign s = it.next();
+				for (Iterator<Symbol> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
+					Symbol s = it.next();
 
 					Word wTemp = s.getWords().get(0);
 					String morphClass = wTemp.getSemClass();
@@ -573,8 +573,8 @@ public class Testbed {
 				}
 				// filter by pos unless none match
 				if (matchPOS > 0) {
-					for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
-						Sign s = it.next();
+					for (Iterator<Symbol> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
+						Symbol s = it.next();
 						Word wTemp = s.getWords().get(0);
 						if (!wTemp.getPOS().equals(pos)) {
 							it.remove(); continue;
@@ -597,7 +597,7 @@ public class Testbed {
 					if (ccgBankTaskTestbed.isDebugDerivations()) {
 						ccgBankTaskTestbed.log(header + ": " + exc.toString());
 					}
-					return new SignHash();
+					return new SymbolHash();
 				}
 				throw new ParseException(exc.toString());
 			} catch (RuntimeException exc) {
@@ -713,7 +713,7 @@ public class Testbed {
 	}
 
 	// returns whether the given LF contains the given indexRel
-	private static boolean containsRel(LF lf, String indexRel, Sign sign) {
+	private static boolean containsRel(LF lf, String indexRel, Symbol sign) {
 
 		if (indexRel == null)
 			return true;
@@ -747,13 +747,13 @@ public class Testbed {
 	}
 
 	// return whether signs contains cat; filter if so
-	private static boolean containsCat(SignHash signs, String cat) {
+	private static boolean containsCat(SymbolHash signs, String cat) {
 		// special case: give free pass to cats with dollars
 		if (!signs.isEmpty() && cat.indexOf('$') >= 0)
 			return true;
 		// check for cat
 		boolean retval = false;
-		for (Sign sign : signs.asSignSet()) {
+		for (Symbol sign : signs.asSignSet()) {
 			String supertag = sign.getCategory().getSupertag();
 			// again, give free pass to cats with dollars
 			if (supertag.indexOf('$') >= 0 || cat.equals(supertag)) {
@@ -763,8 +763,8 @@ public class Testbed {
 		}
 		// filter if found
 		if (retval) {
-			for (Iterator<Sign> it = signs.asSignSet().iterator(); it.hasNext();) {
-				Sign sign = it.next();
+			for (Iterator<Symbol> it = signs.asSignSet().iterator(); it.hasNext();) {
+				Symbol sign = it.next();
 				String supertag = sign.getCategory().getSupertag();
 				if (supertag.indexOf('$') >= 0 || cat.equals(supertag))
 					continue;
@@ -783,8 +783,8 @@ public class Testbed {
 	}
 
 	// recursively adds new combos for given sign
-	private void newCombos(Sign s, List<String> retval) {
-		Sign[] inputs = s.getDerivationHistory().getInputs();
+	private void newCombos(Symbol s, List<String> retval) {
+		Symbol[] inputs = s.getDerivationHistory().getInputs();
 		if (inputs != null) {
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < inputs.length; i++) {

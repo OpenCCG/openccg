@@ -103,7 +103,7 @@ public class Regression {
     public String rescorefile = null;
     
     /** Map from info keys to best realization signs for serialization (if any). */
-    public Map<String,Sign> bestRealMap = null;
+    public Map<String,Symbol> bestRealMap = null;
     
     /** Flag for whether to include LFs in n-best output. */
     public boolean nbestincludelfs = false;
@@ -381,7 +381,7 @@ public class Regression {
     // resets bestRealMap
     private void realserStartDoc() {
     	if (realserdir != null && doRealization) {
-    		bestRealMap = new HashMap<String,Sign>();
+    		bestRealMap = new HashMap<String,Symbol>();
     	}
     }
     
@@ -475,7 +475,7 @@ public class Regression {
             	continue;
             }
             
-            List<Sign> parses = null;
+            List<Symbol> parses = null;
             List<Double> parseScores = null;
             LF parsedLF = null;
             LF compactedLF = null;
@@ -510,7 +510,7 @@ public class Regression {
                     parsedComplete = !parses.get(0).getCategory().isFragment();
                     // get LF of best parse, if needed
                     if (showParseStats || (doRealization && testItem.lfElt == null && testItem.sign == null)) {
-	                    Sign sign = parses.get(0);
+	                    Symbol sign = parses.get(0);
 	                    Category cat = sign.getCategory().copy();
 	                    Nominal index = cat.getIndexNominal();
 	                    parsedLF = cat.getLF();
@@ -642,12 +642,12 @@ public class Regression {
             	// nb: only dealing with complete parses at the moment
             	// nb: gold LF must come from saved sign
             	if (parses.size() > 0 && testItem.sign != null) {
-            		List<Sign> bestSigns = new ArrayList<Sign>(parses);
-            		Sign best = parses.get(0);
+            		List<Symbol> bestSigns = new ArrayList<Symbol>(parses);
+            		Symbol best = parses.get(0);
             		// update best if not exact match
             		if (parseScore.fscore != 1.0) {
             			// check oracle best
-            			Pair<Sign,Boolean> bestPair = parser.oracleBest(goldLF); 
+            			Pair<Symbol,Boolean> bestPair = parser.oracleBest(goldLF); 
             			if (bestPair.a != null) oracleBetter++;
             			if (bestPair.b) {
             				best = bestPair.a;
@@ -691,7 +691,7 @@ public class Regression {
             	}
             	// add remaining n-best 
             	for (int k=1; k < parses.size(); k++) {
-                    Sign sign = parses.get(k);
+                    Symbol sign = parses.get(k);
             		double edgeScore = parseScores.get(k);
                     Category cat = sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
@@ -746,7 +746,7 @@ public class Regression {
             if (testItemLF != null) inputLF = testItemLF;
             // or LF from stored sign
             else if (testItem.sign != null) {
-                Sign sign = testItem.sign;
+                Symbol sign = testItem.sign;
                 Category cat = sign.getCategory().copy();
                 Nominal index = cat.getIndexNominal();
                 LF convertedLF = HyloHelper.getInstance().compactAndConvertNominals(cat.getLF(), index, sign);
@@ -814,8 +814,8 @@ public class Regression {
             		Pair<Edge,Boolean> bestPair = chart.oracleBest(testItem.sentence); 
             		Edge oracleBest = bestPair.a;
             		if (oracleBest != null) {
-                    	Sign best = oracleBest.getSign();
-                    	List<Sign> bestSigns = new ArrayList<Sign>(bestEdges.size()+1);
+                    	Symbol best = oracleBest.getSign();
+                    	List<Symbol> bestSigns = new ArrayList<Symbol>(bestEdges.size()+1);
                     	for (Edge e : bestEdges) bestSigns.add(e.getSign());
             			if (bestEdge != oracleBest) oracleBetter++;
             			if (!bestPair.b) {
@@ -869,7 +869,7 @@ public class Regression {
             	else {
             		nbestrealPW.println("<best " + scores + ">");
             		nbestrealPW.println("<str>" + best + "</str>");
-                	Sign sign = bestEdge.getSign();
+                	Symbol sign = bestEdge.getSign();
                     Category cat = sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     LF lf = cat.getLF();
@@ -896,7 +896,7 @@ public class Regression {
                     	else {
                     		nbestrealPW.println("<next" + eScores + ">");
                     		nbestrealPW.println("<str>" + next + "</str>");
-                        	Sign sign = e.getSign();
+                        	Symbol sign = e.getSign();
                             Category cat = sign.getCategory().copy();
                             Nominal index = cat.getIndexNominal();
                             LF lf = cat.getLF();
@@ -1481,7 +1481,7 @@ public class Regression {
 	        for (int i = 0; i < numItems; i++) {
 	            RegressionInfo.TestItem testItem = tbInfo.getItem(i); 
 	        	if (testItem.numOfParses == 0) continue; // check grammatical
-	        	Sign sign = testItem.sign;
+	        	Symbol sign = testItem.sign;
 	        	List<Word> factors = GenerativeSyntacticModel.getFactors(sign);
 	        	for (Word w : factors) {
 	        		tOut.print(tokenizer.format(w));

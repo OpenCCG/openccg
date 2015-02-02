@@ -47,7 +47,7 @@ public class PerceptronScorer implements SignScorer {
      * In particular, returns the score assigned by the model to the features 
      * extracted from the given sign with the given completeness flag.
      */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
     	return model.score(featureExtractor.extractFeatures(sign, complete));
     }
 }

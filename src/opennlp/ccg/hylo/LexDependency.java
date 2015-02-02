@@ -37,16 +37,16 @@ import opennlp.ccg.synsem.*;
 public class LexDependency {
 
 	/** The lexical head. */
-	public Sign lexHead;
+	public Symbol lexHead;
 	
 	/** The relation. */
 	public String rel;
 	
 	/** The lexical dependent. */
-	public Sign lexDep;
+	public Symbol lexDep;
 	
 	/** Constructor. */
-	public LexDependency(Sign lexHead, String rel, Sign lexDep) {
+	public LexDependency(Symbol lexHead, String rel, Symbol lexDep) {
 		this.lexHead = lexHead; this.rel = rel; this.lexDep = lexDep;
 	}
 	
@@ -92,9 +92,9 @@ public class LexDependency {
 		Set<Nominal> nominals = nomIndex.keySet();
 		// special case for indexRels
 		if (nominals.size() == 1 && !HyloHelper.getInstance().isLexPred(preds.get(0))) {
-			Sign lexHead = null;
+			Symbol lexHead = null;
 			EntityRealizer origin = preds.get(0).getOrigin();
-			if (origin instanceof Sign) lexHead = (Sign) origin;
+			if (origin instanceof Symbol) lexHead = (Symbol) origin;
 			else return retval;
 			for (SatOp pred : preds) {
 				String rel = HyloHelper.getInstance().getRel(pred);
@@ -114,12 +114,12 @@ public class LexDependency {
 			// check for root nominal
 			if (!HyloHelper.getInstance().isRoot(root, preds)) continue;
 			// set lex head
-			Sign lexHead = null;
+			Symbol lexHead = null;
 			int rootIndex = nomIndex.get(root);
 			SatOp rootPred = preds.get(rootIndex);
 			if (HyloHelper.getInstance().isLexPred(rootPred)) {
 				EntityRealizer origin = rootPred.getOrigin();
-				if (origin instanceof Sign) lexHead = (Sign) origin;
+				if (origin instanceof Symbol) lexHead = (Symbol) origin;
 				rootIndex++;
 			}
 			// start path for each rel for root nom
@@ -135,7 +135,7 @@ public class LexDependency {
 	}
 	
 	// recursively adds unfilled lex deps to retval for leaf nominals 
-	private static void addUnfilledLexDep(Nominal dep, Sign lexHead, String rel, List<SatOp> preds, Map<Nominal,Integer> nomIndex, List<LexDependency> retval) {
+	private static void addUnfilledLexDep(Nominal dep, Symbol lexHead, String rel, List<SatOp> preds, Map<Nominal,Integer> nomIndex, List<LexDependency> retval) {
 		// if dep not in nom index, then just add unfilled dep for the current rel
 		if (!nomIndex.containsKey(dep)) {
 			retval.add(new LexDependency(lexHead, rel, null));
@@ -147,10 +147,10 @@ public class LexDependency {
 		// if lex head null, add unfilled dep for the current rel, 
 		// then update lex head and reset rel
 		if (lexHead == null) {
-			Sign lexDep = null;
+			Symbol lexDep = null;
 			EntityRealizer origin = depPred.getOrigin();
-			if (origin instanceof Sign) {
-				lexDep = (Sign) origin;
+			if (origin instanceof Symbol) {
+				lexDep = (Symbol) origin;
 				retval.add(new LexDependency(lexHead, rel, lexDep));
 			}
 			lexHead = lexDep;
@@ -194,8 +194,8 @@ public class LexDependency {
 					// remove dep from unfilled
 					it.remove();
 					// add filled dep, if lexical
-					if (depPred.getOrigin() instanceof Sign) {
-						Sign lexDep = (Sign) depPred.getOrigin();
+					if (depPred.getOrigin() instanceof Symbol) {
+						Symbol lexDep = (Symbol) depPred.getOrigin();
 						retval.add(new LexDependency(udep.lexHead, udep.rel, lexDep));
 					}
 				}
@@ -213,8 +213,8 @@ public class LexDependency {
 					// remove dep from unfilled
 					it.remove();
 					// add filled dep, if lexical
-					if (headPred.getOrigin() instanceof Sign) {
-						Sign lexHead = (Sign) headPred.getOrigin();
+					if (headPred.getOrigin() instanceof Symbol) {
+						Symbol lexHead = (Symbol) headPred.getOrigin();
 						retval.add(new LexDependency(lexHead, udep.rel, udep.lexDep));
 					}
 				}
@@ -224,7 +224,7 @@ public class LexDependency {
 	}
 	
 	// returns the EP with the given origin and rel, or null if not found
-	private static SatOp findPred(Sign origin, String rel, List<SatOp> preds) {
+	private static SatOp findPred(Symbol origin, String rel, List<SatOp> preds) {
 		for (SatOp pred : preds) {
 			if (pred.getOrigin() != origin) continue;
 			if (rel.equals(HyloHelper.getInstance().getRel(pred))) return pred;

@@ -3,7 +3,7 @@ package opennlp.ccg.parse;
 import java.io.PrintStream;
 import java.util.List;
 
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.synsem.SignScorer;
 
 /**
@@ -58,13 +58,14 @@ public interface ChartCompleter {
 	 * @param x1 the x1 position
 	 * @param x2 the y2 position
 	 * @param sign the sign to insert
-	 * @return <code>true</code> if an edge is inserted and <code>false</code> otherwise
+	 * @return <code>true</code> if an edge is duly created and associated to the form and
+	 *     <code>false</code> otherwise
 	 */
-	boolean annotateForm(int x1, int x2, Sign sign);
+	boolean annotateForm(int x1, int x2, Symbol sign);
 
 	/**
-	 * Associates form (x,y) with edges that result from applying unary rules to those already
-	 * associated with it.
+	 * Associates form (x1,x2) with edges that result from applying unary rules to those already
+	 * associated with the form.
 	 * 
 	 * @param x1 the x1 position
 	 * @param x2 the x2 position
@@ -87,8 +88,8 @@ public interface ChartCompleter {
 	void combineForms(int x1, int x2, int y1, int y2, int z1, int z2) throws ParseException;
 
 	/**
-	 * Associates cell (z1,z2) with fragmentary edges, if it is non-empty, that result from
-	 * combining the edges of form (x1,x2) with those in cell (y1,y2) using the glue rule.
+	 * Associates form (z1,z2) with fragmentary edges, if it is non-empty, that result from
+	 * combining the edges of form (x1,x2) with those of form (y1,y2) using the glue rule.
 	 * 
 	 * @param x1 the x1 position
 	 * @param x2 the x2 position
@@ -116,7 +117,7 @@ public interface ChartCompleter {
 	 * @param x2 the x2 position
 	 * @return the edges
 	 */
-	List<Edge> lazyUnpack(int x1, int x2);
+	List<ScoredSymbol> lazyUnpack(int x1, int x2);
 
 	/**
 	 * Gets whether it is unpack.
@@ -125,6 +126,6 @@ public interface ChartCompleter {
 	 * @param x2 the x2 position
 	 * @return the edges
 	 */
-	List<Edge> unpack(int x1, int x2);
+	List<ScoredSymbol> unpack(int x1, int x2);
 
 }

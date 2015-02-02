@@ -550,7 +550,7 @@ public class HyloHelper implements EntityRealizer.EntityRealizerMap {
     }
     
     /** Composes compact and convertNominals with a root sign, for conversion using word positions. */
-    public final LF compactAndConvertNominals(LF lf, Nominal root, Sign rootSign) {
+    public final LF compactAndConvertNominals(LF lf, Nominal root, Symbol rootSign) {
         root = convertNominals(lf, rootSign, root);
         LF retval = compact(lf, root);
         return retval;
@@ -581,7 +581,7 @@ public class HyloHelper implements EntityRealizer.EntityRealizerMap {
 	 * a root sign is given, otherwise using lexical propositions; 
 	 * returns the converted nominal root. 
 	 */
-	public final Nominal convertNominals(LF lf, Sign root, Nominal nominalRoot) {
+	public final Nominal convertNominals(LF lf, Symbol root, Nominal nominalRoot) {
 		return Converter.convertNominals(lf, root, nominalRoot);
 	}
 	

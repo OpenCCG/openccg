@@ -27,10 +27,10 @@ import java.util.*;
 
 /**
  * An implementation of the table (or chart) used for chart parsers like CKY.
- * Special functions are provided for combining cells of the chart into another
- * cell. Time or edge or cell limits can be placed on initial chart
+ * Special functions are provided for combining forms of the chart into another
+ * form. Time or scoredSymbol or form limits can be placed on initial chart
  * construction. A pruning value applies to unpacking, which also limits the
- * number of equivalent edges kept during chart construction.
+ * number of equivalent scoredSymbols kept during chart construction.
  * 
  * @author Jason Baldridge
  * @author Gann Bierner
@@ -40,28 +40,28 @@ import java.util.*;
 public class ChartCompleterImp implements ChartCompleter {
 
 	/**
-	 * Compares edges based on their relative score, in descending order, then
+	 * Compares scoredSymbols based on their relative score, in descending order, then
 	 * their signs.
 	 */
-	public static final Comparator<Edge> edgeComparator = new Comparator<Edge>() {
-		public int compare(Edge edge1, Edge edge2) {
-			if (edge1.score != edge2.score)
-				return -1 * Double.compare(edge1.score, edge2.score);
+	public static final Comparator<ScoredSymbol> scoredSymbolComparator = new Comparator<ScoredSymbol>() {
+		public int compare(ScoredSymbol scoredSymbol1, ScoredSymbol scoredSymbol2) {
+			if (scoredSymbol1.score != scoredSymbol2.score)
+				return -1 * Double.compare(scoredSymbol1.score, scoredSymbol2.score);
 			else
-				return SignHash.compareTo(edge1.sign, edge2.sign);
+				return SymbolHash.compareTo(scoredSymbol1.symbol, scoredSymbol2.symbol);
 		}
 	};
 
 	/** Its size. */
 	protected int _size;
 
-	/** The count of edges created before unpacking. */
+	/** The count of scoredSymbols created before unpacking. */
 	protected int _numEdges = 0;
 
-	/** The count of edges created while unpacking. */
+	/** The count of scoredSymbols created while unpacking. */
 	protected int _numUnpackingEdges = 0;
 
-	/** The max cell size before unpacking. */
+	/** The max form size before unpacking. */
 	protected int _maxCellSize = 0;
 
 	/** The rules. */
@@ -79,11 +79,11 @@ public class ChartCompleterImp implements ChartCompleter {
 	/** The start time. */
 	protected long _startTime = 0;
 
-	/** The edge limit (0 if none). */
-	protected int _edgeLimit = 0;
+	/** The scoredSymbol limit (0 if none). */
+	protected int _scoredSymbolLimit = 0;
 
-	/** The cell limit on non-lexical edges (0 if none). */
-	protected int cellLimit = 0;
+	/** The form limit on non-lexical scoredSymbols (0 if none). */
+	protected int formLimit = 0;
 
 	/**
 	 * The chart to build.
@@ -117,27 +117,27 @@ public class ChartCompleterImp implements ChartCompleter {
 		_startTime = startTime;
 	}
 
-	/** Sets the edge limit. */
-	public void setEdgeLimit(int edgeLimit) {
-		_edgeLimit = edgeLimit;
+	/** Sets the scoredSymbol limit. */
+	public void setEdgeLimit(int scoredSymbolLimit) {
+		_scoredSymbolLimit = scoredSymbolLimit;
 	}
 
-	/** Sets the cell limit on non-lexical edges. */
-	public void setCellPruneValue(int cellLimit) {
-		this.cellLimit = cellLimit;
+	/** Sets the form limit on non-lexical scoredSymbols. */
+	public void setCellPruneValue(int formLimit) {
+		this.formLimit = formLimit;
 	}
 
-	/** Returns the edge count prior to unpacking. */
+	/** Returns the scoredSymbol count prior to unpacking. */
 	public int getEdgeCount() {
 		return _numEdges;
 	}
 
-	/** Returns the edge count while unpacking. */
+	/** Returns the scoredSymbol count while unpacking. */
 	public int getUnpackingEdgeCount() {
 		return _numUnpackingEdges;
 	}
 
-	/** Returns the max cell size prior to unpacking. */
+	/** Returns the max form size prior to unpacking. */
 	public int getMaxCellSize() {
 		return _maxCellSize;
 	}
@@ -152,42 +152,42 @@ public class ChartCompleterImp implements ChartCompleter {
 	 * @param x2 the x2 position
 	 * @return the form starting at the start position with the given length
 	 */
-	protected Cell makeForm(int x1, int x2) {
+	protected Form makeForm(int x1, int x2) {
 		if (chart.getForm(x1, x2) == null) {
-			chart.setForm(x1, x2, new Cell(cellLimit, edgeComparator));
+			chart.setForm(x1, x2, new Form(formLimit, scoredSymbolComparator));
 		}
 		return chart.getForm(x1, x2);
 	}
 
 	/**
-	 * Gets signs for a given cell (ensuring non-null).
+	 * Gets signs for a given form (ensuring non-null).
 	 */
-	protected SignHash getSigns(int x1, int x2) {
-		Cell cell = makeForm(x1, x2);
-		return cell.getSigns();
+	protected SymbolHash getSigns(int x1, int x2) {
+		Form form = makeForm(x1, x2);
+		return form.getSymbols();
 	}
 
 	@Override
-	public boolean annotateForm(int x1, int x2, Sign symbol) {
-		Cell form = makeForm(x1, x2);
+	public boolean annotateForm(int x1, int x2, Symbol symbol) {
+		Form form = makeForm(x1, x2);
 		boolean retval = false;
-		// make edge
-		Edge edge = new Edge(symbol);
+		// make scoredSymbol
+		ScoredSymbol scoredSymbol = new ScoredSymbol(symbol);
 		if (symbol.isIndexed()) {
-			edge.setWordPos(x1);
+			scoredSymbol.setWordPos(x1);
 		}
-		// get representative edge
-		Edge rep = form.get(edge);
+		// get representative scoredSymbol
+		ScoredSymbol rep = form.get(scoredSymbol);
 		// if none, add as representative
 		if (rep == null) {
-			edge.initAltEdges();
-			retval = form.add(edge);
+			scoredSymbol.initAltEdges();
+			retval = form.add(scoredSymbol);
 		}
 		// otherwise add as an alternative
 		else {
-			Cell.addEdgeSorted(edge, rep.altEdges, null, _pruneVal, edgeComparator);
+			Form.insertScoredSymbol(scoredSymbol, rep.alternatives, null, _pruneVal, scoredSymbolComparator);
 		}
-		// update edge count, max cell size
+		// update scoredSymbol count, max form size
 		_numEdges++;
 		if (form.size() > _maxCellSize)
 			_maxCellSize = form.size();
@@ -199,15 +199,15 @@ public class ChartCompleterImp implements ChartCompleter {
 	public final void annotateForm(int x1, int x2) throws ParseException {
 		if (chart.getForm(x1, x2) == null)
 			return;
-		List<Sign> inputs = chart.getForm(x1, x2).getSignsSorted();
-		List<Sign> nextInputs = new ArrayList<Sign>(inputs.size());
+		List<Symbol> inputs = chart.getForm(x1, x2).sortSymbols();
+		List<Symbol> nextInputs = new ArrayList<Symbol>(inputs.size());
 		// repeat until no more inputs
 		while (inputs.size() > 0) {
 			// apply rules
-			for (Sign sign : inputs) {
+			for (Symbol sign : inputs) {
 				checkLimits();
-				List<Sign> results = _rules.applyUnaryRules(sign);
-				for (Sign result : results) {
+				List<Symbol> results = _rules.applyUnaryRules(sign);
+				for (Symbol result : results) {
 					// check for unary rule cycle; skip result if found
 					if (!result.getDerivationHistory().containsCycle()) {
 						// insert result
@@ -231,13 +231,13 @@ public class ChartCompleterImp implements ChartCompleter {
 			return;
 		if (chart.getForm(x2, y2) == null)
 			return;
-		List<Sign> inputs1 = chart.getForm(x1, y1).getSignsSorted();
-		List<Sign> inputs2 = chart.getForm(x2, y2).getSignsSorted();
-		for (Sign sign1 : inputs1) {
-			for (Sign sign2 : inputs2) {
+		List<Symbol> inputs1 = chart.getForm(x1, y1).sortSymbols();
+		List<Symbol> inputs2 = chart.getForm(x2, y2).sortSymbols();
+		for (Symbol sign1 : inputs1) {
+			for (Symbol sign2 : inputs2) {
 				checkLimits();
-				List<Sign> results = _rules.applyBinaryRules(sign1, sign2);
-				for (Sign result : results)
+				List<Symbol> results = _rules.applyBinaryRules(sign1, sign2);
+				for (Symbol result : results)
 					annotateForm(x3, y3, result);
 			}
 		}
@@ -252,13 +252,13 @@ public class ChartCompleterImp implements ChartCompleter {
 			return;
 		if (!isEmpty(x3, y3))
 			return;
-		List<Sign> inputs1 = chart.getForm(x1, y1).getSignsSorted();
-		List<Sign> inputs2 = chart.getForm(x2, y2).getSignsSorted();
-		for (Sign sign1 : inputs1) {
-			for (Sign sign2 : inputs2) {
+		List<Symbol> inputs1 = chart.getForm(x1, y1).sortSymbols();
+		List<Symbol> inputs2 = chart.getForm(x2, y2).sortSymbols();
+		for (Symbol sign1 : inputs1) {
+			for (Symbol sign2 : inputs2) {
 				checkLimits();
-				List<Sign> results = _rules.applyGlueRule(sign1, sign2);
-				for (Sign result : results)
+				List<Symbol> results = _rules.applyGlueRule(sign1, sign2);
+				for (Symbol result : results)
 					annotateForm(x3, y3, result);
 			}
 		}
@@ -270,7 +270,7 @@ public class ChartCompleterImp implements ChartCompleter {
 	 * @throws ParseException if limits are exceeded
 	 */
 	private final void checkLimits() throws ParseException {
-		if (_edgeLimit > 0 && _numEdges > _edgeLimit) {
+		if (_scoredSymbolLimit > 0 && _numEdges > _scoredSymbolLimit) {
 			throw new ParseException(ParseException.EDGE_LIMIT_EXCEEDED);
 		}
 		if (_timeLimit > 0) {
@@ -282,101 +282,105 @@ public class ChartCompleterImp implements ChartCompleter {
 	}
 
 	@Override
-	public boolean isEmpty(int x, int y) {
-		Cell cell = makeForm(x, y);
-		return cell.list.isEmpty();
+	public boolean isEmpty(int x1, int x2) {
+		Form form = chart.getForm(x1, x2);
+		if (form == null) {
+			return true;
+		} else {
+			return !form.hasSymbols();
+		}
 	}
 
 	// -----------------------------------------------------------
 	// Unpacking
 
-	/** Unpacks the edges in the given cell as an n-best list. */
-	public List<Edge> unpack(int x, int y) {
-		Cell cell = makeForm(x, y);
-		// recursively unpack each edge
+	/** Unpacks the scoredSymbols in the given form as an n-best list. */
+	public List<ScoredSymbol> unpack(int x, int y) {
+		Form form = makeForm(x, y);
+		// recursively unpack each scoredSymbol
 		@SuppressWarnings("unchecked")
-		Set<Edge> unpacked = new THashSet(new TObjectIdentityHashingStrategy());
+		Set<ScoredSymbol> unpacked = new THashSet(new TObjectIdentityHashingStrategy());
 		@SuppressWarnings("unchecked")
-		Set<Edge> startedUnpacking = new THashSet(new TObjectIdentityHashingStrategy());
-		for (Edge edge : cell.list)
-			unpack(edge, unpacked, startedUnpacking);
+		Set<ScoredSymbol> startedUnpacking = new THashSet(new TObjectIdentityHashingStrategy());
+		for (ScoredSymbol scoredSymbol : form.getScoredSymbols())
+			unpack(scoredSymbol, unpacked, startedUnpacking);
 		// collect and sort results
 		EdgeHash merged = new EdgeHash();
-		for (Edge edge : cell.list) {
-			merged.addAll(edge.altEdges);
+		for (ScoredSymbol scoredSymbol : form.getScoredSymbols()) {
+			merged.addAll(scoredSymbol.alternatives);
 		}
-		List<Edge> retval = new ArrayList<Edge>(merged.asEdgeSet());
-		Collections.sort(retval, edgeComparator);
+		List<ScoredSymbol> retval = new ArrayList<ScoredSymbol>(merged.asEdgeSet());
+		Collections.sort(retval, scoredSymbolComparator);
 		// prune
 		if (_pruneVal > 0) {
 			while (retval.size() > _pruneVal)
 				retval.remove(retval.size() - 1);
 		}
 		// restore alts
-		for (Edge edge : cell.list)
-			edge.restoreAltEdges();
+		for (ScoredSymbol scoredSymbol : form.getScoredSymbols())
+			scoredSymbol.restoreAltEdges();
 		// return
 		return retval;
 	}
 
-	// recursively unpack edge, unless already visited
-	private void unpack(Edge edge, Set<Edge> unpacked, Set<Edge> startedUnpacking) {
+	// recursively unpack scoredSymbol, unless already visited
+	private void unpack(ScoredSymbol scoredSymbol, Set<ScoredSymbol> unpacked, Set<ScoredSymbol> startedUnpacking) {
 		// check visited
-		if (unpacked.contains(edge))
+		if (unpacked.contains(scoredSymbol))
 			return;
-		if (startedUnpacking.contains(edge)) {
-			System.err.println("Warning, revisiting edge before unpacking complete: " + edge);
-			System.err.println(edge.sign.getDerivationHistory().toString());
+		if (startedUnpacking.contains(scoredSymbol)) {
+			System.err.println("Warning, revisiting scoredSymbol before unpacking complete: " + scoredSymbol);
+			System.err.println(scoredSymbol.symbol.getDerivationHistory().toString());
 			return;
 		}
-		startedUnpacking.add(edge);
+		startedUnpacking.add(scoredSymbol);
 		// OR: recursively unpack alts, merging resulting alts
 		EdgeHash merged = new EdgeHash();
-		for (Edge alt : edge.altEdges) {
+		for (ScoredSymbol alt : scoredSymbol.alternatives) {
 			// AND: unpack inputs, make alts, add to merged
 			unpackAlt(alt, unpacked, startedUnpacking, merged);
 		}
 		// score
-		boolean complete = (edge.sign.getWords().size() == _size);
-		for (Edge m : merged.asEdgeSet()) {
-			m.setScore(_signScorer.score(m.sign, complete));
+		boolean complete = (scoredSymbol.symbol.getWords().size() == _size);
+		for (ScoredSymbol m : merged.asEdgeSet()) {
+			m.setScore(_signScorer.score(m.symbol, complete));
 		}
 		// sort
-		List<Edge> mergedList = new ArrayList<Edge>(merged.asEdgeSet());
-		Collections.sort(mergedList, edgeComparator);
+		List<ScoredSymbol> mergedList = new ArrayList<ScoredSymbol>(merged.asEdgeSet());
+		Collections.sort(mergedList, scoredSymbolComparator);
 		// prune
 		if (_pruneVal > 0) {
 			while (mergedList.size() > _pruneVal)
 				mergedList.remove(mergedList.size() - 1);
 		}
-		// replace edge's alts
-		edge.replaceAltEdges(mergedList);
+		// replace scoredSymbol's alts
+		scoredSymbol.replaceAltEdges(mergedList);
 		// add to unpacked set
-		unpacked.add(edge);
+		unpacked.add(scoredSymbol);
 	}
 
 	// recursively unpack inputs, make alt combos and add to merged
-	private void unpackAlt(Edge alt, Set<Edge> unpacked, Set<Edge> startedUnpacking, EdgeHash merged) {
+	private void unpackAlt(ScoredSymbol alt, Set<ScoredSymbol> unpacked, Set<ScoredSymbol> startedUnpacking, EdgeHash merged) {
 		// unpack via input signs
-		DerivationHistory history = alt.sign.getDerivationHistory();
-		Sign[] inputSigns = history.getInputs();
+		DerivationHistory history = alt.symbol.getDerivationHistory();
+		Symbol[] inputSigns = history.getInputs();
 		// base case: no inputs
 		if (inputSigns == null) {
 			merged.insert(alt);
 			return;
 		}
 		// otherwise recursively unpack
-		Edge[] inputEdges = new Edge[inputSigns.length];
+		ScoredSymbol[] inputEdges = new ScoredSymbol[inputSigns.length];
 		for (int i = 0; i < inputSigns.length; i++) {
-			inputEdges[i] = Edge.getEdge(inputSigns[i]);
+			inputEdges[i] = ScoredSymbol.getScoredSymbol(inputSigns[i]);
 			unpack(inputEdges[i], unpacked, startedUnpacking);
 		}
-		// then make edges for new combos, using same rule, and add to merged
+		// then make scoredSymbols for new combos, using same rule, and add to merged
 		// (if unseen)
 		Rule rule = history.getRule();
-		List<Sign[]> altCombos = inputCombos(inputEdges, 0);
-		List<Sign> results = new ArrayList<Sign>(1);
-		for (Sign[] combo : altCombos) {
+		List<Symbol[]> altCombos = inputCombos(inputEdges, 0);
+		List<Symbol> results = new ArrayList<Symbol>(1);
+		for (Symbol[] combo : altCombos) {
 			// use this alt for same combo
 			if (sameSigns(inputSigns, combo)) {
 				merged.insert(alt);
@@ -393,8 +397,8 @@ public class ChartCompleterImp implements ChartCompleter {
 																// subst)
 			if (results.isEmpty())
 				continue; // (rare?)
-			Sign sign = results.get(0); // assuming single result
-			merged.insert(new Edge(sign)); // make edge for new alt
+			Symbol sign = results.get(0); // assuming single result
+			merged.insert(new ScoredSymbol(sign)); // make scoredSymbol for new alt
 			_numUnpackingEdges++;
 		}
 	}
@@ -402,27 +406,27 @@ public class ChartCompleterImp implements ChartCompleter {
 	// returns a list of sign arrays, with each array of length
 	// inputEdges.length - i,
 	// representing all combinations of alt signs from i onwards
-	private List<Sign[]> inputCombos(Edge[] inputEdges, int index) {
-		Edge edge = inputEdges[index];
+	private List<Symbol[]> inputCombos(ScoredSymbol[] inputEdges, int index) {
+		ScoredSymbol scoredSymbol = inputEdges[index];
 		// base case, inputEdges[last]
 		if (index == inputEdges.length - 1) {
-			List<Edge> altEdges = edge.altEdges;
-			List<Sign[]> retval = new ArrayList<Sign[]>(altEdges.size());
-			for (Edge alt : altEdges) {
-				retval.add(new Sign[] { alt.sign });
+			List<ScoredSymbol> altEdges = scoredSymbol.alternatives;
+			List<Symbol[]> retval = new ArrayList<Symbol[]>(altEdges.size());
+			for (ScoredSymbol alt : altEdges) {
+				retval.add(new Symbol[] { alt.symbol });
 			}
 			return retval;
 		}
 		// otherwise recurse on index+1
-		List<Sign[]> nextCombos = inputCombos(inputEdges, index + 1);
+		List<Symbol[]> nextCombos = inputCombos(inputEdges, index + 1);
 		// and make new combos
-		List<Edge> altEdges = edge.altEdges;
-		List<Sign[]> retval = new ArrayList<Sign[]>(altEdges.size() * nextCombos.size());
-		for (Edge alt : altEdges) {
+		List<ScoredSymbol> altEdges = scoredSymbol.alternatives;
+		List<Symbol[]> retval = new ArrayList<Symbol[]>(altEdges.size() * nextCombos.size());
+		for (ScoredSymbol alt : altEdges) {
 			for (int i = 0; i < nextCombos.size(); i++) {
-				Sign[] nextSigns = nextCombos.get(i);
-				Sign[] newCombo = new Sign[nextSigns.length + 1];
-				newCombo[0] = alt.sign;
+				Symbol[] nextSigns = nextCombos.get(i);
+				Symbol[] newCombo = new Symbol[nextSigns.length + 1];
+				newCombo[0] = alt.symbol;
 				System.arraycopy(nextSigns, 0, newCombo, 1, nextSigns.length);
 				retval.add(newCombo);
 			}
@@ -431,7 +435,7 @@ public class ChartCompleterImp implements ChartCompleter {
 	}
 
 	// checks for same signs
-	private boolean sameSigns(Sign[] a, Sign[] b) {
+	private boolean sameSigns(Symbol[] a, Symbol[] b) {
 		if (a.length != b.length)
 			return false;
 		for (int i = 0; i < a.length; i++)
@@ -444,67 +448,67 @@ public class ChartCompleterImp implements ChartCompleter {
 	// Lazy Unpacking
 
 	/**
-	 * Lazily unpacks the edges in the given cell as an n-best list using a
+	 * Lazily unpacks the scoredSymbols in the given form as an n-best list using a
 	 * variant of "cube pruning". The algorithm essentially follows Algorithm 2
 	 * of Huang and Chiang (2005), with checking for spurious ambiguity.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Edge> lazyUnpack(int x, int y) {
+	public List<ScoredSymbol> lazyUnpack(int x, int y) {
 		// if no pruning value set, use basic unpacking algorithm
 		if (_pruneVal <= 0)
 			return unpack(x, y);
-		// recursively sort edge alts
-		Cell cell = makeForm(x, y);
+		// recursively sort scoredSymbol alts
+		Form form = makeForm(x, y);
 		// make top-level candidate list and derivs map
 		List<Candidate> topcands = new ArrayList<Candidate>(_pruneVal);
-		Map<Edge, List<Edge>> derivsmap = new THashMap(new TObjectIdentityHashingStrategy());
-		for (Edge edge : cell.list) {
-			List<Candidate> cands = getCandidates(edge, derivsmap);
+		Map<ScoredSymbol, List<ScoredSymbol>> derivsmap = new THashMap(new TObjectIdentityHashingStrategy());
+		for (ScoredSymbol scoredSymbol : form.getScoredSymbols()) {
+			List<Candidate> cands = getCandidates(scoredSymbol, derivsmap);
 			topcands.addAll(cands);
 		}
 		sortAndPrune(topcands);
-		// NB: no single edge for top cell, so must treat it as a special case
+		// NB: no single scoredSymbol for top form, so must treat it as a special case
 		// of findKBest
-		List<Edge> retval = new ArrayList<Edge>(_pruneVal);
+		List<ScoredSymbol> retval = new ArrayList<ScoredSymbol>(_pruneVal);
 		EdgeHash merged = new EdgeHash();
 		while (merged.size() < _pruneVal && !topcands.isEmpty()) {
 			appendNext(topcands, merged, derivsmap);
 		}
 		retval.addAll(merged.asEdgeSet());
-		// rescore edges if apropos
+		// rescore scoredSymbols if apropos
 		if (_signScorer instanceof ReRankingScorer) {
 			ReRankingScorer rescorer = (ReRankingScorer) _signScorer;
 			rescorer.setFullModel(true);
-			for (Edge e : retval) {
-				e.score = rescorer.score(e.sign, true);
+			for (ScoredSymbol e : retval) {
+				e.score = rescorer.score(e.symbol, true);
 			}
 			rescorer.setFullModel(false);
 		}
-		Collections.sort(retval, edgeComparator);
+		Collections.sort(retval, scoredSymbolComparator);
 		// done
 		return retval;
 	}
 
-	// lazily find k-best derivations, if edge not already visited
-	private void findKBest(Edge edge, Map<Edge, List<Edge>> derivsmap) {
-		if (derivsmap.containsKey(edge))
+	// lazily find k-best derivations, if scoredSymbol not already visited
+	private void findKBest(ScoredSymbol scoredSymbol, Map<ScoredSymbol, List<ScoredSymbol>> derivsmap) {
+		if (derivsmap.containsKey(scoredSymbol))
 			return;
-		List<Candidate> cands = getCandidates(edge, derivsmap);
+		List<Candidate> cands = getCandidates(scoredSymbol, derivsmap);
 		EdgeHash merged = new EdgeHash();
 		while (merged.size() < _pruneVal && !cands.isEmpty()) {
 			appendNext(cands, merged, derivsmap);
 		}
-		List<Edge> derivs = new ArrayList<Edge>(_pruneVal);
+		List<ScoredSymbol> derivs = new ArrayList<ScoredSymbol>(_pruneVal);
 		derivs.addAll(merged.asEdgeSet());
-		Collections.sort(derivs, edgeComparator);
-		derivsmap.put(edge, derivs);
+		Collections.sort(derivs, scoredSymbolComparator);
+		derivsmap.put(scoredSymbol, derivs);
 	}
 
 	// appends next candidate, expands frontier
-	private void appendNext(List<Candidate> cands, EdgeHash merged, Map<Edge, List<Edge>> derivsmap) {
+	private void appendNext(List<Candidate> cands, EdgeHash merged, Map<ScoredSymbol, List<ScoredSymbol>> derivsmap) {
 		// append next
 		Candidate cand = cands.remove(0);
-		merged.add(cand.edge);
+		merged.add(cand.scoredSymbol);
 		// check for lex cand
 		if (cand.indices == null)
 			return;
@@ -515,7 +519,7 @@ public class ChartCompleterImp implements ChartCompleter {
 			for (int m = 0; m < nextIndices.length; m++)
 				nextIndices[m] = cand.indices[m];
 			nextIndices[i]++;
-			Edge next = getEdgeForIndices(cand.edge, cand.inputReps, nextIndices, derivsmap);
+			ScoredSymbol next = getEdgeForIndices(cand.scoredSymbol, cand.inputReps, nextIndices, derivsmap);
 			// add next candidate, if any, if not already there
 			if (next != null) {
 				Candidate nextCand = new Candidate(next, cand.inputReps, nextIndices);
@@ -532,22 +536,22 @@ public class ChartCompleterImp implements ChartCompleter {
 		}
 	}
 
-	// candidate is an edge plus an array of indices for keeping track of
+	// candidate is an scoredSymbol plus an array of indices for keeping track of
 	// where to pull candidates from next (or null if lexical),
 	// using the input representatives
 	private static class Candidate implements Comparable<Candidate> {
-		Edge edge;
-		Edge[] inputReps;
+		ScoredSymbol scoredSymbol;
+		ScoredSymbol[] inputReps;
 		int[] indices;
 
-		Candidate(Edge edge, Edge[] inputReps, int[] indices) {
-			this.edge = edge;
+		Candidate(ScoredSymbol scoredSymbol, ScoredSymbol[] inputReps, int[] indices) {
+			this.scoredSymbol = scoredSymbol;
 			this.inputReps = inputReps;
 			this.indices = indices;
 		}
 
 		public int compareTo(Candidate c) {
-			int retval = edgeComparator.compare(edge, c.edge);
+			int retval = scoredSymbolComparator.compare(scoredSymbol, c.scoredSymbol);
 			if (retval != 0)
 				return retval;
 			if (indices == null && c.indices == null)
@@ -585,34 +589,34 @@ public class ChartCompleterImp implements ChartCompleter {
 						return false;
 				}
 			}
-			return edge.equals(c.edge);
+			return scoredSymbol.equals(c.scoredSymbol);
 		}
 	}
 
-	// get candidates for unpacking an edge
-	private List<Candidate> getCandidates(Edge edge, Map<Edge, List<Edge>> derivsmap) {
+	// get candidates for unpacking an scoredSymbol
+	private List<Candidate> getCandidates(ScoredSymbol scoredSymbol, Map<ScoredSymbol, List<ScoredSymbol>> derivsmap) {
 		List<Candidate> retval = new ArrayList<Candidate>(_pruneVal);
 		// make initial candidate for each alt
-		// nb: should only get initial candidates for representative edges,
-		// but may as well ensure that at least this edge is included
-		List<Edge> alts = new ArrayList<Edge>(edge.getAltEdges());
+		// nb: should only get initial candidates for representative scoredSymbols,
+		// but may as well ensure that at least this scoredSymbol is included
+		List<ScoredSymbol> alts = new ArrayList<ScoredSymbol>(scoredSymbol.getAltEdges());
 		if (alts.isEmpty())
-			alts.add(edge);
-		for (Edge alt : alts) {
-			Sign[] inputs = alt.sign.getDerivationHistory().getInputs();
+			alts.add(scoredSymbol);
+		for (ScoredSymbol alt : alts) {
+			Symbol[] inputs = alt.symbol.getDerivationHistory().getInputs();
 			// lex case: no indices
 			if (inputs == null) {
 				retval.add(new Candidate(alt, null, null));
 				continue;
 			}
-			// otherwise get edge for best inputs
-			Edge[] inputReps = new Edge[inputs.length];
+			// otherwise get scoredSymbol for best inputs
+			ScoredSymbol[] inputReps = new ScoredSymbol[inputs.length];
 			int[] indices = new int[inputs.length];
 			for (int i = 0; i < inputs.length; i++) {
-				inputReps[i] = Edge.getEdge(inputs[i]);
+				inputReps[i] = ScoredSymbol.getScoredSymbol(inputs[i]);
 				indices[i] = 0;
 			}
-			Edge e = getEdgeForIndices(alt, inputReps, indices, derivsmap);
+			ScoredSymbol e = getEdgeForIndices(alt, inputReps, indices, derivsmap);
 			if (e != null) {
 				retval.add(new Candidate(e, inputReps, indices));
 			}
@@ -623,30 +627,30 @@ public class ChartCompleterImp implements ChartCompleter {
 		return retval;
 	}
 
-	// returns the edge for the given input indices, or null if none
-	private Edge getEdgeForIndices(Edge edge, Edge[] inputReps, int[] indices,
-			Map<Edge, List<Edge>> derivsmap) {
-		DerivationHistory history = edge.sign.getDerivationHistory();
-		Sign[] combo = new Sign[inputReps.length];
+	// returns the scoredSymbol for the given input indices, or null if none
+	private ScoredSymbol getEdgeForIndices(ScoredSymbol scoredSymbol, ScoredSymbol[] inputReps, int[] indices,
+			Map<ScoredSymbol, List<ScoredSymbol>> derivsmap) {
+		DerivationHistory history = scoredSymbol.symbol.getDerivationHistory();
+		Symbol[] combo = new Symbol[inputReps.length];
 		for (int i = 0; i < inputReps.length; i++) {
-			Edge inputEdge = inputReps[i];
+			ScoredSymbol inputEdge = inputReps[i];
 			// recurse
 			findKBest(inputEdge, derivsmap);
 			// get derivs
-			List<Edge> inputDerivs = derivsmap.get(inputEdge);
+			List<ScoredSymbol> inputDerivs = derivsmap.get(inputEdge);
 			// check index, return null if out of bounds
 			if (indices[i] < inputDerivs.size())
-				combo[i] = inputDerivs.get(indices[i]).sign;
+				combo[i] = inputDerivs.get(indices[i]).symbol;
 			else
 				return null;
 		}
-		// return edge if combo is same as input signs
-		Sign[] inputSigns = history.getInputs();
+		// return scoredSymbol if combo is same as input signs
+		Symbol[] inputSigns = history.getInputs();
 		if (sameSigns(inputSigns, combo))
-			return edge;
-		// otherwise return new edge for combo
+			return scoredSymbol;
+		// otherwise return new scoredSymbol for combo
 		Rule rule = history.getRule();
-		List<Sign> results = new ArrayList<Sign>(1);
+		List<Symbol> results = new ArrayList<Symbol>(1);
 		((AbstractRule) rule).applyRule(combo, results); // TODO: bypass rule
 															// app for
 															// efficiency?
@@ -655,8 +659,8 @@ public class ChartCompleterImp implements ChartCompleter {
 															// var subst)
 		if (results.isEmpty())
 			return null; // (rare?)
-		Sign sign = results.get(0); // assuming single result
-		Edge retval = new Edge(sign); // make edge for new combo
+		Symbol sign = results.get(0); // assuming single result
+		ScoredSymbol retval = new ScoredSymbol(sign); // make scoredSymbol for new combo
 		_numUnpackingEdges++;
 		// score it
 		boolean complete = (sign.getWords().size() == _size);
@@ -691,7 +695,7 @@ public class ChartCompleterImp implements ChartCompleter {
 
 	// -----------------------------------------------------------
 
-	/** Returns the number of entries in each cell in the chart. */
+	/** Returns the number of entries in each form in the chart. */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < _size; i++) {

@@ -76,10 +76,10 @@ public class Visualizer {
         return "tmp"+Integer.toString(i);
     }
     
-    public int getTreeDepth(Sign sign, int level)
+    public int getTreeDepth(Symbol sign, int level)
     {
         int max_depth = 0, depth = 0;
-        Sign[] children = sign.getDerivationHistory().getInputs();
+        Symbol[] children = sign.getDerivationHistory().getInputs();
         if (children != null && sign.getWords().size() > 1) 
             for (int i=0; i < children.length; i++) {
                 depth = getTreeDepth(children[i], level+1);
@@ -90,18 +90,18 @@ public class Visualizer {
         return max_depth;
     }
 
-    private int numberOfLeaves(Sign results) {
+    private int numberOfLeaves(Symbol results) {
         int totalLeaves = 0;    
-        Sign[] children = results.getDerivationHistory().getInputs();
+        Symbol[] children = results.getDerivationHistory().getInputs();
         if (children==null || results.getWords().size()==1) return 1;
         for(int i=0;i<children.length;i++)
             totalLeaves+=numberOfLeaves(children[i]);
         return totalLeaves;
     }
     
-    public List<TeXSign> processSign(Sign results, int level, int identation) {
+    public List<TeXSign> processSign(Symbol results, int level, int identation) {
         List<TeXSign> signList = new ArrayList<TeXSign>();
-        Sign[] children = results.getDerivationHistory().getInputs();
+        Symbol[] children = results.getDerivationHistory().getInputs();
         int depth = getTreeDepth(results, 0);
         TeXSign ts = new TeXSign();
         int offset=0;
@@ -267,7 +267,7 @@ public class Visualizer {
      * Writes a derivation in fileName in TeX format; 
      * returns false in case it fails.
      */
-    public boolean saveTeXFile(Sign results, String fileName) {
+    public boolean saveTeXFile(Symbol results, String fileName) {
         List<TeXSign> signList = null;
         java.io.BufferedWriter bw = null;
         try {
@@ -333,7 +333,7 @@ public class Visualizer {
     }
 
     private class TeXSign {
-        Sign sign = null;
+        Symbol sign = null;
         int identation = 0;
         int height = 0;
     }

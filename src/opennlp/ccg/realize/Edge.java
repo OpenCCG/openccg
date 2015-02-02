@@ -63,7 +63,7 @@ public class Edge extends Tracker
 
     
     /** The sign. */
-    protected Sign sign;
+    protected Symbol sign;
     
     /** The completeness percentage. */
     public final float completeness;
@@ -86,7 +86,7 @@ public class Edge extends Tracker
     
     
     /** Constructor. */
-    public Edge(Sign sign, BitSet bitset, BitSet indices, 
+    public Edge(Symbol sign, BitSet bitset, BitSet indices, 
                 float completeness, double score, 
                 List<List<Alt>> activeLfAlts, BitSet incompleteLfChunk) 
     {
@@ -98,7 +98,7 @@ public class Edge extends Tracker
 
     
     /** Returns the sign. */
-    public Sign getSign() { return sign; }
+    public Symbol getSign() { return sign; }
     
     /** Returns whether this edge has completeness 1.0, ie, covers all the input preds. */
     public boolean complete() {

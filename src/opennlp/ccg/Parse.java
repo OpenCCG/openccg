@@ -40,7 +40,7 @@ import opennlp.ccg.parse.Supertagger;
 import opennlp.ccg.parse.supertagger.WordAndPOSDictionaryLabellingStrategy;
 import opennlp.ccg.synsem.Category;
 import opennlp.ccg.synsem.LF;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.synsem.SignScorer;
 import opennlp.ccg.test.RegressionInfo;
 import opennlp.ccgbank.extract.Testbed;
@@ -97,7 +97,7 @@ public class Parse {
 		Document outDoc = new Document();
 		Element outRoot = new Element("regression");
 		outDoc.setRootElement(outRoot);
-		Map<String,Sign> signMap = new HashMap<String,Sign>();
+		Map<String,Symbol> signMap = new HashMap<String,Symbol>();
 
         // load grammar
         URL grammarURL = new File(grammarfile).toURI().toURL();
@@ -148,10 +148,10 @@ public class Parse {
         		System.out.println(line);
 			parser.parse(line);
 			ParseProduct product = parser.getProduct();
-			List<Sign> result = product.getResult();
+			List<Symbol> result = product.getResult();
 			int numParses = Math.min(nbestListSize, result.size());
 			for (int i=0; i < numParses; i++) {
-			    Sign thisParse = result.get(i);
+			    Symbol thisParse = result.get(i);
 			    // convert lf
 			    Category cat = thisParse.getCategory();
 			    LF convertedLF = null;

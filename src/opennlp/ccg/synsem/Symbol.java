@@ -42,7 +42,7 @@ import java.util.*;
  * @author Daniel Couto-Vale
  * @version $Revision: 1.44 $, $Date: 2011/08/27 19:27:01 $
  */
-public class Sign implements EntityRealizer, Serializable {
+public class Symbol implements EntityRealizer, Serializable {
 
 	private static final long serialVersionUID = 1072712272514007274L;
 
@@ -64,7 +64,7 @@ public class Sign implements EntityRealizer, Serializable {
 	/**
 	 * The lexical head
 	 */
-	private Sign lexHead;
+	private Symbol lexHead;
 
 	/**
 	 * List of transient data objects, for retrieval by class.
@@ -80,7 +80,7 @@ public class Sign implements EntityRealizer, Serializable {
 	 * @param lexHead the lex head
 	 */
 	@SuppressWarnings("unchecked")
-	private Sign(List<Word> words, Category category, DerivationHistory history, Sign lexHead) {
+	private Symbol(List<Word> words, Category category, DerivationHistory history, Symbol lexHead) {
 		this.words = (List<Word>) Interner.globalIntern(words);
 		this.category = category;
 		this.history = history != null ? history : new DerivationHistory(this);
@@ -93,7 +93,7 @@ public class Sign implements EntityRealizer, Serializable {
 	 * @param words the words
 	 * @param category the category
 	 */
-	public Sign(List<Word> words, Category category) {
+	public Symbol(List<Word> words, Category category) {
 		this(words, category, null, null);
 	}
 
@@ -101,7 +101,7 @@ public class Sign implements EntityRealizer, Serializable {
 	 * Constructor with words and derivation history formed from the given
 	 * inputs, rule and lex head.
 	 */
-	private Sign(Category category, Sign[] inputs, Rule rule, Sign lexHead) {
+	private Symbol(Category category, Symbol[] inputs, Rule rule, Symbol lexHead) {
 		this(getRemainingWords(inputs, 0), category, null, lexHead);
 		this.history = new DerivationHistory(inputs, this, rule);
 	}
@@ -138,7 +138,7 @@ public class Sign implements EntityRealizer, Serializable {
 	 * Factory method for creating a sign from a lexical sign plus a
 	 * coarticulation one.
 	 */
-	public final static Sign createCoartSign(Category cat, Sign lexSign, Sign coartSign) {
+	public final static Symbol createCoartSign(Category cat, Symbol lexSign, Symbol coartSign) {
 		List<Word> words = lexSign.getWords();
 		if (words.size() > 1)
 			throw new RuntimeException("Can't create coarticulation sign from multiple words.");
@@ -170,8 +170,8 @@ public class Sign implements EntityRealizer, Serializable {
 				throw new RuntimeException("Not supported.");
 			}
 		};
-		Sign retval = new Sign(new SingletonList<Word>(wordPlus), cat, null, null);
-		DerivationHistory history = new DerivationHistory(new Sign[] { lexSign, coartSign },
+		Symbol retval = new Symbol(new SingletonList<Word>(wordPlus), cat, null, null);
+		DerivationHistory history = new DerivationHistory(new Symbol[] { lexSign, coartSign },
 				retval, coartRule);
 		retval.history = history;
 		return retval;
@@ -181,8 +181,8 @@ public class Sign implements EntityRealizer, Serializable {
 	 * Factory method for creating derived signs with the given cat from the
 	 * given inputs, rule and lex head.
 	 */
-	public final static Sign createDerivedSign(Category cat, Sign[] inputs, Rule rule, Sign lexHead) {
-		return new Sign(cat, inputs, rule, lexHead);
+	public final static Symbol createDerivedSign(Category cat, Symbol[] inputs, Rule rule, Symbol lexHead) {
+		return new Symbol(cat, inputs, rule, lexHead);
 	}
 
 	/**
@@ -192,8 +192,8 @@ public class Sign implements EntityRealizer, Serializable {
 	 * with no var substitutions, so it is useful only for creating alternative
 	 * signs during realization.
 	 */
-	public final static Sign createDerivedSignWithNewLF(Category cat, Sign[] inputs, Rule rule,
-			Sign lexHead) {
+	public final static Symbol createDerivedSignWithNewLF(Category cat, Symbol[] inputs, Rule rule,
+			Symbol lexHead) {
 		Category copyCat = cat.shallowCopy();
 		LF lf = null;
 		for (int i = 0; i < inputs.length; i++) {
@@ -207,11 +207,11 @@ public class Sign implements EntityRealizer, Serializable {
 			HyloHelper.getInstance().sort(lf);
 		}
 		copyCat.setLF(lf);
-		return new Sign(copyCat, inputs, rule, lexHead);
+		return new Symbol(copyCat, inputs, rule, lexHead);
 	}
 
 	// returns the remaining words in a structure sharing way
-	private final static List<Word> getRemainingWords(Sign[] inputs, int index) {
+	private final static List<Word> getRemainingWords(Symbol[] inputs, int index) {
 		// if (inputs.length == 0) throw new
 		// RuntimeException("Error: can't make sign from zero inputs");
 		if (index == (inputs.length - 1))
@@ -274,7 +274,7 @@ public class Sign implements EntityRealizer, Serializable {
 	}
 
 	/** Returns the lexical head. */
-	public final Sign getLexHead() {
+	public final Symbol getLexHead() {
 		return lexHead;
 	}
 
@@ -287,9 +287,9 @@ public class Sign implements EntityRealizer, Serializable {
 	public final boolean equals(Object obj) {
 		if (obj == this)
 			return true;
-		if (!(obj instanceof Sign))
+		if (!(obj instanceof Symbol))
 			return false;
-		Sign sign = (Sign) obj;
+		Symbol sign = (Symbol) obj;
 		return words == sign.words && category.equals(sign.category);
 	}
 
@@ -344,9 +344,9 @@ public class Sign implements EntityRealizer, Serializable {
 	public final boolean surfaceWordEquals(Object obj, boolean ignoreLF) {
 		if (obj == this)
 			return true;
-		if (!(obj instanceof Sign))
+		if (!(obj instanceof Symbol))
 			return false;
-		Sign sign = (Sign) obj;
+		Symbol sign = (Symbol) obj;
 		// original equals for lex signs
 		if (history.getInputs() == null || sign.history.getInputs() == null)
 			return equals(sign);
@@ -407,7 +407,7 @@ public class Sign implements EntityRealizer, Serializable {
 			}
 		}
 		// recurse
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		if (inputs == null)
 			return;
 		for (int i = 0; i < inputs.length; i++) {
@@ -433,7 +433,7 @@ public class Sign implements EntityRealizer, Serializable {
 			parent = span;
 		}
 		// process inputs from derivation history
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		if (inputs == null) {
 			// in leaf case, word list must be a singleton
 			Word word = words.get(0);
@@ -502,7 +502,7 @@ public class Sign implements EntityRealizer, Serializable {
 	 * list form.
 	 */
 	public final String getBracketedString() {
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		if (inputs == null)
 			return getOrthography();
 		if (inputs.length == 1)
@@ -544,19 +544,19 @@ public class Sign implements EntityRealizer, Serializable {
 	 * list of words, or -1 if the given lex sign is not in this sign's
 	 * derivation history.
 	 */
-	public final int wordIndex(Sign lexSign) {
+	public final int wordIndex(Symbol lexSign) {
 		return wordIndex(lexSign, new int[] { 0 });
 	}
 
 	// returns word index relative to input offset
-	private final int wordIndex(Sign lexSign, int[] offset) {
+	private final int wordIndex(Symbol lexSign, int[] offset) {
 		if (this == lexSign)
 			return offset[0];
 		if (isIndexed()) {
 			offset[0] += words.size();
 			return -1;
 		}
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		for (int i = 0; i < inputs.length; i++) {
 			int retval = inputs[i].wordIndex(lexSign, offset);
 			if (retval >= 0)
@@ -631,7 +631,7 @@ public class Sign implements EntityRealizer, Serializable {
 			return fdeps.filledDeps;
 		// otherwise get unfilled deps from children recursively
 		List<LexDependency> unfilledDeps = new ArrayList<LexDependency>(5);
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		for (int i = 0; i < inputs.length; i++) {
 			unfilledDeps.addAll(inputs[i].getUnfilledDeps());
 		}
@@ -654,7 +654,7 @@ public class Sign implements EntityRealizer, Serializable {
 		if (filledDeps.isEmpty())
 			return Collections.emptyList();
 		List<LexDependency> retval = new ArrayList<LexDependency>(5);
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		for (int i = 0; i < inputs.length; i++) {
 			inputs[i].addSiblingFilledDeps(retval, filledDeps);
 		}
@@ -675,7 +675,7 @@ public class Sign implements EntityRealizer, Serializable {
 			retval.addAll(sibs);
 
 		}
-		Sign[] inputs = history.getInputs();
+		Symbol[] inputs = history.getInputs();
 		for (int i = 0; i < inputs.length; i++) {
 			inputs[i].addSiblingFilledDeps(retval, filledDeps);
 		}
@@ -686,16 +686,16 @@ public class Sign implements EntityRealizer, Serializable {
 	 * through the input signs as long as the head remains the same as the given
 	 * head; otherwise returns null.
 	 */
-	public final Sign getSignHeadedByDep(LexDependency lexDependency) {
+	public final Symbol getSignHeadedByDep(LexDependency lexDependency) {
 		// check same head
 		if (!isIndexed() && lexHead == lexDependency.lexHead) {
-			Sign[] inputs = history.getInputs();
+			Symbol[] inputs = history.getInputs();
 			for (int i = 0; i < inputs.length; i++) {
 				// check for match
 				if (inputs[i].lexHead == lexDependency.lexDep)
 					return inputs[i]; // found it
 				// otherwise recurse
-				Sign retval = inputs[i].getSignHeadedByDep(lexDependency);
+				Symbol retval = inputs[i].getSignHeadedByDep(lexDependency);
 				if (retval != null)
 					return retval;
 			}
@@ -716,7 +716,7 @@ public class Sign implements EntityRealizer, Serializable {
 		out.close();
 		ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename));
 		System.out.print("Reading sign: ");
-		Sign sign = (Sign) in.readObject();
+		Symbol sign = (Symbol) in.readObject();
 		System.out.println(sign);
 		System.out.println(sign.getDerivationHistory());
 		in.close();

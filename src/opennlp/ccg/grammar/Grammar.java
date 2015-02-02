@@ -532,7 +532,7 @@ public class Grammar {
      * Saves the given sign's words, pitch accents and boundary tones 
      * to an APML file with the given filename.
      */
-    public synchronized void saveToApml(Sign sign, String filename) throws IOException {
+    public synchronized void saveToApml(Symbol sign, String filename) throws IOException {
         // ensure dirs exist for filename
         File file = new File(filename);
         File parent = file.getParentFile();
@@ -550,7 +550,7 @@ public class Grammar {
      * and then converted to APML using opennlp/ccg/grammar/to-apml.xsl.
      * The string is assumed to be a single performative.
      */
-    public synchronized void saveToApml(Sign sign, Writer writer) throws IOException { 
+    public synchronized void saveToApml(Symbol sign, Writer writer) throws IOException { 
         // convert words
         Document doc = sign.getWordsInXml();
         // write transformed doc to file
@@ -581,9 +581,9 @@ public class Grammar {
         catch (ParseException pe) {
             return new ArrayList<Word>(0);
         }
-        List<Sign> parses = parser.getProduct().getResult();
+        List<Symbol> parses = parser.getProduct().getResult();
         // return words of first parse
-        Sign sign = parses.get(0);
+        Symbol sign = parses.get(0);
         return sign.getWords();
     }
 

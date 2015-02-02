@@ -137,7 +137,7 @@ public class TextCCG {
         Realizer realizer = new Realizer(grammar);
 
         // stuff to remember during loop
-        Sign[] lastResults = null;
+        Symbol[] lastResults = null;
         LF[] lastLFs = null;
         String lastSentence = "";
         int lastReading = 0;
@@ -517,8 +517,8 @@ public class TextCCG {
                         }
                     }
                     parser.parse(input);
-                    List<Sign> parses = parser.getProduct().getResult();
-                    Sign[] results = new Sign[parses.size()];
+                    List<Symbol> parses = parser.getProduct().getResult();
+                    Symbol[] results = new Symbol[parses.size()];
                     parses.toArray(results);
                     int resLength = results.length;
                     switch (resLength) {
@@ -560,7 +560,7 @@ public class TextCCG {
                         if (cat.getLF() != null) {
                             cat = cat.copy();
                             Nominal index = cat.getIndexNominal(); 
-                            Sign rootSign = results[i]; // could add a switch here for naming convention
+                            Symbol rootSign = results[i]; // could add a switch here for naming convention
                             convertedLF = HyloHelper.getInstance().compactAndConvertNominals(cat.getLF(), index, rootSign);
                             lastLFs[i] = convertedLF; 
                             cat.setLF(null);

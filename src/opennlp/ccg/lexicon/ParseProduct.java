@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import opennlp.ccg.parse.ChartCompleter;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 
 /**
  * The product of an automatic linguistic analysis.
@@ -46,7 +46,7 @@ public class ParseProduct {
 	/**
 	 * The symbols
 	 */
-	private List<Sign> result = new ArrayList<Sign>();
+	private List<Symbol> result = new ArrayList<Symbol>();
 
 	/**
 	 * The symbol scores
@@ -150,14 +150,14 @@ public class ParseProduct {
 	/**
 	 * @return the result
 	 */
-	public final List<Sign> getResult() {
+	public final List<Symbol> getResult() {
 		return result;
 	}
 
 	/**
 	 * @param result the result to set
 	 */
-	public final void setResult(List<Sign> result) {
+	public final void setResult(List<Symbol> result) {
 		this.result = result;
 	}
 

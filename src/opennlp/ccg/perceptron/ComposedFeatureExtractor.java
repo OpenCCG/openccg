@@ -54,7 +54,7 @@ public class ComposedFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		FeatureVector[] featureVectors = new FeatureVector[featureExtractors.length];
 		for (int i=0; i < featureExtractors.length; i++)
 			featureVectors[i] = featureExtractors[i].extractFeatures(sign, complete);

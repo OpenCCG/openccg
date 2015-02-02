@@ -50,7 +50,7 @@ public abstract class ReRankingPerceptronScorer extends PerceptronScorer impleme
 	}
 
     /** Scores the sign with the full or base model, according to the full model flag. */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
 		if (useFullModel) return super.score(sign, complete);
 		else return baseScorer.score(sign, complete);
     }

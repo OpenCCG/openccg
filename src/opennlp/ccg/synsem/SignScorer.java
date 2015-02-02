@@ -33,17 +33,17 @@ public interface SignScorer
      * numbers are better than lower numbers.
      * When normalized, returns a score between 0 (worst) and 1 (best).
      */
-    public double score(Sign sign, boolean complete);
+    public double score(Symbol sign, boolean complete);
 
     /** A scorer that returns 0 for all signs. */
     public static SignScorer nullScorer = new SignScorer() { 
-        public double score(Sign sign, boolean complete) { return 0; }
+        public double score(Symbol sign, boolean complete) { return 0; }
     };
 
     /** A scorer that returns a random number in [0,1] for all signs. */
     public static SignScorer randomScorer = new SignScorer() { 
     	Random random = new Random();
-        public double score(Sign sign, boolean complete) { return random.nextDouble(); }
+        public double score(Symbol sign, boolean complete) { return random.nextDouble(); }
     };
 }
 

@@ -398,7 +398,7 @@ public class Lexicon {
     /**
      * Returns the lexical signs indexed by the given rel, or null if none. 
      */
-    public Collection<Sign> getSignsFromRel(String rel) {
+    public Collection<Symbol> getSignsFromRel(String rel) {
         // check cache (if not doing supertagging)
     	if (_supertagger == null) {
 	        RelLookup lookup = new RelLookup(rel);
@@ -408,7 +408,7 @@ public class Lexicon {
         // lookup signs via preds
         Collection<String> preds = (Collection<String>) _relsToPreds.get(rel);
         if (preds == null) return null;
-        Collection<Sign> retval = getSignsFromRelAndPreds(rel, preds);
+        Collection<Symbol> retval = getSignsFromRelAndPreds(rel, preds);
         // cache non-null result (if not doing supertagging)
         if (_supertagger == null && retval != null) {
         	RelLookup lookup = new RelLookup(rel);
@@ -418,11 +418,11 @@ public class Lexicon {
     }
 
     // get signs for rel via preds, or null if none
-    private Collection<Sign> getSignsFromRelAndPreds(String rel, Collection<String> preds) {
-        List<Sign> retval = new ArrayList<Sign>();
+    private Collection<Symbol> getSignsFromRelAndPreds(String rel, Collection<String> preds) {
+        List<Symbol> retval = new ArrayList<Symbol>();
         for (Iterator<String> it = preds.iterator(); it.hasNext(); ) {
             String pred = it.next();
-            Collection<Sign> signs = getSignsFromPredAndTargetRel(pred, rel);
+            Collection<Symbol> signs = getSignsFromPredAndTargetRel(pred, rel);
             if (signs != null) retval.addAll(signs);
         }
         // return null if none survive filter
@@ -437,7 +437,7 @@ public class Lexicon {
      * otherwise, null is returned.
      * Coarticulations are applied for the given rels, if non-null.
      */
-    public Collection<Sign> getSignsFromPred(String pred, List<String> coartRels) {
+    public Collection<Symbol> getSignsFromPred(String pred, List<String> coartRels) {
         // check cache (if not doing supertagging)
     	if (_supertagger == null) {
 	        PredLookup lookup = new PredLookup(pred, coartRels);
@@ -445,7 +445,7 @@ public class Lexicon {
 	        if (retLookup != null) return retLookup.signs;
     	}
         // lookup pred
-        Collection<Sign> result = getSignsFromPredAndTargetRel(pred, null);
+        Collection<Symbol> result = getSignsFromPredAndTargetRel(pred, null);
         if (result == null) return null;
         // apply coarts for rels
         if (coartRels != null) applyCoarts(coartRels, result);
@@ -459,7 +459,7 @@ public class Lexicon {
     }
         
     // get signs using an additional arg for a target rel
-    private Collection<Sign> getSignsFromPredAndTargetRel(String pred, String targetRel) {
+    private Collection<Symbol> getSignsFromPredAndTargetRel(String pred, String targetRel) {
         
         Collection<Word> words = (Collection<Word>) _predToWords.get(pred);
         String specialTokenConst = null;
@@ -495,11 +495,11 @@ public class Lexicon {
             }
         }
         
-        List<Sign> retval = new ArrayList<Sign>();
+        List<Symbol> retval = new ArrayList<Symbol>();
         for (Iterator<Word> it = words.iterator(); it.hasNext(); ) {
             Word w = it.next();
             try {
-                SignHash signs = getSignsFromWord(w, specialTokenConst, pred, targetRel);
+                SymbolHash signs = getSignsFromWord(w, specialTokenConst, pred, targetRel);
                 retval.addAll(signs.asSignSet());
             }
             // shouldn't happen
@@ -511,22 +511,22 @@ public class Lexicon {
     }
     
     // look up and apply coarts for given rels to each sign in result
-    private void applyCoarts(List<String> coartRels, Collection<Sign> result) {
-        List<Sign> inputSigns = new ArrayList<Sign>(result);
+    private void applyCoarts(List<String> coartRels, Collection<Symbol> result) {
+        List<Symbol> inputSigns = new ArrayList<Symbol>(result);
         result.clear();
-        List<Sign> outputSigns = new ArrayList<Sign>(inputSigns.size());
+        List<Symbol> outputSigns = new ArrayList<Symbol>(inputSigns.size());
         // for each rel, lookup coarts and apply to input signs, storing results in output signs
         for (Iterator<String> it = coartRels.iterator(); it.hasNext(); ) {
             String rel = it.next();
             Collection<String> preds = (Collection<String>) _coartRelsToPreds.get(rel);
             if (preds == null) continue; // not expected
-            Collection<Sign> coartResult = getSignsFromRelAndPreds(rel, preds);
+            Collection<Symbol> coartResult = getSignsFromRelAndPreds(rel, preds);
             if (coartResult == null) continue;
-            for (Iterator<Sign> it2 = coartResult.iterator(); it2.hasNext(); ) {
-                Sign coartSign = it2.next();
+            for (Iterator<Symbol> it2 = coartResult.iterator(); it2.hasNext(); ) {
+                Symbol coartSign = it2.next();
                 // apply to each input
                 for (int j = 0; j < inputSigns.size(); j++) {
-                    Sign sign = inputSigns.get(j);
+                    Symbol sign = inputSigns.get(j);
                     grammar.rules.applyCoart(sign, coartSign, outputSigns);
                 }
             }
@@ -549,12 +549,12 @@ public class Lexicon {
      * @return a list of sign hashes
      * @exception LexException thrown if word not found
      */
-    public List<SignHash> getEntriesFromWords(String s) throws LexException { 
-        List<SignHash> entries = new ArrayList<SignHash>();
+    public List<SymbolHash> getEntriesFromWords(String s) throws LexException { 
+        List<SymbolHash> entries = new ArrayList<SymbolHash>();
         List<Word> words = tokenizer.tokenize(s);
         for (Iterator<Word> it = words.iterator(); it.hasNext(); ) {
             Word w = it.next();
-            SignHash signs = getSignsFromWord(w);
+            SymbolHash signs = getSignsFromWord(w);
             if (signs.size() == 0) {
                 throw new LexException("Word not in lexicon: \"" + w +"\"");
             }
@@ -575,14 +575,14 @@ public class Lexicon {
      * @return a sign hash
      * @exception LexException thrown if word not found
      */
-    public SignHash getSignsFromWord(Word w) throws LexException {
+    public SymbolHash getSignsFromWord(Word w) throws LexException {
         // reduce word to its core, removing coart attrs if any
     	Word surfaceWord = Word.createSurfaceWord(w);
         Word coreWord = (surfaceWord.attrsIntersect(_coartAttrs)) 
             ? Word.createCoreSurfaceWord(surfaceWord, _coartAttrs) 
             : surfaceWord;
         // lookup core word
-        SignHash result = getSignsFromWord(coreWord, null, null, null);
+        SymbolHash result = getSignsFromWord(coreWord, null, null, null);
         if (result.size() == 0) {
             throw new LexException(coreWord + " not found in lexicon");
         }
@@ -595,10 +595,10 @@ public class Lexicon {
     
     // look up and apply coarts for w to each sign in result
     @SuppressWarnings("unchecked")
-	private void applyCoarts(Word w, SignHash result) throws LexException {
-        List<Sign> inputSigns = new ArrayList<Sign>(result.asSignSet());
+	private void applyCoarts(Word w, SymbolHash result) throws LexException {
+        List<Symbol> inputSigns = new ArrayList<Symbol>(result.asSignSet());
         result.clear();
-        List<Sign> outputSigns = new ArrayList<Sign>(inputSigns.size());
+        List<Symbol> outputSigns = new ArrayList<Symbol>(inputSigns.size());
         // for each surface attr, lookup coarts and apply to input signs, storing results in output signs
         for (Iterator<Pair<String,String>> it = w.getSurfaceAttrValPairs(); it.hasNext(); ) {
             Pair<String,String> p = it.next();
@@ -606,12 +606,12 @@ public class Lexicon {
             if (!_indexedCoartAttrs.contains(attr)) continue;
             String val = (String) p.b;
             Word coartWord = Word.createWord(attr, val);
-            SignHash coartResult = getSignsFromWord(coartWord, null, null, null);
-            for (Iterator<Sign> it2 = coartResult.iterator(); it2.hasNext(); ) {
-                Sign coartSign = it2.next();
+            SymbolHash coartResult = getSignsFromWord(coartWord, null, null, null);
+            for (Iterator<Symbol> it2 = coartResult.iterator(); it2.hasNext(); ) {
+                Symbol coartSign = it2.next();
                 // apply to each input
                 for (int j = 0; j < inputSigns.size(); j++) {
-                    Sign sign = inputSigns.get(j);
+                    Symbol sign = inputSigns.get(j);
                     grammar.rules.applyCoart(sign, coartSign, outputSigns);
                 }
             }
@@ -625,7 +625,7 @@ public class Lexicon {
     }
     
     // get signs with additional args for a known special token const, target pred and target rel        
-    private SignHash getSignsFromWord(Word w, String specialTokenConst, String targetPred, String targetRel) throws LexException {
+    private SymbolHash getSignsFromWord(Word w, String specialTokenConst, String targetPred, String targetRel) throws LexException {
 
         Collection<MorphItem> morphItems = (specialTokenConst == null)
             ? (Collection<MorphItem>) _words.get(w)
@@ -646,7 +646,7 @@ public class Lexicon {
                 throw new LexException(w + " not in lexicon");
         }
 
-        SignHash result = new SignHash();
+        SymbolHash result = new SymbolHash();
 
         for (Iterator<MorphItem> MI = morphItems.iterator(); MI.hasNext();) {
             getWithMorphItem(w, MI.next(), targetPred, targetRel, result);
@@ -657,7 +657,7 @@ public class Lexicon {
 
 
     // given MorphItem
-    private void getWithMorphItem(Word w, MorphItem mi, String targetPred, String targetRel, SignHash result)
+    private void getWithMorphItem(Word w, MorphItem mi, String targetPred, String targetRel, SymbolHash result)
         throws LexException 
     {
     	// get supertags for filtering, if a supertagger is installed
@@ -739,7 +739,7 @@ public class Lexicon {
                                  MacroAdder macAdder,
                                  Map<String,Double> supertags,
                                  Set<String> supertagsFound,
-                                 SignHash result) 
+                                 SymbolHash result) 
     {
         for (int i=0; i < entries.length; i++) {
             EntriesItem entry = entries[i];
@@ -757,7 +757,7 @@ public class Lexicon {
                                     MacroAdder macAdder,
                                     Map<String,Double> supertags,
                                     Set<String> supertagsFound,
-                                    SignHash result) 
+                                    SymbolHash result) 
     {
         // ensure apropos
         if (targetPred != null && !targetPred.equals(pred)) return; 
@@ -800,7 +800,7 @@ public class Lexicon {
 	        Word word = Word.createFullWord(w, mi.getWord(), cat.getSupertag());
 
 	        // set origin and lexprob
-	        Sign sign = new Sign(new SingletonList<Word>(word), cat);
+	        Symbol sign = new Symbol(new SingletonList<Word>(word), cat);
 	        HyloHelper.getInstance().setEntityRealizer(sign.getCategory().getLF(), sign);
 	        //if (lexprob != null) {
 	        //	sign.addData(new SupertaggerAdapter.LexLogProb((float) Math.log10(lexprob)));
@@ -1122,7 +1122,7 @@ public class Lexicon {
     // a class for caching lookups of signs from rels
     // nb: equality is checked just on the rel, to check for a cached lookup
     private static class RelLookup {
-        String rel; Collection<Sign> signs;
+        String rel; Collection<Symbol> signs;
         RelLookup(String s) { rel = s; }
         public int hashCode() { return rel.hashCode(); }
         public boolean equals(Object obj) { 
@@ -1133,7 +1133,7 @@ public class Lexicon {
     // a class for caching lookups of signs from preds and coart rels
     // nb: equality is checked just on the pred and coart rels, to check for a cached lookup
     private static class PredLookup {
-        String pred; List<String> coartRels; Collection<Sign> signs;
+        String pred; List<String> coartRels; Collection<Symbol> signs;
         PredLookup(String s, List<String> l) { pred = s; coartRels = l; }
         public int hashCode() { 
             return pred.hashCode() + ((coartRels != null) ? coartRels.hashCode() : 0); 

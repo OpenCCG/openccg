@@ -19,7 +19,7 @@
 package opennlp.ccg.ngrams;
 
 import opennlp.ccg.perceptron.*;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.synsem.SignScorer;
 
 /**
@@ -68,7 +68,7 @@ public class SignScorerInterpolation implements SignScorer, FeatureExtractor
      * In particular, returns the linear combination using the established weights 
      * of the scores given by the component models. 
      */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
         double retval = 0;
         for (int i = 0; i < models.length; i++) {
             retval += models[i].score(sign, complete) * weights[i];
@@ -82,7 +82,7 @@ public class SignScorerInterpolation implements SignScorer, FeatureExtractor
 	}
 	
 	/** Returns the features for the given sign and completeness flag from the component feature extractors. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		return composedFeatureExtractor.extractFeatures(sign, complete);
 	}
 }

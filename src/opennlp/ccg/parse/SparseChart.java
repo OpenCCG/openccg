@@ -29,7 +29,7 @@ public class SparseChart implements Chart, Serializable {
 	/**
 	 * The data structure.
 	 */
-	private final Map<Integer, Map<Integer, Cell>> formMapMap;
+	private final Map<Integer, Map<Integer, Form>> formMapMap;
 
 	/**
 	 * The size of the chart.
@@ -43,7 +43,7 @@ public class SparseChart implements Chart, Serializable {
 	 */
 	public SparseChart(int size) {
 		this.size = size;
-		this.formMapMap = new HashMap<Integer, Map<Integer, Cell>>();
+		this.formMapMap = new HashMap<Integer, Map<Integer, Form>>();
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class SparseChart implements Chart, Serializable {
 		BufferedInputStream bis = new BufferedInputStream(fis);
 		ObjectInputStream ois = new ObjectInputStream(bis);
 		try {
-			this.formMapMap = (HashMap<Integer, Map<Integer, Cell>>) ois.readObject();
+			this.formMapMap = (HashMap<Integer, Map<Integer, Form>>) ois.readObject();
 			int maxIndex = 0;
 			for (Integer index : formMapMap.keySet()) {
 				if (index > maxIndex) {
@@ -77,11 +77,11 @@ public class SparseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final Cell getForm(int first, int last) {
+	public final Form getForm(int first, int last) {
 		if (first < 0 || last >= size || first > last) {
 			throw new ArrayIndexOutOfBoundsException();
 		}
-		Map<Integer, Cell> formMap = formMapMap.get(first);
+		Map<Integer, Form> formMap = formMapMap.get(first);
 		if (formMap == null) {
 			return null;
 		}
@@ -89,13 +89,13 @@ public class SparseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final void setForm(int first, int last, Cell form) {
+	public final void setForm(int first, int last, Form form) {
 		if (first < 0 || last >= size || first > last) {
 			throw new ArrayIndexOutOfBoundsException();
 		}
-		Map<Integer, Cell> formMap = formMapMap.get(first);
+		Map<Integer, Form> formMap = formMapMap.get(first);
 		if (formMap == null) {
-			formMap = new HashMap<Integer, Cell>();
+			formMap = new HashMap<Integer, Form>();
 			formMapMap.put(first, formMap);
 		}
 		formMap.put(last, form);

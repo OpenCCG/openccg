@@ -21,7 +21,7 @@ package opennlp.ccg.ngrams;
 import opennlp.ccg.grammar.*;
 import opennlp.ccg.lexicon.*;
 import opennlp.ccg.perceptron.FeatureVector;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.util.*;
 
 import gnu.trove.*;
@@ -158,7 +158,7 @@ public class NgramPrecisionModel extends NgramScorer implements SelfParaphraseBi
      * With short sequences (less than the order), the score is adjusted 
      * proportionally to the max score.
      */
-    public synchronized double score(Sign sign, boolean complete) {
+    public synchronized double score(Symbol sign, boolean complete) {
     	// setup
         List<Word> words = sign.getWords(); 
         if (words == null) return 0;
@@ -193,7 +193,7 @@ public class NgramPrecisionModel extends NgramScorer implements SelfParaphraseBi
 	 * Returns the features as counts of each ngram for the given sign and completeness flag.
 	 * This method returns the feature map as a feature vector.
 	 */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		return extractFeatureMap(sign, complete);
 	}
 	

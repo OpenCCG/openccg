@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.zip.*;
 import java.io.*;
 
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 
 /**
  * An abstract representation of an event file, whose syntax is a more readable version 
@@ -250,10 +250,10 @@ public class EventFile {
 	}
 	
 	/** Writes the events for a given list of signs according to the feature extractor and best sign. */
-	public static void writeEvents(PrintWriter pw, List<Sign> signs, Sign best, FeatureExtractor fe) throws IOException {
+	public static void writeEvents(PrintWriter pw, List<Symbol> signs, Symbol best, FeatureExtractor fe) throws IOException {
     	Collections.shuffle(signs);
     	pw.println(Integer.toString(signs.size()));
-    	for (Sign s : signs) {
+    	for (Symbol s : signs) {
     		int count = 0;
     		if (s == best) count = 1;
     		pw.print(count + " ");

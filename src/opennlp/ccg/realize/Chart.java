@@ -142,7 +142,7 @@ public class Chart
     private List<Edge> supercededEdgesPendingRemoval = new ArrayList<Edge>();
 
     // maps signs to edges (w/o optional bits marked as covered)
-    private Map<Sign,Edge> signMap = new IdentityHashMap<Sign,Edge>();
+    private Map<Symbol,Edge> signMap = new IdentityHashMap<Symbol,Edge>();
     
     // the edges seen so far
     private EdgeHash edgeHash = new EdgeHash();
@@ -539,7 +539,7 @@ public class Chart
         }
         // otherwise unpack via input signs
         DerivationHistory history = alt.sign.getDerivationHistory(); 
-        Sign[] inputSigns = history.getInputs();
+        Symbol[] inputSigns = history.getInputs();
         // base case: no inputs
         if (inputSigns == null) {
             merged.insert(alt); return;
@@ -553,10 +553,10 @@ public class Chart
         // then make edges for new combos, and add to merged (if unseen)
         Category resultCat = alt.sign.getCategory();
         boolean lefthead = (alt.sign.getLexHead() == inputSigns[0].getLexHead());
-        List<Sign[]> altCombos = inputCombos(inputEdges, 0);
-        for (Sign[] combo : altCombos) {
-        	Sign lexHead = (lefthead) ? combo[0].getLexHead() : combo[1].getLexHead();
-            Sign sign = Sign.createDerivedSignWithNewLF(resultCat, combo, history.getRule(), lexHead);
+        List<Symbol[]> altCombos = inputCombos(inputEdges, 0);
+        for (Symbol[] combo : altCombos) {
+        	Symbol lexHead = (lefthead) ? combo[0].getLexHead() : combo[1].getLexHead();
+            Symbol sign = Symbol.createDerivedSignWithNewLF(resultCat, combo, history.getRule(), lexHead);
             Edge edgeToAdd = (sign.equals(alt.sign))
                 ? alt // use this alt for equiv sign
                 : edgeFactory.makeAltEdge(sign, alt); // otherwise make edge for new alt
@@ -566,26 +566,26 @@ public class Chart
 
     // returns a list of sign arrays, with each array of length inputEdges.length - i, 
     // representing all combinations of alt signs from i onwards
-    private List<Sign[]> inputCombos(Edge[] inputEdges, int index) {
+    private List<Symbol[]> inputCombos(Edge[] inputEdges, int index) {
         Edge edge = inputEdges[index];
         // base case, inputEdges[last]
         if (index == inputEdges.length-1) {
             List<Edge> altEdges = edge.altEdges; 
-            List<Sign[]> retval = new ArrayList<Sign[]>(altEdges.size());
+            List<Symbol[]> retval = new ArrayList<Symbol[]>(altEdges.size());
             for (Edge alt : altEdges) {
-                retval.add(new Sign[] { alt.sign });
+                retval.add(new Symbol[] { alt.sign });
             }
             return retval;
         }
         // otherwise recurse on index+1
-        List<Sign[]> nextCombos = inputCombos(inputEdges, index+1);
+        List<Symbol[]> nextCombos = inputCombos(inputEdges, index+1);
         // and make new combos
         List<Edge> altEdges = edge.altEdges; 
-        List<Sign[]> retval = new ArrayList<Sign[]>(altEdges.size() * nextCombos.size());
+        List<Symbol[]> retval = new ArrayList<Symbol[]>(altEdges.size() * nextCombos.size());
         for (Edge alt : altEdges) {
             for (int i = 0; i < nextCombos.size(); i++) {
-                Sign[] nextSigns = nextCombos.get(i);
-                Sign[] newCombo = new Sign[nextSigns.length+1];
+                Symbol[] nextSigns = nextCombos.get(i);
+                Symbol[] newCombo = new Symbol[nextSigns.length+1];
                 newCombo[0] = alt.sign;
                 System.arraycopy(nextSigns, 0, newCombo, 1, nextSigns.length);
                 retval.add(newCombo);
@@ -795,10 +795,10 @@ public class Chart
     		return " (" + edgeList.indexOf(edge.optCompletes) + " optC)";
     	}
     	DerivationHistory history = edge.sign.getDerivationHistory();
-    	Sign[] inputs = history.getInputs();
+    	Symbol[] inputs = history.getInputs();
     	if (inputs == null) return " (lex)";
     	String retval = " (";
-		for (Sign sign : inputs) {
+		for (Symbol sign : inputs) {
 			Edge repEdge = signMap.get(sign);
 			if (repEdge != null) retval += edgeList.indexOf(repEdge) + " ";
 		}

@@ -15,7 +15,7 @@ import java.util.Map;
  * O(1) for set and get operations.
  * 
  * This chart is more efficient in space and less efficient in time than a dense chart. It is to be
- * preferred in cases where a large text is to be analyzed.
+ * preferred in cases where the chart has many atoms.
  * 
  * @author Daniel Couto-Vale
  */

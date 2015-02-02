@@ -13,8 +13,8 @@ public interface Chart {
 	/**
 	 * Gets the form starting at the first position and ending at the last position
 	 * 
-	 * @param first the first position of the form 
-	 * @param last the last position of the form
+	 * @param first the position of the first atom of the form 
+	 * @param last the position of the last atom of the form
 	 * @return the forms starting at the first position and ending at the last position
 	 */
 	Cell getForm(int first, int last);
@@ -22,14 +22,14 @@ public interface Chart {
 	/**
 	 * Sets a form token ending at a end position and with a given hops 
 	 * 
-	 * @param first the first position of the form 
-	 * @param last the last position of the form
+	 * @param first the position of the first atom of the form 
+	 * @param last the position of the last atom of the form
 	 * @param form the form to set
 	 */
 	void setForm(int first, int last, Cell form);
 
 	/**
-	 * @return the number of positions in the chart
+	 * @return the number of atoms in the chart
 	 */
 	int getSize();
 

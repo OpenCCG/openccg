@@ -532,7 +532,7 @@ public class Regression {
                 }
                  
                 ParseProduct product = parser.getProduct();
-                opennlp.ccg.parse.ChartCompleter chart = product.getChart();
+                opennlp.ccg.parse.ChartCompleter chart = product.getChartCompleter();
                 // update parse stats
                 int count = chart != null ? chart.getEdgeCount() : 0;
                 pTotalEdges += count;

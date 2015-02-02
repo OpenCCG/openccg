@@ -136,7 +136,7 @@ public class ParseProduct {
 	/**
 	 * @return the chart
 	 */
-	public final ChartCompleter getChart() {
+	public final ChartCompleter getChartCompleter() {
 		return chart;
 	}
 

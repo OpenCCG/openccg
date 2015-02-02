@@ -9,12 +9,12 @@ import opennlp.ccg.synsem.SignScorer;
 /**
  * A chart completer.
  * 
- * The x coordinate is the index of the last atom of a given form.
- * The y coordinate is the number of hops between atoms of a given form.
+ * The x1 position is the position of the first atom of the form x.
+ * The x2 position is the position of the last atom of the form x.
  * 
- * This means that, if we tokenize the input string into word tokens, our atoms shall be words.
- * However, if we recognize forms in the input string instead of chopping it into 
- * we segment
+ * If we tokenize the input string into word tokens, our atoms shall be words. However, if we
+ * recognize forms in the input string instead of tokenizing it, each character of the input string
+ * is an atom.
  * 
  * @author Daniel Couto-Vale
  */
@@ -55,8 +55,8 @@ public interface ChartCompleter {
 	/**
 	 * Associates form (x,y) with an edge for a given sign.
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the y2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the y2 position
 	 * @param sign the sign to insert
 	 * @return <code>true</code> if an edge is inserted and <code>false</code> otherwise
 	 */
@@ -66,8 +66,8 @@ public interface ChartCompleter {
 	 * Associates form (x,y) with edges that result from applying unary rules to those already
 	 * associated with it.
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the x2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
 	 * @throws ParseException
 	 */
 	void annotateForm(int x1, int x2) throws ParseException;
@@ -76,12 +76,12 @@ public interface ChartCompleter {
 	 * Associates form (z1,z2) with edges that result from combining the edges of form (x1,x2) with
 	 * those of form (y1,y2).
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the x2 coordinate
-	 * @param y1 the y1 coordinate
-	 * @param y2 the y2 coordinate
-	 * @param z1 the z1 coordinate
-	 * @param z2 the z2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
+	 * @param y1 the y1 position
+	 * @param y2 the y2 position
+	 * @param z1 the z1 position
+	 * @param z2 the z2 position
 	 * @throws ParseException
 	 */
 	void combineForms(int x1, int x2, int y1, int y2, int z1, int z2) throws ParseException;
@@ -90,12 +90,12 @@ public interface ChartCompleter {
 	 * Associates cell (z1,z2) with fragmentary edges, if it is non-empty, that result from
 	 * combining the edges of form (x1,x2) with those in cell (y1,y2) using the glue rule.
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the x2 coordinate
-	 * @param y1 the y1 coordinate
-	 * @param y2 the y2 coordinate
-	 * @param z1 the z1 coordinate
-	 * @param z2 the z2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
+	 * @param y1 the y1 position
+	 * @param y2 the y2 position
+	 * @param z1 the z1 position
+	 * @param z2 the z2 position
 	 * @throws ParseException
 	 */
 	void glueForms(int x1, int x2, int y1, int y2, int z1, int z2) throws ParseException;
@@ -103,8 +103,8 @@ public interface ChartCompleter {
 	/**
 	 * Checks whether form (x,y) has no associated edge.
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the x2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
 	 * @return <code>true</code> if the cell is empty and <code>false</code> otherwise
 	 */
 	boolean isEmpty(int x1, int x2);
@@ -112,8 +112,8 @@ public interface ChartCompleter {
 	/**
 	 * Gets whether it is lazy unpack.
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the x2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
 	 * @return the edges
 	 */
 	List<Edge> lazyUnpack(int x1, int x2);
@@ -121,8 +121,8 @@ public interface ChartCompleter {
 	/**
 	 * Gets whether it is unpack.
 	 * 
-	 * @param x1 the x1 coordinate
-	 * @param x2 the x2 coordinate
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
 	 * @return the edges
 	 */
 	List<Edge> unpack(int x1, int x2);

@@ -108,8 +108,10 @@ public class Parser {
 	/** Edge limit. (Default is none.) */
 	protected int edgeLimit = -1;
 
-	// flag for whether to glue fragments currently
-	private boolean gluingFragments = false;
+	/**
+	 * Flag for whether to glue formal fragments
+	 */
+	private boolean gluingFlag = false;
 
 	private ParseProduct product;
 
@@ -212,7 +214,7 @@ public class Parser {
 			// do parsing
 			product.setStartTime(System.currentTimeMillis());
 			product.setChart(buildChart(entries));
-			parseEntries(product.getChart());
+			parseEntries(product.getChartCompleter());
 		} catch (LexException e) {
 			setGiveUpTime();
 			String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
@@ -225,7 +227,7 @@ public class Parser {
 			if (debugParse) {
 				System.out.println(e);
 				System.out.println("Chart for failed parse:");
-				product.getChart().print(System.out);
+				product.getChartCompleter().print(System.out);
 			}
 			// rethrow
 			throw e;
@@ -286,7 +288,7 @@ public class Parser {
 		// set supertagger in lexicon
 		grammar.lexicon.setSupertagger(supertagger);
 		// ensure gluing off
-		gluingFragments = false;
+		gluingFlag = false;
 		// reset beta
 		if (stMostToLeastDir)
 			supertagger.resetBeta();
@@ -310,16 +312,16 @@ public class Parser {
 				product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
 				;
 				// do parsing
-				
+
 				// set up chart
 				product.setStartTime(System.currentTimeMillis());
 				product.setChart(buildChart(entries));
-				parseEntries(product.getChart());
+				parseEntries(product.getChartCompleter());
 				// done
 				done = true;
 				// reset supertagger in lexicon, turn gluing off
 				grammar.lexicon.setSupertagger(null);
-				gluingFragments = false;
+				gluingFlag = false;
 			} catch (LexException e) {
 				// continue if more betas
 				if (stMostToLeastDir && supertagger.hasMoreBetas()) {
@@ -330,7 +332,7 @@ public class Parser {
 					setGiveUpTime();
 					// reset supertagger in lexicon, turn gluing off
 					grammar.lexicon.setSupertagger(null);
-					gluingFragments = false;
+					gluingFlag = false;
 					// throw parse exception
 					String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
 					if (debugParse)
@@ -348,11 +350,11 @@ public class Parser {
 				else if (!stMostToLeastDir && supertagger.hasLessBetas() && outwith)
 					supertagger.previousBeta();
 				// otherwise try glue rule, unless already on
-				else if (!gluingFragments) {
+				else if (!gluingFlag) {
 					supertagger.resetBeta(); // may as well use most restrictive
 												// supertagger setting with glue
 												// rule
-					gluingFragments = true;
+					gluingFlag = true;
 				}
 				// otherwise give up
 				else {
@@ -361,11 +363,11 @@ public class Parser {
 					if (debugParse) {
 						System.out.println(e);
 						System.out.println("Chart for failed parse:");
-						product.getChart().print(System.out);
+						product.getChartCompleter().print(System.out);
 					}
 					// reset supertagger in lexicon, turn gluing off
 					grammar.lexicon.setSupertagger(null);
-					gluingFragments = false;
+					gluingFlag = false;
 					// rethrow
 					throw e;
 				}
@@ -399,7 +401,7 @@ public class Parser {
 	 * @return the chart
 	 */
 	private final ChartCompleter buildChart(List<SignHash> entries) {
-		ChartCompleter chart = new ChartCompleterStd(entries.size(), rules);
+		ChartCompleter chart = new ChartCompleterImp(entries.size(), rules);
 		for (int i = 0; i < entries.size(); i++) {
 			SignHash signHash = entries.get(i);
 			for (Sign sign : signHash.getSignsSorted()) {
@@ -418,35 +420,41 @@ public class Parser {
 	 * @throws ParseException
 	 */
 	private void parse(int size) throws ParseException {
-		ChartCompleter chart = product.getChart();
+		ChartCompleter chartCompleter = product.getChartCompleter();
 
-		// Fill in chart
+		// Annotate index forms with unary rules
 		for (int i = 0; i < size; i++) {
-			chart.annotateForm(i, i);
+			chartCompleter.annotateForm(i, i);
 		}
 
-		// Combine forms
+		// Combine forms and annotate combined forms with unary rules
 		for (int y2 = 1; y2 < size; y2++) {
 			for (int x1 = y2 - 1; x1 >= 0; x1--) {
-				for (int y1 = x1; y1 < y2; y1++) {
-					int x2 = y1 + 1;
-					int x3 = x1;
-					int y3 = y2;
-					chart.combineForms(x1, y1, x2, y2, x3, y3);
+				int z1 = x1;
+				int z2 = y2;
+				for (int x2 = x1; x2 < y2; x2++) {
+					int y1 = x2 + 1;
+					chartCompleter.combineForms(x1, x2, y1, y2, z1, z2);
 				}
-				chart.annotateForm(x1, y2);
+				// Annotate combinations with unary rules
+				chartCompleter.annotateForm(x1, y2);
 			}
 		}
-		// glue fragments if apropos
-		if (gluingFragments && chart.isEmpty(0, size - 1)) {
-			for (int j = 1; j < size; j++) {
-				for (int i = j - 1; i >= 0; i--) {
-					for (int k = i; k < j; k++) {
-						chart.glueForms(i, k, k + 1, j, i, j);
+
+		// Glue forms
+		if (gluingFlag && chartCompleter.isEmpty(0, size - 1)) {
+			for (int y2 = 1; y2 < size; y2++) {
+				for (int x1 = y2 - 1; x1 >= 0; x1--) {
+					int z1 = x1;
+					int z2 = y2;
+					for (int x2 = x1; x2 < y2; x2++) {
+						int y1 = x2 + 1;
+						chartCompleter.glueForms(x1, x2, y1, y2, z1, z2);
 					}
 				}
 			}
 		}
+
 		product.setChartTime((int) (System.currentTimeMillis() - product.getStartTime()));
 		// extract results
 		createResult(size);
@@ -456,22 +464,22 @@ public class Parser {
 
 	// create answer ArrayList
 	private void createResult(int size) throws ParseException {
-		List<Sign> result = new ArrayList<Sign>();
+		List<Sign> symbols = new ArrayList<Sign>();
 		List<Double> scores = new ArrayList<Double>();
-		ChartCompleter chart = product.getChart();
+		ChartCompleter chartCompleter = product.getChartCompleter();
 		// unpack top
-		List<Edge> unpacked = product.getLazyUnpacking() ? chart.lazyUnpack(0, size - 1) : chart.unpack(
-				0, size - 1);
+		List<Edge> edges = product.getLazyUnpacking() ? chartCompleter.lazyUnpack(0, size - 1)
+				: chartCompleter.unpack(0, size - 1);
 		// add signs for unpacked edges
-		for (Edge edge : unpacked) {
-			result.add(edge.sign);
+		for (Edge edge : edges) {
+			symbols.add(edge.sign);
 			scores.add(edge.score);
 		}
 		// check non-empty
-		if (result.size() == 0) {
+		if (symbols.size() == 0) {
 			throw new ParseException("Unable to parse");
 		}
-		product.setResult(result);
+		product.setResult(symbols);
 		product.setScores(scores);
 	}
 

@@ -37,7 +37,7 @@ import java.util.*;
  * @author Michael White
  * @version $Revision: 1.41 $, $Date: 2011/11/16 03:25:27 $
  */
-public class ChartCompleterStd implements ChartCompleter {
+public class ChartCompleterImp implements ChartCompleter {
 
 	/**
 	 * Compares edges based on their relative score, in descending order, then
@@ -91,7 +91,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	private Chart chart;
 
 	/** Constructor. */
-	public ChartCompleterStd(int size, RuleGroup _R) {
+	public ChartCompleterImp(int size, RuleGroup _R) {
 		_rules = _R;
 		_size = size;
 		chart = new SparseChart(size);
@@ -146,35 +146,35 @@ public class ChartCompleterStd implements ChartCompleter {
 	// Chart construction
 
 	/**
-	 * Makes a form starting at a start position with a given length.
+	 * Makes a form starting at a x1 position and ending at x2 position.
 	 * 
-	 * @param end the end position of the form
-	 * @param length the length of the form
+	 * @param x1 the x1 position
+	 * @param x2 the x2 position
 	 * @return the form starting at the start position with the given length
 	 */
-	protected Cell makeForm(int end, int length) {
-		if (chart.getForm(end, length) == null) {
-			chart.setForm(end, length, new Cell(cellLimit, edgeComparator));
+	protected Cell makeForm(int x1, int x2) {
+		if (chart.getForm(x1, x2) == null) {
+			chart.setForm(x1, x2, new Cell(cellLimit, edgeComparator));
 		}
-		return chart.getForm(end, length);
+		return chart.getForm(x1, x2);
 	}
 
 	/**
 	 * Gets signs for a given cell (ensuring non-null).
 	 */
-	protected SignHash getSigns(int x, int y) {
-		Cell cell = makeForm(x, y);
+	protected SignHash getSigns(int x1, int x2) {
+		Cell cell = makeForm(x1, x2);
 		return cell.getSigns();
 	}
 
 	@Override
-	public boolean annotateForm(int x, int y, Sign symbol) {
-		Cell form = makeForm(x, y);
+	public boolean annotateForm(int x1, int x2, Sign symbol) {
+		Cell form = makeForm(x1, x2);
 		boolean retval = false;
 		// make edge
 		Edge edge = new Edge(symbol);
 		if (symbol.isIndexed()) {
-			edge.setWordPos(x);
+			edge.setWordPos(x1);
 		}
 		// get representative edge
 		Edge rep = form.get(edge);

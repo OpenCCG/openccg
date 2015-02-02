@@ -1,7 +1,5 @@
 package opennlp.ccg.parse;
 
-import java.io.PrintStream;
-
 /**
  * A chart.
  * 
@@ -13,31 +11,23 @@ import java.io.PrintStream;
 public interface Chart {
 
 	/**
-	 * Gets the form ending at a end position and with a given length
+	 * Gets the form ending at a end position and with a given hops
 	 * 
 	 * @param end the end position 
-	 * @param length the length of the forms
-	 * @return the forms ending at the end position and with a given length
+	 * @param hops the hops between characters/words in the forms
+	 * @return the forms ending at the end position and with a given hops
 	 */
-	Cell getForm(int end, int length);
+	Cell getForm(int end, int hops);
 
 
 	/**
-	 * Sets a form token ending at a end position and with a given length 
+	 * Sets a form token ending at a end position and with a given hops 
 	 * 
 	 * @param end the end position 
-	 * @param length the length of the forms
+	 * @param hops the hops between characters/words in the forms
 	 * @param form the form to set
 	 */
-	void setForm(int end, int length, Cell form);
-
-
-	/**
-	 * Prints the chart to the output stream
-	 * 
-	 * @param out the output stream
-	 */
-	void print(PrintStream out);
+	void setForm(int end, int hops, Cell form);
 
 	/**
 	 * @return the size of the chart

@@ -94,7 +94,7 @@ public class ChartCompleterStd implements ChartCompleter {
 	public ChartCompleterStd(int size, RuleGroup _R) {
 		_rules = _R;
 		_size = size;
-		chart = new ChartStd(size);
+		chart = new DenseChart(size);
 	}
 
 	/** Sets the sign scorer. */
@@ -685,7 +685,7 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	/** Loads the chart entries from the given file. */
 	public void loadChartEntries(File file) throws IOException {
-		chart = new ChartStd(file);
+		chart = new DenseChart(file);
 		_numUnpackingEdges = 0;
 	}
 
@@ -705,7 +705,8 @@ public class ChartCompleterStd implements ChartCompleter {
 
 	@Override
 	public final void print(PrintStream out) {
-		chart.print(out);
+		ChartPrinter chartPrinter = new ChartPrinter();
+		chartPrinter.print(chart, out);
 	}
 
 	@Override

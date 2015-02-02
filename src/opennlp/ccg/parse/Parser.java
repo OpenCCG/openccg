@@ -395,10 +395,10 @@ public class Parser {
 	}
 
 	/**
-	 * Builds a chart for a particular sequence of associations.
+	 * Builds a chart for a particular sequence of symbol hashes.
 	 * 
-	 * @param symbolHashes the entries to build
-	 * @return the chart
+	 * @param symbolHashes the symbol hashes to put in the chart
+	 * @return the chart the chart
 	 */
 	private final ChartCompleter buildChartCompleter(List<SymbolHash> symbolHashes) {
 		Chart chart = new SparseChart(symbolHashes.size());

@@ -31,6 +31,6 @@ public interface Chart {
 	/**
 	 * @return the number of atoms in the chart
 	 */
-	int getSize();
+	int size();
 
 }

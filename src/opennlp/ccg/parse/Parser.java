@@ -389,7 +389,7 @@ public class Parser {
 		chart.setParseTimeLimit(product.getParseLimit());
 		chart.setStartTime(product.getStartTime());
 		chart.setEdgeLimit(product.getEdgeLimit());
-		chart.setCellPruneValue(product.getCellPruneValue());
+		chart.setFormSizeLimt(product.getCellPruneValue());
 		// do parsing
 		parse(chart.getSize());
 	}
@@ -401,7 +401,7 @@ public class Parser {
 	 * @return the chart
 	 */
 	private final ChartCompleter buildChart(List<SymbolHash> entries) {
-		ChartCompleter chart = new ChartCompleterImp(entries.size(), rules);
+		ChartCompleter chart = new ChartCompleterImp(rules, entries.size());
 		for (int i = 0; i < entries.size(); i++) {
 			SymbolHash signHash = entries.get(i);
 			for (Symbol sign : signHash.getSignsSorted()) {

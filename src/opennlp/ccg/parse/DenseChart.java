@@ -70,7 +70,7 @@ public class DenseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final int getSize() {
+	public final int size() {
 		return table.length;
 	}
 

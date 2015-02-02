@@ -102,7 +102,7 @@ public class SparseChart implements Chart, Serializable {
 	}
 
 	@Override
-	public final int getSize() {
+	public final int size() {
 		return size;
 	}
 

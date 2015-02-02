@@ -35,6 +35,7 @@ import java.util.*;
  * @author Jason Baldridge
  * @author Gann Bierner
  * @author Michael White
+ * @author Daniel Couto-Vale
  * @version $Revision: 1.41 $, $Date: 2011/11/16 03:25:27 $
  */
 public class ChartCompleterImp implements ChartCompleter {
@@ -52,94 +53,130 @@ public class ChartCompleterImp implements ChartCompleter {
 		}
 	};
 
-	/** Its size. */
-	protected int _size;
-
 	/** The count of scoredSymbols created before unpacking. */
-	protected int _numEdges = 0;
+	private int scoredSymbolCount = 0;
 
 	/** The count of scoredSymbols created while unpacking. */
-	protected int _numUnpackingEdges = 0;
+	private int nonfinalScoredSymbolCount = 0;
 
 	/** The max form size before unpacking. */
-	protected int _maxCellSize = 0;
+	private int maxFormSize = 0;
 
-	/** The rules. */
-	protected RuleGroup _rules;
+	/**
+	 * The rules.
+	 */
+	private RuleGroup rules;
 
-	/** The sign scorer (defaults to the null scorer). */
-	protected SignScorer _signScorer = SignScorer.nullScorer;
+	/**
+	 * The sign scorer (defaults to the null scorer).
+	 */
+	private SignScorer signScorer = SignScorer.nullScorer;
 
-	/** The "n" for n-best pruning (or 0 if none). */
-	protected int _pruneVal = 0;
+	/**
+	 * The prune limit "n" for n-best pruning (or 0 if none).
+	 */
+	private int pruneLimit = 0;
 
-	/** The time limit (0 if none). */
-	protected int _timeLimit = 0;
+	/**
+	 * The time limit (0 if none).
+	 */
+	private int timeLimit = 0;
 
-	/** The start time. */
-	protected long _startTime = 0;
+	/**
+	 * The limit of scored symbols in the chart (0 if none).
+	 */
+	private int scoredSymbolLimit = 0;
 
-	/** The scoredSymbol limit (0 if none). */
-	protected int _scoredSymbolLimit = 0;
+	/**
+	 * The prune limit of derived symbols for a form (0 if none).
+	 */
+	private int formPruneLimit = 0;
 
-	/** The form limit on non-lexical scoredSymbols (0 if none). */
-	protected int formLimit = 0;
+	/**
+	 * The start time.
+	 */
+	private long startTime = 0;
 
 	/**
 	 * The chart to build.
 	 */
-	private Chart chart;
+	private final Chart chart;
 
-	/** Constructor. */
-	public ChartCompleterImp(int size, RuleGroup _R) {
-		_rules = _R;
-		_size = size;
-		chart = new SparseChart(size);
+	/**
+	 * Constructor
+	 * 
+	 * @param rules the rules of annotation
+	 * @param size the size of the chart
+	 */
+	public ChartCompleterImp(RuleGroup rules, int size) {
+		this(rules, new SparseChart(size));
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param rules the rules for annotation
+	 * @param file the file with the chart
+	 * @throws IOException
+	 */
+	public ChartCompleterImp(RuleGroup rules, File file) throws IOException {
+		this(rules, new DenseChart(file));
+	}
+
+	/**
+	 * Constructor
+	 * 
+	 * @param rules the rules for annotation
+	 * @param chart the chart
+	 */
+	public ChartCompleterImp(RuleGroup rules, Chart chart) {
+		this.rules = rules;
+		this.chart = chart;
+	}
+
+	@Override
+	public int getScoredSymbolCount() {
+		return scoredSymbolCount;
+	}
+
+	@Override
+	public int getNonfinalScoredSymbolCount() {
+		return nonfinalScoredSymbolCount;
+	}
+
+	@Override
+	public final int getMaxFormSize() {
+		return maxFormSize;
 	}
 
 	/** Sets the sign scorer. */
 	public void setSignScorer(SignScorer signScorer) {
-		_signScorer = signScorer;
+		this.signScorer = signScorer;
 	}
 
 	/** Sets the n-best pruning val. */
 	public void setPruneValue(int n) {
-		_pruneVal = n;
+		this.pruneLimit = n;
 	}
 
 	/** Sets the time limit. */
 	public void setParseTimeLimit(int timeLimit) {
-		_timeLimit = timeLimit;
+		this.timeLimit = timeLimit;
 	}
 
 	/** Sets the start time. */
 	public void setStartTime(long startTime) {
-		_startTime = startTime;
+		this.startTime = startTime;
 	}
 
 	/** Sets the scoredSymbol limit. */
 	public void setEdgeLimit(int scoredSymbolLimit) {
-		_scoredSymbolLimit = scoredSymbolLimit;
+		this.scoredSymbolLimit = scoredSymbolLimit;
 	}
 
-	/** Sets the form limit on non-lexical scoredSymbols. */
-	public void setCellPruneValue(int formLimit) {
-		this.formLimit = formLimit;
-	}
-
-	/** Returns the scoredSymbol count prior to unpacking. */
-	public int getEdgeCount() {
-		return _numEdges;
-	}
-
-	/** Returns the scoredSymbol count while unpacking. */
-	public int getUnpackingEdgeCount() {
-		return _numUnpackingEdges;
-	}
-
-	/** Returns the max form size prior to unpacking. */
-	public int getMaxCellSize() {
-		return _maxCellSize;
+	@Override
+	public final void setFormSizeLimt(int formSizeLimit) {
+		this.formPruneLimit = formSizeLimit;
 	}
 
 	// -----------------------------------------------------------
@@ -154,7 +191,7 @@ public class ChartCompleterImp implements ChartCompleter {
 	 */
 	protected Form makeForm(int x1, int x2) {
 		if (chart.getForm(x1, x2) == null) {
-			chart.setForm(x1, x2, new Form(formLimit, scoredSymbolComparator));
+			chart.setForm(x1, x2, new Form(formPruneLimit, scoredSymbolComparator));
 		}
 		return chart.getForm(x1, x2);
 	}
@@ -185,12 +222,12 @@ public class ChartCompleterImp implements ChartCompleter {
 		}
 		// otherwise add as an alternative
 		else {
-			Form.insertScoredSymbol(scoredSymbol, rep.alternatives, null, _pruneVal, scoredSymbolComparator);
+			Form.insertScoredSymbol(scoredSymbol, rep.alternatives, null, pruneLimit, scoredSymbolComparator);
 		}
 		// update scoredSymbol count, max form size
-		_numEdges++;
-		if (form.size() > _maxCellSize)
-			_maxCellSize = form.size();
+		scoredSymbolCount++;
+		if (form.size() > maxFormSize)
+			maxFormSize = form.size();
 		// done
 		return retval;
 	}
@@ -206,7 +243,7 @@ public class ChartCompleterImp implements ChartCompleter {
 			// apply rules
 			for (Symbol sign : inputs) {
 				checkLimits();
-				List<Symbol> results = _rules.applyUnaryRules(sign);
+				List<Symbol> results = rules.applyUnaryRules(sign);
 				for (Symbol result : results) {
 					// check for unary rule cycle; skip result if found
 					if (!result.getDerivationHistory().containsCycle()) {
@@ -236,7 +273,7 @@ public class ChartCompleterImp implements ChartCompleter {
 		for (Symbol sign1 : inputs1) {
 			for (Symbol sign2 : inputs2) {
 				checkLimits();
-				List<Symbol> results = _rules.applyBinaryRules(sign1, sign2);
+				List<Symbol> results = rules.applyBinaryRules(sign1, sign2);
 				for (Symbol result : results)
 					annotateForm(x3, y3, result);
 			}
@@ -257,7 +294,7 @@ public class ChartCompleterImp implements ChartCompleter {
 		for (Symbol sign1 : inputs1) {
 			for (Symbol sign2 : inputs2) {
 				checkLimits();
-				List<Symbol> results = _rules.applyGlueRule(sign1, sign2);
+				List<Symbol> results = rules.applyGlueRule(sign1, sign2);
 				for (Symbol result : results)
 					annotateForm(x3, y3, result);
 			}
@@ -270,12 +307,12 @@ public class ChartCompleterImp implements ChartCompleter {
 	 * @throws ParseException if limits are exceeded
 	 */
 	private final void checkLimits() throws ParseException {
-		if (_scoredSymbolLimit > 0 && _numEdges > _scoredSymbolLimit) {
+		if (scoredSymbolLimit > 0 && scoredSymbolCount > scoredSymbolLimit) {
 			throw new ParseException(ParseException.EDGE_LIMIT_EXCEEDED);
 		}
-		if (_timeLimit > 0) {
-			int timeSoFar = (int) (System.currentTimeMillis() - _startTime);
-			if (timeSoFar > _timeLimit) {
+		if (timeLimit > 0) {
+			int timeSoFar = (int) (System.currentTimeMillis() - startTime);
+			if (timeSoFar > timeLimit) {
 				throw new ParseException(ParseException.TIME_LIMIT_EXCEEDED);
 			}
 		}
@@ -312,8 +349,8 @@ public class ChartCompleterImp implements ChartCompleter {
 		List<ScoredSymbol> retval = new ArrayList<ScoredSymbol>(merged.asEdgeSet());
 		Collections.sort(retval, scoredSymbolComparator);
 		// prune
-		if (_pruneVal > 0) {
-			while (retval.size() > _pruneVal)
+		if (pruneLimit > 0) {
+			while (retval.size() > pruneLimit)
 				retval.remove(retval.size() - 1);
 		}
 		// restore alts
@@ -341,16 +378,16 @@ public class ChartCompleterImp implements ChartCompleter {
 			unpackAlt(alt, unpacked, startedUnpacking, merged);
 		}
 		// score
-		boolean complete = (scoredSymbol.symbol.getWords().size() == _size);
+		boolean complete = (scoredSymbol.symbol.getWords().size() == chart.size());
 		for (ScoredSymbol m : merged.asEdgeSet()) {
-			m.setScore(_signScorer.score(m.symbol, complete));
+			m.setScore(signScorer.score(m.symbol, complete));
 		}
 		// sort
 		List<ScoredSymbol> mergedList = new ArrayList<ScoredSymbol>(merged.asEdgeSet());
 		Collections.sort(mergedList, scoredSymbolComparator);
 		// prune
-		if (_pruneVal > 0) {
-			while (mergedList.size() > _pruneVal)
+		if (pruneLimit > 0) {
+			while (mergedList.size() > pruneLimit)
 				mergedList.remove(mergedList.size() - 1);
 		}
 		// replace scoredSymbol's alts
@@ -399,7 +436,7 @@ public class ChartCompleterImp implements ChartCompleter {
 				continue; // (rare?)
 			Symbol sign = results.get(0); // assuming single result
 			merged.insert(new ScoredSymbol(sign)); // make scoredSymbol for new alt
-			_numUnpackingEdges++;
+			nonfinalScoredSymbolCount++;
 		}
 	}
 
@@ -455,12 +492,12 @@ public class ChartCompleterImp implements ChartCompleter {
 	@SuppressWarnings("unchecked")
 	public List<ScoredSymbol> lazyUnpack(int x, int y) {
 		// if no pruning value set, use basic unpacking algorithm
-		if (_pruneVal <= 0)
+		if (pruneLimit <= 0)
 			return unpack(x, y);
 		// recursively sort scoredSymbol alts
 		Form form = makeForm(x, y);
 		// make top-level candidate list and derivs map
-		List<Candidate> topcands = new ArrayList<Candidate>(_pruneVal);
+		List<Candidate> topcands = new ArrayList<Candidate>(pruneLimit);
 		Map<ScoredSymbol, List<ScoredSymbol>> derivsmap = new THashMap(new TObjectIdentityHashingStrategy());
 		for (ScoredSymbol scoredSymbol : form.getScoredSymbols()) {
 			List<Candidate> cands = getCandidates(scoredSymbol, derivsmap);
@@ -469,15 +506,15 @@ public class ChartCompleterImp implements ChartCompleter {
 		sortAndPrune(topcands);
 		// NB: no single scoredSymbol for top form, so must treat it as a special case
 		// of findKBest
-		List<ScoredSymbol> retval = new ArrayList<ScoredSymbol>(_pruneVal);
+		List<ScoredSymbol> retval = new ArrayList<ScoredSymbol>(pruneLimit);
 		EdgeHash merged = new EdgeHash();
-		while (merged.size() < _pruneVal && !topcands.isEmpty()) {
+		while (merged.size() < pruneLimit && !topcands.isEmpty()) {
 			appendNext(topcands, merged, derivsmap);
 		}
 		retval.addAll(merged.asEdgeSet());
 		// rescore scoredSymbols if apropos
-		if (_signScorer instanceof ReRankingScorer) {
-			ReRankingScorer rescorer = (ReRankingScorer) _signScorer;
+		if (signScorer instanceof ReRankingScorer) {
+			ReRankingScorer rescorer = (ReRankingScorer) signScorer;
 			rescorer.setFullModel(true);
 			for (ScoredSymbol e : retval) {
 				e.score = rescorer.score(e.symbol, true);
@@ -495,10 +532,10 @@ public class ChartCompleterImp implements ChartCompleter {
 			return;
 		List<Candidate> cands = getCandidates(scoredSymbol, derivsmap);
 		EdgeHash merged = new EdgeHash();
-		while (merged.size() < _pruneVal && !cands.isEmpty()) {
+		while (merged.size() < pruneLimit && !cands.isEmpty()) {
 			appendNext(cands, merged, derivsmap);
 		}
-		List<ScoredSymbol> derivs = new ArrayList<ScoredSymbol>(_pruneVal);
+		List<ScoredSymbol> derivs = new ArrayList<ScoredSymbol>(pruneLimit);
 		derivs.addAll(merged.asEdgeSet());
 		Collections.sort(derivs, scoredSymbolComparator);
 		derivsmap.put(scoredSymbol, derivs);
@@ -595,7 +632,7 @@ public class ChartCompleterImp implements ChartCompleter {
 
 	// get candidates for unpacking an scoredSymbol
 	private List<Candidate> getCandidates(ScoredSymbol scoredSymbol, Map<ScoredSymbol, List<ScoredSymbol>> derivsmap) {
-		List<Candidate> retval = new ArrayList<Candidate>(_pruneVal);
+		List<Candidate> retval = new ArrayList<Candidate>(pruneLimit);
 		// make initial candidate for each alt
 		// nb: should only get initial candidates for representative scoredSymbols,
 		// but may as well ensure that at least this scoredSymbol is included
@@ -661,10 +698,10 @@ public class ChartCompleterImp implements ChartCompleter {
 			return null; // (rare?)
 		Symbol sign = results.get(0); // assuming single result
 		ScoredSymbol retval = new ScoredSymbol(sign); // make scoredSymbol for new combo
-		_numUnpackingEdges++;
+		nonfinalScoredSymbolCount++;
 		// score it
-		boolean complete = (sign.getWords().size() == _size);
-		retval.setScore(_signScorer.score(sign, complete));
+		boolean complete = (sign.getWords().size() == chart.size());
+		retval.setScore(signScorer.score(sign, complete));
 		// done
 		return retval;
 	}
@@ -672,7 +709,7 @@ public class ChartCompleterImp implements ChartCompleter {
 	// sort and prune candidate list
 	private void sortAndPrune(List<Candidate> cands) {
 		Collections.sort(cands);
-		while (cands.size() > _pruneVal)
+		while (cands.size() > pruneLimit)
 			cands.remove(cands.size() - 1);
 	}
 
@@ -687,19 +724,13 @@ public class ChartCompleterImp implements ChartCompleter {
 		out.close();
 	}
 
-	/** Loads the chart entries from the given file. */
-	public void loadChartEntries(File file) throws IOException {
-		chart = new DenseChart(file);
-		_numUnpackingEdges = 0;
-	}
-
 	// -----------------------------------------------------------
 
 	/** Returns the number of entries in each form in the chart. */
 	public String toString() {
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < _size; i++) {
-			for (int j = 0; j < _size; j++) {
+		for (int i = 0; i < chart.size(); i++) {
+			for (int j = 0; j < chart.size(); j++) {
 				sb.append(makeForm(i, j).size()).append('\t');
 			}
 			sb.append('\n');
@@ -715,6 +746,6 @@ public class ChartCompleterImp implements ChartCompleter {
 
 	@Override
 	public int getSize() {
-		return _size;
+		return chart.size();
 	}
 }

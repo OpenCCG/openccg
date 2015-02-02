@@ -9,10 +9,10 @@ public class ChartPrinter {
 
 	public final void print(Chart chart, PrintStream out) {
 
-		int[] sizes = new int[chart.getSize()];
+		int[] sizes = new int[chart.size()];
 		int rows = 0;
-		for (int i = 0; i < chart.getSize(); i++) {
-			for (int j = i; j < chart.getSize(); j++) {
+		for (int i = 0; i < chart.size(); i++) {
+			for (int j = i; j < chart.size(); j++) {
 				if (chart.getForm(i, j) != null) {
 					if (chart.getForm(i, j).size() > sizes[i]) {
 						sizes[i] = chart.getForm(i, j).size();
@@ -22,12 +22,12 @@ public class ChartPrinter {
 			rows += sizes[i];
 		}
 
-		String[][] toprint = new String[rows][chart.getSize()];
-		String[] words = new String[chart.getSize()];
+		String[][] toprint = new String[rows][chart.size()];
+		String[] words = new String[chart.size()];
 		int maxwidth = 0;
 
-		for (int i = 0, row = 0; i < chart.getSize(); row += sizes[i++]) {
-			for (int j = 0; j < chart.getSize(); j++) {
+		for (int i = 0, row = 0; i < chart.size(); row += sizes[i++]) {
+			for (int j = 0; j < chart.size(); j++) {
 				for (int s = 0; s < sizes[i]; s++) {
 					SymbolHash symbols;
 					if (chart.getForm(i, j) == null) {
@@ -47,7 +47,7 @@ public class ChartPrinter {
 			}
 		}
 
-		int fullwidth = chart.getSize() * (maxwidth + 3) - 1;
+		int fullwidth = chart.size() * (maxwidth + 3) - 1;
 		out.print(" ");
 		for (String w : words) {
 			out.print(w);
@@ -76,7 +76,7 @@ public class ChartPrinter {
 			}
 			out.print("| ");
 
-			for (int j = 0; j < chart.getSize(); j++) {
+			for (int j = 0; j < chart.size(); j++) {
 				int pad = 1 + maxwidth;
 				if (toprint[i][j] != null) {
 					out.print(toprint[i][j]);

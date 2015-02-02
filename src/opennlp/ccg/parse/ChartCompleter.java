@@ -34,11 +34,11 @@ public interface ChartCompleter {
 	 */
 	void print(PrintStream out);
 
-	int getEdgeCount();
+	int getScoredSymbolCount();
 
-	int getUnpackingEdgeCount();
+	int getNonfinalScoredSymbolCount();
 
-	int getMaxCellSize();
+	int getMaxFormSize();
 
 	void setSignScorer(SignScorer signScorer);
 
@@ -50,7 +50,10 @@ public interface ChartCompleter {
 
 	void setEdgeLimit(int edgeLimit);
 
-	void setCellPruneValue(int cellPruneValue);
+	/**
+	 * Sets the size limit for forms of derived symbols.
+	 */
+	void setFormSizeLimt(int cellPruneValue);
 
 	/**
 	 * Associates form (x,y) with an edge for a given sign.

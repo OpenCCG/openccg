@@ -3,7 +3,7 @@ package opennlp.ccg.lexicon;
 import java.util.ArrayList;
 import java.util.List;
 
-import opennlp.ccg.parse.Chart;
+import opennlp.ccg.parse.ChartCompleter;
 import opennlp.ccg.synsem.Sign;
 
 /**
@@ -41,7 +41,7 @@ public class ParseProduct {
 	/**
 	 * The chart
 	 */
-	private Chart chart = null;
+	private ChartCompleter chart = null;
 
 	/**
 	 * The symbols
@@ -136,14 +136,14 @@ public class ParseProduct {
 	/**
 	 * @return the chart
 	 */
-	public final Chart getChart() {
+	public final ChartCompleter getChart() {
 		return chart;
 	}
 
 	/**
 	 * @param chart the chart to set
 	 */
-	public final void setChart(Chart chart) {
+	public final void setChart(ChartCompleter chart) {
 		this.chart = chart;
 	}
 

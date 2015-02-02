@@ -37,7 +37,7 @@ import java.util.*;
  * @author Michael White
  * @version $Revision: 1.41 $, $Date: 2011/11/16 03:25:27 $
  */
-public class ChartStd implements Chart {
+public class ChartCompleterStd implements ChartCompleter {
 
 	// maps edges to representative edges, according to their headwords and
 	// cats, sans LFs
@@ -184,7 +184,7 @@ public class ChartStd implements Chart {
 	protected int _cellLimit = 0;
 
 	/** Constructor. */
-	public ChartStd(int size, RuleGroup _R) {
+	public ChartCompleterStd(int size, RuleGroup _R) {
 		_rules = _R;
 		_size = size;
 		_table = new Cell[_size][_size];

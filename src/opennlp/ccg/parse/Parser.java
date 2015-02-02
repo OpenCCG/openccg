@@ -379,7 +379,7 @@ public class Parser {
 	}
 
 	// parses from lex entries
-	private void parseEntries(Chart chart) throws ParseException {
+	private void parseEntries(ChartCompleter chart) throws ParseException {
 		if (signScorer != null) {
 			chart.setSignScorer(signScorer);
 		}
@@ -398,8 +398,8 @@ public class Parser {
 	 * @param entries the entries to build
 	 * @return the chart
 	 */
-	private final Chart buildChart(List<SignHash> entries) {
-		Chart chart = new ChartStd(entries.size(), rules);
+	private final ChartCompleter buildChart(List<SignHash> entries) {
+		ChartCompleter chart = new ChartCompleterStd(entries.size(), rules);
 		for (int i = 0; i < entries.size(); i++) {
 			SignHash signHash = entries.get(i);
 			for (Sign sign : signHash.getSignsSorted()) {
@@ -418,7 +418,7 @@ public class Parser {
 	 * @throws ParseException
 	 */
 	private void parse(int size) throws ParseException {
-		Chart chart = product.getChart();
+		ChartCompleter chart = product.getChart();
 		// fill in chart
 		for (int i = 0; i < size; i++) {
 			chart.insertCell(i, i);
@@ -452,7 +452,7 @@ public class Parser {
 	private void createResult(int size) throws ParseException {
 		List<Sign> result = new ArrayList<Sign>();
 		List<Double> scores = new ArrayList<Double>();
-		Chart chart = product.getChart();
+		ChartCompleter chart = product.getChart();
 		// unpack top
 		List<Edge> unpacked = product.getLazyUnpacking() ? chart.lazyUnpack(0, size - 1) : chart.unpack(
 				0, size - 1);

@@ -11,7 +11,7 @@ import opennlp.ccg.synsem.SignScorer;
  * 
  * @author Daniel Couto-Vale
  */
-public interface Chart {
+public interface ChartCompleter {
 
 	/**
 	 * The size of the chart
@@ -46,7 +46,7 @@ public interface Chart {
 	void setCellPruneValue(int cellPruneValue);
 
 	/**
-	 * Insterts an edge for a given sign into cell (x,y)
+	 * Insterts an edge for a given sign into cell (x,y).
 	 * 
 	 * @param x the x coordinate
 	 * @param y the y coordinate
@@ -79,8 +79,8 @@ public interface Chart {
 	void insertCell(int x1, int y1, int x2, int y2, int x3, int y3) throws ParseException;
 
 	/**
-	 * Inserts fragmentary edges into cell (x3,y3), if it is non-empty, that result from
-	 * combining those in cell (x1,y1) with those in cell (x2,y2) using the glue rule.
+	 * Inserts fragmentary edges into cell (x3,y3), if it is non-empty, that result from combining
+	 * those in cell (x1,y1) with those in cell (x2,y2) using the glue rule.
 	 * 
 	 * @param x1 the x1 coordinate
 	 * @param y1 the y1 coordinate
@@ -101,8 +101,22 @@ public interface Chart {
 	 */
 	boolean isEmpty(int x, int y);
 
-	List<Edge> lazyUnpack(int i, int j);
+	/**
+	 * Gets whether it is lazy unpack.
+	 * 
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the edges
+	 */
+	List<Edge> lazyUnpack(int x, int y);
 
-	List<Edge> unpack(int i, int j);
+	/**
+	 * Gets whether it is unpack.
+	 * 
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the edges
+	 */
+	List<Edge> unpack(int x, int y);
 
 }

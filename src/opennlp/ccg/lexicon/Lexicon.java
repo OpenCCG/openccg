@@ -801,7 +801,7 @@ public class Lexicon {
 
 	        // set origin and lexprob
 	        Sign sign = new Sign(new SingletonList<Word>(word), cat);
-	        sign.indexAsEntityRealizer();
+	        HyloHelper.getInstance().setEntityRealizer(sign.getCategory().getLF(), sign);
 	        //if (lexprob != null) {
 	        //	sign.addData(new SupertaggerAdapter.LexLogProb((float) Math.log10(lexprob)));
 	        //}

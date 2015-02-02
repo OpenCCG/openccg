@@ -29,6 +29,16 @@ package opennlp.ccg.synsem;
 public interface EntityRealizer {
 
 	/**
+	 * A map of entity realizers
+	 * 
+	 * @author Daniel Couto-Vale
+	 *
+	 */
+	public static interface EntityRealizerMap {
+		public void setEntityRealizer(LF entity, EntityRealizer entityRealizer);
+	}
+
+	/**
 	 * @return the supertag
 	 */
 	public String getSupertag();
@@ -41,8 +51,4 @@ public interface EntityRealizer {
 	 */
 	public String getPOS();
 
-	/**
-	 * Sets the origin of the elementary predications.
-	 */
-	public void indexAsEntityRealizer();
 }

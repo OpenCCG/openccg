@@ -36,7 +36,7 @@ import gnu.trove.*;
  * @author      Michael White
  * @version     $Revision: 1.43 $, $Date: 2011/08/26 05:18:39 $
  **/
-public class HyloHelper {
+public class HyloHelper implements EntityRealizer.EntityRealizerMap {
 
 	/**
 	 * Constructor
@@ -467,7 +467,7 @@ public class HyloHelper {
     /**
      * Sets the origin of the elementary preds in the given LF (if any).
      */
-    public final void setOrigin(LF lf, EntityRealizer origin) {
+    public final void setEntityRealizer(LF lf, EntityRealizer origin) {
     	if (lf == null) return;
     	if (lf instanceof SatOp) ((SatOp)lf).setOrigin(origin);
     	else if (lf instanceof Op && ((Op)lf).getName().equals(Op.CONJ)) {

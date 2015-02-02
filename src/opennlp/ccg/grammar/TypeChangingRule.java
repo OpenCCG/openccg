@@ -58,7 +58,7 @@ public class TypeChangingRule extends AbstractRule implements EntityRealizer {
     /** Constructor. */
     public TypeChangingRule(Category arg, Category result, String name, LF firstEP) {
         _arg = arg; _result = result; _name = name.intern(); _firstEP = firstEP;
-        indexAsEntityRealizer();
+        HyloHelper.getInstance().setEntityRealizer(_result.getLF(), this);
     }
 
     /** Returns an XML element representing the rule. */
@@ -148,9 +148,5 @@ public class TypeChangingRule extends AbstractRule implements EntityRealizer {
      */
     public String getPOS() { return POS_STRING; }
     
-    /**
-     * Sets the origin of the elementary predications.
-     */
-    public void indexAsEntityRealizer() { HyloHelper.getInstance().setOrigin(_result.getLF(), this); }
 }
 

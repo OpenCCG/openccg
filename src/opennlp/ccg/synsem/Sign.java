@@ -540,13 +540,6 @@ public class Sign implements EntityRealizer, Serializable {
 	}
 
 	/**
-	 * Sets the origin of the elementary predications.
-	 */
-	public final void indexAsEntityRealizer() {
-		HyloHelper.getInstance().setOrigin(category.getLF(), this);
-	}
-
-	/**
 	 * Returns the index of the first word of the given lex sign in this sign's
 	 * list of words, or -1 if the given lex sign is not in this sign's
 	 * derivation history.

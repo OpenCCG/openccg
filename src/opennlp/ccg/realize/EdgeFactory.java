@@ -25,7 +25,6 @@ import opennlp.ccg.unify.*;
 import opennlp.ccg.synsem.*;
 import opennlp.ccg.hylo.*;
 import opennlp.ccg.util.*;
-
 import gnu.trove.*;
 
 import java.util.*;
@@ -913,7 +912,7 @@ public class EdgeFactory
             featureLicenser.indexSemanticallyNullWords(filledCat);
             // update lex origins for new sign
             Sign newSign = new Sign(words, filledCat);
-            newSign.indexAsEntityRealizer();
+            HyloHelper.getInstance().setEntityRealizer(newSign.getCategory().getLF(), newSign);
             // and add new edge
             List<List<Alt>> activeLfAlts = getActiveLfAlts(lfAlts, bitset);
             retval.add(makeEdge(newSign, bitset, activeLfAlts));

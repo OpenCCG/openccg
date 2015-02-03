@@ -208,25 +208,24 @@ public class Parser {
 	 * @throws ParseException
 	 */
 	public final ParseProduct parse(List<Word> words) throws ParseException {
-		product = new ParseProduct();
-
-		// For supertagger, parse iterative beta-best
 		if (supertagger != null) {
-			parseIterativeBetaBest(words);
+			return parseIterativeBetaBest(words);
 		} else {
-			parseOnce(words);
+			return parseOnce(words);
 		}
-		return product;
 	}
 
 	/**
 	 * Parses a list of words
 	 * 
 	 * @param words the list of words
+	 * @return 
 	 * @throws ParseException
 	 */
-	private final void parseOnce(List<Word> words) throws ParseException {
+	private final ParseProduct parseOnce(List<Word> words) throws ParseException {
+		
 		try {
+			product = new ParseProduct();
 			// init
 			long lexStartTime = System.currentTimeMillis();
 			UnifyControl.startUnifySequence();
@@ -240,6 +239,7 @@ public class Parser {
 			product.setStartTime(System.currentTimeMillis());
 			product.setChartCompleter(buildChartCompleter(entries));
 			parseEntries(product.getChartCompleter());
+			return product;
 		} catch (LexException e) {
 			setGiveUpTime();
 			String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
@@ -296,8 +296,9 @@ public class Parser {
 	}
 
 	// iterative beta-best parsing
-	private void parseIterativeBetaBest(List<Word> words) throws ParseException {
+	private final ParseProduct parseIterativeBetaBest(List<Word> words) throws ParseException {
 		// set supertagger in lexicon
+		product = new ParseProduct();
 		grammar.lexicon.setSupertagger(supertagger);
 		// ensure gluing off
 		gluingFlag = false;
@@ -385,15 +386,16 @@ public class Parser {
 				}
 			}
 		}
+		return product;
 	}
 
 	/** Returns the supertagger's final beta value (or 0 if none). */
-	public double getSupertaggerBeta() {
+	public final double getSupertaggerBeta() {
 		return (supertagger != null) ? supertagger.getCurrentBetaValue() : 0;
 	}
 
 	// parses from lex entries
-	private void parseEntries(ChartCompleter chartCompleter) throws ParseException {
+	private final void parseEntries(ChartCompleter chartCompleter) throws ParseException {
 		parse(chartCompleter.getSize());
 	}
 
@@ -427,7 +429,7 @@ public class Parser {
 	 * @param size the size of the chart
 	 * @throws ParseException
 	 */
-	private void parse(int size) throws ParseException {
+	private final void parse(int size) throws ParseException {
 		ChartCompleter chartCompleter = product.getChartCompleter();
 
 		// Annotate index forms with unary rules
@@ -471,7 +473,7 @@ public class Parser {
 	}
 
 	// create answer ArrayList
-	private void createResult(int size) throws ParseException {
+	private final void createResult(int size) throws ParseException {
 		List<Symbol> symbols = new ArrayList<Symbol>();
 		List<Double> scores = new ArrayList<Double>();
 		ChartCompleter chartCompleter = product.getChartCompleter();
@@ -492,7 +494,7 @@ public class Parser {
 	}
 
 	// set parse time when giving up
-	private void setGiveUpTime() {
+	private final void setGiveUpTime() {
 		product.setChartTime((int) (System.currentTimeMillis() - product.getStartTime()));
 		product.setParseTime(product.getChartTime());
 		product.setUnpackingTime(0);
@@ -502,7 +504,7 @@ public class Parser {
 	 * Adds the supertagger log probs to the lexical signs of the gold standard
 	 * parse.
 	 */
-	public void addSupertaggerLogProbs(Symbol gold) {
+	public final void addSupertaggerLogProbs(Symbol gold) {
 		List<Word> words = gold.getWords();
 		supertagger.mapWords(words);
 		addSupertaggerLogProbs(gold, gold);
@@ -512,7 +514,7 @@ public class Parser {
 	}
 
 	// recurses through derivation, adding lex log probs to lexical signs
-	private void addSupertaggerLogProbs(Symbol gold, Symbol current) {
+	private final void addSupertaggerLogProbs(Symbol gold, Symbol current) {
 		// lookup and add log prob for lex sign
 		if (current.isIndexed()) {
 			supertagger.setWord(gold.wordIndex(current));
@@ -537,7 +539,7 @@ public class Parser {
 	 * be better to return the forest oracle, but the nominal conversion would
 	 * be tricky to do correctly.
 	 */
-	public Pair<Symbol, Boolean> oracleBest(LF goldLF) {
+	public final Pair<Symbol, Boolean> oracleBest(LF goldLF) {
 		Symbol retval = null;
 		List<Symbol> result = product.getSymbols();
 		double bestF = 0.0;

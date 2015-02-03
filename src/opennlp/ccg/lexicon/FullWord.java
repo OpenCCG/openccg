@@ -49,7 +49,7 @@ public class FullWord extends WordWithPitchAccent {
 	protected String semClass;
 
 	/** Returns the list of extra attribute-value pairs. */
-	protected List<Pair<String, String>> getAttrValPairsList() {
+	protected List<Pair<String, String>> getFormalAttributes() {
 		return attrValPairs;
 	}
 

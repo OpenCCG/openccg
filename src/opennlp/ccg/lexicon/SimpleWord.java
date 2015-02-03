@@ -46,7 +46,7 @@ public class SimpleWord extends Word {
 	}
 
 	/** Returns the list of extra attribute-value pairs. */
-	protected List<Pair<String, String>> getAttrValPairsList() {
+	protected List<Pair<String, String>> getFormalAttributes() {
 		return null;
 	}
 
@@ -89,7 +89,7 @@ public class SimpleWord extends Word {
 			return getSupertag();
 		if (internedAttr == Tokenizer.SEM_CLASS_ATTR)
 			return getSemClass();
-		List<Pair<String, String>> pairs = getAttrValPairsList();
+		List<Pair<String, String>> pairs = getFormalAttributes();
 		if (pairs == null)
 			return null;
 		for (int i = 0; i < pairs.size(); i++) {

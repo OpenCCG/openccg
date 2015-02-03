@@ -56,7 +56,7 @@ public class FactorChainWord extends Word {
     public String getPitchAccent() { return getValFromInterned(Tokenizer.PITCH_ACCENT_ATTR); }
     
     /** Returns the list of extra attribute-value pairs. */
-    protected List<Pair<String,String>> getAttrValPairsList() { 
+    protected List<Pair<String,String>> getFormalAttributes() { 
         List<Pair<String,String>> retval = null; 
         FactorChainWord current = this;
         while (current != null) {

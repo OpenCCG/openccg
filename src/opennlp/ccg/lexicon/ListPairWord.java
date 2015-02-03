@@ -55,7 +55,7 @@ public class ListPairWord extends Word {
 	}
 
 	/** Returns the list of extra attribute-value pairs. */
-	protected List<Pair<String, String>> getAttrValPairsList() {
+	protected List<Pair<String, String>> getFormalAttributes() {
 		List<Pair<String, String>> retval = null;
 		for (Pair<String, String> pair : pairsList) {
 			if (!isKnownAttr(pair.a)) {

@@ -75,13 +75,13 @@ public class Lexicon {
 	private Set<String> _lfAttrs;
 
 	// distributive attributes
-	private String[] _distributiveAttrs = null;
+	private String[] distributiveFeatures = null;
 
 	// licensing features
-	private LicensingFeature[] _licensingFeatures = null;
+	private LicensingFeature[] licensingFeatures = null;
 
 	// relation sorting
-	private Map<String, Integer> _relationIndexMap = new HashMap<String, Integer>();
+	private Map<String, Integer> relationIndexMap = new HashMap<String, Integer>();
 
 	// interner for caching lex lookups during realization
 	private Interner<Object> lookupCache = new Interner<Object>(true);
@@ -104,15 +104,12 @@ public class Lexicon {
 	 */
 	public boolean debugSemClasses = false;
 
-	/*************************************************************
+	/**
 	 * Constructor
-	 *************************************************************/
-	public Lexicon(Grammar grammar) {
-		this.grammar = grammar;
-		this.tokenizer = new DefaultTokenizer();
-	}
-
-	/** Constructor with tokenizer. */
+	 * 
+	 * @param grammar the grammar
+	 * @param tokenizer the tokenizer
+	 */
 	public Lexicon(Grammar grammar, Tokenizer tokenizer) {
 		this.grammar = grammar;
 		this.tokenizer = tokenizer;
@@ -128,21 +125,28 @@ public class Lexicon {
 	/** Loads the lexicon and morph files. */
 	public void init(URL lexiconUrl, URL morphUrl) throws IOException {
 
-		List<Family> lexicon = null;
+		List<Family> families = null;
 		List<MorphItem> morphItems = null;
 		List<MacroItem> macroItems = null;
 
-		// load category families (lexicon), morph forms and macros
-		lexicon = getLexicon(lexiconUrl);
+		// Load lexicon
+		LexiconLoader lexiconScanner = new LexiconLoader();
+		LexiconObject lexiconObject = lexiconScanner.loadLexicon(lexiconUrl);
+		distributiveFeatures = lexiconObject.distributiveFeatures;
+		licensingFeatures = lexiconObject.licensingFeatures;
+		relationIndexMap = lexiconObject.relationIndexMap;
+		families = lexiconObject.families;
 
-		// Load morph items and macro items
+		// Load morph
 		MorphLoader morphLoader = new MorphLoader();
 		Morph morph = morphLoader.loadMorph(morphUrl);
 		morphItems = morph.getMorphItems();
 		macroItems = morph.getMacroItems();
 
-		// index words; also index stems to words, as default preds
-		// store indexed coarticulation attrs too
+		// surface-word -> set(morph-item)
+		// term -> set(morph-item)
+		// set(formal-attributes)
+		// set(indexed-formal-attributes)
 		_words = new GroupMap<Word, MorphItem>();
 		_predToWords = new GroupMap<String, Word>();
 		_coartAttrs = new HashSet<String>();
@@ -178,7 +182,7 @@ public class Lexicon {
 		HashSet<String> familyAndEntryNames = new HashSet<String>();
 
 		// index each family
-		for (Family family : lexicon) {
+		for (Family family : families) {
 
 			familyAndEntryNames.add(family.getName());
 			EntriesItem[] entries = family.getEntries();
@@ -1034,7 +1038,7 @@ public class Lexicon {
 	 * Returns the list of distributive attributes, or null if none.
 	 */
 	public String[] getDistributiveAttrs() {
-		return _distributiveAttrs;
+		return distributiveFeatures;
 	}
 
 	/**
@@ -1048,7 +1052,7 @@ public class Lexicon {
 	 * Gathers and propagates the unique values of each distributive attribute.
 	 */
 	public void propagateDistributiveAttrs(Category cat, Category cat2) {
-		if (_distributiveAttrs == null)
+		if (distributiveFeatures == null)
 			return;
 		resetDistrAttrVals();
 		cat.forall(gatherDistrAttrVals);
@@ -1068,7 +1072,7 @@ public class Lexicon {
 	@SuppressWarnings("rawtypes")
 	private void resetDistrAttrVals() {
 		if (distrAttrVals == null) {
-			distrAttrVals = new List[_distributiveAttrs.length];
+			distrAttrVals = new List[distributiveFeatures.length];
 			for (int i = 0; i < distrAttrVals.length; i++) {
 				distrAttrVals[i] = new ArrayList(3);
 			}
@@ -1088,8 +1092,8 @@ public class Lexicon {
 			FeatureStructure fs = c.getFeatureStructure();
 			if (fs == null)
 				return;
-			for (int i = 0; i < _distributiveAttrs.length; i++) {
-				String attr = _distributiveAttrs[i];
+			for (int i = 0; i < distributiveFeatures.length; i++) {
+				String attr = distributiveFeatures[i];
 				Object val = fs.getValue(attr);
 				if (val != null && !distrAttrVals[i].contains(val)) {
 					distrAttrVals[i].add(val);
@@ -1106,11 +1110,11 @@ public class Lexicon {
 			FeatureStructure fs = c.getFeatureStructure();
 			if (fs == null)
 				return;
-			for (int i = 0; i < _distributiveAttrs.length; i++) {
+			for (int i = 0; i < distributiveFeatures.length; i++) {
 				if (distrAttrVals[i].size() != 1)
 					continue;
 				Object distVal = distrAttrVals[i].get(0);
-				String attr = _distributiveAttrs[i];
+				String attr = distributiveFeatures[i];
 				Object val = fs.getValue(attr);
 				if (val == null) {
 					fs.setFeature(attr, UnifyControl.copy(distVal));
@@ -1127,7 +1131,7 @@ public class Lexicon {
 	 * Returns the list of licensing features.
 	 */
 	public LicensingFeature[] getLicensingFeatures() {
-		return _licensingFeatures;
+		return licensingFeatures;
 	}
 
 	/**
@@ -1135,10 +1139,10 @@ public class Lexicon {
 	 * the index of "*" if the relation is not explicitly listed.
 	 */
 	public Integer getRelationSortIndex(String rel) {
-		Integer retval = _relationIndexMap.get(rel);
+		Integer retval = relationIndexMap.get(rel);
 		if (retval != null)
 			return retval;
-		retval = _relationIndexMap.get("*");
+		retval = relationIndexMap.get("*");
 		if (retval != null)
 			return retval;
 		return new Integer(-1);
@@ -1206,17 +1210,6 @@ public class Lexicon {
 				return (pLook.coartRels == null);
 			return coartRels.equals(pLook.coartRels);
 		}
-	}
-
-	private final List<Family> getLexicon(URL url) throws IOException {
-		// scan XML, creating families
-		LexiconLoader lexiconScanner = new LexiconLoader();
-		LexiconObject lexiconObject = lexiconScanner.loadLexicon(url);
-		_distributiveAttrs = lexiconObject.distributiveFeatures;
-		_licensingFeatures = lexiconObject.licensingFeatures;
-		_relationIndexMap = lexiconObject.relationIndexMap;
-		// return families
-		return lexiconObject.families;
 	}
 
 	// default relation sort order

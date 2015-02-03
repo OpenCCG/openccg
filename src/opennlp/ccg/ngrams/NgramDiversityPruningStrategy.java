@@ -20,7 +20,7 @@ package opennlp.ccg.ngrams;
 
 import opennlp.ccg.lexicon.Word;
 import opennlp.ccg.realize.*;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 
 import java.util.*;
 
@@ -52,7 +52,7 @@ public class NgramDiversityPruningStrategy extends DiversityPruningStrategy
     
     /** Returns true iff the given signs are not compellingly different.
         In particular, returns true iff the n-1 initial and final words are the same. */
-    public boolean notCompellinglyDifferent(Sign sign1, Sign sign2) {
+    public boolean notCompellinglyDifferent(Symbol sign1, Symbol sign2) {
         List<Word> words1 = sign1.getWords(); List<Word> words2 = sign2.getWords();
         int words1Len = words1.size(); int words2Len = words2.size();  
         for (int i = 0; i < order-1 && i < words1Len && i < words2Len; i++) {

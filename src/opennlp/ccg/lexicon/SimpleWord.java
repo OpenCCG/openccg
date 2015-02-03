@@ -25,62 +25,83 @@ import java.util.*;
  * A SimpleWord object is a surface word which stores just the word form.
  * SimpleWord serves as the base class for concrete instantiations of words.
  *
- * @author      Michael White
- * @version     $Revision: 1.4 $, $Date: 2009/07/17 04:23:30 $
+ * @author Michael White
+ * @version $Revision: 1.4 $, $Date: 2009/07/17 04:23:30 $
  */
 public class SimpleWord extends Word {
-    
+
 	private static final long serialVersionUID = 181491057498517717L;
-	
+
 	/** The surface form. */
-    protected String form;
-    
-    /** Returns the surface form. */
-    public String getForm() { return form; }
-    
-    /** Returns the pitch accent. */
-    public String getPitchAccent() { return null; }
-    
-    /** Returns the list of extra attribute-value pairs. */
-    protected List<Pair<String,String>> getAttrValPairsList() { return null; }
-    
-    /** Returns the stem. */
-    public String getStem() { return null; }
-    
-    /** Returns the part of speech. */
-    public String getPOS() { return null; }
-    
-    /** Returns the supertag. */
-    public String getSupertag() { return null; }
-    
-    /** Returns the semantic class. */
-    public String getSemClass() { return null; }
+	protected String form;
 
-    
-    /** Returns the value of the attribute with the given name, or null if none. 
-        The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
-        may be used to retrieve the form, ..., semantic class. */
-    public String getVal(String attr) {
-        String internedAttr = attr.intern(); // use == on interned attr
-        if (internedAttr == Tokenizer.WORD_ATTR) return getForm();
-        if (internedAttr == Tokenizer.PITCH_ACCENT_ATTR) return getPitchAccent();
-        if (internedAttr == Tokenizer.STEM_ATTR) return getStem();
-        if (internedAttr == Tokenizer.POS_ATTR) return getPOS();
-        if (internedAttr == Tokenizer.SUPERTAG_ATTR) return getSupertag();
-        if (internedAttr == Tokenizer.SEM_CLASS_ATTR) return getSemClass();
-        List<Pair<String,String>> pairs = getAttrValPairsList(); 
-        if (pairs == null) return null;
-        for (int i = 0; i < pairs.size(); i++) {
-            Pair<String,String> p = pairs.get(i);
-            if (p.a == internedAttr) return p.b;
-        }
-        return null; // not found
-    }
+	/** Returns the surface form. */
+	public String getForm() {
+		return form;
+	}
 
-    
-    /** Constructor. */
-    protected SimpleWord(String form) {
-        this.form = form; 
-    }
+	/** Returns the pitch accent. */
+	public String getPitchAccent() {
+		return null;
+	}
+
+	/** Returns the list of extra attribute-value pairs. */
+	protected List<Pair<String, String>> getFormalAttributes() {
+		return null;
+	}
+
+	/** Returns the stem. */
+	public String getStem() {
+		return null;
+	}
+
+	/** Returns the part of speech. */
+	public String getPOS() {
+		return null;
+	}
+
+	/** Returns the supertag. */
+	public String getSupertag() {
+		return null;
+	}
+
+	/** Returns the semantic class. */
+	public String getSemClass() {
+		return null;
+	}
+
+	/**
+	 * Returns the value of the attribute with the given name, or null if none.
+	 * The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR
+	 * may be used to retrieve the form, ..., semantic class.
+	 */
+	public String getFormalAttributeValue(String attr) {
+		String internedAttr = attr.intern(); // use == on interned attr
+		if (internedAttr == Tokenizer.WORD_ASSOCIATE)
+			return getForm();
+		if (internedAttr == Tokenizer.TONE_ASSOCIATE)
+			return getPitchAccent();
+		if (internedAttr == Tokenizer.TERM_ASSOCIATE)
+			return getStem();
+		if (internedAttr == Tokenizer.FUNCTIONS_ASSOCIATE)
+			return getPOS();
+		if (internedAttr == Tokenizer.SUPERTAG_ASSOCIATE)
+			return getSupertag();
+		if (internedAttr == Tokenizer.ENTITY_CLASS_ASSOCIATE)
+			return getSemClass();
+		List<Pair<String, String>> pairs = getFormalAttributes();
+		if (pairs == null)
+			return null;
+		for (int i = 0; i < pairs.size(); i++) {
+			Pair<String, String> p = pairs.get(i);
+			if (p.a == internedAttr)
+				return p.b;
+		}
+		return null; // not found
+	}
+
+	/** Constructor. */
+	protected SimpleWord(String form) {
+		this.form = form;
+	}
 }
-

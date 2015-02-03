@@ -115,7 +115,7 @@ public class Realize
         out.println("Input LF: " + lf);
         
         // set up n-gram scorer
-        SignScorer ngramScorer;
+        SymbolScorer ngramScorer;
         Element root = doc.getRootElement();
         Element ngramModelElt = root.getChild("ngram-model");
         if (ngramModelElt == null) {
@@ -147,7 +147,7 @@ public class Realize
             String scorerClass = ngramModelElt.getAttributeValue("class");
             out.println();
             out.println("Instantiating scorer from class: " + scorerClass);
-            ngramScorer = (SignScorer) Class.forName(scorerClass).newInstance();
+            ngramScorer = (SymbolScorer) Class.forName(scorerClass).newInstance();
         }
         else {
             // load n-gram model

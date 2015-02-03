@@ -19,8 +19,8 @@
 package opennlp.ccg.ngrams;
 
 import opennlp.ccg.perceptron.*;
-import opennlp.ccg.synsem.Sign;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.Symbol;
+import opennlp.ccg.synsem.SymbolScorer;
 
 // import java.util.*;
 
@@ -30,10 +30,10 @@ import opennlp.ccg.synsem.SignScorer;
  * @author      Michael White
  * @version     $Revision: 1.4 $, $Date: 2011/01/15 17:52:59 $
  */
-public class SignScorerProduct implements SignScorer, FeatureExtractor
+public class SignScorerProduct implements SymbolScorer, FeatureExtractor
 {
     /** The component models. */
-    protected SignScorer[] models;
+    protected SymbolScorer[] models;
     
     /** The composed feature extractor. */
     protected ComposedFeatureExtractor composedFeatureExtractor;
@@ -41,7 +41,7 @@ public class SignScorerProduct implements SignScorer, FeatureExtractor
     /**
      * Constructor with component models.
      */
-    public SignScorerProduct(SignScorer[] models) { 
+    public SignScorerProduct(SymbolScorer[] models) { 
         this.models = models;
         this.composedFeatureExtractor = new ComposedFeatureExtractor(models);
     }
@@ -51,7 +51,7 @@ public class SignScorerProduct implements SignScorer, FeatureExtractor
      * and completeness flag, as the product of the scores assigned 
      * by the component models.
      */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
         double retval = 1.0;
         for (int i = 0; i < models.length; i++) {
             retval *= models[i].score(sign, complete);
@@ -65,7 +65,7 @@ public class SignScorerProduct implements SignScorer, FeatureExtractor
 	}
 	
 	/** Returns the features for the given sign and completeness flag from the component feature extractors. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		return composedFeatureExtractor.extractFeatures(sign, complete);
 	}
 }

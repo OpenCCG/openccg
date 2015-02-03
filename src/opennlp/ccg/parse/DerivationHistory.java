@@ -35,21 +35,21 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
 
 	private static final long serialVersionUID = 2867339743258182859L;
 	
-	private Sign[] _inputs;
-    private Sign _output;
+	private Symbol[] _inputs;
+    private Symbol _output;
     private Rule _rule;
     private boolean _noHistory = false;
     private transient int _complexity = -1;
     
     /** Constructor for a sign with no prior history. */
-    public DerivationHistory(Sign output) {
+    public DerivationHistory(Symbol output) {
         _noHistory = true;
         _output = output;
     }
     
     /** Constructor for a sign created by rule. */
-    public DerivationHistory(Sign[] inputs, Sign output, Rule rule) {
-        _inputs = new Sign[inputs.length];
+    public DerivationHistory(Symbol[] inputs, Symbol output, Rule rule) {
+        _inputs = new Symbol[inputs.length];
         for (int i=0; i < inputs.length; i++) {
             _inputs[i] = inputs[i];
         }
@@ -62,10 +62,10 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
     public boolean isEmpty() { return _noHistory; }
     
     /** Returns the inputs (or null if none). */
-    public Sign[] getInputs() { return _inputs; }
+    public Symbol[] getInputs() { return _inputs; }
     
     /** Returns the output. */
-    public Sign getOutput() { return _output; }
+    public Symbol getOutput() { return _output; }
     
     /** Returns the rule. */
     public Rule getRule() { return _rule; }

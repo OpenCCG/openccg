@@ -191,6 +191,7 @@ public class RulesTally {
 		output.println("</body>");
 		output.println("</html>");
 		output.flush();
+		output.close();
 	}
 	
 	

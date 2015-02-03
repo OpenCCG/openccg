@@ -57,9 +57,9 @@ import opennlp.ccg.util.Pair;
  */
 public class STPriorModel extends ConditionalProbabilityTable {
 
-    public static final String WORD = DefaultTokenizer.WORD_ATTR;
-    public static final String POS_TAG = DefaultTokenizer.POS_ATTR;
-    public static final String SUPERTAG = DefaultTokenizer.SUPERTAG_ATTR;
+    public static final String WORD = DefaultTokenizer.WORD_ASSOCIATE;
+    public static final String POS_TAG = DefaultTokenizer.FUNCTIONS_ASSOCIATE;
+    public static final String SUPERTAG = DefaultTokenizer.SUPERTAG_ASSOCIATE;
     private Interner<Pair<String, String>> pairs = new Interner<Pair<String, String>>();
     /** 
      * Re-usable list for attr-val pairs of word-pos-supertag inputs to the prior model
@@ -125,6 +125,7 @@ public class STPriorModel extends ConditionalProbabilityTable {
                 st = st.trim().split("-")[1];
             }
         }
+        br.close();
 
         // initialize the arrays to this size.
         stagVocab = new String[cnt];

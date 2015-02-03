@@ -64,17 +64,17 @@ public class SatOp extends HyloFormula {
     /**
      * The sign or unary rule which introduced this predication.
      */
-    protected LexSemOrigin _origin = null;
+    protected EntityRealizer _origin = null;
     
     /**
      * Gets the sign or unary rule which introduced this predication (or null if none).
      */
-    public LexSemOrigin getOrigin() { return _origin; }
+    public EntityRealizer getOrigin() { return _origin; }
     
     /**
      * Sets the sign or unary rule which introduced this predication.
      */
-    public void setOrigin(LexSemOrigin origin) { _origin = origin; }
+    public void setOrigin(EntityRealizer origin) { _origin = origin; }
     
     
     // the real contents of the satop
@@ -85,16 +85,16 @@ public class SatOp extends HyloFormula {
         boolean shared = "true".equals(e.getAttributeValue("shared"));
         String nom = e.getAttributeValue("nom");
         if (nom != null) {
-            _nominal = new NominalAtom(HyloHelper.prefix(nom), HyloHelper.type(nom), shared);
+            _nominal = new NominalAtom(HyloHelper.getInstance().prefix(nom), HyloHelper.getInstance().type(nom), shared);
         } else {
             nom = e.getAttributeValue("nomvar");
             if (nom != null) {
-                _nominal = new NominalVar(HyloHelper.prefix(nom), HyloHelper.type(nom), shared);
+                _nominal = new NominalVar(HyloHelper.getInstance().prefix(nom), HyloHelper.getInstance().type(nom), shared);
             } else {
                 throw new RuntimeException("Satop must have a nom or nomvar.");
             }
         }
-        _arg = HyloHelper.getLF_FromChildren(e);
+        _arg = HyloHelper.getInstance().getLF_FromChildren(e);
     }
 
     public SatOp(Nominal nom, LF arg) {

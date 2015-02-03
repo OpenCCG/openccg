@@ -23,70 +23,86 @@ import java.util.*;
 import opennlp.ccg.util.Pair;
 
 /**
- * A ListPairWord represents a word via a list of pairs of interned 
- * attributes and values.  It is intended to be a simple wrapper of 
- * the list to make it act like a word, without requiring canonical 
- * instances. 
+ * A ListPairWord represents a word via a list of pairs of interned attributes
+ * and values. It is intended to be a simple wrapper of the list to make it act
+ * like a word, without requiring canonical instances.
  *
- * @author      Michael White
- * @version     $Revision: 1.1 $, $Date: 2010/01/17 04:49:24 $
+ * @author Michael White
+ * @version $Revision: 1.1 $, $Date: 2010/01/17 04:49:24 $
  */
 public class ListPairWord extends Word {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * The list of pairs of attributes and values.
 	 */
-	protected List<Pair<String,String>> pairsList;
-	
+	protected List<Pair<String, String>> pairsList;
+
 	/** Constructor. */
-	public ListPairWord(List<Pair<String,String>> pairsList) { this.pairsList = pairsList; }
-	
-    /** Returns the surface form. */
-    public String getForm() { return getValFromInterned(Tokenizer.WORD_ATTR); }
-    
-    /** Returns the pitch accent. */
-    public String getPitchAccent() { return getValFromInterned(Tokenizer.PITCH_ACCENT_ATTR); }
-    
-    /** Returns the list of extra attribute-value pairs. */
-    protected List<Pair<String,String>> getAttrValPairsList() { 
-        List<Pair<String,String>> retval = null; 
-		for (Pair<String,String> pair : pairsList) {
-            if (!isKnownAttr(pair.a)) {
-                if (retval == null) retval = new ArrayList<Pair<String,String>>(5);
-                retval.add(pair);
-            }
+	public ListPairWord(List<Pair<String, String>> pairsList) {
+		this.pairsList = pairsList;
+	}
+
+	/** Returns the surface form. */
+	public String getForm() {
+		return getValFromInterned(Tokenizer.WORD_ASSOCIATE);
+	}
+
+	/** Returns the pitch accent. */
+	public String getPitchAccent() {
+		return getValFromInterned(Tokenizer.TONE_ASSOCIATE);
+	}
+
+	/** Returns the list of extra attribute-value pairs. */
+	protected List<Pair<String, String>> getFormalAttributes() {
+		List<Pair<String, String>> retval = null;
+		for (Pair<String, String> pair : pairsList) {
+			if (!isKnownAttr(pair.a)) {
+				if (retval == null)
+					retval = new ArrayList<Pair<String, String>>(5);
+				retval.add(pair);
+			}
 		}
-        return retval; 
-    }
-    
-    /** Returns the stem. */
-    public String getStem() { return getValFromInterned(Tokenizer.STEM_ATTR); }
-    
-    /** Returns the part of speech. */
-    public String getPOS() { return getValFromInterned(Tokenizer.POS_ATTR); }
-    
-    /** Returns the supertag. */
-    public String getSupertag() { return getValFromInterned(Tokenizer.SUPERTAG_ATTR); }
-    
-    /** Returns the semantic class. */
-    public String getSemClass() { return getValFromInterned(Tokenizer.SEM_CLASS_ATTR); }
+		return retval;
+	}
 
+	/** Returns the stem. */
+	public String getStem() {
+		return getValFromInterned(Tokenizer.TERM_ASSOCIATE);
+	}
 
-    /** Returns the value of the attribute with the given name, or null if none. 
-    The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
-    may be used to retrieve the form, ..., semantic class. */
-	public String getVal(String attr) {
+	/** Returns the part of speech. */
+	public String getPOS() {
+		return getValFromInterned(Tokenizer.FUNCTIONS_ASSOCIATE);
+	}
+
+	/** Returns the supertag. */
+	public String getSupertag() {
+		return getValFromInterned(Tokenizer.SUPERTAG_ASSOCIATE);
+	}
+
+	/** Returns the semantic class. */
+	public String getSemClass() {
+		return getValFromInterned(Tokenizer.ENTITY_CLASS_ASSOCIATE);
+	}
+
+	/**
+	 * Returns the value of the attribute with the given name, or null if none.
+	 * The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR
+	 * may be used to retrieve the form, ..., semantic class.
+	 */
+	public String getFormalAttributeValue(String attr) {
 		String internedAttr = attr.intern(); // use == on interned attr
-		return getValFromInterned(internedAttr); 
+		return getValFromInterned(internedAttr);
 	}
 
 	/** Returns the value of the given interned attr, or null if none. */
 	protected String getValFromInterned(String attr) {
-		for (Pair<String,String> pair : pairsList) {
-			if (pair.a == attr) return pair.b;
+		for (Pair<String, String> pair : pairsList) {
+			if (pair.a == attr)
+				return pair.b;
 		}
-	    return null;
+		return null;
 	}
 }

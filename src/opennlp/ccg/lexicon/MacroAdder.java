@@ -54,18 +54,18 @@ public class MacroAdder {
             LF[] preds = mi.getPreds();
             for (int j=0; j < preds.length; j++) {
                 LF pred = (LF) preds[j].copy();
-                if (!HyloHelper.isElementaryPredication(pred)) {
+                if (!HyloHelper.getInstance().isElementaryPredication(pred)) {
                     System.out.println(
                         "Warning: ignoring LF macro pred, which is not an elementary predication: " +
                         pred
                     );
                     continue;
                 }
-                lf = HyloHelper.append(lf, pred);
+                lf = HyloHelper.getInstance().append(lf, pred);
             }
         }
         // sort and reset LF
-        HyloHelper.sort(lf);
+        HyloHelper.getInstance().sort(lf);
         cat.setLF(lf);
     }
     

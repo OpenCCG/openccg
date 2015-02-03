@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////
 package opennlp.ccg.ngrams;
 
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.test.*;
 import java.io.*;
 import java.util.*;
@@ -238,7 +238,7 @@ public class SRILM_ScorerMaker implements ScorerMaker {
     /**
      * Loads a scoring model created from the training data. 
      */
-    public SignScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException {
+    public SymbolScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException {
         String lmfile = filename(foldNum);
         String lmPath = new File(tmpDir, lmfile).getCanonicalPath();
         return new StandardNgramModel(getOrder(), lmPath, useSemClasses);

@@ -38,10 +38,10 @@ public class EdgeHash extends THashSet {
     protected static TObjectHashingStrategy surfaceWordHashingStrategy = new TObjectHashingStrategy() {
 		private static final long serialVersionUID = 1L;
 		public int computeHashCode(java.lang.Object o) {
-            return ((Edge)o).surfaceWordHashCode();
+            return ((ScoredSymbol)o).surfaceWordHashCode();
         }
         public boolean equals(java.lang.Object o1, java.lang.Object o2) {
-            return ((Edge)o1).surfaceWordEquals((Edge)o2);
+            return ((ScoredSymbol)o1).surfaceWordEquals((ScoredSymbol)o2);
         }
     };
 
@@ -52,7 +52,7 @@ public class EdgeHash extends THashSet {
      * Returns this as a set of edges.
      */
     @SuppressWarnings("unchecked")
-	public Set<Edge> asEdgeSet() { return (Set<Edge>) this; }
+	public Set<ScoredSymbol> asEdgeSet() { return (Set<ScoredSymbol>) this; }
 
     /**
      * Adds an edge, keeping the one whose sign has lower derivational complexity 
@@ -61,13 +61,13 @@ public class EdgeHash extends THashSet {
      * old edge, or null if the edge was not actually added.
      * iff the edge is actually inserted.
      */
-    public Edge insert(Edge edge) {
+    public ScoredSymbol insert(ScoredSymbol edge) {
         int pos = index(edge);
         if (pos >= 0) {
-            Edge oldEdge = (Edge) _set[pos];
+            ScoredSymbol oldEdge = (ScoredSymbol) _set[pos];
             if (oldEdge == edge) return null; 
-            int complexity = edge.sign.getDerivationHistory().complexity();
-            int oldComplexity = oldEdge.sign.getDerivationHistory().complexity();
+            int complexity = edge.symbol.getDerivationHistory().complexity();
+            int oldComplexity = oldEdge.symbol.getDerivationHistory().complexity();
             if (complexity < oldComplexity) {
             	_set[pos] = edge; return oldEdge;
             }

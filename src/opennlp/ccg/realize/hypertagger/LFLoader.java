@@ -132,7 +132,7 @@ public class LFLoader implements Iterator<LFInfo> {
 			// mww: added try-catch block
 			try {
 				LF lf = Realizer.getLfFromElt(itemLFElt);
-				LF flatLF = HyloHelper.flattenLF(lf);
+				LF flatLF = HyloHelper.getInstance().flattenLF(lf);
 				lfs.offer(new LFInfo(flatLF, predInfo, lfNum));
 			}
 			catch (Exception exc) {

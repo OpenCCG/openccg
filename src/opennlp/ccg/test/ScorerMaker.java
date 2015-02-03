@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////
 package opennlp.ccg.test;
 
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 
 import java.io.*;
 
@@ -53,7 +53,7 @@ public interface ScorerMaker {
     /**
      * Loads a scoring model created from the training data. 
      */
-    public SignScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException;
+    public SymbolScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException;
 }
 
 

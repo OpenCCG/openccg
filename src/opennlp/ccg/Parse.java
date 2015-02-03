@@ -21,6 +21,7 @@ package opennlp.ccg;
 import java.io.*;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jdom.Document;
@@ -31,6 +32,7 @@ import org.jdom.output.XMLOutputter;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.Nominal;
+import opennlp.ccg.lexicon.ParseProduct;
 import opennlp.ccg.lexicon.Tokenizer;
 import opennlp.ccg.parse.ParseException;
 import opennlp.ccg.parse.Parser;
@@ -38,8 +40,8 @@ import opennlp.ccg.parse.Supertagger;
 import opennlp.ccg.parse.supertagger.WordAndPOSDictionaryLabellingStrategy;
 import opennlp.ccg.synsem.Category;
 import opennlp.ccg.synsem.LF;
-import opennlp.ccg.synsem.Sign;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.Symbol;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.test.RegressionInfo;
 import opennlp.ccgbank.extract.Testbed;
 
@@ -95,7 +97,7 @@ public class Parse {
 		Document outDoc = new Document();
 		Element outRoot = new Element("regression");
 		outDoc.setRootElement(outRoot);
-		Map<String,Sign> signMap = new HashMap<String,Sign>();
+		Map<String,Symbol> signMap = new HashMap<String,Symbol>();
 
         // load grammar
         URL grammarURL = new File(grammarfile).toURI().toURL();
@@ -109,8 +111,8 @@ public class Parse {
         // instantiate scorer
         try {
             System.out.println("Instantiating parsing sign scorer from class: " + parseScorerClass);
-            SignScorer parseScorer = (SignScorer) Class.forName(parseScorerClass).newInstance();
-            parser.setSignScorer(parseScorer);
+            SymbolScorer parseScorer = (SymbolScorer) Class.forName(parseScorerClass).newInstance();
+            parser.setSymbolScorer(parseScorer);
             System.out.println();
         } catch (Exception exc) {
             throw (RuntimeException) new RuntimeException().initCause(exc);
@@ -144,10 +146,11 @@ public class Parse {
         	try {
         		// parse it
         		System.out.println(line);
-			parser.parse(line);
-			int numParses = Math.min(nbestListSize, parser.getResult().size());
+			ParseProduct product = parser.parse(line);
+			List<Symbol> result = product.getSymbols();
+			int numParses = Math.min(nbestListSize, result.size());
 			for (int i=0; i < numParses; i++) {
-			    Sign thisParse = parser.getResult().get(i);
+			    Symbol thisParse = result.get(i);
 			    // convert lf
 			    Category cat = thisParse.getCategory();
 			    LF convertedLF = null;
@@ -157,7 +160,7 @@ public class Parse {
 				LF flatLF = cat.getLF();
 				cat = cat.copy();
 				Nominal index = cat.getIndexNominal(); 
-				convertedLF = HyloHelper.compactAndConvertNominals(flatLF, index, thisParse);
+				convertedLF = HyloHelper.getInstance().compactAndConvertNominals(flatLF, index, thisParse);
 				// get pred info
 				predInfoMap.clear();
 				Testbed.extractPredInfo(flatLF, predInfoMap);

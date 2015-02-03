@@ -17,7 +17,7 @@
 //////////////////////////////////////////////////////////////////////////////
 package opennlp.ccg.ngrams;
 
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 
 import java.io.*;
 
@@ -75,6 +75,7 @@ public class SRILM_FactoredScorerMaker extends SRILM_ScorerMaker {
             }
         }
         out.close();
+        br.close();
     }
     
     /**
@@ -125,7 +126,7 @@ public class SRILM_FactoredScorerMaker extends SRILM_ScorerMaker {
     /**
      * Loads a scoring model created from the training data. 
      */
-    public SignScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException {
+    public SymbolScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException {
         File foldSpecFile = new File(tmpDir, filename(foldNum));
         String foldSpecPath = foldSpecFile.getCanonicalPath();
         return new FactoredNgramModelFamily(foldSpecPath, useSemClasses);

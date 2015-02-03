@@ -20,6 +20,7 @@ package opennlp.ccg.hylo;
 
 import opennlp.ccg.TextCCG;
 import opennlp.ccg.synsem.*;
+
 import java.util.*;
 import java.util.prefs.Preferences;
 
@@ -53,7 +54,7 @@ public class Converter {
 	 * a root sign is given, otherwise using lexical propositions; 
 	 * returns the converted nominal root. 
 	 */
-	static Nominal convertNominals(LF lf, Sign root, Nominal nominalRoot) {
+	static Nominal convertNominals(LF lf, Symbol root, Nominal nominalRoot) {
 		// check preference for naming with word positions; set root to null if false
         Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
         boolean useWordPositions = prefs.getBoolean(USE_WORD_POSITIONS_FOR_ATOM_CONVERSION, true);
@@ -72,19 +73,19 @@ public class Converter {
     }
 
     // recurse through lf, converting nominals
-    private void convertNoms(LF lf, Sign root) {
+    private void convertNoms(LF lf, Symbol root) {
         if (lf instanceof SatOp) {
             SatOp satOp = (SatOp) lf;
             // try finding word index of lex origin in root sign
             int wordIndex = -1;
             if (root != null) {
-	            LexSemOrigin origin = satOp.getOrigin();
-	            if (origin instanceof Sign) {
-	            	Sign lexSign = (Sign) origin;
+	            EntityRealizer origin = satOp.getOrigin();
+	            if (origin instanceof Symbol) {
+	            	Symbol lexSign = (Symbol) origin;
 	            	// make sure it's not dominated by another lex pred
 	            	// nb: also need to check for special pred 'elem', which isn't 
 	            	// dominated in sample flights grammar
-	            	String lexPred = HyloHelper.getLexPred(satOp);
+	            	String lexPred = HyloHelper.getInstance().getLexPred(satOp);
 	            	if (lexPred != null && !lexPred.equals("elem")) {
 	            		if (!lexDominated(lexPred, lexSign)) 
 		            		wordIndex = root.wordIndex(lexSign);
@@ -180,17 +181,17 @@ public class Converter {
     //
     
     // returns true if the EP for the lexPred is dominated by another lex pred
-    private static boolean lexDominated(String lexPred, Sign lexSign) {
+    private static boolean lexDominated(String lexPred, Symbol lexSign) {
     	Category cat = lexSign.getCategory();
     	LF lf = cat.getLF();
     	Nominal index = cat.getIndexNominal();
-    	List<SatOp> preds = HyloHelper.getPreds(lf);
+    	List<SatOp> preds = HyloHelper.getInstance().getPreds(lf);
     	// find EP with lexPred, other lex preds
     	SatOp lexEP = null;
     	List<SatOp> otherLexPreds = new ArrayList<SatOp>();
     	for (SatOp pred : preds) {
-    		if (HyloHelper.isLexPred(pred)) {
-        		if (lexPred.equals(HyloHelper.getLexPred(pred))) 
+    		if (HyloHelper.getInstance().isLexPred(pred)) {
+        		if (lexPred.equals(HyloHelper.getInstance().getLexPred(pred))) 
         			lexEP = pred; 
         		else otherLexPreds.add(pred);
     		}
@@ -199,9 +200,9 @@ public class Converter {
     		throw new RuntimeException("Couldn't find lexPred: " + lexPred); 
 		}
     	// check domination
-    	Nominal lexNom = HyloHelper.getPrincipalNominal(lexEP);
+    	Nominal lexNom = HyloHelper.getInstance().getPrincipalNominal(lexEP);
     	for (SatOp pred : otherLexPreds) {
-    		Nominal otherNom = HyloHelper.getPrincipalNominal(pred);
+    		Nominal otherNom = HyloHelper.getInstance().getPrincipalNominal(pred);
     		Stack<Nominal> seen = new Stack<Nominal>();
     		seen.push(index); // don't recurse through index nominal
     		if (dominates(otherNom, lexNom, preds, seen)) return true; 
@@ -218,8 +219,8 @@ public class Converter {
     	seen.push(a);
     	// check relations
     	for (SatOp pred : preds) {
-    		if (a.equals(HyloHelper.getPrincipalNominal(pred))) {
-    			Nominal c = HyloHelper.getSecondaryNominal(pred);
+    		if (a.equals(HyloHelper.getInstance().getPrincipalNominal(pred))) {
+    			Nominal c = HyloHelper.getInstance().getSecondaryNominal(pred);
     			if (c == null) continue;
     			// check immed dominance
     			if (b.equals(c)) return true; // found dominance!

@@ -146,10 +146,10 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	protected FeatureMap currentMap = null;
 	
 	/** Current sign (for extracting features). */
-	protected Sign currentSign = null;
+	protected Symbol currentSign = null;
 	
 	/** Current input signs (for extracting features). */
-	protected Sign[] currentInputs = null;
+	protected Symbol[] currentInputs = null;
 	
 	/** Current dependency (for extracting features). */
 	protected LexDependency currentDep = null;
@@ -179,10 +179,10 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	protected boolean currentDepPrecedesSib = false;
 
 	/** Current dep sign (for extracting features). */
-	protected Sign currentDepSign = null;
+	protected Symbol currentDepSign = null;
 	
 	/** Current sib sign (for extracting features). */
-	protected Sign currentSibSign = null;
+	protected Symbol currentSibSign = null;
 	
 	/** Current dep phrase lengths (for extracting features). */
 	protected PhraseLengths currentDepLengths = null;
@@ -249,26 +249,26 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		addFeatures(sign, complete);
 		return getFeatureMap(sign);
 	}
 	
 	/** Recursively adds features to the feature map for the given sign, if not already present. */
-	protected void addFeatures(Sign sign, boolean complete) {
+	protected void addFeatures(Symbol sign, boolean complete) {
 		// check for existing map, otherwise make one
 		if (getFeatureMap(sign) != null) return;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			currentSign = sign;
 			currentMap = new FeatureMap(0);
 			//inc(lexExtractors);
 		}
 		// non-terminal
 		else {
-			Sign[] inputs = sign.getDerivationHistory().getInputs();
+			Symbol[] inputs = sign.getDerivationHistory().getInputs();
 			// first recurse
-			for (Sign child : inputs) addFeatures(child, false);
+			for (Symbol child : inputs) addFeatures(child, false);
 			// use input maps in making current map
 			currentSign = sign;
 			currentInputs = inputs;
@@ -316,12 +316,12 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Stores the current feature map as a data object in the given sign. */
-	protected void storeFeatureMap(Sign sign) {
+	protected void storeFeatureMap(Symbol sign) {
 		sign.addData(new FeatureMapWrapper(currentMap));
 	}
 	
 	/** Returns the feature map for this extractor from the given sign (null if none). */
-	protected FeatureMap getFeatureMap(Sign sign) {
+	protected FeatureMap getFeatureMap(Symbol sign) {
 		FeatureMapWrapper fmw = (FeatureMapWrapper)sign.getData(FeatureMapWrapper.class);
 		return (fmw != null) ? fmw.featureMap : null;
 	}
@@ -414,20 +414,20 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Returns the definite NP status for a sign, caching it in the sign. */
-	public DefiniteNP getDefiniteNP(Sign sign) {
+	public DefiniteNP getDefiniteNP(Symbol sign) {
 		// check cached
 		DefiniteNP defNP = (DefiniteNP)sign.getData(DefiniteNP.class);
 		if (defNP != null) return defNP;
 		// determine def NP status
 		Boolean def = null;
 		// check for NP
-		Sign npSign = getSignOrChildSignAsNP(sign);
+		Symbol npSign = getSignOrChildSignAsNP(sign);
 		if (npSign != null) {
 			// set status to definite by default; check for indef
 			def = Boolean.TRUE;
 			// get sem feats
 			Nominal npNom = npSign.getCategory().getIndexNominal();
-			List<SatOp> semFeats = HyloHelper.getSemFeatsForHead(npNom, npSign.getCategory().getLF());
+			List<SatOp> semFeats = HyloHelper.getInstance().getSemFeatsForHead(npNom, npSign.getCategory().getLF());
 			// check for <det>nil
 			for (SatOp feat : semFeats) {
 				if (isIndefFeat(feat)) {
@@ -459,10 +459,10 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	 * otherwise returns the first child sign that's an NP sign;
 	 * otherwise returns null.
 	 */
-	protected Sign getSignOrChildSignAsNP(Sign sign) {
+	protected Symbol getSignOrChildSignAsNP(Symbol sign) {
 		if (isNP(sign)) return sign;
-		if (sign.isLexical()) return null;
-		Sign[] inputs = sign.getDerivationHistory().getInputs();
+		if (sign.isIndexed()) return null;
+		Symbol[] inputs = sign.getDerivationHistory().getInputs();
         for (int i = 0; i < inputs.length; i++) {
         	if (isNP(inputs[i])) return inputs[i];
         }
@@ -473,7 +473,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	 * Returns whether the given sign is an NP.
 	 * The default implementation tests for a category type of "np".
 	 */
-	protected boolean isNP(Sign sign) {
+	protected boolean isNP(Symbol sign) {
 		Category cat = sign.getCategory();
 		if (!(cat instanceof AtomCat)) return false;
 		AtomCat ac = (AtomCat) cat;
@@ -485,7 +485,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	 * The default implementation tests for &lt:det&gt;nil.
 	 */
 	protected boolean isIndefFeat(SatOp feat) {
-		return HyloHelper.getRel(feat).equals("det") && "nil".equals(HyloHelper.getVal(feat));
+		return HyloHelper.getInstance().getRel(feat).equals("det") && "nil".equals(HyloHelper.getInstance().getVal(feat));
 	}
 	
 	/**
@@ -502,7 +502,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Returns whether two signs differ in definiteness. */
-	public boolean defDifference(Sign sign1, Sign sign2) {
+	public boolean defDifference(Symbol sign1, Symbol sign2) {
 		DefiniteNP defNP1 = getDefiniteNP(sign1);
 		if (defNP1.def == null) return false;
 		DefiniteNP defNP2 = getDefiniteNP(sign2);
@@ -531,13 +531,13 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Returns the phrase lengths for a sign, caching them in the sign. */
-	public PhraseLengths getPhraseLengths(Sign sign) {
+	public PhraseLengths getPhraseLengths(Symbol sign) {
 		// check cached
 		PhraseLengths lengths = (PhraseLengths)sign.getData(PhraseLengths.class);
 		if (lengths != null) return lengths;
 		int wordlen = 0, punctlen = 0, verblen = 0;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			for (Word w: sign.getWords()) {
 				wordlen++;
 				if (isPunct(w)) punctlen++;
@@ -546,7 +546,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 		}
 		// non-lex: add child lengths
 		else {
-			Sign[] inputs = sign.getDerivationHistory().getInputs();
+			Symbol[] inputs = sign.getDerivationHistory().getInputs();
 	        for (int i = 0; i < inputs.length; i++) {
 	        	PhraseLengths lengthsI = getPhraseLengths(inputs[i]);
 	        	wordlen += lengthsI.wordlen; punctlen += lengthsI.punctlen; verblen += lengthsI.punctlen;
@@ -819,7 +819,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	// sibs class1
 	private void add_sibs_class1(List<TrieMap.KeyExtractor<String>> retval) {
 		retval.add(new TrieMap.KeyExtractor<String>(){public String getKey(){
-			Sign first = (currentDepPrecedesSib) ? currentDep.lexDep : currentSib.lexDep;
+			Symbol first = (currentDepPrecedesSib) ? currentDep.lexDep : currentSib.lexDep;
 			return getWordClass(first.getWords().get(0));
 		}});
 	}
@@ -827,7 +827,7 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	// sibs class2
 	private void add_sibs_class2(List<TrieMap.KeyExtractor<String>> retval) {
 		retval.add(new TrieMap.KeyExtractor<String>(){public String getKey(){
-			Sign second = (currentDepPrecedesSib) ? currentSib.lexDep : currentDep.lexDep;
+			Symbol second = (currentDepPrecedesSib) ? currentSib.lexDep : currentDep.lexDep;
 			return getWordClass(second.getWords().get(0));
 		}});
 	}

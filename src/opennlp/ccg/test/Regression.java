@@ -26,6 +26,7 @@ import java.util.prefs.Preferences;
 import opennlp.ccg.TextCCG;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.*;
+import opennlp.ccg.lexicon.ParseProduct;
 import opennlp.ccg.lexicon.Tokenizer;
 import opennlp.ccg.lexicon.Word;
 import opennlp.ccg.ngrams.*;
@@ -102,7 +103,7 @@ public class Regression {
     public String rescorefile = null;
     
     /** Map from info keys to best realization signs for serialization (if any). */
-    public Map<String,Sign> bestRealMap = null;
+    public Map<String,Symbol> bestRealMap = null;
     
     /** Flag for whether to include LFs in n-best output. */
     public boolean nbestincludelfs = false;
@@ -120,10 +121,10 @@ public class Regression {
     public Realizer realizer = null;
     
     /** The scorer to use for realizer testing (or null, for default). */
-    public SignScorer scorer = null;
+    public SymbolScorer scorer = null;
     
     /** The scorer to use for parser testing. */
-    public SignScorer parseScorer = null;
+    public SymbolScorer parseScorer = null;
     
     /** Flag for whether to only allow exact matches with the default scorer. */
     public boolean exactMatches = false;
@@ -380,7 +381,7 @@ public class Regression {
     // resets bestRealMap
     private void realserStartDoc() {
     	if (realserdir != null && doRealization) {
-    		bestRealMap = new HashMap<String,Sign>();
+    		bestRealMap = new HashMap<String,Symbol>();
     	}
     }
     
@@ -474,7 +475,7 @@ public class Regression {
             	continue;
             }
             
-            List<Sign> parses = null;
+            List<Symbol> parses = null;
             List<Double> parseScores = null;
             LF parsedLF = null;
             LF compactedLF = null;
@@ -482,6 +483,7 @@ public class Regression {
             boolean parsed = false;
             boolean parsedComplete = false;
             if (doParsing) {
+        		ParseProduct product = null;
                 try {
             		// use full-words or words from stored sign if possible
             		List<Word> words = null;
@@ -496,24 +498,23 @@ public class Regression {
             		}
             		if (words != null) {
 	            		// parse 'em
-	            		parser.parse(words);
-            		}
-                	else { 
-                		parser.parse(testItem.sentence);
+	            		product = parser.parse(words);
+            		} else { 
+                		product = parser.parse(testItem.sentence);
                 	}
-                	// retrieve results
-                    parses = parser.getResult();
-                    parseScores = parser.getScores();
+                	// retrieve results 
+                    parses = product.getSymbols();
+                    parseScores = product.getScores();
                     parsed = true;
                     parsedComplete = !parses.get(0).getCategory().isFragment();
                     // get LF of best parse, if needed
                     if (showParseStats || (doRealization && testItem.lfElt == null && testItem.sign == null)) {
-	                    Sign sign = parses.get(0);
+	                    Symbol sign = parses.get(0);
 	                    Category cat = sign.getCategory().copy();
 	                    Nominal index = cat.getIndexNominal();
 	                    parsedLF = cat.getLF();
-	                    index = HyloHelper.convertNominals(parsedLF, sign, index);
-	                    compactedLF = HyloHelper.compact(parsedLF, index);
+	                    index = HyloHelper.getInstance().convertNominals(parsedLF, sign, index);
+	                    compactedLF = HyloHelper.getInstance().compact(parsedLF, index);
 	                    // get transformed version if needed
 	                    if (testItem.sign == null) {
 		                    transformedParsedLF = grammar.transformLF(compactedLF); 
@@ -528,35 +529,35 @@ public class Regression {
                     System.err.println("Uncaught exception in parsing: " + testItem.sentence);
                     e.printStackTrace(System.err);
                 }
-                  
+                opennlp.ccg.parse.ChartCompleter chart = product.getChartCompleter();
                 // update parse stats
-                int count = parser.edgeCount();
+                int count = chart != null ? chart.getScoredSymbolCount() : 0;
                 pTotalEdges += count;
                 if (count > pMaxEdges) pMaxEdges = count;
                 if (parsedComplete) {
                 	pTotalEdgesGood += count;
                 	if (count > pMaxEdgesGood) pMaxEdgesGood = count;
                 }
-                count = parser.unpackingEdgeCount();
+                count = chart != null ? chart.getNonfinalScoredSymbolCount() : 0;
                 pTotalUnpackingEdges += count;
                 if (count > pMaxUnpackingEdges) pMaxUnpackingEdges = count;
-                int cellMax = parser.maxCellSize();
+                int cellMax = chart.getMaxFormSize();
                 pTotalCellMax += cellMax;
                 if (cellMax > pMaxCellMax) pMaxCellMax = cellMax;
                 if (parsedComplete) {
                 	pTotalCellMaxGood += cellMax;
                     if (cellMax > pMaxCellMaxGood) pMaxCellMaxGood = cellMax;
                 }
-                int time = parser.getLexTime();
+                int time = product.getLexTime();
                 pTotalLexTime += time;
                 if (time > pMaxLexTime) pMaxLexTime = time;
-                time = parser.getParseTime();
+                time = product.getParseTime();
                 pTotalParseTime += time;
                 if (time > pMaxParseTime) pMaxParseTime = time;
-                time = parser.getChartTime();
+                time = product.getChartTime();
                 pTotalChartTime += time;
                 if (time > pMaxChartTime) pMaxChartTime = time;
-                time = parser.getUnpackingTime();
+                time = product.getUnpackingTime();
                 pTotalUnpackingTime += time;
                 if (time > pMaxUnpackingTime) pMaxUnpackingTime = time;
                 double beta = parser.getSupertaggerBeta();
@@ -586,7 +587,7 @@ public class Regression {
                     Category cat = testItem.sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     goldLF = cat.getLF();
-                    index = HyloHelper.convertNominals(goldLF, testItem.sign, index);
+                    index = HyloHelper.getInstance().convertNominals(goldLF, testItem.sign, index);
                 }
                 else {
                 	// otherwise use test item LF
@@ -638,12 +639,12 @@ public class Regression {
             	// nb: only dealing with complete parses at the moment
             	// nb: gold LF must come from saved sign
             	if (parses.size() > 0 && testItem.sign != null) {
-            		List<Sign> bestSigns = new ArrayList<Sign>(parses);
-            		Sign best = parses.get(0);
+            		List<Symbol> bestSigns = new ArrayList<Symbol>(parses);
+            		Symbol best = parses.get(0);
             		// update best if not exact match
             		if (parseScore.fscore != 1.0) {
             			// check oracle best
-            			Pair<Sign,Boolean> bestPair = parser.oracleBest(goldLF); 
+            			Pair<Symbol,Boolean> bestPair = parser.oracleBest(goldLF); 
             			if (bestPair.a != null) oracleBetter++;
             			if (bestPair.b) {
             				best = bestPair.a;
@@ -687,13 +688,13 @@ public class Regression {
             	}
             	// add remaining n-best 
             	for (int k=1; k < parses.size(); k++) {
-                    Sign sign = parses.get(k);
+                    Symbol sign = parses.get(k);
             		double edgeScore = parseScores.get(k);
                     Category cat = sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     LF parsedLFk = cat.getLF();
-                    index = HyloHelper.convertNominals(parsedLFk, sign, index);
-                    LF compactedLFk = HyloHelper.compact(parsedLFk, index);
+                    index = HyloHelper.getInstance().convertNominals(parsedLFk, sign, index);
+                    LF compactedLFk = HyloHelper.getInstance().compact(parsedLFk, index);
                     LF lfToScore = parsedLFk;
                     if (testItem.sign != null) {
                         lfToScore = grammar.transformLF(compactedLFk); 
@@ -742,10 +743,10 @@ public class Regression {
             if (testItemLF != null) inputLF = testItemLF;
             // or LF from stored sign
             else if (testItem.sign != null) {
-                Sign sign = testItem.sign;
+                Symbol sign = testItem.sign;
                 Category cat = sign.getCategory().copy();
                 Nominal index = cat.getIndexNominal();
-                LF convertedLF = HyloHelper.compactAndConvertNominals(cat.getLF(), index, sign);
+                LF convertedLF = HyloHelper.getInstance().compactAndConvertNominals(cat.getLF(), index, sign);
                 inputLF = grammar.transformLF(convertedLF);
             }
             // otherwise use first parse
@@ -761,7 +762,7 @@ public class Regression {
             	? new String[] { testItem.sentence }
             	: new String[] { testItem.sentence, testItem.alt };
             NgramPrecisionModel defaultNgramScorer = new NgramPrecisionModel(targets);
-            SignScorer scorerToUse = scorer;
+            SymbolScorer scorerToUse = scorer;
             if (scorerToUse == null) {
                 if (ngramOrder > 0 || exactMatches) {
                 	if (ngramOrder > 0) scorerToUse = new NgramPrecisionModel(targets, ngramOrder);
@@ -810,8 +811,8 @@ public class Regression {
             		Pair<Edge,Boolean> bestPair = chart.oracleBest(testItem.sentence); 
             		Edge oracleBest = bestPair.a;
             		if (oracleBest != null) {
-                    	Sign best = oracleBest.getSign();
-                    	List<Sign> bestSigns = new ArrayList<Sign>(bestEdges.size()+1);
+                    	Symbol best = oracleBest.getSign();
+                    	List<Symbol> bestSigns = new ArrayList<Symbol>(bestEdges.size()+1);
                     	for (Edge e : bestEdges) bestSigns.add(e.getSign());
             			if (bestEdge != oracleBest) oracleBetter++;
             			if (!bestPair.b) {
@@ -865,13 +866,13 @@ public class Regression {
             	else {
             		nbestrealPW.println("<best " + scores + ">");
             		nbestrealPW.println("<str>" + best + "</str>");
-                	Sign sign = bestEdge.getSign();
+                	Symbol sign = bestEdge.getSign();
                     Category cat = sign.getCategory().copy();
                     Nominal index = cat.getIndexNominal();
                     LF lf = cat.getLF();
-                	index = HyloHelper.convertNominalsToVars(lf, index);
-                    index = HyloHelper.convertNominals(lf, sign, index);
-                    LF lfc = HyloHelper.compact(lf, index);
+                	index = HyloHelper.getInstance().convertNominalsToVars(lf, index);
+                    index = HyloHelper.getInstance().convertNominals(lf, sign, index);
+                    LF lfc = HyloHelper.getInstance().compact(lf, index);
                 	Element lfElt = grammar.makeLfElt(lfc);
                 	nbestrealPW.println(outputter.outputString(lfElt));
             		nbestrealPW.println("</best>");
@@ -892,13 +893,13 @@ public class Regression {
                     	else {
                     		nbestrealPW.println("<next" + eScores + ">");
                     		nbestrealPW.println("<str>" + next + "</str>");
-                        	Sign sign = e.getSign();
+                        	Symbol sign = e.getSign();
                             Category cat = sign.getCategory().copy();
                             Nominal index = cat.getIndexNominal();
                             LF lf = cat.getLF();
-                        	index = HyloHelper.convertNominalsToVars(lf, index);
-                            index = HyloHelper.convertNominals(lf, sign, index);
-                            LF lfc = HyloHelper.compact(lf, index);
+                        	index = HyloHelper.getInstance().convertNominalsToVars(lf, index);
+                            index = HyloHelper.getInstance().convertNominals(lf, sign, index);
+                            LF lfc = HyloHelper.getInstance().compact(lf, index);
                         	Element lfElt = grammar.makeLfElt(lfc);
                         	nbestrealPW.println(outputter.outputString(lfElt));
                     		nbestrealPW.println("</next>");
@@ -1477,7 +1478,7 @@ public class Regression {
 	        for (int i = 0; i < numItems; i++) {
 	            RegressionInfo.TestItem testItem = tbInfo.getItem(i); 
 	        	if (testItem.numOfParses == 0) continue; // check grammatical
-	        	Sign sign = testItem.sign;
+	        	Symbol sign = testItem.sign;
 	        	List<Word> factors = GenerativeSyntacticModel.getFactors(sign);
 	        	for (Word w : factors) {
 	        		tOut.print(tokenizer.format(w));
@@ -1563,10 +1564,10 @@ public class Regression {
             if (args[i].equals("-odd")) { tester.oddOnly = true; continue; }
             if (args[i].equals("-gc")) { tester.doGC = true; continue; }
             if (args[i].equals("-nullscorer")) { 
-            	tester.scorer = SignScorer.nullScorer; tester.parseScorer = SignScorer.nullScorer; continue; 
+            	tester.scorer = SymbolScorer.nullScorer; tester.parseScorer = SymbolScorer.nullScorer; continue; 
             }
             if (args[i].equals("-randomscorer")) { 
-            	tester.scorer = SignScorer.randomScorer; tester.parseScorer = SignScorer.randomScorer; continue; 
+            	tester.scorer = SymbolScorer.randomScorer; tester.parseScorer = SymbolScorer.randomScorer; continue; 
             }
             if (args[i].equals("-depthfirst")) { depthFirst = true; continue; }
             if (args[i].equals("-exactmatches")) { tester.exactMatches = true; continue; }
@@ -1646,7 +1647,7 @@ public class Regression {
         if (scorerClass != null) {
             try {
                 System.out.println("Instantiating sign scorer from class: " + scorerClass);
-                SignScorer scorer = (SignScorer) Class.forName(scorerClass).newInstance();
+                SymbolScorer scorer = (SymbolScorer) Class.forName(scorerClass).newInstance();
             	if (scorer instanceof NgramScorer) {
                     NgramScorer lmScorer = (NgramScorer) scorer;
                     if (aanfilter) lmScorer.addFilter(aanFilter);
@@ -1708,7 +1709,7 @@ public class Regression {
             if (parseScorerClass != null) {
                 try {
                     System.out.println("Instantiating parsing sign scorer from class: " + parseScorerClass);
-                    tester.parseScorer = (SignScorer) Class.forName(parseScorerClass).newInstance();
+                    tester.parseScorer = (SymbolScorer) Class.forName(parseScorerClass).newInstance();
                     tester.showParseStats = true; // turn parsing stats on
                     System.out.println();
                 } catch (Exception exc) {
@@ -1716,7 +1717,7 @@ public class Regression {
                 }
             }
             // set parser scorer, if any
-            if (tester.parseScorer != null) tester.parser.setSignScorer(tester.parseScorer);
+            if (tester.parseScorer != null) tester.parser.setSymbolScorer(tester.parseScorer);
             // also turn on parse stats if doing n-best output
             if (tester.nbestparsefile != null) tester.showParseStats = true;
             // instantiate supertagger, if any

@@ -42,7 +42,7 @@ import opennlp.ccg.util.Pair;
  * @author 	Michael White
  * @version	$Revision: 1.12 $, $Date: 2010/03/07 03:23:01 $
  */ 
-public class GenerativeSyntacticModel implements FeatureExtractor, SignScorer {
+public class GenerativeSyntacticModel implements FeatureExtractor, SymbolScorer {
 
 	/** Feature key. */
 	public static String genlogprobkey = "genlogprob";
@@ -155,7 +155,7 @@ public class GenerativeSyntacticModel implements FeatureExtractor, SignScorer {
 	}
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		return genLogProbVector((float) logprob(sign, complete));
 	}
 	
@@ -176,34 +176,34 @@ public class GenerativeSyntacticModel implements FeatureExtractor, SignScorer {
 			return sb.toString();
 		}
 		/** Checks for cached value. */
-		public Double checkCache(Sign sign) {
+		public Double checkCache(Symbol sign) {
 			GenLogProb glp = (GenLogProb) sign.getData(GenLogProb.class);
 			return (glp == null) ? null : glp.logprob;
 		}
 		/** Caches the total. */
-		public void cache(Sign sign, Double total) {
+		public void cache(Symbol sign, Double total) {
 			sign.addData(new GenLogProb(total));
 		}
 		/** Top step. */
-		public Double topStep(Sign sign) {
+		public Double topStep(Symbol sign) {
 			pairs.clear(); addTopFactors(sign, pairs); 
 			if (debugScore) System.out.println("[topStep] " + listPairs());
 			return topModel.logprob(pairs) + handleDerivation(sign);
 		}
 		/** Lexical step. */
-		public Double lexStep(Sign sign) {
+		public Double lexStep(Symbol sign) {
 			pairs.clear(); addLexFactors(sign, pairs); 
 			if (debugScore) System.out.println("[lexStep] " + listPairs());
 			return leafModel.logprob(pairs); 
 		}
 		/** Unary step. */
-		public Double unaryStep(Sign sign, Sign headChild) {
+		public Double unaryStep(Symbol sign, Symbol headChild) {
 			pairs.clear(); addUnaryFactors(sign, pairs, headChild);
 			if (debugScore) System.out.println("[unaryStep] " + listPairs());
 			return unaryModel.logprob(pairs) + handleDerivation(headChild);
 		}
 		/** Binary step. */
-		public Double binaryStep(Sign sign, boolean left, Sign headChild, Sign siblingChild) {
+		public Double binaryStep(Symbol sign, boolean left, Symbol headChild, Symbol siblingChild) {
 			pairs.clear(); addBinaryFactors(sign, pairs, left, headChild, siblingChild); 
 			if (debugScore) System.out.println("[binaryStep] " + listPairs());
 			return binaryModel.logprob(pairs) + handleDerivation(headChild) + handleDerivation(siblingChild);
@@ -221,87 +221,87 @@ public class GenerativeSyntacticModel implements FeatureExtractor, SignScorer {
 		// adds new word for pairs to result
 		private void addPairs() { factors.add(new ListPairWord(pairs)); }
 		/** Top step. */
-		public Void topStep(Sign sign) {
+		public Void topStep(Symbol sign) {
 			newPairs(); addTopFactors(sign, pairs); addPairs(); 
 			handleDerivation(sign); return null;
 		}
 		/** Lexical step. */
-		public Void lexStep(Sign sign) {
+		public Void lexStep(Symbol sign) {
 			newPairs(); addLexFactors(sign, pairs); addPairs(); return null;
 		}
 		/** Unary step. */
-		public Void unaryStep(Sign sign, Sign headChild) {
+		public Void unaryStep(Symbol sign, Symbol headChild) {
 			newPairs(); addUnaryFactors(sign, pairs, headChild); addPairs(); 
 			handleDerivation(headChild); return null;
 		}
 		/** Binary step. */
-		public Void binaryStep(Sign sign, boolean left, Sign headChild, Sign siblingChild) {
+		public Void binaryStep(Symbol sign, boolean left, Symbol headChild, Symbol siblingChild) {
 			newPairs(); addBinaryFactors(sign, pairs, left, headChild, siblingChild); addPairs(); 
 			handleDerivation(headChild); handleDerivation(siblingChild); return null;
 		}
 	}
 	
 	/** Returns the probability of the derivation according to the models. */
-	public double score(Sign sign, boolean complete) {
+	public double score(Symbol sign, boolean complete) {
 		return NgramScorer.convertToProb(logprob(sign, complete));
 	}
 	
 	/** Returns the log probability of the derivation according to the models. */
-	public double logprob(Sign sign, boolean complete) {
+	public double logprob(Symbol sign, boolean complete) {
 		LogProbGetter lpgetter = new LogProbGetter();
 		if (complete) return lpgetter.handleCompleteDerivation(sign);
 		else return lpgetter.handleDerivation(sign);
 	}
 	
 	/** Returns the factors from the derivation of the given sign (assumed to be complete). */
-	public static List<Word> getFactors(Sign sign) {
+	public static List<Word> getFactors(Symbol sign) {
 		FactorsGetter fgetter = new FactorsGetter();
 		fgetter.handleCompleteDerivation(sign);
 		return fgetter.factors;
 	}
 	
 	/** Adds the factors for the top step in the derivation of the given sign. */
-	public static void addTopFactors(Sign sign, List<Pair<String,String>> pairs) {
+	public static void addTopFactors(Symbol sign, List<Pair<String,String>> pairs) {
 		pairs.add(new Pair<String,String>(EXPANSION, TOP));
 		pairs.add(new Pair<String,String>(PARENT, TOP));
 		pairs.add(new Pair<String,String>(LEXCAT_PARENT, TOP));
 		pairs.add(new Pair<String,String>(WORD_PARENT, TOP));
 		pairs.add(new Pair<String,String>(HEAD, sign.getSupertag()));
-		Sign lexHead = sign.getLexHead();
+		Symbol lexHead = sign.getLexHead();
 		pairs.add(new Pair<String,String>(LEXCAT_TOP, lexHead.getSupertag()));
 		pairs.add(new Pair<String,String>(POS_TOP, lexHead.getPOS()));
 		pairs.add(new Pair<String,String>(WORD_TOP, lexHead.getWordForm()));
 	}
 	
 	/** Adds the factors for a lexical step in the derivation of the given sign. */
-	public static void addLexFactors(Sign sign, List<Pair<String,String>> pairs) {
+	public static void addLexFactors(Symbol sign, List<Pair<String,String>> pairs) {
 		pairs.add(new Pair<String,String>(EXPANSION, LEAF));
 		addParentFactors(sign, pairs);
 	}
 	
 	/** Adds the parent factors for a step in the derivation of the given sign. */
-	public static void addParentFactors(Sign sign, List<Pair<String,String>> pairs) {
+	public static void addParentFactors(Symbol sign, List<Pair<String,String>> pairs) {
 		pairs.add(new Pair<String,String>(PARENT, sign.getSupertag()));
-		Sign lexHead = sign.getLexHead();
+		Symbol lexHead = sign.getLexHead();
 		pairs.add(new Pair<String,String>(LEXCAT_PARENT, lexHead.getSupertag()));
 		pairs.add(new Pair<String,String>(POS_PARENT, lexHead.getPOS()));
 		pairs.add(new Pair<String,String>(WORD_PARENT, lexHead.getWordForm()));
 	}
 	
 	/** Returns the factors for a unary step in the derivation of the given sign. */
-	public static void addUnaryFactors(Sign sign, List<Pair<String,String>> pairs, Sign headChild) {
+	public static void addUnaryFactors(Symbol sign, List<Pair<String,String>> pairs, Symbol headChild) {
 		pairs.add(new Pair<String,String>(EXPANSION, UNARY));
 		addParentFactors(sign, pairs);
 		pairs.add(new Pair<String,String>(HEAD, headChild.getSupertag()));
 	}
 	
 	/** Returns the factors for a binary step in the derivation of the given sign. */
-	public static void addBinaryFactors(Sign sign, List<Pair<String,String>> pairs, boolean left, Sign headChild, Sign siblingChild) {
+	public static void addBinaryFactors(Symbol sign, List<Pair<String,String>> pairs, boolean left, Symbol headChild, Symbol siblingChild) {
 		pairs.add(new Pair<String,String>(EXPANSION, (left) ? LEFT : RIGHT));
 		addParentFactors(sign, pairs);
 		pairs.add(new Pair<String,String>(HEAD, headChild.getSupertag()));
 		pairs.add(new Pair<String,String>(SIBLING, siblingChild.getSupertag()));
-		Sign siblingLexHead = siblingChild.getLexHead();
+		Symbol siblingLexHead = siblingChild.getLexHead();
 		pairs.add(new Pair<String,String>(LEXCAT_SIBLING, siblingLexHead.getSupertag()));
 		pairs.add(new Pair<String,String>(POS_SIBLING, siblingLexHead.getPOS()));
 		pairs.add(new Pair<String,String>(WORD_SIBLING, siblingLexHead.getWordForm()));
@@ -355,7 +355,7 @@ public class GenerativeSyntacticModel implements FeatureExtractor, SignScorer {
 	    		numsents++;
 	    		if (verbose) System.out.println("scoring: " + item.sentence);
 	    		else System.out.print(".");
-	    		Sign sign = item.sign;
+	    		Symbol sign = item.sign;
 	            double logprob = model.logprob(sign, true);
 	            logprobttotal += logprob;
 	            if (verbose) {

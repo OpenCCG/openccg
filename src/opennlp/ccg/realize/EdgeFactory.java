@@ -25,7 +25,6 @@ import opennlp.ccg.unify.*;
 import opennlp.ccg.synsem.*;
 import opennlp.ccg.hylo.*;
 import opennlp.ccg.util.*;
-
 import gnu.trove.*;
 
 import java.util.*;
@@ -59,7 +58,7 @@ public class EdgeFactory
     public final List<SatOp> preds;
     
     /** The sign scorer. */
-    public final SignScorer signScorer;
+    public final SymbolScorer signScorer;
     
     /** The hypertagger. */
     public final Hypertagger hypertagger;
@@ -182,12 +181,12 @@ public class EdgeFactory
     
     
     /** Constructor. */
-    public EdgeFactory(Grammar grammar, List<SatOp> preds, SignScorer signScorer) {
+    public EdgeFactory(Grammar grammar, List<SatOp> preds, SymbolScorer signScorer) {
     	this(grammar, preds, signScorer, null);
     }
     
     /** Constructor with hypertagger. */
-    public EdgeFactory(Grammar grammar, List<SatOp> preds, SignScorer signScorer, Hypertagger hypertagger) {
+    public EdgeFactory(Grammar grammar, List<SatOp> preds, SymbolScorer signScorer, Hypertagger hypertagger) {
         this.grammar = grammar;
         this.preds = preds;
         this.signScorer = signScorer;
@@ -284,7 +283,7 @@ public class EdgeFactory
 		// set missing lex preds flag
 		for (int i = retval.nextSetBit(0); i >= 0; i = retval.nextSetBit(i+1)) {
 			SatOp pred = preds.get(i);
-			if (HyloHelper.isLexPred(pred) || HyloHelper.isAttrPred(pred)) {
+			if (HyloHelper.getInstance().isLexPred(pred) || HyloHelper.getInstance().isAttrPred(pred)) {
 				hasUncoveredPreds =  true; break;
 			}
 		}
@@ -299,7 +298,7 @@ public class EdgeFactory
 
     /** Makes an edge, computing the completeness percentage, sign score, 
         and indices, and setting the most specific incomplete LF chunk (if any). */
-    protected Edge makeEdge(Sign sign, BitSet bitset, List<List<Alt>> activeLfAlts) {
+    protected Edge makeEdge(Symbol sign, BitSet bitset, List<List<Alt>> activeLfAlts) {
         BitSet indices = getIndices(sign.getCategory(), null);
         float completeness = bitset.cardinality() / (float) preds.size();
         boolean complete = (completeness == 1.0);
@@ -309,7 +308,7 @@ public class EdgeFactory
     }
 
     /** Makes an edge for the given alt sign from the given edge, after computing the sign's score. */
-    protected Edge makeAltEdge(Sign altSign, Edge edge) {
+    protected Edge makeAltEdge(Symbol altSign, Edge edge) {
         double score = signScorer.score(altSign, edge.complete());
         return new Edge(
         		altSign, edge.bitset, edge.indices, 
@@ -320,7 +319,7 @@ public class EdgeFactory
     
     /** Makes an edge consisting of two joined fragments. */
     public Edge makeJoinedEdge(Edge edge1, Edge edge2) {
-    	Sign sign = fragmentRule.applyRule(edge1.sign, edge2.sign);
+    	Symbol sign = fragmentRule.applyRule(edge1.sign, edge2.sign);
     	BitSet bitset = (BitSet) edge1.bitset.clone();
     	bitset.or(edge2.bitset);
         float completeness = bitset.cardinality() / (float) preds.size();
@@ -421,10 +420,10 @@ public class EdgeFactory
     private void extractLabeledNominals() {
         for (Iterator<SatOp> it = preds.iterator(); it.hasNext(); ) {
         	SatOp pred = it.next();
-            if (!HyloHelper.isAttrPred(pred)) continue;
-            Nominal nom1 = HyloHelper.getPrincipalNominal(pred);
+            if (!HyloHelper.getInstance().isAttrPred(pred)) continue;
+            Nominal nom1 = HyloHelper.getInstance().getPrincipalNominal(pred);
             if (!(nom1 instanceof NominalAtom)) continue;
-            String rel = HyloHelper.getRel(pred);
+            String rel = HyloHelper.getInstance().getRel(pred);
             if (rel == null || !rel.equals("mark")) continue;
             labeledNominals.add(nom1);
             it.remove();
@@ -434,8 +433,8 @@ public class EdgeFactory
     // lists the nominals in the preds
     private void listNominals() {
     	for (SatOp pred : preds) {
-            Nominal nom1 = HyloHelper.getPrincipalNominal(pred);
-            Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+            Nominal nom1 = HyloHelper.getInstance().getPrincipalNominal(pred);
+            Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
             if (nom1 instanceof NominalAtom && !nominals.containsKey(nom1)) { 
                 nominals.put(nom1, nominals.size()); 
             }
@@ -506,18 +505,18 @@ public class EdgeFactory
     private void listPairedNominals() {
         for (int i=0; i < preds.size(); i++) {
         	SatOp pred = preds.get(i);
-            if (!"tup".equals(HyloHelper.getLexPred(pred))) continue;
-            Nominal tupNom = HyloHelper.getPrincipalNominal(pred);
+            if (!"tup".equals(HyloHelper.getInstance().getLexPred(pred))) continue;
+            Nominal tupNom = HyloHelper.getInstance().getPrincipalNominal(pred);
             Nominal nom1 = null;
             Nominal nom2 = null;
             for (int j = i+1; j < preds.size(); j++) {
             	SatOp predJ = preds.get(j);
-                if (!tupNom.equals(HyloHelper.getPrincipalNominal(predJ))) break;
-                if ("Item1".equals(HyloHelper.getRel(predJ))) {
-                    nom1 = HyloHelper.getSecondaryNominal(predJ);
+                if (!tupNom.equals(HyloHelper.getInstance().getPrincipalNominal(predJ))) break;
+                if ("Item1".equals(HyloHelper.getInstance().getRel(predJ))) {
+                    nom1 = HyloHelper.getInstance().getSecondaryNominal(predJ);
                 }
-                if ("Item2".equals(HyloHelper.getRel(predJ))) {
-                    nom2 = HyloHelper.getSecondaryNominal(predJ);
+                if ("Item2".equals(HyloHelper.getInstance().getRel(predJ))) {
+                    nom2 = HyloHelper.getInstance().getSecondaryNominal(predJ);
                 }
             }
             if (nom1 == null || nom2 == null) {
@@ -540,23 +539,23 @@ public class EdgeFactory
     private void addBoundVarNominals() {
         for (int i=0; i < preds.size(); i++) {
         	SatOp pred = preds.get(i);
-            String rel = HyloHelper.getRel(pred);
+            String rel = HyloHelper.getInstance().getRel(pred);
             if (rel == null || !rel.equals("BoundVar")) continue;
-            Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+            Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
             if (!(nom2 instanceof NominalAtom)) continue;
             boundVarNominals.add(nom2);
             // check if nom2 is a tuple
             for (int j = 0; j < preds.size(); j++) {
             	SatOp predJ = preds.get(j);
-                if (!nom2.equals(HyloHelper.getPrincipalNominal(predJ))) continue;
-                if (!"tup".equals(HyloHelper.getLexPred(predJ))) continue;
+                if (!nom2.equals(HyloHelper.getInstance().getPrincipalNominal(predJ))) continue;
+                if (!"tup".equals(HyloHelper.getInstance().getLexPred(predJ))) continue;
                 // if so, add paired items as bound vars too
                 for (int k = j+1; k < preds.size(); k++) {
                 	SatOp predK = preds.get(k);
-                    if (!nom2.equals(HyloHelper.getPrincipalNominal(predK))) break;
-                    String relK = HyloHelper.getRel(predK);
+                    if (!nom2.equals(HyloHelper.getInstance().getPrincipalNominal(predK))) break;
+                    String relK = HyloHelper.getInstance().getRel(predK);
                     if ("Item1".equals(relK) || "Item2".equals(relK)) {
-                        Nominal nom2K = HyloHelper.getSecondaryNominal(predK);
+                        Nominal nom2K = HyloHelper.getInstance().getSecondaryNominal(predK);
                         if (!(nom2K instanceof NominalAtom)) continue;
                         boundVarNominals.add(nom2K);
                     }
@@ -599,10 +598,10 @@ public class EdgeFactory
     // a rel pred is indexed by atom<rel> and <rel>atom2
     // an attr pred is indexed by atom<rel>
     private static String[] predKeys(LF pred) {
-        Nominal nom = HyloHelper.getPrincipalNominal(pred);
-        String lexPred = HyloHelper.getLexPred(pred);
-        String rel = HyloHelper.getRel(pred);
-        Nominal nom2 = HyloHelper.getSecondaryNominal(pred);
+        Nominal nom = HyloHelper.getInstance().getPrincipalNominal(pred);
+        String lexPred = HyloHelper.getInstance().getLexPred(pred);
+        String rel = HyloHelper.getInstance().getRel(pred);
+        Nominal nom2 = HyloHelper.getInstance().getSecondaryNominal(pred);
         List<String> keys = new ArrayList<String>(2);
         if (nom instanceof NominalAtom && lexPred != null) 
             keys.add(nom.toString() + "(" + lexPred + ")");
@@ -750,12 +749,12 @@ public class EdgeFactory
     // NB: assumes that preds are sorted by their principal nominals, with the lex pred first
     private List<String> getCoartRels(int predIndex) {
     	SatOp pred = preds.get(predIndex);
-        Nominal nom = HyloHelper.getPrincipalNominal(pred);
+        Nominal nom = HyloHelper.getInstance().getPrincipalNominal(pred);
         List<String> retval = null;
         for (int i = predIndex+1; i < preds.size(); i++) {
         	SatOp relPred = preds.get(i);
-            if (!nom.equals(HyloHelper.getPrincipalNominal(relPred))) break;
-            String rel = HyloHelper.getRel(relPred);
+            if (!nom.equals(HyloHelper.getInstance().getPrincipalNominal(relPred))) break;
+            String rel = HyloHelper.getInstance().getRel(relPred);
             if (rel != null && grammar.lexicon.isCoartRel(rel)) { 
                 if (retval == null) retval = new ArrayList<String>(3);
                 retval.add(rel);
@@ -787,31 +786,31 @@ public class EdgeFactory
         // and similarly for type changing rules
         for (int i=0; i < preds.size(); i++) {
         	SatOp pred = preds.get(i);
-            String key = HyloHelper.getLexPred(pred);
-            String rel = HyloHelper.getRel(pred);
+            String key = HyloHelper.getInstance().getLexPred(pred);
+            String rel = HyloHelper.getInstance().getRel(pred);
             // skip if no lex pred or indexed rel (not expected)
             if (key == null && rel == null) continue;
             // update hypertagger for beta-best lookup
             if (hypertagger != null) hypertagger.setPred(i); 
-            Collection<Sign> signs = new ArrayList<Sign>();
+            Collection<Symbol> signs = new ArrayList<Symbol>();
             Collection<TypeChangingRule> typeChangingRules = new ArrayList<TypeChangingRule>();
             // add signs and rules for lex pred
             if (key != null) {
                 List<String> coartRels = getCoartRels(i);
-                Collection<Sign> lexPredSigns = lexicon.getSignsFromPred(key, coartRels);
+                Collection<Symbol> lexPredSigns = lexicon.getSymbolsForPredicate(key, coartRels);
                 if (lexPredSigns != null) { signs.addAll(lexPredSigns); }
                 Collection<TypeChangingRule> lexPredRules = grammar.rules.getRulesForPred(key);
                 if (lexPredRules != null) { typeChangingRules.addAll(lexPredRules); }
             }
             // add signs and rules for indexed rel
             if (rel != null) {
-                Collection<Sign> indexedRelSigns = lexicon.getSignsFromRel(rel);
+                Collection<Symbol> indexedRelSigns = lexicon.getSymbolsForRelation(rel);
                 if (indexedRelSigns != null) { signs.addAll(indexedRelSigns); }
                 Collection<TypeChangingRule> indexedRelRules = grammar.rules.getRulesForRel(rel);
                 if (indexedRelRules != null) { typeChangingRules.addAll(indexedRelRules); }
             }
             // create initial and marked edges for each sign, updating feature map
-            for (Sign sign : signs) {
+            for (Symbol sign : signs) {
                 List<Edge> initialEdgesForSign = createInitialEdges(sign, i);
                 if (initialEdgesForSign != null) {
                     for (Edge initialEdge : initialEdgesForSign) {
@@ -890,7 +889,7 @@ public class EdgeFactory
     }
     
     // return null if LF doesn't unify with preds
-    private List<Edge> createInitialEdges(Sign sign, int predIndex) {
+    private List<Edge> createInitialEdges(Symbol sign, int predIndex) {
         // get parts of sign 
         List<Word> words = sign.getWords();
         Category cat = sign.getCategory();
@@ -912,8 +911,8 @@ public class EdgeFactory
             // index subcategorized semantically null words
             featureLicenser.indexSemanticallyNullWords(filledCat);
             // update lex origins for new sign
-            Sign newSign = new Sign(words, filledCat);
-            newSign.setOrigin();
+            Symbol newSign = new Symbol(words, filledCat);
+            HyloHelper.getInstance().setEntityRealizer(newSign.getCategory().getLF(), newSign);
             // and add new edge
             List<List<Alt>> activeLfAlts = getActiveLfAlts(lfAlts, bitset);
             retval.add(makeEdge(newSign, bitset, activeLfAlts));
@@ -964,7 +963,7 @@ public class EdgeFactory
 
         // unify with indexed pred
         UnifyControl.reindex(cat, cat2); 
-        List<SatOp> lfPreds = HyloHelper.getPreds(cat.getLF());
+        List<SatOp> lfPreds = HyloHelper.getInstance().getPreds(cat.getLF());
         Substitution subst = null;
         SatOp indexedPred = preds.get(predIndex);
         int lfPredIndex = -1;
@@ -1018,7 +1017,7 @@ public class EdgeFactory
                     if (indices != null) matchingPredIndices.addAll(indices);
                 }
                 if (matchingPredIndices.isEmpty()) {
-                	if (useRelaxedRelationMatching && HyloHelper.isRelPred(lfPred)) continue; // skip
+                	if (useRelaxedRelationMatching && HyloHelper.getInstance().isRelPred(lfPred)) continue; // skip
                 	else return null; // fail
                 }
                 // try extending each subst/bitset: 
@@ -1056,7 +1055,7 @@ public class EdgeFactory
                     }
                 }
                 if (retval.isEmpty()) {
-                	if (useRelaxedRelationMatching && HyloHelper.isRelPred(lfPred)) {
+                	if (useRelaxedRelationMatching && HyloHelper.getInstance().isRelPred(lfPred)) {
                 		retval.addAll(prev);
                 		continue; // skip
                 	}
@@ -1160,22 +1159,22 @@ public class EdgeFactory
             int numNewEdges = newEdges.size(); // get num before adding any more
             for (int i = 0; i < numNewEdges; i++) {
                 Edge resultEdge = newEdges.get(i);
-                Sign resultSign = resultEdge.sign;
+                Symbol resultSign = resultEdge.sign;
                 Category resultCat = resultSign.getCategory();
                 Rule rule = resultSign.getDerivationHistory().getRule();
-                Sign[] resultInputs = resultSign.getDerivationHistory().getInputs(); 
+                Symbol[] resultInputs = resultSign.getDerivationHistory().getInputs(); 
                 boolean rightward = (resultInputs[0] == next.sign);
                 boolean lefthead = (resultSign.getLexHead() == resultInputs[0].getLexHead());
                 for (int j = 0; j < edge.altEdges.size(); j++) {
                     Edge furtherEdge = edge.altEdges.get(j);
                     if (furtherEdge == edge) continue;
-                    Sign[] signs = (rightward) 
-                        ? new Sign[] { next.sign, furtherEdge.sign }
-                        : new Sign[] { furtherEdge.sign, next.sign };
-                    Sign lexHead = (rightward == lefthead) 
+                    Symbol[] signs = (rightward) 
+                        ? new Symbol[] { next.sign, furtherEdge.sign }
+                        : new Symbol[] { furtherEdge.sign, next.sign };
+                    Symbol lexHead = (rightward == lefthead) 
                     	? next.sign.getLexHead() 
             			: furtherEdge.sign.getLexHead(); 
-                	Sign altSign = Sign.createDerivedSignWithNewLF(resultCat, signs, rule, lexHead);
+                	Symbol altSign = Symbol.createDerivedSignWithNewLF(resultCat, signs, rule, lexHead);
                     newEdges.add(makeAltEdge(altSign, resultEdge));
                 }
             }
@@ -1200,14 +1199,14 @@ public class EdgeFactory
         if (gluingFragments) fragCompletion = completesChunk(edgeA, edgeB);
         
         // A B combos
-        List<Sign> results;
+        List<Symbol> results;
         if (gluingFragments) results = generalRules.applyGlueRule(edgeA.sign, edgeB.sign);
         else results = generalRules.applyBinaryRules(edgeA.sign, edgeB.sign);
         binaryRuleApps++; 
         int numResults = results.size();
         
         // B A combos
-        List<Sign> reversedResults = Collections.emptyList();
+        List<Symbol> reversedResults = Collections.emptyList();
         if (bothDirections) {
         	if (gluingFragments) reversedResults = generalRules.applyGlueRule(edgeB.sign, edgeA.sign);
         	else reversedResults = generalRules.applyBinaryRules(edgeB.sign, edgeA.sign);
@@ -1226,7 +1225,7 @@ public class EdgeFactory
             // check for alt completion when gluing fragments
             if (gluingFragments && union.cardinality() > cardBefore) fragCompletion = true;
             for (int i = 0; i < numResults; i++) {
-                Sign sign = results.get(i);
+                Symbol sign = results.get(i);
                 if (fragCompletion) { ((AtomCat)sign.getCategory()).fragCompletion = true; }
                 Edge resultEdge = makeEdge(sign, union, activeLfAlts); 
                 retval.add(resultEdge);
@@ -1236,7 +1235,7 @@ public class EdgeFactory
                 }
             }
             for (int i = 0; i < numReversedResults; i++) {
-                Sign sign = reversedResults.get(i);
+                Symbol sign = reversedResults.get(i);
                 if (fragCompletion) { ((AtomCat)sign.getCategory()).fragCompletion = true; }
                 Edge resultEdge = makeEdge(sign, union, activeLfAlts); 
                 retval.add(resultEdge);
@@ -1275,13 +1274,13 @@ public class EdgeFactory
         
         if (!gluingFragments) {
 	        	
-	        List<Sign> genResults = generalRules.applyUnaryRules(edge.sign);
+	        List<Symbol> genResults = generalRules.applyUnaryRules(edge.sign);
 	        unaryRuleApps++;
 	        // make edges for results, updating edge combos
 	        if (genResults.size() > 0) {
 	            if (retval == null) retval = new ArrayList<Edge>(genResults.size());
 	            for (int i = 0; i < genResults.size(); i++) {
-	                Sign sign = genResults.get(i);
+	                Symbol sign = genResults.get(i);
 					// check for unary rule cycle; skip result if found
 	                if (sign.getDerivationHistory().containsCycle()) continue;
 	                Edge resultEdge = makeEdge(sign, edge.bitset, edge.activeLfAlts); 
@@ -1291,7 +1290,7 @@ public class EdgeFactory
 	        }
 	        
 	        // do rule instances
-	        Sign[] signs = { edge.sign };
+	        Symbol[] signs = { edge.sign };
 	        for (int i = 0; i < ruleInstances.size(); i++) {
 	            RuleInstance ruleInst = ruleInstances.get(i);
 	            // check sem overlap
@@ -1305,7 +1304,7 @@ public class EdgeFactory
 	            if (combinedLfAlts == null) continue;
 	        
 	            // apply rule
-	            List<Sign> instResults = new ArrayList<Sign>(1);
+	            List<Symbol> instResults = new ArrayList<Symbol>(1);
 	            ruleInst.rule.applyRule(signs, instResults);
 	            unaryRuleInstApps++;
 	            if (instResults.size() > 0) {
@@ -1314,7 +1313,7 @@ public class EdgeFactory
 	                union.or(ruleInst.bitset);
 	                List<List<Alt>> activeLfAlts = getActiveLfAlts(combinedLfAlts, union);
 	                for (int j = 0; j < instResults.size(); j++) {
-	                    Sign sign = instResults.get(j);
+	                    Symbol sign = instResults.get(j);
 	    				// check for unary rule cycle; skip result if found
 	                    if (sign.getDerivationHistory().containsCycle()) continue;
 	                    Edge resultEdge = makeEdge(sign, union, activeLfAlts); 
@@ -1428,20 +1427,20 @@ public class EdgeFactory
     private void addAltsFromCombos(Edge edge, List<EdgeCombos.CatCombo> combos, boolean rightward, List<Edge> results) {
         for (EdgeCombos.CatCombo combo : combos) {
             Edge resultEdge = combo.resultEdge;
-            Sign resultSign = resultEdge.sign;
+            Symbol resultSign = resultEdge.sign;
             Category resultCat = resultSign.getCategory();
             Rule rule = resultSign.getDerivationHistory().getRule();
-            Sign[] resultInputs = resultSign.getDerivationHistory().getInputs(); 
+            Symbol[] resultInputs = resultSign.getDerivationHistory().getInputs(); 
             boolean lefthead = (resultSign.getLexHead() == resultInputs[0].getLexHead());
             List<Edge> comboEdges = combo.inputEdge.altEdges;
             for (Edge comboEdge : comboEdges) {
-                Sign[] signs = (rightward) 
-                    ? new Sign[] { edge.sign, comboEdge.sign }
-                    : new Sign[] { comboEdge.sign, edge.sign };
-                Sign lexHead = (rightward == lefthead) 
+                Symbol[] signs = (rightward) 
+                    ? new Symbol[] { edge.sign, comboEdge.sign }
+                    : new Symbol[] { comboEdge.sign, edge.sign };
+                Symbol lexHead = (rightward == lefthead) 
                 	? edge.sign.getLexHead() 
         			: comboEdge.sign.getLexHead();
-                Sign altSign = Sign.createDerivedSignWithNewLF(resultCat, signs, rule, lexHead);
+                Symbol altSign = Symbol.createDerivedSignWithNewLF(resultCat, signs, rule, lexHead);
                 results.add(makeAltEdge(altSign, resultEdge));
             }
         }
@@ -1450,12 +1449,12 @@ public class EdgeFactory
     // adds alt edges for the given edge and unary results to results
     private void addAltsFromUnaryResults(Edge edge, List<Edge> unaryResults, List<Edge> results) {
         for (Edge resultEdge : unaryResults) {
-            Sign resultSign = resultEdge.sign;
+            Symbol resultSign = resultEdge.sign;
             Category resultCat = resultSign.getCategory();
             Rule rule = resultSign.getDerivationHistory().getRule();
-            Sign[] signs = { edge.sign };
-            Sign lexHead = edge.sign.getLexHead();
-            Sign altSign = Sign.createDerivedSignWithNewLF(resultCat, signs, rule, lexHead);
+            Symbol[] signs = { edge.sign };
+            Symbol lexHead = edge.sign.getLexHead();
+            Symbol altSign = Symbol.createDerivedSignWithNewLF(resultCat, signs, rule, lexHead);
             results.add(makeAltEdge(altSign, resultEdge));
         }
     }
@@ -1510,7 +1509,7 @@ public class EdgeFactory
     private void initNoSemEdges() {
         // lookup signs by special index rel constant NO_SEM_FLAG
         lexicon.setSupertagger(null); // turn off hypertagger first
-        Collection<Sign> noSemSigns = lexicon.getSignsFromRel(Lexicon.NO_SEM_FLAG);
+        Collection<Symbol> noSemSigns = lexicon.getSymbolsForRelation(Lexicon.NO_SEM_FLAG);
         lexicon.setSupertagger(hypertagger); // reset hypertagger
         if (noSemSigns == null) return;
         // sets for accumulating no sem edges
@@ -1524,7 +1523,7 @@ public class EdgeFactory
         int numInstEdges, numUninstEdges;
         do {
         	numInstEdges = instEdges.size(); numUninstEdges = uninstEdges.size();
-	        for (Sign sign : noSemSigns) {
+	        for (Symbol sign : noSemSigns) {
 	            Category cat = sign.getCategory();
 	            // get licensed, potentially instantiated cats
 	            instantiatedCats.clear();
@@ -1535,7 +1534,7 @@ public class EdgeFactory
 	            for (Category instCat : instantiatedCats) {
                     featureLicenser.updateFeatureMap(instCat);
                     featureLicenser.indexSemanticallyNullWords(instCat);
-	                Sign instSign = new Sign(sign.getWords(), instCat);
+	                Symbol instSign = new Symbol(sign.getWords(), instCat);
 	                instEdges.add(makeEdge(instSign, new BitSet(preds.size()), emptyLfAlts));
 	            }
 	            // add edges for uninstantiated cats to no-sem edges, updating
@@ -1543,7 +1542,7 @@ public class EdgeFactory
 	            for (Category uninstCat : uninstantiatedCats) {
                     featureLicenser.updateFeatureMap(uninstCat);
                     featureLicenser.indexSemanticallyNullWords(uninstCat);
-	                Sign uninstSign = new Sign(sign.getWords(), uninstCat);
+	                Symbol uninstSign = new Symbol(sign.getWords(), uninstCat);
 	                Edge noSemEdge = makeEdge(uninstSign, new BitSet(preds.size()), emptyLfAlts); 
 	                uninstEdges.add(noSemEdge);
 	            }

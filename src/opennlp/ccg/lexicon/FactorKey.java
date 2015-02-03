@@ -43,7 +43,7 @@ public class FactorKey {
         Null vals are replaced with &lt;NULL&gt;. */
     public static Object getKey(String attr, String val) {
         if (val == null) val = "<NULL>";
-        if (attr == Tokenizer.WORD_ATTR) return val;
+        if (attr == Tokenizer.WORD_ASSOCIATE) return val;
         else return Interner.globalIntern(new FactorKey(attr, val));
     }
 

@@ -38,10 +38,10 @@ public abstract class ReRankingPerceptronScorer extends PerceptronScorer impleme
     public void setFullModel(boolean on) { useFullModel = on; }
 
 	/** The base scorer, for use when the full model is turned off. */
-    protected SignScorer baseScorer;
+    protected SymbolScorer baseScorer;
 
     /** Returns the base scorer, using the given feature extractor if desired. */
-    abstract protected SignScorer getBaseScorer(FeatureExtractor featureExtractor);
+    abstract protected SymbolScorer getBaseScorer(FeatureExtractor featureExtractor);
 
     /** Constructor that configures the base scorer using getBaseScorer. */
 	public ReRankingPerceptronScorer(FeatureExtractor featureExtractor, Model model) {
@@ -50,7 +50,7 @@ public abstract class ReRankingPerceptronScorer extends PerceptronScorer impleme
 	}
 
     /** Scores the sign with the full or base model, according to the full model flag. */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
 		if (useFullModel) return super.score(sign, complete);
 		else return baseScorer.score(sign, complete);
     }

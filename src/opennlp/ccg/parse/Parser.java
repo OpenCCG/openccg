@@ -32,477 +32,532 @@ import java.util.*;
 import java.util.prefs.Preferences;
 
 /**
- * The parser is a CKY chart parser for CCG, optionally  
- * with iterative beta-best supertagging and n-best output.
+ * The parser is a CKY chart parser for CCG, optionally with iterative beta-best
+ * supertagging and n-best output.
  *
- * @author      Jason Baldridge
- * @author      Gann Bierner
- * @author      Michael White
- * @version     $Revision: 1.38 $, $Date: 2011/08/27 19:27:00 $
+ * @author Jason Baldridge
+ * @author Gann Bierner
+ * @author Michael White
+ * @author Daniel Couto-Vale
+ * @version $Revision: 1.38 $, $Date: 2011/08/27 19:27:00 $
  */
-public class Parser 
-{
-    /** Preference key for time limit on parsing. */
-    public static final String PARSE_TIME_LIMIT = "Parse Time Limit";
-    
-    /** A constant indicating no time limit on parsing. */
-    public static final int NO_TIME_LIMIT = 0;
+public class Parser {
 
-    /** Preference key for edge limit on parsing. */
-    public static final String PARSE_EDGE_LIMIT = "Parse Edge Limit";
-    
-    /** A constant indicating no edge limit on parsing. */
-    public static final int NO_EDGE_LIMIT = 0;
+	/** Preference key for time limit on parsing. */
+	public static final String PARSE_TIME_LIMIT = "Parse Time Limit";
 
-    /** Preference key for pruning the number of signs kept per equivalence class. */
-    public static final String PARSE_PRUNING_VALUE = "Parse Pruning Value";
+	/** A constant indicating no time limit on parsing. */
+	public static final int NO_TIME_LIMIT = 0;
 
-    /** Preference key for pruning the number of edges kept per cell. */
-    public static final String PARSE_CELL_PRUNING_VALUE = "Parse Cell Pruning Value";
+	/** Preference key for edge limit on parsing. */
+	public static final String PARSE_SCORED_SYMBOL_LIMIT = "Parse Edge Limit";
 
-    /** A constant indicating no pruning of signs per equivalence class. */
-    public static final int NO_PRUNING = 0;
+	/** A constant indicating no edge limit on parsing. */
+	public static final int NO_SCORED_SYMBOL_LIMIT = 0;
 
-    /** Preference key for whether to use lazy unpacking. */
-    public static final String PARSE_LAZY_UNPACKING = "Parse Lazy Unpacking";
-    
+	/**
+	 * Preference key for pruning the number of signs kept per equivalence
+	 * class.
+	 */
+	public static final String PARSE_PRUNE_LIMIT = "Parse Pruning Value";
+
+	/** Preference key for pruning the number of edges kept per cell. */
+	public static final String FORM_PRUNE_LIMIT = "Parse Cell Pruning Value";
+
+	/** A constant indicating no pruning of signs per equivalence class. */
+	public static final int NO_PRUNE_LIMIT = 0;
+
+	/** Preference key for whether to use lazy unpacking. */
+	public static final String LAZY_UNPACKING = "Parse Lazy Unpacking";
+
 	/** The grammar. */
 	public final Grammar grammar;
-	
-    /** The lexicon used to create edges. */    
-    public final Lexicon lexicon;
-    
-    /** The rules used to create edges. */
-    public final RuleGroup rules;
-    
-    /** Flag for whether to show the chart for failed parses. */
-    public boolean debugParse = false;
-    
+
+	/** The lexicon used to create edges. */
+	public final Lexicon lexicon;
+
+	/** The rules used to create edges. */
+	public final RuleGroup rules;
+
+	/** Flag for whether to show the chart for failed parses. */
+	public boolean debugParse = false;
+
 	/** The sign scorer (or null if none). */
-	protected SignScorer signScorer = null;
-	
+	protected SymbolScorer signScorer = null;
+
 	/** The "n" for n-best pruning. (Default is none.) */
 	protected int pruneVal = -1;
-	
+
 	/** The cell pruning value. (Default is none.) */
 	protected int cellPruneVal = -1;
-	
+
 	/** The lazy unpacking flag. (Default is none.) */
-	protected Boolean lazyUnpacking = null;
-	
-    /** Supertagger to use. (Default is none.) */
-    protected Supertagger supertagger = null;
-    
-    /** Flag for whether to use the supertagger in the most-to-least restrictive direction. */
-    protected boolean stMostToLeastDir = true;
-    
-    /** Time limit in milliseconds. (Default is none.) */
-    protected int timeLimit = -1; 
-    
-    /** Edge limit. (Default is none.) */
-    protected int edgeLimit = -1; 
-    
-    // start time for chart construction
-    private long startTime = 0;
-    
-    // lex lookup time
-    private int lexTime = 0;
-    
-    // parse time
-    private int parseTime = 0;
-    
-    // chart construction time
-    private int chartTime = 0;
-    
-    // unpacking time
-    private int unpackingTime = 0;
-    
-    // time limit to use
-    private int timeLimitToUse = NO_TIME_LIMIT;
-    
-    // edge limit to use
-    private int edgeLimitToUse = NO_EDGE_LIMIT;
-    
-    // pruning value to use
-    private int pruneValToUse = NO_PRUNING;
-    
-    // pruning value to use
-    private int cellPruneValToUse = NO_PRUNING;
-    
-    // lazy unpacking flag to use
-    private boolean lazyUnpackingToUse = true;
-    
-    // current chart
-    private Chart chart = null;
-    
-    // parse results
-    private ArrayList<Sign> result;
+	protected boolean lazyUnpacking = true;
 
-    // parse scores
-    private ArrayList<Double> scores;
+	/** Supertagger to use. (Default is none.) */
+	protected Supertagger supertagger = null;
 
-    // flag for whether to glue fragments currently
-    private boolean gluingFragments = false;
-    
-    /** Constructor. */
-    public Parser(Grammar grammar) {
-    	this.grammar = grammar;
-        this.lexicon = grammar.lexicon;
-        this.rules = grammar.rules;
-    }
-    
-	/** Sets the sign scorer. */
-	public void setSignScorer(SignScorer signScorer) { this.signScorer = signScorer; }
-	
-	/** Sets the time limit. */
-	public void setTimeLimit(int timeLimit) { this.timeLimit = timeLimit; }
-	
-	/** Sets the edge limit. */
-	public void setEdgeLimit(int edgeLimit) { this.edgeLimit = edgeLimit; }
-	
-	/** Sets the n-best pruning val. */
-	public void setPruneVal(int n) { pruneVal = n; }
-	
-	/** Sets the cell pruning val. */
-	public void setCellPruneVal(int n) { cellPruneVal = n; }
-	
-	/** Sets the lazy unpacking flag. */
-	public void setLazyUnpacking(Boolean b) { this.lazyUnpacking = b; }
-	
+	/**
+	 * Flag for whether to use the supertagger in the most-to-least restrictive
+	 * direction.
+	 */
+	protected boolean stMostToLeastDir = true;
+
+	/**
+	 * Flag for whether to glue formal fragments
+	 */
+	private boolean gluingFlag = false;
+
+	/**
+	 * The product of parsing
+	 */
+	private ParseProduct product;
+
+	/**
+	 * The chart completer config
+	 */
+	private ChartCompleterConfig config;
+
+	/**
+	 * @param grammar the grammar
+	 */
+	public Parser(Grammar grammar) {
+		this.grammar = grammar;
+		this.lexicon = grammar.lexicon;
+		this.rules = grammar.rules;
+		this.config = new ChartCompleterConfig();
+	}
+
+	/**
+	 * @param symbolScorer the symbol scorer
+	 */
+	public final void setSymbolScorer(SymbolScorer symbolScorer) {
+		config.symbolScorer = symbolScorer;
+	}
+
+	/**
+	 * @param timeLimit the time limit for parsing
+	 */
+	public final void setTimeLimit(int timeLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.timeLimit = makeValueToUse(preferences, timeLimit, PARSE_TIME_LIMIT, NO_TIME_LIMIT);
+	}
+
+	/**
+	 * @param scoredSymbolLimit the limit of scored symbols for parsing
+	 */
+	public final void setScoredSymbolLimit(int scoredSymbolLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.scoredSymbolLimit = makeValueToUse(preferences, scoredSymbolLimit,
+				PARSE_SCORED_SYMBOL_LIMIT, NO_SCORED_SYMBOL_LIMIT);
+	}
+
+	/**
+	 * @param pruneLimit the prune limit of the chart for scored symbols
+	 */
+	public final void setPruneLimit(int pruneLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.pruneLimit = makeValueToUse(preferences, pruneLimit, PARSE_PRUNE_LIMIT,
+				NO_PRUNE_LIMIT);
+	}
+
+	/**
+	 * @param formPruneLimit the prune limit of forms for scored symbols
+	 */
+	public final void setCellPruneVal(int formPruneLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.formPruneLimit = makeValueToUse(preferences, formPruneLimit, FORM_PRUNE_LIMIT,
+				NO_PRUNE_LIMIT);
+	}
+
+	/**
+	 * @param lazyUnpacking lazy unpacking
+	 */
+	public final void setLazyUnpacking(boolean lazyUnpacking) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		this.lazyUnpacking = makeValueToUse(preferences, lazyUnpacking, LAZY_UNPACKING, true);
+	}
+
 	/** Sets the supertagger. */
-	public void setSupertagger(Supertagger supertagger) { this.supertagger = supertagger; }
+	public final void setSupertagger(Supertagger supertagger) {
+		this.supertagger = supertagger;
+	}
 
 	/** Sets the supertagger most-to-least restrictive direction flag. */
-	public void setSupertaggerMostToLeastRestrictiveDirection(boolean bool) {
-		stMostToLeastDir = bool;
+	public final void setSupertaggerMostToLeastRestrictiveDirection(boolean bool) {
+		this.stMostToLeastDir = bool;
 	}
-	
-    /**
-     * Parses a string.
-     *
-     * @param s the string
-     * @exception ParseException thrown if a parse can't be found for the
-     *            entire string
-     */
-    public void parse(String s) throws ParseException {
-        // tokenize
-        List<Word> words = lexicon.tokenizer.tokenize(s);
-        // parse words
-        parse(words);
-    }
-    
-    /**
-     * Parses a list of words.
-     */
-    public void parse(List<Word> words) throws ParseException {
-    	// set up timing: use limit from prefs unless explicitly set
-		Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
-    	if (timeLimit >= 0) timeLimitToUse = timeLimit;
-    	else timeLimitToUse = prefs.getInt(PARSE_TIME_LIMIT, NO_TIME_LIMIT);
-    	if (edgeLimit >= 0) edgeLimitToUse = edgeLimit;
-    	else edgeLimitToUse = prefs.getInt(PARSE_EDGE_LIMIT, NO_EDGE_LIMIT);
-    	if (pruneVal >= 0) pruneValToUse = pruneVal; 
-    	else pruneValToUse = prefs.getInt(PARSE_PRUNING_VALUE, NO_PRUNING);
-    	if (cellPruneVal >= 0) cellPruneValToUse = cellPruneVal; 
-    	else cellPruneValToUse = prefs.getInt(PARSE_CELL_PRUNING_VALUE, NO_PRUNING);
-    	if (lazyUnpacking != null) lazyUnpackingToUse = lazyUnpacking;
-    	else lazyUnpackingToUse = prefs.getBoolean(PARSE_LAZY_UNPACKING, true);
-    	// supertagger case: iterative beta-best
-    	if (supertagger != null) {
-    		parseWithSupertagger(words);
-    		return;
-    	}
-    	// otherwise just once
-        try {
-        	// init
-        	long lexStartTime = System.currentTimeMillis();
-            UnifyControl.startUnifySequence();
-            // get entries for each word
-            List<SignHash> entries = new ArrayList<SignHash>(words.size());
-            for (Word w : words) {
-            	entries.add(lexicon.getSignsFromWord(w));
-            }
-            lexTime = (int) (System.currentTimeMillis() - lexStartTime);
-            // do parsing
-            parseEntries(entries);
-        } catch (LexException e) {
-        	setGiveUpTime();
-        	String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
-        	if (debugParse) System.out.println(msg);
-        	throw new ParseException(msg);
-        }
-		catch (ParseException e) {
-        	setGiveUpTime();
+
+	/**
+	 * Parses a character sequence.
+	 *
+	 * @param string the character sequence
+	 * @return 
+	 * @exception ParseException thrown if a parse can't be found for the entire
+	 *                string
+	 */
+	public final ParseProduct parse(String string) throws ParseException {
+		List<Word> words = lexicon.tokenizer.tokenize(string);
+		return parse(words);
+	}
+
+	/**
+	 * Parses a list of words
+	 * 
+	 * @param words the list of words
+	 * @return 
+	 * @throws ParseException
+	 */
+	public final ParseProduct parse(List<Word> words) throws ParseException {
+		if (supertagger != null) {
+			return parseIterativeBetaBest(words);
+		} else {
+			return parseOnce(words);
+		}
+	}
+
+	/**
+	 * Parses a list of words
+	 * 
+	 * @param words the list of words
+	 * @return 
+	 * @throws ParseException
+	 */
+	private final ParseProduct parseOnce(List<Word> words) throws ParseException {
+		
+		try {
+			product = new ParseProduct();
+			// init
+			long lexStartTime = System.currentTimeMillis();
+			UnifyControl.startUnifySequence();
+			// get entries for each word
+			List<SymbolHash> entries = new ArrayList<SymbolHash>(words.size());
+			for (Word w : words) {
+				entries.add(lexicon.getSymbolsForWord(w));
+			}
+			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
+			// do parsing
+			product.setStartTime(System.currentTimeMillis());
+			product.setChartCompleter(buildChartCompleter(entries));
+			parseEntries(product.getChartCompleter());
+			return product;
+		} catch (LexException e) {
+			setGiveUpTime();
+			String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
+			if (debugParse)
+				System.out.println(msg);
+			throw new ParseException(msg);
+		} catch (ParseException e) {
+			setGiveUpTime();
 			// show chart for failed parse if apropos
 			if (debugParse) {
 				System.out.println(e);
 				System.out.println("Chart for failed parse:");
-				chart.printChart();
+				product.getChartCompleter().print(System.out);
 			}
-        	// rethrow
+			// rethrow
 			throw e;
 		}
-    }
+	}
 
-    // iterative beta-best parsing
-    private void parseWithSupertagger(List<Word> words) throws ParseException {
-    	// set supertagger in lexicon
-    	grammar.lexicon.setSupertagger(supertagger);
-    	// ensure gluing off
-    	gluingFragments = false;
-    	// reset beta
-    	if (stMostToLeastDir) supertagger.resetBeta();
-    	else supertagger.resetBetaToMax();
-    	// loop
-    	boolean done = false;
-    	while (!done) {
-    		try {
-    	    	// init
-            	long lexStartTime = System.currentTimeMillis();
-    	        UnifyControl.startUnifySequence();
-                // get filtered entries for each word
-                List<SignHash> entries = new ArrayList<SignHash>(words.size());
-                supertagger.mapWords(words);
-                for (int i=0; i < words.size(); i++) {
-                	supertagger.setWord(i);
-                    Word word = words.get(i);
-            		entries.add(lexicon.getSignsFromWord(word));
-                }
-                lexTime = (int) (System.currentTimeMillis() - lexStartTime);
-                // do parsing
-                parseEntries(entries);
-                // done
-                done = true;
-            	// reset supertagger in lexicon, turn gluing off
-            	grammar.lexicon.setSupertagger(null);
-            	gluingFragments = false;
-    		}
-    		catch (LexException e) {
-    			// continue if more betas
-    			if (stMostToLeastDir && supertagger.hasMoreBetas()) {
-    				supertagger.nextBeta();
-    			}
-    			// otherwise give up
-    			else {
-    	        	setGiveUpTime();
-    	        	// reset supertagger in lexicon, turn gluing off
-    	        	grammar.lexicon.setSupertagger(null);
-                	gluingFragments = false;
-    	        	// throw parse exception
-    	        	String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
-    	        	if (debugParse) System.out.println(msg);
-    	            throw new ParseException(msg);
-    			}
-    		}
-    		catch (ParseException e) {
-    			// check if limits exceeded
-    			boolean outwith = e.getMessage() == ParseException.EDGE_LIMIT_EXCEEDED || 
-					e.getMessage() == ParseException.TIME_LIMIT_EXCEEDED;
-    			// continue if more betas and limits not exceeded
-    			if (stMostToLeastDir && supertagger.hasMoreBetas() && !outwith) 
-    				supertagger.nextBeta();
-    			// or if limits exceeded and moving in the opposite direction
-    			else if (!stMostToLeastDir && supertagger.hasLessBetas() && outwith)
-    				supertagger.previousBeta();
-    			// otherwise try glue rule, unless already on
-    			else if (!gluingFragments) {
-    				supertagger.resetBeta(); // may as well use most restrictive supertagger setting with glue rule
-    				gluingFragments = true;
-    			}
-    			// otherwise give up
-    			else {
-    	        	setGiveUpTime();
-    				// show chart for failed parse if apropos
-    				if (debugParse) {
-    					System.out.println(e);
-	    				System.out.println("Chart for failed parse:");
-	    				chart.printChart();
-    				}
-    	        	// reset supertagger in lexicon, turn gluing off
-    	        	grammar.lexicon.setSupertagger(null);
-                	gluingFragments = false;
-    	        	// rethrow
-    				throw e;
-    			}
-    		}
-    	}
-    }
-    
-    /**
-     * Returns the results of the parse.
-     */
-    public List<Sign> getResult() { return result; }
+	/**
+	 * Helper to choose value
+	 * 
+	 * @param preferences the preferences
+	 * @param value a given value
+	 * @param valueKey the value key in the preferences
+	 * @param valueDefault the value default
+	 * @return the value to use
+	 */
+	private final Boolean makeValueToUse(Preferences preferences, Boolean value, String valueKey,
+			Boolean valueDefault) {
+		if (value != null) {
+			return value;
+		} else {
+			return preferences.getBoolean(valueKey, valueDefault);
+		}
+	}
 
-    /**
-     * Returns the corresponding scores for the results of the parse.
-     */
-    public List<Double> getScores() { return scores; }
+	/**
+	 * Helper to choose value
+	 * 
+	 * @param preferences the preferences
+	 * @param value a given value
+	 * @param valueKey the value key in the preferences
+	 * @param valueDefault the value default
+	 * @return the value to use
+	 */
+	private final static int makeValueToUse(Preferences preferences, int value, String valueKey,
+			int valueDefault) {
+		if (value >= 0) {
+			return value;
+		} else {
+			return preferences.getInt(valueKey, valueDefault);
+		}
+	}
 
-	/** Returns the edge count prior to unpacking. */
-	public int edgeCount() { return (chart != null) ? chart.edgeCount() : 0; }
-	
-	/** Returns the edge count while unpacking. */
-	public int unpackingEdgeCount() { return (chart != null) ? chart.unpackingEdgeCount() : 0; }
+	// iterative beta-best parsing
+	private final ParseProduct parseIterativeBetaBest(List<Word> words) throws ParseException {
+		// set supertagger in lexicon
+		product = new ParseProduct();
+		grammar.lexicon.setSupertagger(supertagger);
+		// ensure gluing off
+		gluingFlag = false;
+		// reset beta
+		if (stMostToLeastDir)
+			supertagger.resetBeta();
+		else
+			supertagger.resetBetaToMax();
+		// loop
+		boolean done = false;
+		while (!done) {
+			try {
+				// init
+				long lexStartTime = System.currentTimeMillis();
+				UnifyControl.startUnifySequence();
+				// get filtered entries for each word
+				List<SymbolHash> entries = new ArrayList<SymbolHash>(words.size());
+				supertagger.mapWords(words);
+				for (int i = 0; i < words.size(); i++) {
+					supertagger.setWord(i);
+					Word word = words.get(i);
+					entries.add(lexicon.getSymbolsForWord(word));
+				}
+				product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
+				;
+				// do parsing
 
-	/** Returns the max cell size prior to unpacking. */
-	public int maxCellSize() { return (chart != null) ? chart.maxCellSize() : 0; }
-	
-	/** Returns the lexical lookup time for the latest parse. */
-	public int getLexTime() { return lexTime; }
-	
-	/** Returns the overall parse time (but excluding lex lookup) for the latest parse. */
-	public int getParseTime() { return parseTime; }
-	
-	/** Returns the time spent constructing the chart. */
-	public int getChartTime() { return chartTime; }
-	
-	/** Returns the time spent unpacking. */
-	public int getUnpackingTime() { return unpackingTime; }
-	
+				// set up chart
+				product.setStartTime(System.currentTimeMillis());
+				product.setChartCompleter(buildChartCompleter(entries));
+				parseEntries(product.getChartCompleter());
+				// done
+				done = true;
+				// reset supertagger in lexicon, turn gluing off
+				grammar.lexicon.setSupertagger(null);
+				gluingFlag = false;
+			} catch (LexException e) {
+				// continue if more betas
+				if (stMostToLeastDir && supertagger.hasMoreBetas()) {
+					supertagger.nextBeta();
+				}
+				// otherwise give up
+				else {
+					setGiveUpTime();
+					// reset supertagger in lexicon, turn gluing off
+					grammar.lexicon.setSupertagger(null);
+					gluingFlag = false;
+					// throw parse exception
+					String msg = "Unable to retrieve lexical entries:\n\t" + e.toString();
+					if (debugParse)
+						System.out.println(msg);
+					throw new ParseException(msg);
+				}
+			} catch (ParseException e) {
+				// check if limits exceeded
+				boolean outwith = e.getMessage() == ParseException.EDGE_LIMIT_EXCEEDED
+						|| e.getMessage() == ParseException.TIME_LIMIT_EXCEEDED;
+				// continue if more betas and limits not exceeded
+				if (stMostToLeastDir && supertagger.hasMoreBetas() && !outwith)
+					supertagger.nextBeta();
+				// or if limits exceeded and moving in the opposite direction
+				else if (!stMostToLeastDir && supertagger.hasLessBetas() && outwith)
+					supertagger.previousBeta();
+				// otherwise try glue rule, unless already on
+				else if (!gluingFlag) {
+					supertagger.resetBeta(); // may as well use most restrictive
+												// supertagger setting with glue
+												// rule
+					gluingFlag = true;
+				}
+				// otherwise give up
+				else {
+					setGiveUpTime();
+					// show chart for failed parse if apropos
+					if (debugParse) {
+						System.out.println(e);
+						System.out.println("Chart for failed parse:");
+						product.getChartCompleter().print(System.out);
+					}
+					// reset supertagger in lexicon, turn gluing off
+					grammar.lexicon.setSupertagger(null);
+					gluingFlag = false;
+					// rethrow
+					throw e;
+				}
+			}
+		}
+		return product;
+	}
+
 	/** Returns the supertagger's final beta value (or 0 if none). */
-	public double getSupertaggerBeta() {
+	public final double getSupertaggerBeta() {
 		return (supertagger != null) ? supertagger.getCurrentBetaValue() : 0;
 	}
-	
-	
-    // parses from lex entries
-    private void parseEntries(List<SignHash> entries) throws ParseException {
-    	startTime = System.currentTimeMillis();
-        // set up chart
-        initializeChart(entries);
-        if (signScorer != null) chart.setSignScorer(signScorer);
-        chart.setPruneVal(pruneValToUse);
-        chart.setTimeLimit(timeLimitToUse);
-        chart.setStartTime(startTime);
-        chart.setEdgeLimit(edgeLimitToUse);
-        chart.setCellLimit(cellPruneValToUse);
-        // do parsing
-        parse(entries.size());
-    }
-    
-    // initialize the chart
-    private void initializeChart(List<SignHash> entries) {
-        chart = new Chart(entries.size(), rules);
-        for (int i=0; i < entries.size(); i++) {
-            SignHash wh = entries.get(i);
-            for (Sign sign : wh.getSignsSorted()) {
-                Category cat = sign.getCategory();
-                UnifyControl.reindex(cat);
-                chart.insert(i, i, sign);
-            }
-        }
-    }
-    
-    // actual CKY parsing
-    private void parse(int size) throws ParseException {
-    	// fill in chart
-        for (int i=0; i<size; i++) {
-        	chart.insertCell(i,i);
-        }
-        for (int j=1; j<size; j++) {
-            for (int i=j-1; i>=0; i--) {
-                for (int k=i; k<j; k++) {
-                	chart.insertCell(i,k, k+1,j, i,j);
-                }
-                chart.insertCell(i,j);
-            }
-        }
-        // glue fragments if apropos
-        if (gluingFragments && chart.cellIsEmpty(0, size-1)) {
-            for (int j=1; j<size; j++) {
-                for (int i=j-1; i>=0; i--) {
-                    for (int k=i; k<j; k++) {
-                    	chart.insertCellFrag(i,k, k+1,j, i,j);
-                    }
-                }
-            }
-        }
-        chartTime = (int) (System.currentTimeMillis() - startTime);
-        // extract results
-        createResult(size);
-        parseTime = (int) (System.currentTimeMillis() - startTime);
-        unpackingTime = parseTime - chartTime;
-    }
-	
-    // create answer ArrayList
-    private void createResult(int size) throws ParseException {
-        result = new ArrayList<Sign>();
-        scores = new ArrayList<Double>();
-        // unpack top
-        List<Edge> unpacked = (lazyUnpackingToUse) 
-        	? chart.lazyUnpack(0,size - 1) 
-			: chart.unpack(0, size - 1);
-        // add signs for unpacked edges
-        for (Edge edge : unpacked) {
-        	result.add(edge.sign);
-        	scores.add(edge.score);
-        }
-        // check non-empty
-        if (result.size() == 0) {
-            throw new ParseException("Unable to parse");
-        }
-    }
-    
-    // set parse time when giving up
-    private void setGiveUpTime() {
-        chartTime = (int) (System.currentTimeMillis() - startTime);
-        parseTime = chartTime; 
-    	unpackingTime = 0;
-    }
-    
-    /**
-     * Adds the supertagger log probs to the lexical signs of the gold standard parse.
-     */
-    public void addSupertaggerLogProbs(Sign gold) {
-    	List<Word> words = gold.getWords();
-        supertagger.mapWords(words);
-        addSupertaggerLogProbs(gold, gold);
-        for (int i=0; i < words.size(); i++) {
-        	supertagger.setWord(i);
-        }
-    }
 
-    // recurses through derivation, adding lex log probs to lexical signs
-    private void addSupertaggerLogProbs(Sign gold, Sign current) {
-    	// lookup and add log prob for lex sign
-    	if (current.isLexical()) {
-    		supertagger.setWord(gold.wordIndex(current));
-    		Map<String,Double> stags = supertagger.getSupertags();
-    		Double lexprob = stags.get(current.getSupertag());
-    		if (lexprob != null) {
-    			current.addData(new SupertaggerAdapter.LexLogProb((float) Math.log10(lexprob)));
-    		}
-    	}
-    	// otherwise recurse
-    	else {
-    		Sign[] inputs = current.getDerivationHistory().getInputs();
-    		for (Sign s : inputs) addSupertaggerLogProbs(gold, s);
-    	}
-    }
-    
-    /**
-     * Returns the oracle best sign among those in the n-best list for the given LF, 
-     * using the f-score on all EPs, together with a flag indicating whether the gold LF 
-     * was found (as indicated by an f-score of 1.0).
-     * NB: It would be better to return the forest oracle, but the nominal conversion would 
-     * be tricky to do correctly. 
-     */
-    public Pair<Sign,Boolean> oracleBest(LF goldLF) {
-    	Sign retval = null; double bestF = 0.0;
-    	for (Sign sign : result) {
-            Category cat = sign.getCategory().copy();
-            Nominal index = cat.getIndexNominal();
-            LF parsedLF = cat.getLF();
-            if (parsedLF != null) {
-	            index = HyloHelper.convertNominals(parsedLF, sign, index);
-	    		EPsScorer.Results score = EPsScorer.score(parsedLF, goldLF);
-	    		if (score.fscore > bestF) {
-	    			retval = sign;
-	    			bestF = score.fscore;
-	    		}
-            }
-    	}
-    	return new Pair<Sign,Boolean>(retval, (bestF == 1.0));
-    }
+	// parses from lex entries
+	private final void parseEntries(ChartCompleter chartCompleter) throws ParseException {
+		parse(chartCompleter.getSize());
+	}
+
+	/**
+	 * Builds a chart for a particular sequence of symbol hashes.
+	 * 
+	 * @param symbolHashes the symbol hashes to put in the chart
+	 * @return the chart the chart
+	 */
+	private final ChartCompleter buildChartCompleter(List<SymbolHash> symbolHashes) {
+		Chart chart = new SparseChart(symbolHashes.size());
+		ChartCompleter chartCompleter = new ChartCompleterImp(rules, chart,
+				new ChartCompleterConfig(config));
+		int x1 = 0;
+		int x2 = 0;
+		for (SymbolHash symbolHash : symbolHashes) {
+			for (Symbol symbol : symbolHash.getSignsSorted()) {
+				Category category = symbol.getCategory();
+				UnifyControl.reindex(category);
+				chartCompleter.annotateForm(x1, x2, symbol);
+			}
+			x1++;
+			x2++;
+		}
+		return chartCompleter;
+	}
+
+	/**
+	 * Parse using the Cocke–Younger–Kasami (CKY) algorithm
+	 * 
+	 * @param size the size of the chart
+	 * @throws ParseException
+	 */
+	private final void parse(int size) throws ParseException {
+		ChartCompleter chartCompleter = product.getChartCompleter();
+
+		// Annotate index forms with unary rules
+		for (int i = 0; i < size; i++) {
+			chartCompleter.annotateForm(i, i);
+		}
+
+		// Combine forms and annotate combined forms with unary rules
+		for (int y2 = 1; y2 < size; y2++) {
+			for (int x1 = y2 - 1; x1 >= 0; x1--) {
+				int z1 = x1;
+				int z2 = y2;
+				for (int x2 = x1; x2 < y2; x2++) {
+					int y1 = x2 + 1;
+					chartCompleter.combineForms(x1, x2, y1, y2, z1, z2);
+				}
+				// Annotate combinations with unary rules
+				chartCompleter.annotateForm(x1, y2);
+			}
+		}
+
+		// Glue forms
+		if (gluingFlag && chartCompleter.isEmpty(0, size - 1)) {
+			for (int y2 = 1; y2 < size; y2++) {
+				for (int x1 = y2 - 1; x1 >= 0; x1--) {
+					int z1 = x1;
+					int z2 = y2;
+					for (int x2 = x1; x2 < y2; x2++) {
+						int y1 = x2 + 1;
+						chartCompleter.glueForms(x1, x2, y1, y2, z1, z2);
+					}
+				}
+			}
+		}
+
+		product.setChartTime((int) (System.currentTimeMillis() - product.getStartTime()));
+		// extract results
+		createResult(size);
+		product.setParseTime((int) (System.currentTimeMillis() - product.getStartTime()));
+		product.setUnpackingTime(product.getParseTime() - product.getChartTime());
+	}
+
+	// create answer ArrayList
+	private final void createResult(int size) throws ParseException {
+		List<Symbol> symbols = new ArrayList<Symbol>();
+		List<Double> scores = new ArrayList<Double>();
+		ChartCompleter chartCompleter = product.getChartCompleter();
+		// unpack top
+		List<ScoredSymbol> edges = lazyUnpacking ? chartCompleter.lazyUnpack(0,
+				size - 1) : chartCompleter.unpack(0, size - 1);
+		// add signs for unpacked edges
+		for (ScoredSymbol edge : edges) {
+			symbols.add(edge.symbol);
+			scores.add(edge.score);
+		}
+		// check non-empty
+		if (symbols.size() == 0) {
+			throw new ParseException("Unable to parse");
+		}
+		product.setSymbols(symbols);
+		product.setScores(scores);
+	}
+
+	// set parse time when giving up
+	private final void setGiveUpTime() {
+		product.setChartTime((int) (System.currentTimeMillis() - product.getStartTime()));
+		product.setParseTime(product.getChartTime());
+		product.setUnpackingTime(0);
+	}
+
+	/**
+	 * Adds the supertagger log probs to the lexical signs of the gold standard
+	 * parse.
+	 */
+	public final void addSupertaggerLogProbs(Symbol gold) {
+		List<Word> words = gold.getWords();
+		supertagger.mapWords(words);
+		addSupertaggerLogProbs(gold, gold);
+		for (int i = 0; i < words.size(); i++) {
+			supertagger.setWord(i);
+		}
+	}
+
+	// recurses through derivation, adding lex log probs to lexical signs
+	private final void addSupertaggerLogProbs(Symbol gold, Symbol current) {
+		// lookup and add log prob for lex sign
+		if (current.isIndexed()) {
+			supertagger.setWord(gold.wordIndex(current));
+			Map<String, Double> stags = supertagger.getSupertags();
+			Double lexprob = stags.get(current.getSupertag());
+			if (lexprob != null) {
+				current.addData(new SupertaggerAdapter.LexLogProb((float) Math.log10(lexprob)));
+			}
+		}
+		// otherwise recurse
+		else {
+			Symbol[] inputs = current.getDerivationHistory().getInputs();
+			for (Symbol s : inputs)
+				addSupertaggerLogProbs(gold, s);
+		}
+	}
+
+	/**
+	 * Returns the oracle best sign among those in the n-best list for the given
+	 * LF, using the f-score on all EPs, together with a flag indicating whether
+	 * the gold LF was found (as indicated by an f-score of 1.0). NB: It would
+	 * be better to return the forest oracle, but the nominal conversion would
+	 * be tricky to do correctly.
+	 */
+	public final Pair<Symbol, Boolean> oracleBest(LF goldLF) {
+		Symbol retval = null;
+		List<Symbol> result = product.getSymbols();
+		double bestF = 0.0;
+		for (Symbol sign : result) {
+			Category cat = sign.getCategory().copy();
+			Nominal index = cat.getIndexNominal();
+			LF parsedLF = cat.getLF();
+			if (parsedLF != null) {
+				index = HyloHelper.getInstance().convertNominals(parsedLF, sign, index);
+				EPsScorer.Results score = EPsScorer.score(parsedLF, goldLF);
+				if (score.fscore > bestF) {
+					retval = sign;
+					bestF = score.fscore;
+				}
+			}
+		}
+		return new Pair<Symbol, Boolean>(retval, (bestF == 1.0));
+	}
+
 }
-

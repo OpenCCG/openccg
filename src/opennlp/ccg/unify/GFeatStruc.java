@@ -103,7 +103,7 @@ public class GFeatStruc extends HashMap<String,Object> implements FeatureStructu
     					varElt.setAttribute("name", name);
     				}
     				else if (val instanceof LF)
-    					featElt.addContent(HyloHelper.toXml((LF)val));
+    					featElt.addContent(HyloHelper.getInstance().toXml((LF)val));
     				else 
     					throw new RuntimeException("Unsupported feature value type in constructing XML: " + val);
     			}
@@ -149,7 +149,7 @@ public class GFeatStruc extends HashMap<String,Object> implements FeatureStructu
                 else
                     value = new GFeatVar(name[0], Grammar.theGrammar.types.getSimpleType(name[1]));
             } else {
-                value = HyloHelper.getLF((Element)e.getChildren().get(0));
+                value = HyloHelper.getInstance().getLF((Element)e.getChildren().get(0));
             }
         }
         setFeature(attr, value);

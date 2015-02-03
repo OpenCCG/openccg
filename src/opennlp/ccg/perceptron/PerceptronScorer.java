@@ -26,7 +26,7 @@ import opennlp.ccg.synsem.*;
  * @author Michael White
  * @version     $Revision: 1.7 $, $Date: 2011/03/21 20:46:43 $
  */
-public class PerceptronScorer implements SignScorer {
+public class PerceptronScorer implements SymbolScorer {
 
 	/** The feature extractor. */
 	public final FeatureExtractor featureExtractor;
@@ -47,7 +47,7 @@ public class PerceptronScorer implements SignScorer {
      * In particular, returns the score assigned by the model to the features 
      * extracted from the given sign with the given completeness flag.
      */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
     	return model.score(featureExtractor.extractFeatures(sign, complete));
     }
 }

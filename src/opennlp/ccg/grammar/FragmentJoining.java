@@ -45,9 +45,9 @@ public class FragmentJoining extends AbstractRule {
 	/**
 	 *  Returns the result of applying this rule to two input signs.
 	 */
-	public Sign applyRule(Sign sign1, Sign sign2) {
-		List<Sign> results = new ArrayList<Sign>(1);
-		Sign[] inputs = new Sign[] { sign1, sign2 };
+	public Symbol applyRule(Symbol sign1, Symbol sign2) {
+		List<Symbol> results = new ArrayList<Symbol>(1);
+		Symbol[] inputs = new Symbol[] { sign1, sign2 };
 		applyRule(inputs, results);
 		return results.get(0);
 	}

@@ -26,6 +26,7 @@ import opennlp.ccg.util.*;
 
 import org.jdom.*;
 import org.jdom.output.*;
+
 import gnu.trove.*;
 
 import java.io.*;
@@ -261,7 +262,7 @@ public class RuleGroup implements Serializable {
         Category result = CatReader.getCat(resultCatElt);
         LF firstEP = null;
         if (lfElt != null) {
-            firstEP = HyloHelper.firstEP(HyloHelper.getLF(lfElt));
+            firstEP = HyloHelper.getInstance().firstEP(HyloHelper.getInstance().getLF(lfElt));
         }
         
         grammar.lexicon.propagateTypes(result, arg);
@@ -337,6 +338,7 @@ public class RuleGroup implements Serializable {
     			supercatRuleCombos.add(new SupercatRuleCombo(tokens[0], tokens[1], tokens[2]));
     		}
     	}
+    	in.close();
     }
     
     
@@ -366,12 +368,12 @@ public class RuleGroup implements Serializable {
     private void index(TypeChangingRule rule) {
         LF firstEP = rule.getFirstEP();
         if (firstEP == null) { return; }
-        String pred = HyloHelper.getLexPred(firstEP);
+        String pred = HyloHelper.getInstance().getLexPred(firstEP);
         if (pred != null) { 
             predsToRules.put(pred, rule); 
             return; 
         }
-        String rel = HyloHelper.getRel(firstEP);
+        String rel = HyloHelper.getInstance().getRel(firstEP);
         if (rel != null) { 
             relsToRules.put(rel, rule);
         }
@@ -414,9 +416,9 @@ public class RuleGroup implements Serializable {
     
     
     /** Applies the unary rules to the given input sign, returning the list of results. */
-    public List<Sign> applyUnaryRules(Sign input) {
-    	Sign[] inputs = { input };
-        List<Sign> results = new ArrayList<Sign>(2);
+    public List<Symbol> applyUnaryRules(Symbol input) {
+    	Symbol[] inputs = { input };
+        List<Symbol> results = new ArrayList<Symbol>(2);
         String supertag = input.getCategory().getSupertag();
         // check whether dynamic combos update required, or whether rules can be skipped
         boolean dynamicCombosUpdate = false;
@@ -470,9 +472,9 @@ public class RuleGroup implements Serializable {
     }
     
     /** Applies the binary rules to the given input signs, returning the list of results. */
-    public List<Sign> applyBinaryRules(Sign input1, Sign input2) {
-    	Sign[] inputs = { input1, input2 };
-        List<Sign> results = new ArrayList<Sign>(2);
+    public List<Symbol> applyBinaryRules(Symbol input1, Symbol input2) {
+    	Symbol[] inputs = { input1, input2 };
+        List<Symbol> results = new ArrayList<Symbol>(2);
 		String supertag1 = input1.getCategory().getSupertag();
 		String supertag2 = input2.getCategory().getSupertag();
         // check whether dynamic combos update required, or whether rules can be skipped
@@ -528,16 +530,16 @@ public class RuleGroup implements Serializable {
     
     
     /** Applies the glue rule to the given input signs, returning the list of results. */
-    public List<Sign> applyGlueRule(Sign input1, Sign input2) {
-    	Sign[] inputs = { input1, input2 };
-        List<Sign> results = new ArrayList<Sign>(1);
+    public List<Symbol> applyGlueRule(Symbol input1, Symbol input2) {
+    	Symbol[] inputs = { input1, input2 };
+        List<Symbol> results = new ArrayList<Symbol>(1);
     	glueRule.applyRule(inputs, results);
         return results;
     }
 
     
     /** Applies the coarticulation to the given sign, adding the result (if any) to the given ones. */
-    public void applyCoart(Sign lexSign, Sign coartSign, List<Sign> results) {
+    public void applyCoart(Symbol lexSign, Symbol coartSign, List<Symbol> results) {
 
         Category[] cats = new Category[] { lexSign.getCategory(), coartSign.getCategory() }; 
 
@@ -548,7 +550,7 @@ public class RuleGroup implements Serializable {
             for (Iterator<Category> it = resultCats.iterator(); it.hasNext();) {
                 Category catResult = it.next();
                 bapp.distributeTargetFeatures(catResult);
-                Sign sign = Sign.createCoartSign(catResult, lexSign, coartSign);
+                Symbol sign = Symbol.createCoartSign(catResult, lexSign, coartSign);
                 results.add(sign);
             }
         } catch (UnifyFailure uf) {}

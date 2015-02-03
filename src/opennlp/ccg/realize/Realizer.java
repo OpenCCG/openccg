@@ -70,7 +70,7 @@ public class Realizer
     public boolean waitForCompleteEdge = false;
 
     /** Sign scorer to use.  (Default is none.) */
-    public SignScorer signScorer = null;
+    public SymbolScorer signScorer = null;
     
     /** Pruning strategy to use. (Default is none.) */
     public PruningStrategy pruningStrategy = null;
@@ -97,8 +97,8 @@ public class Realizer
      * LF chunks along the way.
      */
     public static LF getLfFromElt(Element lfElt) {
-        HyloHelper.processChunks(lfElt);
-        LF lf = HyloHelper.getLF(lfElt);
+        HyloHelper.getInstance().processChunks(lfElt);
+        LF lf = HyloHelper.getInstance().getLF(lfElt);
         return lf;
     }
 
@@ -118,7 +118,7 @@ public class Realizer
      * Realizes the input LF relative to the given sign scorer, 
      * returning the best edge found (or null if none).
      */
-    public Edge realize(LF lf, SignScorer signScorer) {
+    public Edge realize(LF lf, SymbolScorer signScorer) {
         Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
         int timeLimitToUse = (timeLimitMS != -1) 
             ? timeLimitMS
@@ -135,10 +135,10 @@ public class Realizer
      * iteratively through the available beta-best values 
      * within the overall time or edge limit.
      */
-    public Edge realize(LF lf, SignScorer signScorer, int timeLimitMS, boolean waitForCompleteEdge) {
-        List<SatOp> preds = HyloHelper.flatten(lf);
-        SignScorer scorerToUse = (signScorer != null) 
-            ? signScorer : SignScorer.nullScorer;
+    public Edge realize(LF lf, SymbolScorer signScorer, int timeLimitMS, boolean waitForCompleteEdge) {
+        List<SatOp> preds = HyloHelper.getInstance().flatten(lf);
+        SymbolScorer scorerToUse = (signScorer != null) 
+            ? signScorer : SymbolScorer.nullScorer;
         PruningStrategy strategyToUse = (pruningStrategy != null) 
             ? pruningStrategy : new NBestPruningStrategy();
         // realize iteratively with hypertagger, if present
@@ -170,7 +170,7 @@ public class Realizer
     // iterate through beta-best values until a complete realization is found; 
     // otherwise return the best fragment using the glue rule, or if all else 
     // fails (or not using gluing), greedy fragment joining
-    private Edge realizeWithHypertagger(List<SatOp> preds, SignScorer signScorer, PruningStrategy pruningStrategy, int timeLimitMS) {
+    private Edge realizeWithHypertagger(List<SatOp> preds, SymbolScorer signScorer, PruningStrategy pruningStrategy, int timeLimitMS) {
         // get start time
         long startTime = System.currentTimeMillis();
         // get edge limit

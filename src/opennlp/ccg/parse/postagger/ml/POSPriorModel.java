@@ -54,8 +54,8 @@ import opennlp.ccg.util.Pair;
  */
 public class POSPriorModel extends ConditionalProbabilityTable {
 
-    public static final String WORD = DefaultTokenizer.WORD_ATTR;
-    public static final String POS_TAG = DefaultTokenizer.POS_ATTR;
+    public static final String WORD = DefaultTokenizer.WORD_ASSOCIATE;
+    public static final String POS_TAG = DefaultTokenizer.FUNCTIONS_ASSOCIATE;
     private Interner<Pair<String, String>> pairs = new Interner<Pair<String, String>>();
     /** 
      * Re-usable list for attr-val pairs of word-pos-supertag inputs to the prior model
@@ -112,6 +112,7 @@ public class POSPriorModel extends ConditionalProbabilityTable {
         for (String posTag : allSupertags) {
             posVocab[cnt++] = posTag.intern();
         }
+        br.close();
     }
 
     /** Get the prior probability of this POS/word combo. */

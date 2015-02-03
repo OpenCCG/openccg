@@ -18,8 +18,8 @@
 
 package opennlp.ccg.ngrams;
 
-import opennlp.ccg.synsem.Sign;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.Symbol;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.lexicon.Word;
 
 import java.util.*;
@@ -37,7 +37,7 @@ import gnu.trove.*;
  * @version     $Revision: 1.6 $, $Date: 2011/03/20 20:11:58 $
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class RepetitionScorer implements SignScorer
+public class RepetitionScorer implements SymbolScorer
 {
     /** The repetition penalty (defaults to 1.0). */
     public double penalty = 1.0;
@@ -99,7 +99,7 @@ public class RepetitionScorer implements SignScorer
     }
     
     /** Adds the items (eg stems) from the given sign's words to the context items. */
-    public void updateContext(Sign sign) {
+    public void updateContext(Symbol sign) {
         List words = sign.getWords(); 
         if (words == null) return;
         for (int i = 0; i < words.size(); i++) {
@@ -135,7 +135,7 @@ public class RepetitionScorer implements SignScorer
      * In particular, returns 10 to the minus (penalty times repeated items), 
      * or zero if there are no words.
      */
-    public double score(Sign sign, boolean complete) {
+    public double score(Symbol sign, boolean complete) {
         List words = sign.getWords(); 
         if (words == null) return 0;
         return Math.pow(10, -1 * penalty * repeatedItems(words));

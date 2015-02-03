@@ -22,15 +22,20 @@ import opennlp.ccg.util.*;
 
 import java.io.*;
 import java.util.*;
+
 import gnu.trove.*;
 
 /**
  * A Word object may either be a surface word or a full word.
+ * 
  * A surface word holds a surface form, an optional pitch accent, and an 
  * optional list of extra attribute-value pairs.
+ * 
  * A full word additionally contains a stem, part of speech, supertag and semantic class.
+ * 
  * A word may be a multiword consisting of multiple orthographic words, 
  * typically separated by underscores in the surface form.
+ * 
  * For efficient storage and equality checking, Word objects are interned by 
  * the factory methods of the configured WordFactory.
  *
@@ -39,6 +44,7 @@ import gnu.trove.*;
  */
 abstract public class Word implements Serializable, Comparable<Word> {
 
+	private static final List<Pair<String, String>> EMPTY_PAIR_LIST = new ArrayList<Pair<String, String>>();
 	private static final long serialVersionUID = 1L;
 
 	/** Returns the surface form. */
@@ -46,35 +52,13 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     /** Returns the pitch accent. */
     abstract public String getPitchAccent();
-    
-    // empty iterator
-    private static Iterator<Pair<String,String>> emptyIterator = new ArrayList<Pair<String,String>>(0).iterator();
-
-    /** Returns an iterator over the extra attribute-value pairs. */
-    public Iterator<Pair<String,String>> getAttrValPairs() { 
-        List<Pair<String,String>> pairs = getAttrValPairsList();
-        return (pairs != null) ? pairs.iterator() : emptyIterator; 
-    } 
-    
-    /** Returns an iterator over the surface attribute-value pairs, including the pitch accent (if any). */
-    public Iterator<Pair<String,String>> getSurfaceAttrValPairs() {
-        List<Pair<String,String>> pairs = getAttrValPairsList(); String pitchAccent = getPitchAccent();
-        if (pairs == null && pitchAccent == null) return emptyIterator; 
-        else if (pairs == null) { 
-            List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(1); 
-            retval.add(new Pair<String,String>(Tokenizer.PITCH_ACCENT_ATTR, pitchAccent));
-            return retval.iterator();
-        }
-        else if (pitchAccent == null) return pairs.iterator();
-        else {
-            List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(pairs);
-            retval.add(new Pair<String,String>(Tokenizer.PITCH_ACCENT_ATTR, pitchAccent));
-            return retval.iterator();
-        }
-    }            
-    
     /** Returns the list of extra attribute-value pairs. */
-    abstract protected List<Pair<String,String>> getAttrValPairsList();
+    abstract protected List<Pair<String,String>> getFormalAttributes();
+
+    /** Returns the value of the attribute with the given name, or null if none. 
+    The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
+    may be used to retrieve the form, ..., semantic class. */
+    abstract public String getFormalAttributeValue(String formalAttributeName);
     
     /** Returns the stem. */
     abstract public String getStem();
@@ -87,13 +71,32 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     /** Returns the semantic class. */
     abstract public String getSemClass();
-
     
-    /** Returns the value of the attribute with the given name, or null if none. 
-        The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
-        may be used to retrieve the form, ..., semantic class. */
-    abstract public String getVal(String attr);
+    // empty iterator
+    private final static List<Pair<String,String>> emptyPairs = new ArrayList<Pair<String,String>>(0);
 
+    /** Returns an iterator over the extra attribute-value pairs. */
+    public final List<Pair<String,String>> getFormalAttributesProtected() { 
+        List<Pair<String,String>> pairs = getFormalAttributes();
+        return pairs != null ? pairs : emptyPairs;
+    } 
+    
+    /** Returns an iterator over the surface attribute-value pairs, including the pitch accent (if any). */
+    public List<Pair<String,String>> getSurfaceAttrValPairs() {
+        List<Pair<String,String>> pairs = getFormalAttributes(); String pitchAccent = getPitchAccent();
+        if (pairs == null && pitchAccent == null) return EMPTY_PAIR_LIST; 
+        else if (pairs == null) { 
+            List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(1); 
+            retval.add(new Pair<String,String>(Tokenizer.TONE_ASSOCIATE, pitchAccent));
+            return retval;
+        }
+        else if (pitchAccent == null) return pairs;
+        else {
+            List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(pairs);
+            retval.add(new Pair<String,String>(Tokenizer.TONE_ASSOCIATE, pitchAccent));
+            return retval;
+        }
+    }
     
     // the known attr names
     private static Set<String> knownAttrs = initKnownAttrs(); 
@@ -101,9 +104,9 @@ abstract public class Word implements Serializable, Comparable<Word> {
 	private static Set<String> initKnownAttrs() {
         Set<String> knownAttrs = new THashSet(new TObjectIdentityHashingStrategy());
         String[] names = {
-            Tokenizer.WORD_ATTR, Tokenizer.PITCH_ACCENT_ATTR, 
-            Tokenizer.STEM_ATTR, Tokenizer.POS_ATTR, 
-            Tokenizer.SUPERTAG_ATTR, Tokenizer.SEM_CLASS_ATTR
+            Tokenizer.WORD_ASSOCIATE, Tokenizer.TONE_ASSOCIATE, 
+            Tokenizer.TERM_ASSOCIATE, Tokenizer.FUNCTIONS_ASSOCIATE, 
+            Tokenizer.SUPERTAG_ASSOCIATE, Tokenizer.ENTITY_CLASS_ASSOCIATE
         };
         for (int i = 0; i < names.length; i++) { knownAttrs.add(names[i]); }
         return knownAttrs;
@@ -123,23 +126,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     // factory methods
     
-    /** Factory interface. */
-    public interface WordFactory {
-        /** Creates a surface word with the given interned form. */
-        public Word create(String form);
-        /** Creates a (surface or full) word with the given normalized attribute name and value.
-            The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
-            may be used for the form, ..., semantic class. */
-        public Word create(String attr, String val);
-        /** Creates a (surface or full) word from the given canonical factors. */
-        public Word create(
-            String form, String pitchAccent, List<Pair<String,String>> attrValPairs, 
-            String stem, String POS, String supertag, String semClass 
-        );
-    }
-    
     /** The word factory to use. */
-    protected static WordFactory wordFactory = new FullWord.Factory();
+    protected static WordFactory wordFactory = new FullWordFactory();
 
     // NB: could try different factory methods for concrete words, but 
     //     it's unclear whether it makes much difference
@@ -203,16 +191,17 @@ abstract public class Word implements Serializable, Comparable<Word> {
     /** Creates a (surface or full) word with the given attribute name and value.
         The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
         may be used for the form, ..., semantic class. */
-    public static synchronized Word createWord(String attr, String val) {
-        attr = attr.intern(); val = (val != null) ? val.intern() : null; 
-        return wordFactory.create(attr, val);
+    public static synchronized Word createWord(String attributeName, String attributeValue) {
+        attributeName = attributeName.intern();
+        attributeValue = (attributeValue != null) ? attributeValue.intern() : null; 
+        return wordFactory.create(attributeName, attributeValue);
     }
     
     /** Creates a (surface or full) word from the given one, replacing the word form with the given one. */
     public static synchronized Word createWord(Word word, String form) {
         if (form != null) form = form.intern();
         return createWordDirectly(
-            form, word.getPitchAccent(), word.getAttrValPairsList(), 
+            form, word.getPitchAccent(), word.getFormalAttributes(), 
             word.getStem(), word.getPOS(), word.getSupertag(), word.getSemClass()
         );
     }
@@ -223,7 +212,7 @@ abstract public class Word implements Serializable, Comparable<Word> {
         String form = word.getSemClass().toUpperCase().intern();
         String stem = form;
         return createWordDirectly(
-            form, word.getPitchAccent(), word.getAttrValPairsList(), 
+            form, word.getPitchAccent(), word.getFormalAttributes(), 
             stem, word.getPOS(), word.getSupertag(), word.getSemClass()
         );
     }
@@ -236,8 +225,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
         if (accent == null) accent = word2.getPitchAccent();
         // get attrs
         boolean mixedAttrs = false;
-        List<Pair<String,String>> pairs = word.getAttrValPairsList();
-        List<Pair<String,String>> pairs2 = word2.getAttrValPairsList(); 
+        List<Pair<String,String>> pairs = word.getFormalAttributes();
+        List<Pair<String,String>> pairs2 = word2.getFormalAttributes(); 
         if (pairs == null && pairs2 != null) { pairs = pairs2; }
         else if (pairs2 != null) {
             mixedAttrs = true;
@@ -265,7 +254,7 @@ abstract public class Word implements Serializable, Comparable<Word> {
         POS = (POS != null) ? POS.intern() : null;
         supertag = (supertag != null) ? supertag.intern() : null;
         semClass = (semClass != null) ? semClass.intern() : null; 
-        return createWordDirectly(word.getForm(), word.getPitchAccent(), word.getAttrValPairsList(), stem, POS, supertag, semClass);
+        return createWordDirectly(word.getForm(), word.getPitchAccent(), word.getFormalAttributes(), stem, POS, supertag, semClass);
     }
     
     /** Creates a full word from the given surface one, 
@@ -274,8 +263,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
         plus the given supertag. */
     public static synchronized Word createFullWord(Word word, Word word2, String supertag) {
         boolean mixedAttrs = false;
-        List<Pair<String,String>> pairs = word.getAttrValPairsList(); 
-        List<Pair<String,String>> pairs2 = word2.getAttrValPairsList(); 
+        List<Pair<String,String>> pairs = word.getFormalAttributes(); 
+        List<Pair<String,String>> pairs2 = word2.getFormalAttributes(); 
         if (pairs == null && pairs2 != null) { pairs = pairs2; }
         else if (pairs2 != null) {
             mixedAttrs = true;
@@ -300,25 +289,24 @@ abstract public class Word implements Serializable, Comparable<Word> {
             );
         }
     }
-    
 
     /** Creates a surface word from the given one, removing the stem, POS, supertag and semantic class. */
     public static synchronized Word createSurfaceWord(Word word) {
-        return createWordDirectly(word.getForm(), word.getPitchAccent(), word.getAttrValPairsList(), null, null, null, null);
+        return createWordDirectly(word.getForm(), word.getPitchAccent(), word.getFormalAttributes(), null, null, null, null);
     }
     
     /** Creates a surface word from the given one, removing the stem, POS, supertag and semantic class, 
         and replacing the form with the given one. */
     public static synchronized Word createSurfaceWord(Word word, String form) {
         form = (form != null) ? form.intern() : null; 
-        return createWordDirectly(form, word.getPitchAccent(), word.getAttrValPairsList(), null, null, null, null);
+        return createWordDirectly(form, word.getPitchAccent(), word.getFormalAttributes(), null, null, null, null);
     }
     
     /** Creates a surface word from the given one, removing the stem, POS, supertag and semantic class, 
         and replacing the form with the semantic class, uppercased. */
     public static synchronized Word createSurfaceWordUsingSemClass(Word word) {
         String form = word.getSemClass().toUpperCase().intern();
-        return createWordDirectly(form, word.getPitchAccent(), word.getAttrValPairsList(), null, null, null, null);
+        return createWordDirectly(form, word.getPitchAccent(), word.getFormalAttributes(), null, null, null, null);
     }
 
     
@@ -326,8 +314,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
     public static synchronized Word createCoreSurfaceWord(Word word, Set<String> attrsSet) {
         String form = word.getForm();
         String accent = word.getPitchAccent();
-        if (accent != null && attrsSet.contains(Tokenizer.PITCH_ACCENT_ATTR)) accent = null;
-        List<Pair<String,String>> pairs = word.getAttrValPairsList(); 
+        if (accent != null && attrsSet.contains(Tokenizer.TONE_ASSOCIATE)) accent = null;
+        List<Pair<String,String>> pairs = word.getFormalAttributes(); 
         if (pairs != null) {
             pairs = new ArrayList<Pair<String,String>>(pairs); 
             Iterator<Pair<String,String>> pairsIt = pairs.iterator(); 
@@ -347,10 +335,9 @@ abstract public class Word implements Serializable, Comparable<Word> {
     public int hashCode() {
         int hc = System.identityHashCode(getForm());
         hc = 31*hc + System.identityHashCode(getPitchAccent());
-        for (Iterator<Pair<String,String>> it = getAttrValPairs(); it.hasNext(); ) {
-            Pair<String,String> p = it.next();
-            hc = 31*hc + System.identityHashCode(p.a);
-            hc = 31*hc + System.identityHashCode(p.b);
+        for (Pair<String,String> pair : getFormalAttributesProtected()) {
+            hc = 31*hc + System.identityHashCode(pair.a);
+            hc = 31*hc + System.identityHashCode(pair.b);
         }
         hc = 31*hc + System.identityHashCode(getStem()); 
         hc = 31*hc + System.identityHashCode(getPOS()); 
@@ -373,8 +360,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
             getSupertag() == word.getSupertag() && 
             getSemClass() == word.getSemClass();
         if (!sameFields) return false;
-        List<Pair<String,String>> pairs = getAttrValPairsList();
-        List<Pair<String,String>> wordPairs = word.getAttrValPairsList();
+        List<Pair<String,String>> pairs = getFormalAttributes();
+        List<Pair<String,String>> wordPairs = word.getFormalAttributes();
         if (pairs == null && wordPairs == null) return true;
         if (pairs == null || wordPairs == null) return false;
         if (pairs.size() != wordPairs.size()) return false;
@@ -400,8 +387,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
     	if (cmp != 0) return cmp;
     	cmp = compare(getSemClass(), word.getSemClass());
     	if (cmp != 0) return cmp;
-        List<Pair<String,String>> pairs = getAttrValPairsList();
-        List<Pair<String,String>> wordPairs = word.getAttrValPairsList();
+        List<Pair<String,String>> pairs = getFormalAttributes();
+        List<Pair<String,String>> wordPairs = word.getFormalAttributes();
         if (pairs == null && wordPairs == null) return 0;
         if (pairs == null) return -1;
         if (wordPairs == null) return 1;
@@ -428,11 +415,10 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     /** Returns whether this word's surface attributes intersect with the given ones. */
     public boolean attrsIntersect(Set<String> attrsSet) {
-        if (getPitchAccent() != null && attrsSet.contains(Tokenizer.PITCH_ACCENT_ATTR))
+        if (getPitchAccent() != null && attrsSet.contains(Tokenizer.TONE_ASSOCIATE))
             return true;
-        for (Iterator<Pair<String,String>> it = getAttrValPairs(); it.hasNext(); ) {
-            Pair<String,String> p = it.next();
-            if (attrsSet.contains(p.a)) return true;
+        for (Pair<String,String> pair : getFormalAttributesProtected()) {
+            if (attrsSet.contains(pair.a)) return true;
         }
         return false;
     }
@@ -441,10 +427,9 @@ abstract public class Word implements Serializable, Comparable<Word> {
     public int surfaceWordHashCode() {
         int hc = System.identityHashCode(getForm());
         hc = 31*hc + System.identityHashCode(getPitchAccent());
-        for (Iterator<Pair<String,String>> it = getAttrValPairs(); it.hasNext(); ) {
-            Pair<String,String> p = it.next();
-            hc = 31*hc + System.identityHashCode(p.a);
-            hc = 31*hc + System.identityHashCode(p.b);
+        for (Pair<String,String> pair : getFormalAttributesProtected()) {
+            hc = 31*hc + System.identityHashCode(pair.a);
+            hc = 31*hc + System.identityHashCode(pair.b);
         }
         return hc;
     }
@@ -459,8 +444,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
             getForm() == word.getForm() && 
             getPitchAccent() == word.getPitchAccent();
         if (!sameFields) return false;
-        List<Pair<String,String>> pairs = getAttrValPairsList();
-        List<Pair<String,String>> wordPairs = word.getAttrValPairsList();
+        List<Pair<String,String>> pairs = getFormalAttributes();
+        List<Pair<String,String>> wordPairs = word.getFormalAttributes();
         if (pairs == null && wordPairs == null) return true;
         if (pairs == null || wordPairs == null) return false;
         if (pairs.size() != wordPairs.size()) return false;
@@ -472,7 +457,7 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     /** Returns canonical version of deserialized word. */
     public Object readResolve() throws ObjectStreamException {
-    	return createWord(getForm(), getPitchAccent(), getAttrValPairsList(), getStem(), getPOS(), getSupertag(), getSemClass());
+    	return createWord(getForm(), getPitchAccent(), getFormalAttributes(), getStem(), getPOS(), getSupertag(), getSemClass());
     }
     
     /** Shows non-trivial fields separated by underscores. */
@@ -480,9 +465,8 @@ abstract public class Word implements Serializable, Comparable<Word> {
         StringBuffer sb = new StringBuffer();
         if (getForm() != null) sb.append(getForm());
         if (getPitchAccent() != null) sb.append('_').append(getPitchAccent());
-        for (Iterator<Pair<String,String>> it = getAttrValPairs(); it.hasNext(); ) {
-            Pair<String,String> p = it.next();
-            sb.append('_').append(p.b);
+        for (Pair<String,String> pair : getFormalAttributesProtected()) {
+            sb.append('_').append(pair.b);
         }
         if (getStem() != null && getStem() != getForm()) sb.append('_').append(getStem());
         if (getPOS() != null) sb.append('_').append(getPOS());

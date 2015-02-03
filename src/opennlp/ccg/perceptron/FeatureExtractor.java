@@ -29,7 +29,7 @@ import opennlp.ccg.synsem.*;
 public interface FeatureExtractor {
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete);
+	public FeatureVector extractFeatures(Symbol sign, boolean complete);
 	
 	/** Sets the alphabet. */
 	public void setAlphabet(Alphabet alphabet);

@@ -51,7 +51,7 @@ public abstract class AbstractRule implements Rule, Serializable {
     abstract public Element toXml();
 
     /** Applies the rule to the given input signs, adding to the given list of results. */
-    public void applyRule(Sign[] inputs, List<Sign> results) {
+    public void applyRule(Symbol[] inputs, List<Symbol> results) {
 
         if (inputs.length != arity()) { // shouldn't happen
             throw new RuntimeException("Inputs must have length " + arity());
@@ -70,11 +70,11 @@ public abstract class AbstractRule implements Rule, Serializable {
             	Category catResult = resultCats.get(i);
                 distributeTargetFeatures(catResult);
                 Category headCat = _headCats.get(i);
-                Sign lexHead = inputs[0].getLexHead();
+                Symbol lexHead = inputs[0].getLexHead();
                 for (int j=0; j < inputs.length; j++) {
                 	if (inputs[j].getCategory() == headCat) lexHead = inputs[j].getLexHead();
                 }
-                Sign sign = Sign.createDerivedSign(catResult, inputs, this, lexHead);
+                Symbol sign = Symbol.createDerivedSign(catResult, inputs, this, lexHead);
                 results.add(sign);
             }
         } catch (UnifyFailure uf) {}
@@ -178,11 +178,11 @@ public abstract class AbstractRule implements Rule, Serializable {
     protected void appendLFs(Category cat1, Category cat2, Category result, Substitution sub) 
         throws UnifyFailure
     {
-        LF lf = HyloHelper.append(cat1.getLF(), cat2.getLF());
+        LF lf = HyloHelper.getInstance().append(cat1.getLF(), cat2.getLF());
         if (lf != null) {
             lf = (LF) lf.fill(sub);
-            HyloHelper.sort(lf);
-            HyloHelper.check(lf);
+            HyloHelper.getInstance().sort(lf);
+            HyloHelper.getInstance().check(lf);
         }
         result.setLF(lf);
     }

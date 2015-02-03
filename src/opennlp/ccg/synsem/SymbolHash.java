@@ -26,51 +26,56 @@ import opennlp.ccg.lexicon.Word;
 
 /**
  * A set of signs, unique up to surface words.
- * Signs with lower derivational complexity are kept during insertion.
+ * 
+ * WARNING: Signs with lower derivational complexity are kept during insertion.
  *
- * @author      Jason Baldridge
- * @author      Gann Bierner
- * @author      Michael White
- * @version     $Revision: 1.13 $, $Date: 2009/12/21 02:15:44 $
+ * @author Jason Baldridge
+ * @author Gann Bierner
+ * @author Michael White
+ * @author Daniel Couto-Vale
+ * @version $Revision: 1.13 $, $Date: 2009/12/21 02:15:44 $
  */
-public class SignHash extends THashSet {
-
-	private static final long serialVersionUID = 1L;
+public class SymbolHash extends THashSet {
 	
+	/**
+	 * Generated serial version UID
+	 */
+	private static final long serialVersionUID = -6570863529126436679L;
+
 	/** Hashing strategy that uses Sign's surfaceWordHashCode and surfaceWordEquals methods. */
     protected static TObjectHashingStrategy surfaceWordHashingStrategy = new TObjectHashingStrategy() {
 		private static final long serialVersionUID = 1L;
 		public int computeHashCode(java.lang.Object o) {
-            return ((Sign)o).surfaceWordHashCode();
+            return ((Symbol)o).surfaceWordHashCode();
         }
         public boolean equals(java.lang.Object o1, java.lang.Object o2) {
-            return ((Sign)o1).surfaceWordEquals((Sign)o2);
+            return ((Symbol)o1).surfaceWordEquals((Symbol)o2);
         }
     };
 
     /** Default constructor. */
-    public SignHash() { super(surfaceWordHashingStrategy); }
+    public SymbolHash() { super(surfaceWordHashingStrategy); }
 
     /**
      * Constructor which adds one sign.
      */
-    public SignHash(Sign sign) {
+    public SymbolHash(Symbol sign) {
         this(); insert(sign);
     }
 
     /**
      * Constructor which adds a collection of signs.
      */
-    public SignHash(Collection<Sign> c) {
+    public SymbolHash(Collection<Symbol> c) {
         this();
-        for (Sign s : c) insert(s);
+        for (Symbol s : c) insert(s);
     }
     
     /**
      * Returns this as a set of signs.
      */
     @SuppressWarnings("unchecked")
-	public Set<Sign> asSignSet() { return (Set<Sign>) this; }
+	public Set<Symbol> asSymbolSet() { return (Set<Symbol>) this; }
 
     /**
      * Adds a sign, keeping the one with lower derivational complexity 
@@ -78,10 +83,10 @@ public class SignHash extends THashSet {
      * sign if it was displaced, the new sign if there was no equivalent 
      * old sign, or null if the sign was not actually added.
      */
-    public Sign insert(Sign sign) {
+    public Symbol insert(Symbol sign) {
         int pos = index(sign);
         if (pos >= 0) {
-            Sign oldSign = (Sign) _set[pos];
+            Symbol oldSign = (Symbol) _set[pos];
             if (oldSign == sign) return null;
             if (sign.getDerivationHistory().compareTo(oldSign.getDerivationHistory()) < 0) {
             	_set[pos] = sign; return oldSign;
@@ -94,21 +99,21 @@ public class SignHash extends THashSet {
     }
     
     /** Returns the signs sorted by their words lexicographically. */
-    public List<Sign> getSignsSorted() {
-    	ArrayList<Sign> retval = new ArrayList<Sign>(asSignSet());
+    public List<Symbol> getSignsSorted() {
+    	ArrayList<Symbol> retval = new ArrayList<Symbol>(asSymbolSet());
     	Collections.sort(retval, signComparator); 
     	return retval;
     }
     
     /** Comparator for signs to provide a persistent ordering. */
-    public static final Comparator<Sign> signComparator = new Comparator<Sign>() {
-		public int compare(Sign sign1, Sign sign2) {
+    public static final Comparator<Symbol> signComparator = new Comparator<Symbol>() {
+		public int compare(Symbol sign1, Symbol sign2) {
 			return compareTo(sign1, sign2);
 		}
     };
 
     /** Compares signs by their derivation complexity, lists of words, then (somewhat desperately) cat hash codes. */
-    public static int compareTo(Sign sign1, Sign sign2) {
+    public static int compareTo(Symbol sign1, Symbol sign2) {
     	int cmp = 0;
     	cmp = sign1.getDerivationHistory().compareTo(sign2.getDerivationHistory());
     	if (cmp != 0) return cmp;

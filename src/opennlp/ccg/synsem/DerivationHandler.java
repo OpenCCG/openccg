@@ -33,45 +33,45 @@ import opennlp.ccg.parse.DerivationHistory;
 abstract public class DerivationHandler<T> {
 	
 	/** Top step. */
-	abstract public T topStep(Sign sign);
+	abstract public T topStep(Symbol sign);
 	
 	/** Lexical step. */
-	abstract public T lexStep(Sign sign);
+	abstract public T lexStep(Symbol sign);
 
 	/** Unary step. */
-	abstract public T unaryStep(Sign sign, Sign headChild);
+	abstract public T unaryStep(Symbol sign, Symbol headChild);
 	
 	/** Binary step. */
-	abstract public T binaryStep(Sign sign, boolean left, Sign headChild, Sign siblingChild);
+	abstract public T binaryStep(Symbol sign, boolean left, Symbol headChild, Symbol siblingChild);
 	
 	/** Checks for cached value, returning null if none. Defaults to null. */
-	public T checkCache(Sign sign) { return null; }
+	public T checkCache(Symbol sign) { return null; }
 
 	/** Caches the result.  Default no-op. */
-	public void cache(Sign sign, T result) {}
+	public void cache(Symbol sign, T result) {}
 	
 	/** Handles a complete derivation, invoking the top step. */
-	public T handleCompleteDerivation(Sign sign) {
+	public T handleCompleteDerivation(Symbol sign) {
 		return topStep(sign);
 	}
 	
 	/** Handles a sub-derivation, checking and updating cache. */
-	public T handleDerivation(Sign sign) {
+	public T handleDerivation(Symbol sign) {
 		// check cache
 		T retval = checkCache(sign); 
 		if (retval != null) return retval;
 		// lexical case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			retval = lexStep(sign);
 			cache(sign, retval); 
 			return retval; 
 		}
 		// recursive case
 		DerivationHistory dh = sign.getDerivationHistory();
-		Sign[] inputs = dh.getInputs();
+		Symbol[] inputs = dh.getInputs();
 		// unary case
 		if (inputs.length == 1) {
-			Sign headChild = inputs[0];
+			Symbol headChild = inputs[0];
 			retval = unaryStep(sign, headChild);
 			cache(sign, retval); 
 			return retval; 
@@ -79,7 +79,7 @@ abstract public class DerivationHandler<T> {
 		// binary case
 		else {
 			boolean left;
-			Sign headChild, siblingChild;
+			Symbol headChild, siblingChild;
 			if (sign.getLexHead() == inputs[0].getLexHead()) {
 				left = true; headChild = inputs[0]; siblingChild = inputs[1];
 			}

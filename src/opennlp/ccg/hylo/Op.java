@@ -69,7 +69,7 @@ public class Op extends HyloFormula {
         int argSize = argElements.size();
         List<LF> args = new ArrayList<LF>(argSize);
         for (int i=0; i<argSize; i++) {
-            args.add(HyloHelper.getLF((Element)argElements.get(i)));
+            args.add(HyloHelper.getInstance().getLF((Element)argElements.get(i)));
         }
         // add implicit CONJ op with NEG or OPT
         if (args.size() > 1 && (name.equals(NEG) || name.equals(OPT))) {
@@ -222,9 +222,9 @@ public class Op extends HyloFormula {
         for (Iterator<LF> it = _args.iterator(); it.hasNext(); ) {
             LF arg = it.next();
             String attr = null;
-            if (arg instanceof SatOp && HyloHelper.isAttrPred(arg)) 
-                attr = HyloHelper.getRel(arg);
-            else if (arg instanceof Diamond && HyloHelper.isAttr(arg))
+            if (arg instanceof SatOp && HyloHelper.getInstance().isAttrPred(arg)) 
+                attr = HyloHelper.getInstance().getRel(arg);
+            else if (arg instanceof Diamond && HyloHelper.getInstance().isAttr(arg))
                 attr = ((Diamond)arg).getMode().toString();
             if (attr == null || featsToShow.indexOf(attr) != -1)
                 retval.add(arg);

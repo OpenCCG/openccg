@@ -26,7 +26,7 @@ import opennlp.ccg.perceptron.FeatureVector;
 import opennlp.ccg.synsem.AtomCat;
 import opennlp.ccg.synsem.Category;
 import opennlp.ccg.synsem.ComplexCat;
-import opennlp.ccg.synsem.Sign;
+import opennlp.ccg.synsem.Symbol;
 import opennlp.ccg.unify.FeatureStructure;
 import opennlp.ccg.unify.SimpleType;
 import opennlp.ccg.util.TrieMap;
@@ -85,8 +85,8 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 	protected FeatureMap currentMap = null;
 	
 	/** Head and dependent signs (For feature extraction) .*/
-	protected Sign headSign=null;
-	protected Sign depSign=null;
+	protected Symbol headSign=null;
+	protected Symbol depSign=null;
 	
 	/** Error analysis related. */
 	//Sentence id
@@ -166,25 +166,25 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 	}
 	
 	/** Returns the features for the given sign and completeness flag. */
-	public FeatureVector extractFeatures(Sign sign, boolean complete) {
+	public FeatureVector extractFeatures(Symbol sign, boolean complete) {
 		addFeatures(sign, complete);
 		return getFeatureMap(sign);
 	}
 	
 	/** Recursively adds features to the feature map for the given sign, if not already present. */
 	//TODO: Lazier feature extraction involving conditional feature extractors
-	protected void addFeatures(Sign sign, boolean complete) {
+	protected void addFeatures(Symbol sign, boolean complete) {
 		// check for existing map, otherwise make one
 		if (getFeatureMap(sign) != null) return;
 		// lex case
-		if (sign.isLexical()) {
+		if (sign.isIndexed()) {
 			currentMap = new FeatureMap(0);
 		}
 		// non-terminal
 		else {
-			Sign[] inputs = sign.getDerivationHistory().getInputs();
+			Symbol[] inputs = sign.getDerivationHistory().getInputs();
 			// first recurse
-			for (Sign child : inputs) addFeatures(child, false);
+			for (Symbol child : inputs) addFeatures(child, false);
 			// use input maps in making current map
 			if (inputs.length == 1) {
 				currentMap = new FeatureMap(getFeatureMap(inputs[0]));
@@ -221,7 +221,7 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 					if(dep.lexDep.getOrthography().equals("or")){
 						ArrayList<String>rels=new ArrayList<String>(2);
 						rels.add("First");rels.add("Next");
-						Hashtable<LexDependency,Sign>cdeps=this.getLowerSiblingDeps(inputs,dep.lexDep,rels,null);
+						Hashtable<LexDependency,Symbol>cdeps=this.getLowerSiblingDeps(inputs,dep.lexDep,rels,null);
 						if(cdeps!=null){
 							for(Enumeration<LexDependency>e=cdeps.keys();e.hasMoreElements();){
 								LexDependency cdep=e.nextElement();
@@ -240,14 +240,14 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 						rels.add("Mod");
 						ArrayList<String>depPreds=new ArrayList<String>(1);
 						depPreds.add("of");
-						Hashtable<LexDependency,Sign>ofComplDeps=this.getLowerSiblingDeps(inputs,dep.lexDep,rels,depPreds);
+						Hashtable<LexDependency,Symbol>ofComplDeps=this.getLowerSiblingDeps(inputs,dep.lexDep,rels,depPreds);
 						if(ofComplDeps!=null){
 							for(Enumeration<LexDependency>e1=ofComplDeps.keys();e1.hasMoreElements();){
 								LexDependency ofComplDep=e1.nextElement();
-								Sign[] ofComplSigns=ofComplDeps.get(ofComplDep).getDerivationHistory().getInputs();
+								Symbol[] ofComplSigns=ofComplDeps.get(ofComplDep).getDerivationHistory().getInputs();
 								rels=new ArrayList<String>(1);
 								rels.add("Arg1");
-								Hashtable<LexDependency,Sign>ofDeps=this.getLowerSiblingDeps(ofComplSigns,ofComplDep.lexDep,rels,null);
+								Hashtable<LexDependency,Symbol>ofDeps=this.getLowerSiblingDeps(ofComplSigns,ofComplDep.lexDep,rels,null);
 								if(ofDeps!=null){
 									for(Enumeration<LexDependency>e2=ofDeps.keys();e2.hasMoreElements();){
 										LexDependency ofDep=e2.nextElement();
@@ -267,7 +267,7 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 					
 					//Make sure relative clause is linked to head of the quoted NP 
 					//(and not the quotation mark itself)
-					Sign sib=this.getSibling(sign.getSiblingFilledDeps(),"Arg");
+					Symbol sib=this.getSibling(sign.getSiblingFilledDeps(),"Arg");
 					if(sib!=null){
 						this.headSign=sib;
 					}
@@ -281,7 +281,7 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 					if(dep.lexDep.getPOS().equals("CC") || dep.lexDep.getOrthography().equals(",") || dep.lexDep.getOrthography().equals(";")|| dep.lexDep.getOrthography().equals("or")|| dep.lexDep.getOrthography().equals("and")){
 						ArrayList<String>rels=new ArrayList<String>(1);
 						rels.add("Next");
-						Hashtable<LexDependency,Sign>cdeps=this.getLowerSiblingDeps(inputs,dep.lexDep,rels,null);
+						Hashtable<LexDependency,Symbol>cdeps=this.getLowerSiblingDeps(inputs,dep.lexDep,rels,null);
 						if(cdeps!=null){
 							for(Enumeration<LexDependency>e=cdeps.keys();e.hasMoreElements();){
 								LexDependency cdep=e.nextElement();
@@ -335,20 +335,20 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 		storeFeatureMap(sign);
 	}
 	
-	public Sign getOfComplSign(){
+	public Symbol getOfComplSign(){
 	
-		Sign retval=null;
+		Symbol retval=null;
 		
 		return retval;
 	}
 	
 	/** Stores the current feature map as a data object in the given sign. */
-	protected void storeFeatureMap(Sign sign) {
+	protected void storeFeatureMap(Symbol sign) {
 		sign.addData(new FeatureMapWrapper(currentMap));
 	}
 	
 	/** Returns the feature map for this extractor from the given sign (null if none). */
-	public FeatureMap getFeatureMap(Sign sign) {
+	public FeatureMap getFeatureMap(Symbol sign) {
 		FeatureMapWrapper fmw = (FeatureMapWrapper)sign.getData(FeatureMapWrapper.class);
 		return (fmw != null) ? fmw.featureMap : null;
 	}
@@ -401,10 +401,10 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 	}
 	
 	// Get siblings of a given head 1-step down the derivation, given the head-sibling relations and lexical preds of deps .*/
-	public Hashtable<LexDependency,Sign> getLowerSiblingDeps(Sign[] inputs,Sign headSign,ArrayList<String>rels,ArrayList<String>depPreds){
+	public Hashtable<LexDependency,Symbol> getLowerSiblingDeps(Symbol[] inputs,Symbol headSign,ArrayList<String>rels,ArrayList<String>depPreds){
 		
-		Hashtable<LexDependency,Sign> retval=new Hashtable<LexDependency,Sign>();
-		for(Sign sign: inputs){
+		Hashtable<LexDependency,Symbol> retval=new Hashtable<LexDependency,Symbol>();
+		for(Symbol sign: inputs){
 			if(retval.size()==rels.size())break;
 			List<LexDependency>sdeps=sign.getSiblingFilledDeps();
 			sdeps.addAll(sign.getFilledDeps());
@@ -421,9 +421,9 @@ public class EnglishAgreementExtractor implements FeatureExtractor{
 	}
 	
 	//returns sibling sign of a given head given a relation label
-	private Sign getSibling(List<LexDependency> sdeps,String rel){
+	private Symbol getSibling(List<LexDependency> sdeps,String rel){
 		
-		Sign retval=null;
+		Symbol retval=null;
 		if(sdeps!=null){
 			for(LexDependency dep: sdeps){
 				if(dep.rel.equals(rel)){

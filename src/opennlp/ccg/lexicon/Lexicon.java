@@ -629,7 +629,6 @@ public class Lexicon {
 	}
 
 	// look up and apply coarts for w to each sign in result
-	@SuppressWarnings("unchecked")
 	private void applyCoarts(Word word, SymbolHash symbolHash) throws LexException {
 		List<Symbol> inputSymbols = new ArrayList<Symbol>(symbolHash.asSymbolSet());
 		List<Symbol> outputSymbols = new ArrayList<Symbol>(inputSymbols.size());

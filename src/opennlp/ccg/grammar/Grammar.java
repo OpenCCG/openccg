@@ -575,13 +575,15 @@ public class Grammar {
         // ensure parser instantiated
         if (parser == null) parser = new Parser(this);
         // get parses
+        List<Symbol> parses;
         try {
+            ParseProduct product = parser.parse(s);
+            parses = product.getSymbols();
             parser.parse(s);
         }
         catch (ParseException pe) {
             return new ArrayList<Word>(0);
         }
-        List<Symbol> parses = parser.getProduct().getSymbols();
         // return words of first parse
         Symbol sign = parses.get(0);
         return sign.getWords();

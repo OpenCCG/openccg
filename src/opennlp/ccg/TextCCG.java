@@ -516,8 +516,8 @@ public class TextCCG {
                             continue;
                         }
                     }
-                    parser.parse(input);
-                    List<Symbol> parses = parser.getProduct().getSymbols();
+                    ParseProduct product = parser.parse(input);
+                    List<Symbol> parses = product.getSymbols();
                     Symbol[] results = new Symbol[parses.size()];
                     parses.toArray(results);
                     int resLength = results.length;

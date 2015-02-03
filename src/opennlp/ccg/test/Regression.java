@@ -483,6 +483,7 @@ public class Regression {
             boolean parsed = false;
             boolean parsedComplete = false;
             if (doParsing) {
+        		ParseProduct product = null;
                 try {
             		// use full-words or words from stored sign if possible
             		List<Word> words = null;
@@ -497,13 +498,11 @@ public class Regression {
             		}
             		if (words != null) {
 	            		// parse 'em
-	            		parser.parse(words);
-            		}
-                	else { 
-                		parser.parse(testItem.sentence);
+	            		product = parser.parse(words);
+            		} else { 
+                		product = parser.parse(testItem.sentence);
                 	}
-                	// retrieve results
-            		ParseProduct product = parser.getProduct(); 
+                	// retrieve results 
                     parses = product.getSymbols();
                     parseScores = product.getScores();
                     parsed = true;
@@ -530,8 +529,6 @@ public class Regression {
                     System.err.println("Uncaught exception in parsing: " + testItem.sentence);
                     e.printStackTrace(System.err);
                 }
-                 
-                ParseProduct product = parser.getProduct();
                 opennlp.ccg.parse.ChartCompleter chart = product.getChartCompleter();
                 // update parse stats
                 int count = chart != null ? chart.getScoredSymbolCount() : 0;

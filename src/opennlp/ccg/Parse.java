@@ -146,8 +146,7 @@ public class Parse {
         	try {
         		// parse it
         		System.out.println(line);
-			parser.parse(line);
-			ParseProduct product = parser.getProduct();
+			ParseProduct product = parser.parse(line);
 			List<Symbol> result = product.getSymbols();
 			int numParses = Math.min(nbestListSize, result.size());
 			for (int i=0; i < numParses; i++) {

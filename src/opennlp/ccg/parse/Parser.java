@@ -191,23 +191,23 @@ public class Parser {
 	 * Parses a character sequence.
 	 *
 	 * @param string the character sequence
+	 * @return 
 	 * @exception ParseException thrown if a parse can't be found for the entire
 	 *                string
 	 */
-	public void parse(String string) throws ParseException {
-		// tokenize
+	public final ParseProduct parse(String string) throws ParseException {
 		List<Word> words = lexicon.tokenizer.tokenize(string);
-		// parse words
-		parse(words);
+		return parse(words);
 	}
 
 	/**
 	 * Parses a list of words
 	 * 
 	 * @param words the list of words
+	 * @return 
 	 * @throws ParseException
 	 */
-	public final void parse(List<Word> words) throws ParseException {
+	public final ParseProduct parse(List<Word> words) throws ParseException {
 		product = new ParseProduct();
 
 		// For supertagger, parse iterative beta-best
@@ -216,6 +216,7 @@ public class Parser {
 		} else {
 			parseOnce(words);
 		}
+		return product;
 	}
 
 	/**
@@ -554,10 +555,6 @@ public class Parser {
 			}
 		}
 		return new Pair<Symbol, Boolean>(retval, (bestF == 1.0));
-	}
-
-	public final ParseProduct getProduct() {
-		return product;
 	}
 
 }

@@ -23,7 +23,6 @@ import org.jdom.Element;
  * A builder of morph objects.
  * 
  * @author Daniel Couto-Vale
- * @version
  */
 public interface MorphBuilder {
 

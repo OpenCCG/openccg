@@ -1210,49 +1210,21 @@ public class Lexicon {
 		}
 	}
 
-	private class LexiconScanner extends XmlScanner {
-		List<Family> lexicon = new ArrayList<Family>();
-		Element distrElt = null;
-		Element licensingElt = null;
-		Element relationSortingElt = null;
-
-		public void handleElement(Element e) {
-			// create family
-			if (e.getName().equals("family")) {
-				try {
-					lexicon.add(new Family(e));
-				} catch (RuntimeException exc) {
-					System.err.println("Skipping family: " + e.getAttributeValue("name"));
-					System.err.println(exc.toString());
-				}
-			}
-			// save distributive attributes
-			else if (e.getName().equals("distributive-features"))
-				distrElt = e;
-			// save licensing features
-			else if (e.getName().equals("licensing-features"))
-				licensingElt = e;
-			// save relation sort order
-			else if (e.getName().equals("relation-sorting"))
-				relationSortingElt = e;
-		}
-	};
-
 	private List<Family> getLexicon(URL url) throws IOException {
 		// scan XML, creating families
-		LexiconScanner lexiconScanner = new LexiconScanner();
+		LexiconLoader lexiconScanner = new LexiconLoader();
 		lexiconScanner.parse(url);
 		// get distributive attributes, if any
-		if (lexiconScanner.distrElt != null) {
-			String distrAttrs = lexiconScanner.distrElt.getAttributeValue("attrs");
+		if (lexiconScanner.distributiveElm != null) {
+			String distrAttrs = lexiconScanner.distributiveElm.getAttributeValue("attrs");
 			_distributiveAttrs = distrAttrs.split("\\s+");
 		}
 		// load licensing features
-		loadLicensingFeatures(lexiconScanner.licensingElt);
+		loadLicensingFeatures(lexiconScanner.licensingElm);
 		// load relation sort order
-		loadRelationSortOrder(lexiconScanner.relationSortingElt);
+		loadRelationSortOrder(lexiconScanner.relationSortingElm);
 		// return families
-		return lexiconScanner.lexicon;
+		return lexiconScanner.families;
 	}
 
 	// get licensing features, with appropriate defaults

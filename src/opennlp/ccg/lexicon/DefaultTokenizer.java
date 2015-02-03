@@ -417,10 +417,8 @@ public class DefaultTokenizer implements Tokenizer {
 			sb.append(w.getForm());
 		if (w.getPitchAccent() != null)
 			sb.append("_").append(w.getPitchAccent());
-		for (Iterator<Pair<String, String>> it = w.getAttrValPairs(); it.hasNext();) {
-			Pair<String, String> p = it.next();
-			sb.append("_").append(p.b);
-
+		for (Pair<String, String> pair : w.getFormalAttributesProtected()) {
+			sb.append("_").append(pair.b);
 		}
 		return sb.toString();
 	}
@@ -486,10 +484,9 @@ public class DefaultTokenizer implements Tokenizer {
 		if (pitchAccent != null)
 			sb.append(":").append(Tokenizer.PITCH_ACCENT_ATTR).append("-")
 					.append(escape(pitchAccent));
-		for (Iterator<Pair<String, String>> it = w.getAttrValPairs(); it.hasNext();) {
-			Pair<String, String> p = it.next();
-			String attr = p.a;
-			String val = p.b;
+		for (Pair<String, String> pair : w.getFormalAttributesProtected()) {
+			String attr = pair.a;
+			String val = pair.b;
 			if (val != null)
 				sb.append(":").append(escape(attr)).append("-").append(escape(val));
 		}

@@ -487,10 +487,9 @@ public class Symbol implements EntityRealizer, Serializable {
 			}
 			child = multiwordElt;
 		}
-		for (Iterator<Pair<String, String>> it = word.getAttrValPairs(); it.hasNext();) {
-			Pair<String, String> p = it.next();
-			String attr = p.a;
-			String val = p.b;
+		for (Pair<String, String> pair : word.getFormalAttributesProtected()) {
+			String attr = pair.a;
+			String val = pair.b;
 			child.setAttribute(attr, val);
 		}
 		parent.addContent(child);

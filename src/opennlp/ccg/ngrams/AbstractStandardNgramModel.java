@@ -58,7 +58,7 @@ abstract class AbstractStandardNgramModel extends NgramScorer {
             if (scr != null) s = scr;
             // add pitch accent and attrs, if any
             String pitchAccent = w.getPitchAccent();
-            Iterator<Pair<String,String>> pairs = w.getAttrValPairs();
+            Iterator<Pair<String,String>> pairs = w.getFormalAttributesProtected().iterator();
             if (pitchAccent != null || pairs.hasNext()) {
                 StringBuffer sb = new StringBuffer();
                 sb.append(s);

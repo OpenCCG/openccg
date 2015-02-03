@@ -88,7 +88,7 @@ public class FactorChainWord extends Word {
     /** Returns the value of the attribute with the given name, or null if none. 
         The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
         may be used to retrieve the form, ..., semantic class. */
-    public String getVal(String attr) {
+    public String getFormalAttributeValue(String attr) {
         String internedAttr = attr.intern(); // use == on interned attr
         return getValFromInterned(internedAttr); 
     }

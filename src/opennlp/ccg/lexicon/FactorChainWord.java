@@ -50,10 +50,10 @@ public class FactorChainWord extends Word {
     
     
     /** Returns the surface form. */
-    public String getForm() { return getValFromInterned(Tokenizer.WORD_ATTR); }
+    public String getForm() { return getValFromInterned(Tokenizer.WORD_ASSOCIATE); }
     
     /** Returns the pitch accent. */
-    public String getPitchAccent() { return getValFromInterned(Tokenizer.PITCH_ACCENT_ATTR); }
+    public String getPitchAccent() { return getValFromInterned(Tokenizer.TONE_ASSOCIATE); }
     
     /** Returns the list of extra attribute-value pairs. */
     protected List<Pair<String,String>> getFormalAttributes() { 
@@ -73,16 +73,16 @@ public class FactorChainWord extends Word {
     }
     
     /** Returns the stem. */
-    public String getStem() { return getValFromInterned(Tokenizer.STEM_ATTR); }
+    public String getStem() { return getValFromInterned(Tokenizer.TERM_ASSOCIATE); }
     
     /** Returns the part of speech. */
-    public String getPOS() { return getValFromInterned(Tokenizer.POS_ATTR); }
+    public String getPOS() { return getValFromInterned(Tokenizer.FUNCTIONS_ASSOCIATE); }
     
     /** Returns the supertag. */
-    public String getSupertag() { return getValFromInterned(Tokenizer.SUPERTAG_ATTR); }
+    public String getSupertag() { return getValFromInterned(Tokenizer.SUPERTAG_ASSOCIATE); }
     
     /** Returns the semantic class. */
-    public String getSemClass() { return getValFromInterned(Tokenizer.SEM_CLASS_ATTR); }
+    public String getSemClass() { return getValFromInterned(Tokenizer.ENTITY_CLASS_ASSOCIATE); }
 
     
     /** Returns the value of the attribute with the given name, or null if none. 
@@ -97,7 +97,7 @@ public class FactorChainWord extends Word {
     protected String getValFromInterned(String attr) {
         FactorChainWord current = this;
         while (current != null) {
-            if (attr == Tokenizer.WORD_ATTR) {
+            if (attr == Tokenizer.WORD_ASSOCIATE) {
                 if (current.key instanceof String) return (String) current.key;
             }
             else if (current.key instanceof FactorKey) {
@@ -117,7 +117,7 @@ public class FactorChainWord extends Word {
         
         /** Creates a surface word with the given interned form. */
         public synchronized Word create(String form) {
-            return create(factorChainRoot, Tokenizer.WORD_ATTR, form);
+            return create(factorChainRoot, Tokenizer.WORD_ASSOCIATE, form);
         }
         
         /** Creates a (surface or full) word with the given normalized attribute name and value.
@@ -135,12 +135,12 @@ public class FactorChainWord extends Word {
         ) {
             // adds non-null vals from the root, in a rough specificity order 
             TrieMap<Object,FactorChainWord> currentNode = factorChainRoot;
-            if (POS != null) currentNode = findChild(currentNode, Tokenizer.POS_ATTR, POS);
-            if (supertag != null) currentNode = findChild(currentNode, Tokenizer.SUPERTAG_ATTR, supertag);
-            if (semClass != null) currentNode = findChild(currentNode, Tokenizer.SEM_CLASS_ATTR, semClass);
-            if (stem != null) currentNode = findChild(currentNode, Tokenizer.STEM_ATTR, stem);
-            if (form != null) currentNode = findChild(currentNode, Tokenizer.WORD_ATTR, form);
-            if (pitchAccent != null) currentNode = findChild(currentNode, Tokenizer.PITCH_ACCENT_ATTR, pitchAccent);
+            if (POS != null) currentNode = findChild(currentNode, Tokenizer.FUNCTIONS_ASSOCIATE, POS);
+            if (supertag != null) currentNode = findChild(currentNode, Tokenizer.SUPERTAG_ASSOCIATE, supertag);
+            if (semClass != null) currentNode = findChild(currentNode, Tokenizer.ENTITY_CLASS_ASSOCIATE, semClass);
+            if (stem != null) currentNode = findChild(currentNode, Tokenizer.TERM_ASSOCIATE, stem);
+            if (form != null) currentNode = findChild(currentNode, Tokenizer.WORD_ASSOCIATE, form);
+            if (pitchAccent != null) currentNode = findChild(currentNode, Tokenizer.TONE_ASSOCIATE, pitchAccent);
             if (attrValPairs != null) {
                 for (int i = 0; i < attrValPairs.size(); i++) {
                 	Pair<String,String> p = attrValPairs.get(i);

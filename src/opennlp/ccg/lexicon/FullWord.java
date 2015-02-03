@@ -138,17 +138,17 @@ public class FullWord extends WordWithPitchAccent {
 			String POS = null;
 			String supertag = null;
 			String semClass = null;
-			if (attributeName == Tokenizer.WORD_ATTR) {
+			if (attributeName == Tokenizer.WORD_ASSOCIATE) {
 				form = attributeValue;
-			} else if (attributeName == Tokenizer.PITCH_ACCENT_ATTR) {
+			} else if (attributeName == Tokenizer.TONE_ASSOCIATE) {
 				pitchAccent = attributeValue;
-			} else if (attributeName == Tokenizer.STEM_ATTR) {
+			} else if (attributeName == Tokenizer.TERM_ASSOCIATE) {
 				stem = attributeValue;
-			} else if (attributeName == Tokenizer.POS_ATTR) {
+			} else if (attributeName == Tokenizer.FUNCTIONS_ASSOCIATE) {
 				POS = attributeValue;
-			} else if (attributeName == Tokenizer.SUPERTAG_ATTR) {
+			} else if (attributeName == Tokenizer.SUPERTAG_ASSOCIATE) {
 				supertag = attributeValue;
-			} else if (attributeName == Tokenizer.SEM_CLASS_ATTR) {
+			} else if (attributeName == Tokenizer.ENTITY_CLASS_ASSOCIATE) {
 				semClass = attributeValue;
 			} else {
 				attrValPairs = new ArrayList<Pair<String, String>>(1);

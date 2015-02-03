@@ -77,17 +77,17 @@ public class SimpleWord extends Word {
 	 */
 	public String getFormalAttributeValue(String attr) {
 		String internedAttr = attr.intern(); // use == on interned attr
-		if (internedAttr == Tokenizer.WORD_ATTR)
+		if (internedAttr == Tokenizer.WORD_ASSOCIATE)
 			return getForm();
-		if (internedAttr == Tokenizer.PITCH_ACCENT_ATTR)
+		if (internedAttr == Tokenizer.TONE_ASSOCIATE)
 			return getPitchAccent();
-		if (internedAttr == Tokenizer.STEM_ATTR)
+		if (internedAttr == Tokenizer.TERM_ASSOCIATE)
 			return getStem();
-		if (internedAttr == Tokenizer.POS_ATTR)
+		if (internedAttr == Tokenizer.FUNCTIONS_ASSOCIATE)
 			return getPOS();
-		if (internedAttr == Tokenizer.SUPERTAG_ATTR)
+		if (internedAttr == Tokenizer.SUPERTAG_ASSOCIATE)
 			return getSupertag();
-		if (internedAttr == Tokenizer.SEM_CLASS_ATTR)
+		if (internedAttr == Tokenizer.ENTITY_CLASS_ASSOCIATE)
 			return getSemClass();
 		List<Pair<String, String>> pairs = getFormalAttributes();
 		if (pairs == null)

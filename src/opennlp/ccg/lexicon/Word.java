@@ -87,13 +87,13 @@ abstract public class Word implements Serializable, Comparable<Word> {
         if (pairs == null && pitchAccent == null) return EMPTY_PAIR_LIST; 
         else if (pairs == null) { 
             List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(1); 
-            retval.add(new Pair<String,String>(Tokenizer.PITCH_ACCENT_ATTR, pitchAccent));
+            retval.add(new Pair<String,String>(Tokenizer.TONE_ASSOCIATE, pitchAccent));
             return retval;
         }
         else if (pitchAccent == null) return pairs;
         else {
             List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(pairs);
-            retval.add(new Pair<String,String>(Tokenizer.PITCH_ACCENT_ATTR, pitchAccent));
+            retval.add(new Pair<String,String>(Tokenizer.TONE_ASSOCIATE, pitchAccent));
             return retval;
         }
     }
@@ -104,9 +104,9 @@ abstract public class Word implements Serializable, Comparable<Word> {
 	private static Set<String> initKnownAttrs() {
         Set<String> knownAttrs = new THashSet(new TObjectIdentityHashingStrategy());
         String[] names = {
-            Tokenizer.WORD_ATTR, Tokenizer.PITCH_ACCENT_ATTR, 
-            Tokenizer.STEM_ATTR, Tokenizer.POS_ATTR, 
-            Tokenizer.SUPERTAG_ATTR, Tokenizer.SEM_CLASS_ATTR
+            Tokenizer.WORD_ASSOCIATE, Tokenizer.TONE_ASSOCIATE, 
+            Tokenizer.TERM_ASSOCIATE, Tokenizer.FUNCTIONS_ASSOCIATE, 
+            Tokenizer.SUPERTAG_ASSOCIATE, Tokenizer.ENTITY_CLASS_ASSOCIATE
         };
         for (int i = 0; i < names.length; i++) { knownAttrs.add(names[i]); }
         return knownAttrs;
@@ -125,21 +125,6 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     
     // factory methods
-    
-    /** Factory interface. */
-    public interface WordFactory {
-        /** Creates a surface word with the given interned form. */
-        public Word create(String form);
-        /** Creates a (surface or full) word with the given normalized attribute name and value.
-            The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
-            may be used for the form, ..., semantic class. */
-        public Word create(String attr, String val);
-        /** Creates a (surface or full) word from the given canonical factors. */
-        public Word create(
-            String form, String pitchAccent, List<Pair<String,String>> attrValPairs, 
-            String stem, String POS, String supertag, String semClass 
-        );
-    }
     
     /** The word factory to use. */
     protected static WordFactory wordFactory = new FullWord.Factory();
@@ -329,7 +314,7 @@ abstract public class Word implements Serializable, Comparable<Word> {
     public static synchronized Word createCoreSurfaceWord(Word word, Set<String> attrsSet) {
         String form = word.getForm();
         String accent = word.getPitchAccent();
-        if (accent != null && attrsSet.contains(Tokenizer.PITCH_ACCENT_ATTR)) accent = null;
+        if (accent != null && attrsSet.contains(Tokenizer.TONE_ASSOCIATE)) accent = null;
         List<Pair<String,String>> pairs = word.getFormalAttributes(); 
         if (pairs != null) {
             pairs = new ArrayList<Pair<String,String>>(pairs); 
@@ -430,7 +415,7 @@ abstract public class Word implements Serializable, Comparable<Word> {
     
     /** Returns whether this word's surface attributes intersect with the given ones. */
     public boolean attrsIntersect(Set<String> attrsSet) {
-        if (getPitchAccent() != null && attrsSet.contains(Tokenizer.PITCH_ACCENT_ATTR))
+        if (getPitchAccent() != null && attrsSet.contains(Tokenizer.TONE_ASSOCIATE))
             return true;
         for (Pair<String,String> pair : getFormalAttributesProtected()) {
             if (attrsSet.contains(pair.a)) return true;

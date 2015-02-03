@@ -46,12 +46,12 @@ public class ListPairWord extends Word {
 
 	/** Returns the surface form. */
 	public String getForm() {
-		return getValFromInterned(Tokenizer.WORD_ATTR);
+		return getValFromInterned(Tokenizer.WORD_ASSOCIATE);
 	}
 
 	/** Returns the pitch accent. */
 	public String getPitchAccent() {
-		return getValFromInterned(Tokenizer.PITCH_ACCENT_ATTR);
+		return getValFromInterned(Tokenizer.TONE_ASSOCIATE);
 	}
 
 	/** Returns the list of extra attribute-value pairs. */
@@ -69,22 +69,22 @@ public class ListPairWord extends Word {
 
 	/** Returns the stem. */
 	public String getStem() {
-		return getValFromInterned(Tokenizer.STEM_ATTR);
+		return getValFromInterned(Tokenizer.TERM_ASSOCIATE);
 	}
 
 	/** Returns the part of speech. */
 	public String getPOS() {
-		return getValFromInterned(Tokenizer.POS_ATTR);
+		return getValFromInterned(Tokenizer.FUNCTIONS_ASSOCIATE);
 	}
 
 	/** Returns the supertag. */
 	public String getSupertag() {
-		return getValFromInterned(Tokenizer.SUPERTAG_ATTR);
+		return getValFromInterned(Tokenizer.SUPERTAG_ASSOCIATE);
 	}
 
 	/** Returns the semantic class. */
 	public String getSemClass() {
-		return getValFromInterned(Tokenizer.SEM_CLASS_ATTR);
+		return getValFromInterned(Tokenizer.ENTITY_CLASS_ASSOCIATE);
 	}
 
 	/**

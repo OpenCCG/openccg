@@ -191,27 +191,27 @@ public class DefaultTokenizer implements Tokenizer {
 					suffix = null;
 				attr = unescape(attr);
 				val = unescape(val);
-				if (attr.equals(Tokenizer.WORD_ATTR)) {
+				if (attr.equals(Tokenizer.WORD_ASSOCIATE)) {
 					form = val;
 					continue;
 				}
-				if (attr.equals(Tokenizer.STEM_ATTR)) {
+				if (attr.equals(Tokenizer.TERM_ASSOCIATE)) {
 					stem = val;
 					continue;
 				}
-				if (attr.equals(Tokenizer.POS_ATTR)) {
+				if (attr.equals(Tokenizer.FUNCTIONS_ASSOCIATE)) {
 					POS = val;
 					continue;
 				}
-				if (attr.equals(Tokenizer.SUPERTAG_ATTR)) {
+				if (attr.equals(Tokenizer.SUPERTAG_ASSOCIATE)) {
 					supertag = val;
 					continue;
 				}
-				if (attr.equals(Tokenizer.SEM_CLASS_ATTR)) {
+				if (attr.equals(Tokenizer.ENTITY_CLASS_ASSOCIATE)) {
 					semClass = val;
 					continue;
 				}
-				if (attr.equals(Tokenizer.PITCH_ACCENT_ATTR)) {
+				if (attr.equals(Tokenizer.TONE_ASSOCIATE)) {
 					pitchAccent = val;
 					continue;
 				}
@@ -482,7 +482,7 @@ public class DefaultTokenizer implements Tokenizer {
 		}
 		sb.append(escape(form));
 		if (pitchAccent != null)
-			sb.append(":").append(Tokenizer.PITCH_ACCENT_ATTR).append("-")
+			sb.append(":").append(Tokenizer.TONE_ASSOCIATE).append("-")
 					.append(escape(pitchAccent));
 		for (Pair<String, String> pair : w.getFormalAttributesProtected()) {
 			String attr = pair.a;
@@ -491,13 +491,13 @@ public class DefaultTokenizer implements Tokenizer {
 				sb.append(":").append(escape(attr)).append("-").append(escape(val));
 		}
 		if (stem != null)
-			sb.append(":").append(Tokenizer.STEM_ATTR).append("-").append(escape(stem));
+			sb.append(":").append(Tokenizer.TERM_ASSOCIATE).append("-").append(escape(stem));
 		if (POS != null)
-			sb.append(":").append(Tokenizer.POS_ATTR).append("-").append(escape(POS));
+			sb.append(":").append(Tokenizer.FUNCTIONS_ASSOCIATE).append("-").append(escape(POS));
 		if (supertag != null)
-			sb.append(":").append(Tokenizer.SUPERTAG_ATTR).append("-").append(escape(supertag));
+			sb.append(":").append(Tokenizer.SUPERTAG_ASSOCIATE).append("-").append(escape(supertag));
 		if (semClass != null)
-			sb.append(":").append(Tokenizer.SEM_CLASS_ATTR).append("-").append(escape(semClass));
+			sb.append(":").append(Tokenizer.ENTITY_CLASS_ASSOCIATE).append("-").append(escape(semClass));
 		return sb.toString();
 	}
 

@@ -1,5 +1,8 @@
 package opennlp.ccg.lexicon;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -7,7 +10,7 @@ import java.util.Map;
  * 
  * @author Daniel Couto-Vale
  */
-public class Muster {
+public class Muster implements Comparable<Muster> {
 
 	/**
 	 * A muster sequence of characters
@@ -67,5 +70,31 @@ public class Muster {
     public String getParallel(String parallelKey) {
     	return parallelMap.get(parallelKey);
     }
+
+	@Override
+	public int compareTo(Muster o) {
+		int compare = 0;
+		compare = form.compareTo(o.form);
+		if (compare != 0) return compare;
+		compare = tone.compareTo(o.tone);
+		if (compare != 0) return compare;
+		compare = parallelMap.size() - o.parallelMap.size();
+		if (compare != 0) return compare;
+		List<String> keyList = new ArrayList<String>(parallelMap.keySet());
+		List<String> oKeyList = new ArrayList<String>(o.parallelMap.keySet());
+		Collections.sort(keyList);
+		Collections.sort(oKeyList);
+		for (int i = 0; i < keyList.size(); i++) {
+			String key = keyList.get(i);
+			String oKey = oKeyList.get(i);
+			compare = key.compareTo(oKey);
+			if (compare != 0) return compare;
+			String value = parallelMap.get(key);
+			String oValue = parallelMap.get(oKey);
+			compare = value.compareTo(oValue);
+			if (compare != 0) return compare;
+		}
+		return compare;
+	}
 
 }

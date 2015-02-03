@@ -36,7 +36,7 @@ public class ChartPrinter {
 						symbols = chart.getForm(i, j).getSymbols();
 					}
 					if (i == j) {
-						words[i] = symbols.asSignSet().iterator().next().getOrthography();
+						words[i] = symbols.asSymbolSet().iterator().next().getOrthography();
 					}
 					if (symbols.size() >= s + 1) {
 						toprint[row + s][j] = ((Symbol) symbols.toArray()[s]).getCategory().toString();

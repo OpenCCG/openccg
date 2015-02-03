@@ -156,11 +156,9 @@ public class Lexicon {
 			if (morphItem.isCoart()) {
 				Word indexingWord = morphItem.getCoartIndexingWord();
 				_words.put(indexingWord, morphItem);
-				Pair<String, String> first = indexingWord.getSurfaceAttrValPairs().next();
+				Pair<String, String> first = indexingWord.getSurfaceAttrValPairs().get(0);
 				_indexedCoartAttrs.add(first.a);
-				for (Iterator<Pair<String, String>> it = surfaceWord.getSurfaceAttrValPairs(); it
-						.hasNext();) {
-					Pair<String, String> p = it.next();
+				for (Pair<String, String> p : surfaceWord.getSurfaceAttrValPairs()) {
 					_coartAttrs.add(p.a);
 				}
 			}
@@ -535,8 +533,8 @@ public class Lexicon {
 		for (Iterator<Word> it = words.iterator(); it.hasNext();) {
 			Word w = it.next();
 			try {
-				SymbolHash signs = getSignsFromWord(w, specialTokenConst, pred, targetRel);
-				retval.addAll(signs.asSignSet());
+				SymbolHash signs = getSymbolsFromWord(w, specialTokenConst, pred, targetRel);
+				retval.addAll(signs.asSymbolSet());
 			}
 			// shouldn't happen
 			catch (LexException exc) {
@@ -618,7 +616,7 @@ public class Lexicon {
 		Word coreWord = (surfaceWord.attrsIntersect(_coartAttrs)) ? Word.createCoreSurfaceWord(
 				surfaceWord, _coartAttrs) : surfaceWord;
 		// lookup core word
-		SymbolHash result = getSignsFromWord(coreWord, null, null, null);
+		SymbolHash result = getSymbolsFromWord(coreWord, null, null, null);
 		if (result.size() == 0) {
 			throw new LexException(coreWord + " not found in lexicon");
 		}
@@ -632,40 +630,38 @@ public class Lexicon {
 
 	// look up and apply coarts for w to each sign in result
 	@SuppressWarnings("unchecked")
-	private void applyCoarts(Word w, SymbolHash result) throws LexException {
-		List<Symbol> inputSigns = new ArrayList<Symbol>(result.asSignSet());
-		result.clear();
-		List<Symbol> outputSigns = new ArrayList<Symbol>(inputSigns.size());
+	private void applyCoarts(Word word, SymbolHash symbolHash) throws LexException {
+		List<Symbol> inputSymbols = new ArrayList<Symbol>(symbolHash.asSymbolSet());
+		List<Symbol> outputSymbols = new ArrayList<Symbol>(inputSymbols.size());
+		symbolHash.clear();
 		// for each surface attr, lookup coarts and apply to input signs,
 		// storing results in output signs
-		for (Iterator<Pair<String, String>> it = w.getSurfaceAttrValPairs(); it.hasNext();) {
-			Pair<String, String> p = it.next();
-			String attr = (String) p.a;
-			if (!_indexedCoartAttrs.contains(attr))
+		for (Pair<String, String> pair : word.getSurfaceAttrValPairs()) {
+			String attributeName = (String) pair.a;
+			if (!_indexedCoartAttrs.contains(attributeName))
 				continue;
-			String val = (String) p.b;
-			Word coartWord = Word.createWord(attr, val);
-			SymbolHash coartResult = getSignsFromWord(coartWord, null, null, null);
-			for (Iterator<Symbol> it2 = coartResult.iterator(); it2.hasNext();) {
-				Symbol coartSign = it2.next();
+			String attributeValue = (String) pair.b;
+			Word coartWord = Word.createWord(attributeName, attributeValue);
+			SymbolHash coartSymbolHash = getSymbolsFromWord(coartWord, null, null, null);
+			for (Symbol coartSymbol : coartSymbolHash.asSymbolSet()) {
 				// apply to each input
-				for (int j = 0; j < inputSigns.size(); j++) {
-					Symbol sign = inputSigns.get(j);
-					grammar.rules.applyCoart(sign, coartSign, outputSigns);
+				for (int j = 0; j < inputSymbols.size(); j++) {
+					Symbol sign = inputSymbols.get(j);
+					grammar.rules.applyCoart(sign, coartSymbol, outputSymbols);
 				}
 			}
 			// switch output to input for next iteration
-			inputSigns.clear();
-			inputSigns.addAll(outputSigns);
-			outputSigns.clear();
+			inputSymbols.clear();
+			inputSymbols.addAll(outputSymbols);
+			outputSymbols.clear();
 		}
 		// add results back
-		result.addAll(inputSigns);
+		symbolHash.addAll(inputSymbols);
 	}
 
 	// get signs with additional args for a known special token const, target
 	// pred and target rel
-	private SymbolHash getSignsFromWord(Word w, String specialTokenConst, String targetPred,
+	private SymbolHash getSymbolsFromWord(Word w, String specialTokenConst, String targetPred,
 			String targetRel) throws LexException {
 
 		Collection<MorphItem> morphItems = (specialTokenConst == null) ? (Collection<MorphItem>) _words

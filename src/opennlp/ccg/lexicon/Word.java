@@ -22,6 +22,7 @@ import opennlp.ccg.util.*;
 
 import java.io.*;
 import java.util.*;
+
 import gnu.trove.*;
 
 /**
@@ -43,6 +44,7 @@ import gnu.trove.*;
  */
 abstract public class Word implements Serializable, Comparable<Word> {
 
+	private static final List<Pair<String, String>> EMPTY_PAIR_LIST = new ArrayList<Pair<String, String>>();
 	private static final long serialVersionUID = 1L;
 
 	/** Returns the surface form. */
@@ -61,19 +63,19 @@ abstract public class Word implements Serializable, Comparable<Word> {
     } 
     
     /** Returns an iterator over the surface attribute-value pairs, including the pitch accent (if any). */
-    public Iterator<Pair<String,String>> getSurfaceAttrValPairs() {
+    public List<Pair<String,String>> getSurfaceAttrValPairs() {
         List<Pair<String,String>> pairs = getAttrValPairsList(); String pitchAccent = getPitchAccent();
-        if (pairs == null && pitchAccent == null) return emptyIterator; 
+        if (pairs == null && pitchAccent == null) return EMPTY_PAIR_LIST; 
         else if (pairs == null) { 
             List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(1); 
             retval.add(new Pair<String,String>(Tokenizer.PITCH_ACCENT_ATTR, pitchAccent));
-            return retval.iterator();
+            return retval;
         }
-        else if (pitchAccent == null) return pairs.iterator();
+        else if (pitchAccent == null) return pairs;
         else {
             List<Pair<String,String>> retval = new ArrayList<Pair<String,String>>(pairs);
             retval.add(new Pair<String,String>(Tokenizer.PITCH_ACCENT_ATTR, pitchAccent));
-            return retval.iterator();
+            return retval;
         }
     }            
     
@@ -207,9 +209,10 @@ abstract public class Word implements Serializable, Comparable<Word> {
     /** Creates a (surface or full) word with the given attribute name and value.
         The attribute names Tokenizer.WORD_ATTR, ..., Tokenizer.SEM_CLASS_ATTR 
         may be used for the form, ..., semantic class. */
-    public static synchronized Word createWord(String attr, String val) {
-        attr = attr.intern(); val = (val != null) ? val.intern() : null; 
-        return wordFactory.create(attr, val);
+    public static synchronized Word createWord(String attributeName, String attributeValue) {
+        attributeName = attributeName.intern();
+        attributeValue = (attributeValue != null) ? attributeValue.intern() : null; 
+        return wordFactory.create(attributeName, attributeValue);
     }
     
     /** Creates a (surface or full) word from the given one, replacing the word form with the given one. */

@@ -70,7 +70,7 @@ public class SymbolHash extends THashSet {
      * Returns this as a set of signs.
      */
     @SuppressWarnings("unchecked")
-	public Set<Symbol> asSignSet() { return (Set<Symbol>) this; }
+	public Set<Symbol> asSymbolSet() { return (Set<Symbol>) this; }
 
     /**
      * Adds a sign, keeping the one with lower derivational complexity 
@@ -95,7 +95,7 @@ public class SymbolHash extends THashSet {
     
     /** Returns the signs sorted by their words lexicographically. */
     public List<Symbol> getSignsSorted() {
-    	ArrayList<Symbol> retval = new ArrayList<Symbol>(asSignSet());
+    	ArrayList<Symbol> retval = new ArrayList<Symbol>(asSymbolSet());
     	Collections.sort(retval, signComparator); 
     	return retval;
     }

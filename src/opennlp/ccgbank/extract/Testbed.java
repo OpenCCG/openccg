@@ -306,7 +306,7 @@ public class Testbed {
 			SymbolHash signs = followDerivR(derivElt);
 			// set results, using first available sign (ie some arbitrary one)
 			if (!signs.isEmpty()) {
-				Iterator<Symbol> iter = signs.asSignSet().iterator();
+				Iterator<Symbol> iter = signs.asSymbolSet().iterator();
 				// System.out.println("Processing file no: "+header);
 				// Count of single rooted LFs produced by the constrained parser
 				int matchSRLF = 0;
@@ -331,7 +331,7 @@ public class Testbed {
 				// If no single rooted LF is there, using first available sign
 				// (ie some arbitrary one)
 				if (matchSRLF == 0) {
-					sign = signs.asSignSet().iterator().next();
+					sign = signs.asSymbolSet().iterator().next();
 					cat = sign.getCategory();
 					index = cat.getIndexNominal();
 					flatLF = cat.getLF();
@@ -384,7 +384,7 @@ public class Testbed {
 			// unary case
 			if (numChildren == 2) {
 				// apply rules
-				for (Symbol s : firstSigns.asSignSet()) {
+				for (Symbol s : firstSigns.asSymbolSet()) {
 					List<Symbol> results = rules.applyUnaryRules(s);
 					for (Symbol rSign : results)
 						retval.insert(rSign);
@@ -398,12 +398,12 @@ public class Testbed {
 						ccgBankTaskTestbed.log("Caution for " + header + ": " + msg);
 					if (ccgBankTaskTestbed.isDebugDerivations()) {
 						ccgBankTaskTestbed.log(header + ": derivation stymied; inputs: ");
-						for (Symbol s : firstSigns.asSignSet()) {
+						for (Symbol s : firstSigns.asSymbolSet()) {
 							ccgBankTaskTestbed.log(s.toString());
 						}
 						if (!noResults) {
 							ccgBankTaskTestbed.log("Outputs: ");
-							for (Symbol s : retval.asSignSet())
+							for (Symbol s : retval.asSymbolSet())
 								ccgBankTaskTestbed.log(s.toString());
 						}
 					}
@@ -416,8 +416,8 @@ public class Testbed {
 				Element secondInputElt = (Element) childElts.get(2);
 				SymbolHash secondSigns = followDerivR(secondInputElt);
 				// apply rules
-				for (Symbol sign1 : firstSigns.asSignSet()) {
-					for (Symbol sign2 : secondSigns.asSignSet()) {
+				for (Symbol sign1 : firstSigns.asSymbolSet()) {
+					for (Symbol sign2 : secondSigns.asSymbolSet()) {
 						List<Symbol> results = rules.applyBinaryRules(sign1, sign2);
 						for (Symbol rSign : results)
 							retval.insert(rSign);
@@ -441,16 +441,16 @@ public class Testbed {
 						ccgBankTaskTestbed.log("Caution for " + header + ": " + msg);
 					if (ccgBankTaskTestbed.isDebugDerivations()) {
 						ccgBankTaskTestbed.log(header + ": derivation stymied; first inputs: ");
-						for (Symbol sign1 : firstSigns.asSignSet()) {
+						for (Symbol sign1 : firstSigns.asSymbolSet()) {
 							ccgBankTaskTestbed.log(sign1.toString());
 						}
 						ccgBankTaskTestbed.log("Second inputs: ");
-						for (Symbol sign2 : secondSigns.asSignSet()) {
+						for (Symbol sign2 : secondSigns.asSymbolSet()) {
 							ccgBankTaskTestbed.log(sign2.toString());
 						}
 						if (!noResults) {
 							ccgBankTaskTestbed.log("Outputs: ");
-							for (Symbol s : retval.asSignSet())
+							for (Symbol s : retval.asSymbolSet())
 								ccgBankTaskTestbed.log(s.toString());
 						}
 					}
@@ -462,7 +462,7 @@ public class Testbed {
 			// Store cat ids of tree nodes for printing to aux files
 			if (treeInfoFlag) {
 
-				for (Symbol s : retval.asSignSet()) {
+				for (Symbol s : retval.asSymbolSet()) {
 
 					Hashtable<String, String> idConvTally = new Hashtable<String, String>();
 					Hashtable<String, Integer> freqTally = new Hashtable<String, Integer>();
@@ -544,7 +544,7 @@ public class Testbed {
 				// also check number with matching pos, match on no class
 				int matchPOS = 0;
 				boolean matchNoClass = false;
-				for (Iterator<Symbol> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
+				for (Iterator<Symbol> it = lexSigns.asSymbolSet().iterator(); it.hasNext();) {
 					Symbol s = it.next();
 
 					Word wTemp = s.getWords().get(0);
@@ -573,7 +573,7 @@ public class Testbed {
 				}
 				// filter by pos unless none match
 				if (matchPOS > 0) {
-					for (Iterator<Symbol> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
+					for (Iterator<Symbol> it = lexSigns.asSymbolSet().iterator(); it.hasNext();) {
 						Symbol s = it.next();
 						Word wTemp = s.getWords().get(0);
 						if (!wTemp.getPOS().equals(pos)) {
@@ -753,7 +753,7 @@ public class Testbed {
 			return true;
 		// check for cat
 		boolean retval = false;
-		for (Symbol sign : signs.asSignSet()) {
+		for (Symbol sign : signs.asSymbolSet()) {
 			String supertag = sign.getCategory().getSupertag();
 			// again, give free pass to cats with dollars
 			if (supertag.indexOf('$') >= 0 || cat.equals(supertag)) {
@@ -763,7 +763,7 @@ public class Testbed {
 		}
 		// filter if found
 		if (retval) {
-			for (Iterator<Symbol> it = signs.asSignSet().iterator(); it.hasNext();) {
+			for (Iterator<Symbol> it = signs.asSymbolSet().iterator(); it.hasNext();) {
 				Symbol sign = it.next();
 				String supertag = sign.getCategory().getSupertag();
 				if (supertag.indexOf('$') >= 0 || cat.equals(supertag))

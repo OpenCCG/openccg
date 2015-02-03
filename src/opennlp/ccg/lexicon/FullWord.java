@@ -130,7 +130,7 @@ public class FullWord extends WordWithPitchAccent {
 		 * Tokenizer.SEM_CLASS_ATTR may be used for the form, ..., semantic
 		 * class.
 		 */
-		public synchronized Word create(String attr, String val) {
+		public synchronized Word create(String attributeName, String attributeValue) {
 			String form = null;
 			String pitchAccent = null;
 			List<Pair<String, String>> attrValPairs = null;
@@ -138,21 +138,21 @@ public class FullWord extends WordWithPitchAccent {
 			String POS = null;
 			String supertag = null;
 			String semClass = null;
-			if (attr == Tokenizer.WORD_ATTR)
-				form = val;
-			else if (attr == Tokenizer.PITCH_ACCENT_ATTR)
-				pitchAccent = val;
-			else if (attr == Tokenizer.STEM_ATTR)
-				stem = val;
-			else if (attr == Tokenizer.POS_ATTR)
-				POS = val;
-			else if (attr == Tokenizer.SUPERTAG_ATTR)
-				supertag = val;
-			else if (attr == Tokenizer.SEM_CLASS_ATTR)
-				semClass = val;
-			else {
+			if (attributeName == Tokenizer.WORD_ATTR) {
+				form = attributeValue;
+			} else if (attributeName == Tokenizer.PITCH_ACCENT_ATTR) {
+				pitchAccent = attributeValue;
+			} else if (attributeName == Tokenizer.STEM_ATTR) {
+				stem = attributeValue;
+			} else if (attributeName == Tokenizer.POS_ATTR) {
+				POS = attributeValue;
+			} else if (attributeName == Tokenizer.SUPERTAG_ATTR) {
+				supertag = attributeValue;
+			} else if (attributeName == Tokenizer.SEM_CLASS_ATTR) {
+				semClass = attributeValue;
+			} else {
 				attrValPairs = new ArrayList<Pair<String, String>>(1);
-				attrValPairs.add(new Pair<String, String>(attr, val));
+				attrValPairs.add(new Pair<String, String>(attributeName, attributeValue));
 			}
 			return create(form, pitchAccent, attrValPairs, stem, POS, supertag, semClass);
 		}

@@ -38,6 +38,7 @@ import java.util.prefs.Preferences;
  * @author Jason Baldridge
  * @author Gann Bierner
  * @author Michael White
+ * @author Daniel Couto-Vale
  * @version $Revision: 1.38 $, $Date: 2011/08/27 19:27:00 $
  */
 public class Parser {

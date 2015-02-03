@@ -26,7 +26,7 @@ import java.util.Random;
  * @author      Michael White
  * @version     $Revision: 1.2 $, $Date: 2008/11/09 02:59:49 $
  */
-public interface SignScorer
+public interface SymbolScorer
 {
     /** 
      * Returns a score for the given sign and completeness flag, where higher 
@@ -36,12 +36,12 @@ public interface SignScorer
     public double score(Symbol sign, boolean complete);
 
     /** A scorer that returns 0 for all signs. */
-    public static SignScorer nullScorer = new SignScorer() { 
+    public static SymbolScorer nullScorer = new SymbolScorer() { 
         public double score(Symbol sign, boolean complete) { return 0; }
     };
 
     /** A scorer that returns a random number in [0,1] for all signs. */
-    public static SignScorer randomScorer = new SignScorer() { 
+    public static SymbolScorer randomScorer = new SymbolScorer() { 
     	Random random = new Random();
         public double score(Symbol sign, boolean complete) { return random.nextDouble(); }
     };

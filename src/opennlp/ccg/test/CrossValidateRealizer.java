@@ -19,7 +19,7 @@ package opennlp.ccg.test;
 
 import opennlp.ccg.grammar.*;
 import opennlp.ccg.realize.*;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.ngrams.*;
 
 import java.io.*;
@@ -214,7 +214,7 @@ public class CrossValidateRealizer implements ScorerMaker {
      * Loads an n-gram precision model with semantic class replacement, 
      * using targets from the training data. 
      */
-    public SignScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException {
+    public SymbolScorer loadScorer(File tmpDir, int foldNum, File trainFile) throws IOException {
         RegressionInfo trainingItems = new RegressionInfo(tester.grammar, trainFile);
         String[] targets = new String[trainingItems.numberOfItems()];
         for (int i=0; i < trainingItems.numberOfItems(); i++) {

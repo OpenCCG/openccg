@@ -202,10 +202,10 @@ public class TextCCG {
                 prefs.putBoolean(AbstractCompositionRule.EISNER_CONSTRAINTS, true);
                 AbstractCompositionRule.useEisnerConstraints = true; 
                 prefs.putInt(Parser.PARSE_TIME_LIMIT, Parser.NO_TIME_LIMIT);
-                prefs.putInt(Parser.PARSE_EDGE_LIMIT, Parser.NO_EDGE_LIMIT);
-                prefs.putInt(Parser.PARSE_PRUNING_VALUE, Parser.NO_PRUNING);
-                prefs.putInt(Parser.PARSE_CELL_PRUNING_VALUE, Parser.NO_PRUNING);
-                prefs.putBoolean(Parser.PARSE_LAZY_UNPACKING, true);
+                prefs.putInt(Parser.PARSE_SCORED_SYMBOL_LIMIT, Parser.NO_SCORED_SYMBOL_LIMIT);
+                prefs.putInt(Parser.PARSE_PRUNE_LIMIT, Parser.NO_PRUNE_LIMIT);
+                prefs.putInt(Parser.FORM_PRUNE_LIMIT, Parser.NO_PRUNE_LIMIT);
+                prefs.putBoolean(Parser.LAZY_UNPACKING, true);
                 prefs.putBoolean(EdgeFactory.USE_INDEXING, true);
                 prefs.putBoolean(EdgeFactory.USE_CHUNKS, true);
                 prefs.putBoolean(EdgeFactory.USE_FEATURE_LICENSING, true);
@@ -474,38 +474,38 @@ public class TextCCG {
                 String last = tokens[tokens.length-1];
                 try {
                     int limit = Integer.parseInt(last);
-                    prefs.putInt(Parser.PARSE_EDGE_LIMIT, limit);
+                    prefs.putInt(Parser.PARSE_SCORED_SYMBOL_LIMIT, limit);
                 } catch (NumberFormatException exc) {
                     System.out.println("Expecting an edge limit, rather than: " + last);
                 }
             } else if (input.startsWith(":no parse edge limit") || input.startsWith(":nopel")) {
-                prefs.putInt(Parser.PARSE_EDGE_LIMIT, Parser.NO_EDGE_LIMIT);
+                prefs.putInt(Parser.PARSE_SCORED_SYMBOL_LIMIT, Parser.NO_SCORED_SYMBOL_LIMIT);
             } else if (input.startsWith(":parse pruning value") || input.startsWith(":ppv")) {
                 String[] tokens = input.split("\\s+");
                 String last = tokens[tokens.length-1];
                 try {
                     int val = Integer.parseInt(last);
-                    prefs.putInt(Parser.PARSE_PRUNING_VALUE, val);
+                    prefs.putInt(Parser.PARSE_PRUNE_LIMIT, val);
                 } catch (NumberFormatException exc) {
                     System.out.println("Expecting an integer pruning value, rather than: " + last);
                 }
             } else if (input.startsWith(":no parse pruning value") || input.startsWith(":noppv")) {
-                prefs.putInt(Parser.PARSE_PRUNING_VALUE, Parser.NO_PRUNING);
+                prefs.putInt(Parser.PARSE_PRUNE_LIMIT, Parser.NO_PRUNE_LIMIT);
             } else if (input.startsWith(":parse cell pruning value") || input.startsWith(":pcpv")) {
                 String[] tokens = input.split("\\s+");
                 String last = tokens[tokens.length-1];
                 try {
                     int val = Integer.parseInt(last);
-                    prefs.putInt(Parser.PARSE_CELL_PRUNING_VALUE, val);
+                    prefs.putInt(Parser.FORM_PRUNE_LIMIT, val);
                 } catch (NumberFormatException exc) {
                     System.out.println("Expecting an integer cell pruning value, rather than: " + last);
                 }
             } else if (input.startsWith(":no parse cell pruning value") || input.startsWith(":nopcpv")) {
-                prefs.putInt(Parser.PARSE_CELL_PRUNING_VALUE, Parser.NO_PRUNING);
+                prefs.putInt(Parser.FORM_PRUNE_LIMIT, Parser.NO_PRUNE_LIMIT);
             } else if (input.equals(":plazy")) {
-                prefs.putBoolean(Parser.PARSE_LAZY_UNPACKING, true);     
+                prefs.putBoolean(Parser.LAZY_UNPACKING, true);     
             } else if (input.equals(":noplazy")) {
-                prefs.putBoolean(Parser.PARSE_LAZY_UNPACKING, false);     
+                prefs.putBoolean(Parser.LAZY_UNPACKING, false);     
             } else { 
                 try {
                     if (input.length() == 0) {
@@ -517,7 +517,7 @@ public class TextCCG {
                         }
                     }
                     parser.parse(input);
-                    List<Symbol> parses = parser.getProduct().getResult();
+                    List<Symbol> parses = parser.getProduct().getSymbols();
                     Symbol[] results = new Symbol[parses.size()];
                     parses.toArray(results);
                     int resLength = results.length;
@@ -718,13 +718,13 @@ public class TextCCG {
         System.out.println();
         int ptl = prefs.getInt(Parser.PARSE_TIME_LIMIT, Parser.NO_TIME_LIMIT);
         System.out.println("  parse time limit:\t" + ((ptl == Parser.NO_TIME_LIMIT) ? "none" : "" + ptl + " ms"));
-        int pel = prefs.getInt(Parser.PARSE_EDGE_LIMIT, Parser.NO_EDGE_LIMIT);
-        System.out.println("  parse edge limit:\t" + ((pel == Parser.NO_EDGE_LIMIT) ? "none" : "" + pel));
-        int ppv = prefs.getInt(Parser.PARSE_PRUNING_VALUE, Parser.NO_PRUNING);
-        System.out.println("  parse pruning value:\t" + ((ppv == Parser.NO_PRUNING) ? "none" : "" + ppv));
-        int pcpv = prefs.getInt(Parser.PARSE_CELL_PRUNING_VALUE, Parser.NO_PRUNING);
-        System.out.println("  parse cell prune val:\t" + ((pcpv == Parser.NO_PRUNING) ? "none" : "" + pcpv));
-        boolean plazy = prefs.getBoolean(Parser.PARSE_LAZY_UNPACKING, true);
+        int pel = prefs.getInt(Parser.PARSE_SCORED_SYMBOL_LIMIT, Parser.NO_SCORED_SYMBOL_LIMIT);
+        System.out.println("  parse edge limit:\t" + ((pel == Parser.NO_SCORED_SYMBOL_LIMIT) ? "none" : "" + pel));
+        int ppv = prefs.getInt(Parser.PARSE_PRUNE_LIMIT, Parser.NO_PRUNE_LIMIT);
+        System.out.println("  parse pruning value:\t" + ((ppv == Parser.NO_PRUNE_LIMIT) ? "none" : "" + ppv));
+        int pcpv = prefs.getInt(Parser.FORM_PRUNE_LIMIT, Parser.NO_PRUNE_LIMIT);
+        System.out.println("  parse cell prune val:\t" + ((pcpv == Parser.NO_PRUNE_LIMIT) ? "none" : "" + pcpv));
+        boolean plazy = prefs.getBoolean(Parser.LAZY_UNPACKING, true);
         System.out.println("  lazy unpacking:\t" + ((plazy) ? "on" : "off")); 
         System.out.println();
         int tl = prefs.getInt(opennlp.ccg.realize.Chart.TIME_LIMIT, opennlp.ccg.realize.Chart.NO_TIME_LIMIT);

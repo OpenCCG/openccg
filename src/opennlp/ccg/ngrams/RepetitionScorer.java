@@ -19,7 +19,7 @@
 package opennlp.ccg.ngrams;
 
 import opennlp.ccg.synsem.Symbol;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.lexicon.Word;
 
 import java.util.*;
@@ -37,7 +37,7 @@ import gnu.trove.*;
  * @version     $Revision: 1.6 $, $Date: 2011/03/20 20:11:58 $
  */
 @SuppressWarnings({"unchecked","rawtypes"})
-public class RepetitionScorer implements SignScorer
+public class RepetitionScorer implements SymbolScorer
 {
     /** The repetition penalty (defaults to 1.0). */
     public double penalty = 1.0;

@@ -41,7 +41,7 @@ import opennlp.ccg.parse.supertagger.WordAndPOSDictionaryLabellingStrategy;
 import opennlp.ccg.synsem.Category;
 import opennlp.ccg.synsem.LF;
 import opennlp.ccg.synsem.Symbol;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.test.RegressionInfo;
 import opennlp.ccgbank.extract.Testbed;
 
@@ -111,8 +111,8 @@ public class Parse {
         // instantiate scorer
         try {
             System.out.println("Instantiating parsing sign scorer from class: " + parseScorerClass);
-            SignScorer parseScorer = (SignScorer) Class.forName(parseScorerClass).newInstance();
-            parser.setSignScorer(parseScorer);
+            SymbolScorer parseScorer = (SymbolScorer) Class.forName(parseScorerClass).newInstance();
+            parser.setSymbolScorer(parseScorer);
             System.out.println();
         } catch (Exception exc) {
             throw (RuntimeException) new RuntimeException().initCause(exc);
@@ -148,7 +148,7 @@ public class Parse {
         		System.out.println(line);
 			parser.parse(line);
 			ParseProduct product = parser.getProduct();
-			List<Symbol> result = product.getResult();
+			List<Symbol> result = product.getSymbols();
 			int numParses = Math.min(nbestListSize, result.size());
 			for (int i=0; i < numParses; i++) {
 			    Symbol thisParse = result.get(i);

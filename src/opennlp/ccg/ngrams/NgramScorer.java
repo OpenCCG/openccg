@@ -19,7 +19,7 @@
 package opennlp.ccg.ngrams;
 
 import opennlp.ccg.synsem.Symbol;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.lexicon.*;
 import opennlp.ccg.util.*;
@@ -34,7 +34,7 @@ import java.io.*;
  * @author      Michael White
  * @version     $Revision: 1.37 $, $Date: 2010/02/25 22:26:11 $
  */
-public abstract class NgramScorer implements SignScorer, Reversible, FeatureExtractor
+public abstract class NgramScorer implements SymbolScorer, Reversible, FeatureExtractor
 {
 	protected NgramScorer() {}
 	

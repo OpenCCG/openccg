@@ -20,7 +20,7 @@ package opennlp.ccg.ngrams;
 
 import opennlp.ccg.perceptron.*;
 import opennlp.ccg.synsem.Symbol;
-import opennlp.ccg.synsem.SignScorer;
+import opennlp.ccg.synsem.SymbolScorer;
 
 /**
  * Linear interpolation of sign scorers, some of which may be feature extractors.
@@ -28,10 +28,10 @@ import opennlp.ccg.synsem.SignScorer;
  * @author      Michael White
  * @version     $Revision: 1.3 $, $Date: 2011/01/15 17:52:59 $
  */
-public class SignScorerInterpolation implements SignScorer, FeatureExtractor
+public class SignScorerInterpolation implements SymbolScorer, FeatureExtractor
 {
     /** The component models. */
-    protected SignScorer[] models;
+    protected SymbolScorer[] models;
     
     /** The weights. */
     protected double weights[];
@@ -42,7 +42,7 @@ public class SignScorerInterpolation implements SignScorer, FeatureExtractor
     /**
      * Constructor with component models, which are given uniform weights.
      */
-    public SignScorerInterpolation(SignScorer[] models) { 
+    public SignScorerInterpolation(SymbolScorer[] models) { 
         this.models = models;
         this.weights = new double[models.length];
         for (int i = 0; i < models.length; i++) {
@@ -55,7 +55,7 @@ public class SignScorerInterpolation implements SignScorer, FeatureExtractor
      * The weights are assumed to sum to 1, 
      * and the number of weights is assumed to match the number of models.
      */
-    public SignScorerInterpolation(SignScorer[] models, double[] weights) { 
+    public SignScorerInterpolation(SymbolScorer[] models, double[] weights) { 
         this.models = models;
         this.weights = weights;
         this.composedFeatureExtractor = new ComposedFeatureExtractor(models);

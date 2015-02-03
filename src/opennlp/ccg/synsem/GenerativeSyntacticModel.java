@@ -42,7 +42,7 @@ import opennlp.ccg.util.Pair;
  * @author 	Michael White
  * @version	$Revision: 1.12 $, $Date: 2010/03/07 03:23:01 $
  */ 
-public class GenerativeSyntacticModel implements FeatureExtractor, SignScorer {
+public class GenerativeSyntacticModel implements FeatureExtractor, SymbolScorer {
 
 	/** Feature key. */
 	public static String genlogprobkey = "genlogprob";

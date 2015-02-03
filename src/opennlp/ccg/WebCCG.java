@@ -116,7 +116,7 @@ public class WebCCG {
 		continue;
 	    try {
 		parser.parse(input);
-		List<Symbol> parses = parser.getProduct().getResult();
+		List<Symbol> parses = parser.getProduct().getSymbols();
 		Symbol[] results = new Symbol[parses.size()];
 		parses.toArray(results);
 		int resLength = results.length;

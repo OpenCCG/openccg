@@ -49,25 +49,25 @@ public class Parser {
 	public static final int NO_TIME_LIMIT = 0;
 
 	/** Preference key for edge limit on parsing. */
-	public static final String PARSE_EDGE_LIMIT = "Parse Edge Limit";
+	public static final String PARSE_SCORED_SYMBOL_LIMIT = "Parse Edge Limit";
 
 	/** A constant indicating no edge limit on parsing. */
-	public static final int NO_EDGE_LIMIT = 0;
+	public static final int NO_SCORED_SYMBOL_LIMIT = 0;
 
 	/**
 	 * Preference key for pruning the number of signs kept per equivalence
 	 * class.
 	 */
-	public static final String PARSE_PRUNING_VALUE = "Parse Pruning Value";
+	public static final String PARSE_PRUNE_LIMIT = "Parse Pruning Value";
 
 	/** Preference key for pruning the number of edges kept per cell. */
-	public static final String PARSE_CELL_PRUNING_VALUE = "Parse Cell Pruning Value";
+	public static final String FORM_PRUNE_LIMIT = "Parse Cell Pruning Value";
 
 	/** A constant indicating no pruning of signs per equivalence class. */
-	public static final int NO_PRUNING = 0;
+	public static final int NO_PRUNE_LIMIT = 0;
 
 	/** Preference key for whether to use lazy unpacking. */
-	public static final String PARSE_LAZY_UNPACKING = "Parse Lazy Unpacking";
+	public static final String LAZY_UNPACKING = "Parse Lazy Unpacking";
 
 	/** The grammar. */
 	public final Grammar grammar;
@@ -82,7 +82,7 @@ public class Parser {
 	public boolean debugParse = false;
 
 	/** The sign scorer (or null if none). */
-	protected SignScorer signScorer = null;
+	protected SymbolScorer signScorer = null;
 
 	/** The "n" for n-best pruning. (Default is none.) */
 	protected int pruneVal = -1;
@@ -91,7 +91,7 @@ public class Parser {
 	protected int cellPruneVal = -1;
 
 	/** The lazy unpacking flag. (Default is none.) */
-	protected Boolean lazyUnpacking = null;
+	protected boolean lazyUnpacking = true;
 
 	/** Supertagger to use. (Default is none.) */
 	protected Supertagger supertagger = null;
@@ -102,64 +102,89 @@ public class Parser {
 	 */
 	protected boolean stMostToLeastDir = true;
 
-	/** Time limit in milliseconds. (Default is none.) */
-	protected int timeLimit = -1;
-
-	/** Edge limit. (Default is none.) */
-	protected int edgeLimit = -1;
-
 	/**
 	 * Flag for whether to glue formal fragments
 	 */
 	private boolean gluingFlag = false;
 
+	/**
+	 * The product of parsing
+	 */
 	private ParseProduct product;
 
-	/** Constructor. */
+	/**
+	 * The chart completer config
+	 */
+	private ChartCompleterConfig config;
+
+	/**
+	 * @param grammar the grammar
+	 */
 	public Parser(Grammar grammar) {
 		this.grammar = grammar;
 		this.lexicon = grammar.lexicon;
 		this.rules = grammar.rules;
+		this.config = new ChartCompleterConfig();
 	}
 
-	/** Sets the sign scorer. */
-	public void setSignScorer(SignScorer signScorer) {
-		this.signScorer = signScorer;
+	/**
+	 * @param symbolScorer the symbol scorer
+	 */
+	public final void setSymbolScorer(SymbolScorer symbolScorer) {
+		config.symbolScorer = symbolScorer;
 	}
 
-	/** Sets the time limit. */
-	public void setTimeLimit(int timeLimit) {
-		this.timeLimit = timeLimit;
+	/**
+	 * @param timeLimit the time limit for parsing
+	 */
+	public final void setTimeLimit(int timeLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.timeLimit = makeValueToUse(preferences, timeLimit, PARSE_TIME_LIMIT, NO_TIME_LIMIT);
 	}
 
-	/** Sets the edge limit. */
-	public void setEdgeLimit(int edgeLimit) {
-		this.edgeLimit = edgeLimit;
+	/**
+	 * @param scoredSymbolLimit the limit of scored symbols for parsing
+	 */
+	public final void setScoredSymbolLimit(int scoredSymbolLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.scoredSymbolLimit = makeValueToUse(preferences, scoredSymbolLimit,
+				PARSE_SCORED_SYMBOL_LIMIT, NO_SCORED_SYMBOL_LIMIT);
 	}
 
-	/** Sets the n-best pruning val. */
-	public void setPruneVal(int n) {
-		pruneVal = n;
+	/**
+	 * @param pruneLimit the prune limit of the chart for scored symbols
+	 */
+	public final void setPruneLimit(int pruneLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.pruneLimit = makeValueToUse(preferences, pruneLimit, PARSE_PRUNE_LIMIT,
+				NO_PRUNE_LIMIT);
 	}
 
-	/** Sets the cell pruning val. */
-	public void setCellPruneVal(int n) {
-		cellPruneVal = n;
+	/**
+	 * @param formPruneLimit the prune limit of forms for scored symbols
+	 */
+	public final void setCellPruneVal(int formPruneLimit) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		config.formPruneLimit = makeValueToUse(preferences, formPruneLimit, FORM_PRUNE_LIMIT,
+				NO_PRUNE_LIMIT);
 	}
 
-	/** Sets the lazy unpacking flag. */
-	public void setLazyUnpacking(Boolean b) {
-		this.lazyUnpacking = b;
+	/**
+	 * @param lazyUnpacking lazy unpacking
+	 */
+	public final void setLazyUnpacking(boolean lazyUnpacking) {
+		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
+		this.lazyUnpacking = makeValueToUse(preferences, lazyUnpacking, LAZY_UNPACKING, true);
 	}
 
 	/** Sets the supertagger. */
-	public void setSupertagger(Supertagger supertagger) {
+	public final void setSupertagger(Supertagger supertagger) {
 		this.supertagger = supertagger;
 	}
 
 	/** Sets the supertagger most-to-least restrictive direction flag. */
-	public void setSupertaggerMostToLeastRestrictiveDirection(boolean bool) {
-		stMostToLeastDir = bool;
+	public final void setSupertaggerMostToLeastRestrictiveDirection(boolean bool) {
+		this.stMostToLeastDir = bool;
 	}
 
 	/**
@@ -183,12 +208,11 @@ public class Parser {
 	 * @throws ParseException
 	 */
 	public final void parse(List<Word> words) throws ParseException {
-		makeProduct();
+		product = new ParseProduct();
 
 		// For supertagger, parse iterative beta-best
 		if (supertagger != null) {
 			parseIterativeBetaBest(words);
-			return;
 		} else {
 			parseOnce(words);
 		}
@@ -213,7 +237,7 @@ public class Parser {
 			product.setLexTime((int) (System.currentTimeMillis() - lexStartTime));
 			// do parsing
 			product.setStartTime(System.currentTimeMillis());
-			product.setChart(buildChartCompleter(entries));
+			product.setChartCompleter(buildChartCompleter(entries));
 			parseEntries(product.getChartCompleter());
 		} catch (LexException e) {
 			setGiveUpTime();
@@ -232,19 +256,6 @@ public class Parser {
 			// rethrow
 			throw e;
 		}
-	}
-
-	private final void makeProduct() {
-		Preferences preferences = Preferences.userNodeForPackage(TextCCG.class);
-		product = new ParseProduct();
-		product.setParseLimit(makeValueToUse(preferences, timeLimit, PARSE_TIME_LIMIT,
-				NO_TIME_LIMIT));
-		product.setEdgeLimit(makeValueToUse(preferences, edgeLimit, PARSE_EDGE_LIMIT, NO_EDGE_LIMIT));
-		product.setPruneValue(makeValueToUse(preferences, pruneVal, PARSE_PRUNING_VALUE, NO_PRUNING));
-		product.setCellPruneValue(makeValueToUse(preferences, cellPruneVal,
-				PARSE_CELL_PRUNING_VALUE, NO_PRUNING));
-		product.setLazyUnpacking(makeValueToUse(preferences, lazyUnpacking, PARSE_LAZY_UNPACKING,
-				true));
 	}
 
 	/**
@@ -315,7 +326,7 @@ public class Parser {
 
 				// set up chart
 				product.setStartTime(System.currentTimeMillis());
-				product.setChart(buildChartCompleter(entries));
+				product.setChartCompleter(buildChartCompleter(entries));
 				parseEntries(product.getChartCompleter());
 				// done
 				done = true;
@@ -381,17 +392,8 @@ public class Parser {
 	}
 
 	// parses from lex entries
-	private void parseEntries(ChartCompleter chart) throws ParseException {
-		if (signScorer != null) {
-			chart.setSignScorer(signScorer);
-		}
-		chart.setPruneValue(product.getPruneValue());
-		chart.setParseTimeLimit(product.getParseLimit());
-		chart.setStartTime(product.getStartTime());
-		chart.setEdgeLimit(product.getEdgeLimit());
-		chart.setFormSizeLimt(product.getCellPruneValue());
-		// do parsing
-		parse(chart.getSize());
+	private void parseEntries(ChartCompleter chartCompleter) throws ParseException {
+		parse(chartCompleter.getSize());
 	}
 
 	/**
@@ -402,15 +404,18 @@ public class Parser {
 	 */
 	private final ChartCompleter buildChartCompleter(List<SymbolHash> symbolHashes) {
 		Chart chart = new SparseChart(symbolHashes.size());
-		ChartCompleter chartCompleter = new ChartCompleterImp(rules, chart);
+		ChartCompleter chartCompleter = new ChartCompleterImp(rules, chart,
+				new ChartCompleterConfig(config));
 		int x1 = 0;
 		int x2 = 0;
 		for (SymbolHash symbolHash : symbolHashes) {
 			for (Symbol symbol : symbolHash.getSignsSorted()) {
 				Category category = symbol.getCategory();
 				UnifyControl.reindex(category);
-				chartCompleter.annotateForm(x1++, x2++, symbol);
+				chartCompleter.annotateForm(x1, x2, symbol);
 			}
+			x1++;
+			x2++;
 		}
 		return chartCompleter;
 	}
@@ -470,8 +475,8 @@ public class Parser {
 		List<Double> scores = new ArrayList<Double>();
 		ChartCompleter chartCompleter = product.getChartCompleter();
 		// unpack top
-		List<ScoredSymbol> edges = product.getLazyUnpacking() ? chartCompleter.lazyUnpack(0, size - 1)
-				: chartCompleter.unpack(0, size - 1);
+		List<ScoredSymbol> edges = lazyUnpacking ? chartCompleter.lazyUnpack(0,
+				size - 1) : chartCompleter.unpack(0, size - 1);
 		// add signs for unpacked edges
 		for (ScoredSymbol edge : edges) {
 			symbols.add(edge.symbol);
@@ -481,7 +486,7 @@ public class Parser {
 		if (symbols.size() == 0) {
 			throw new ParseException("Unable to parse");
 		}
-		product.setResult(symbols);
+		product.setSymbols(symbols);
 		product.setScores(scores);
 	}
 
@@ -533,7 +538,7 @@ public class Parser {
 	 */
 	public Pair<Symbol, Boolean> oracleBest(LF goldLF) {
 		Symbol retval = null;
-		List<Symbol> result = product.getResult();
+		List<Symbol> result = product.getSymbols();
 		double bestF = 0.0;
 		for (Symbol sign : result) {
 			Category cat = sign.getCategory().copy();

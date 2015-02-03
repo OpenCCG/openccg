@@ -26,7 +26,7 @@ import opennlp.ccg.synsem.*;
  * @author Michael White
  * @version     $Revision: 1.7 $, $Date: 2011/03/21 20:46:43 $
  */
-public class PerceptronScorer implements SignScorer {
+public class PerceptronScorer implements SymbolScorer {
 
 	/** The feature extractor. */
 	public final FeatureExtractor featureExtractor;

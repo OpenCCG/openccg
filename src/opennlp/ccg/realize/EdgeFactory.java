@@ -58,7 +58,7 @@ public class EdgeFactory
     public final List<SatOp> preds;
     
     /** The sign scorer. */
-    public final SignScorer signScorer;
+    public final SymbolScorer signScorer;
     
     /** The hypertagger. */
     public final Hypertagger hypertagger;
@@ -181,12 +181,12 @@ public class EdgeFactory
     
     
     /** Constructor. */
-    public EdgeFactory(Grammar grammar, List<SatOp> preds, SignScorer signScorer) {
+    public EdgeFactory(Grammar grammar, List<SatOp> preds, SymbolScorer signScorer) {
     	this(grammar, preds, signScorer, null);
     }
     
     /** Constructor with hypertagger. */
-    public EdgeFactory(Grammar grammar, List<SatOp> preds, SignScorer signScorer, Hypertagger hypertagger) {
+    public EdgeFactory(Grammar grammar, List<SatOp> preds, SymbolScorer signScorer, Hypertagger hypertagger) {
         this.grammar = grammar;
         this.preds = preds;
         this.signScorer = signScorer;

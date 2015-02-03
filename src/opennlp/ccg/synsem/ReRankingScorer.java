@@ -23,7 +23,7 @@ package opennlp.ccg.synsem;
  * The implementation of the score(Sign, boolean) method should vary according to the 
  * full model flag. The base model should be the default. 
  */
-public interface ReRankingScorer extends SignScorer {
+public interface ReRankingScorer extends SymbolScorer {
 	/** Sets flag for using full (vs. base) model. The base model should be the default. */
 	public void setFullModel(boolean on);
 }

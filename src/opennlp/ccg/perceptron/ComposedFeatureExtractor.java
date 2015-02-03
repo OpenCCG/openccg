@@ -45,7 +45,7 @@ public class ComposedFeatureExtractor implements FeatureExtractor {
 	}
 	
 	/** Constructor for sign scorers, some of which may be feature extractors. */
-	public ComposedFeatureExtractor(SignScorer[] models) { 
+	public ComposedFeatureExtractor(SymbolScorer[] models) { 
     	ArrayList<FeatureExtractor> feList = new ArrayList<FeatureExtractor>(models.length);
         for (int i = 0; i < models.length; i++) {
         	if (models[i] instanceof FeatureExtractor) feList.add((FeatureExtractor)models[i]);

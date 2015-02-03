@@ -30,7 +30,7 @@ import opennlp.ccg.lexicon.SupertaggerAdapter;
  * @author 	Michael White
  * @version $Revision: 1.3 $, $Date: 2009/11/01 22:26:29 $
  */ 
-public class LexLogProbFeatureExtractor implements FeatureExtractor, SignScorer {
+public class LexLogProbFeatureExtractor implements FeatureExtractor, SymbolScorer {
 
 	/** Feature key. */
 	public static String lexlogprobkey = "lexlogprob";

@@ -4,7 +4,6 @@ import java.io.PrintStream;
 import java.util.List;
 
 import opennlp.ccg.synsem.Symbol;
-import opennlp.ccg.synsem.SignScorer;
 
 /**
  * A chart completer.
@@ -39,21 +38,6 @@ public interface ChartCompleter {
 	int getNonfinalScoredSymbolCount();
 
 	int getMaxFormSize();
-
-	void setSignScorer(SignScorer signScorer);
-
-	void setPruneValue(int pruneValue);
-
-	void setParseTimeLimit(int parseTimeLimit);
-
-	void setStartTime(long startTime);
-
-	void setEdgeLimit(int edgeLimit);
-
-	/**
-	 * Sets the size limit for forms of derived symbols.
-	 */
-	void setFormSizeLimt(int cellPruneValue);
 
 	/**
 	 * Associates form (x,y) with an edge for a given sign.

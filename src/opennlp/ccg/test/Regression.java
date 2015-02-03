@@ -121,10 +121,10 @@ public class Regression {
     public Realizer realizer = null;
     
     /** The scorer to use for realizer testing (or null, for default). */
-    public SignScorer scorer = null;
+    public SymbolScorer scorer = null;
     
     /** The scorer to use for parser testing. */
-    public SignScorer parseScorer = null;
+    public SymbolScorer parseScorer = null;
     
     /** Flag for whether to only allow exact matches with the default scorer. */
     public boolean exactMatches = false;
@@ -504,7 +504,7 @@ public class Regression {
                 	}
                 	// retrieve results
             		ParseProduct product = parser.getProduct(); 
-                    parses = product.getResult();
+                    parses = product.getSymbols();
                     parseScores = product.getScores();
                     parsed = true;
                     parsedComplete = !parses.get(0).getCategory().isFragment();
@@ -765,7 +765,7 @@ public class Regression {
             	? new String[] { testItem.sentence }
             	: new String[] { testItem.sentence, testItem.alt };
             NgramPrecisionModel defaultNgramScorer = new NgramPrecisionModel(targets);
-            SignScorer scorerToUse = scorer;
+            SymbolScorer scorerToUse = scorer;
             if (scorerToUse == null) {
                 if (ngramOrder > 0 || exactMatches) {
                 	if (ngramOrder > 0) scorerToUse = new NgramPrecisionModel(targets, ngramOrder);
@@ -1567,10 +1567,10 @@ public class Regression {
             if (args[i].equals("-odd")) { tester.oddOnly = true; continue; }
             if (args[i].equals("-gc")) { tester.doGC = true; continue; }
             if (args[i].equals("-nullscorer")) { 
-            	tester.scorer = SignScorer.nullScorer; tester.parseScorer = SignScorer.nullScorer; continue; 
+            	tester.scorer = SymbolScorer.nullScorer; tester.parseScorer = SymbolScorer.nullScorer; continue; 
             }
             if (args[i].equals("-randomscorer")) { 
-            	tester.scorer = SignScorer.randomScorer; tester.parseScorer = SignScorer.randomScorer; continue; 
+            	tester.scorer = SymbolScorer.randomScorer; tester.parseScorer = SymbolScorer.randomScorer; continue; 
             }
             if (args[i].equals("-depthfirst")) { depthFirst = true; continue; }
             if (args[i].equals("-exactmatches")) { tester.exactMatches = true; continue; }
@@ -1650,7 +1650,7 @@ public class Regression {
         if (scorerClass != null) {
             try {
                 System.out.println("Instantiating sign scorer from class: " + scorerClass);
-                SignScorer scorer = (SignScorer) Class.forName(scorerClass).newInstance();
+                SymbolScorer scorer = (SymbolScorer) Class.forName(scorerClass).newInstance();
             	if (scorer instanceof NgramScorer) {
                     NgramScorer lmScorer = (NgramScorer) scorer;
                     if (aanfilter) lmScorer.addFilter(aanFilter);
@@ -1712,7 +1712,7 @@ public class Regression {
             if (parseScorerClass != null) {
                 try {
                     System.out.println("Instantiating parsing sign scorer from class: " + parseScorerClass);
-                    tester.parseScorer = (SignScorer) Class.forName(parseScorerClass).newInstance();
+                    tester.parseScorer = (SymbolScorer) Class.forName(parseScorerClass).newInstance();
                     tester.showParseStats = true; // turn parsing stats on
                     System.out.println();
                 } catch (Exception exc) {
@@ -1720,7 +1720,7 @@ public class Regression {
                 }
             }
             // set parser scorer, if any
-            if (tester.parseScorer != null) tester.parser.setSignScorer(tester.parseScorer);
+            if (tester.parseScorer != null) tester.parser.setSymbolScorer(tester.parseScorer);
             // also turn on parse stats if doing n-best output
             if (tester.nbestparsefile != null) tester.showParseStats = true;
             // instantiate supertagger, if any

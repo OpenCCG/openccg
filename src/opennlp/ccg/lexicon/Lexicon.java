@@ -24,8 +24,6 @@ import opennlp.ccg.unify.*;
 import opennlp.ccg.util.*;
 import opennlp.ccg.hylo.*;
 
-import org.jdom.*;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
@@ -83,7 +81,7 @@ public class Lexicon {
 	private LicensingFeature[] _licensingFeatures = null;
 
 	// relation sorting
-	private HashMap<String, Integer> _relationIndexMap = new HashMap<String, Integer>();
+	private Map<String, Integer> _relationIndexMap = new HashMap<String, Integer>();
 
 	// interner for caching lex lookups during realization
 	private Interner<Object> lookupCache = new Interner<Object>(true);
@@ -1210,100 +1208,19 @@ public class Lexicon {
 		}
 	}
 
-	private List<Family> getLexicon(URL url) throws IOException {
+	private final List<Family> getLexicon(URL url) throws IOException {
 		// scan XML, creating families
 		LexiconLoader lexiconScanner = new LexiconLoader();
-		lexiconScanner.parse(url);
-		// get distributive attributes, if any
-		if (lexiconScanner.distributiveElm != null) {
-			String distrAttrs = lexiconScanner.distributiveElm.getAttributeValue("attrs");
-			_distributiveAttrs = distrAttrs.split("\\s+");
-		}
-		// load licensing features
-		loadLicensingFeatures(lexiconScanner.licensingElm);
-		// load relation sort order
-		loadRelationSortOrder(lexiconScanner.relationSortingElm);
+		LexiconObject lexiconObject = lexiconScanner.loadLexicon(url);
+		_distributiveAttrs = lexiconObject.distributiveFeatures;
+		_licensingFeatures = lexiconObject.licensingFeatures;
+		_relationIndexMap = lexiconObject.relationIndexMap;
 		// return families
-		return lexiconScanner.families;
-	}
-
-	// get licensing features, with appropriate defaults
-	@SuppressWarnings("unchecked")
-	private void loadLicensingFeatures(Element licensingElt) {
-		List<LicensingFeature> licensingFeats = new ArrayList<LicensingFeature>();
-		boolean containsLexFeat = false;
-		if (licensingElt != null) {
-			for (Iterator<Element> it = licensingElt.getChildren("feat").iterator(); it.hasNext();) {
-				Element featElt = it.next();
-				String attr = featElt.getAttributeValue("attr");
-				if (attr.equals("lex"))
-					containsLexFeat = true;
-				String val = featElt.getAttributeValue("val");
-				List<String> alsoLicensedBy = null;
-				String alsoVals = featElt.getAttributeValue("also-licensed-by");
-				if (alsoVals != null) {
-					alsoLicensedBy = Arrays.asList(alsoVals.split("\\s+"));
-				}
-				boolean licenseEmptyCats = true;
-				boolean licenseMarkedCats = false;
-				boolean instantiate = true;
-				byte loc = LicensingFeature.BOTH;
-				String lmc = featElt.getAttributeValue("license-marked-cats");
-				if (lmc != null) {
-					licenseMarkedCats = Boolean.valueOf(lmc).booleanValue();
-					// change defaults
-					licenseEmptyCats = false;
-					loc = LicensingFeature.TARGET_ONLY;
-					instantiate = false;
-				}
-				String lec = featElt.getAttributeValue("license-empty-cats");
-				if (lec != null) {
-					licenseEmptyCats = Boolean.valueOf(lec).booleanValue();
-				}
-				String inst = featElt.getAttributeValue("instantiate");
-				if (inst != null) {
-					instantiate = Boolean.valueOf(inst).booleanValue();
-				}
-				String locStr = featElt.getAttributeValue("location");
-				if (locStr != null) {
-					if (locStr.equals("target-only"))
-						loc = LicensingFeature.TARGET_ONLY;
-					if (locStr.equals("args-only"))
-						loc = LicensingFeature.ARGS_ONLY;
-					if (locStr.equals("both"))
-						loc = LicensingFeature.BOTH;
-				}
-				licensingFeats.add(new LicensingFeature(attr, val, alsoLicensedBy,
-						licenseEmptyCats, licenseMarkedCats, instantiate, loc));
-			}
-		}
-		if (!containsLexFeat) {
-			licensingFeats.add(LicensingFeature.defaultLexFeature);
-		}
-		_licensingFeatures = new LicensingFeature[licensingFeats.size()];
-		licensingFeats.toArray(_licensingFeatures);
+		return lexiconObject.families;
 	}
 
 	// default relation sort order
-	private static String[] defaultRelationSortOrder = { "BoundVar", "PairedWith", "Restr", "Body",
-			"Scope", "*", "GenRel", "Coord", "Append" };
-
-	// get relation sort order, or use defaults
-	private void loadRelationSortOrder(Element relationSortingElt) {
-		// use defaults if no order specified
-		if (relationSortingElt == null) {
-			for (int i = 0; i < defaultRelationSortOrder.length; i++) {
-				_relationIndexMap.put(defaultRelationSortOrder[i], new Integer(i));
-			}
-			return;
-		}
-		// otherwise load from 'order' attribute
-		String orderAttr = relationSortingElt.getAttributeValue("order");
-		String[] relSortOrder = orderAttr.split("\\s+");
-		for (int i = 0; i < relSortOrder.length; i++) {
-			_relationIndexMap.put(relSortOrder[i], new Integer(i));
-		}
-	}
+	
 
 	/*
 	 * Accessor for words map

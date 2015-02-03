@@ -797,14 +797,14 @@ public class EdgeFactory
             // add signs and rules for lex pred
             if (key != null) {
                 List<String> coartRels = getCoartRels(i);
-                Collection<Symbol> lexPredSigns = lexicon.getSignsFromPred(key, coartRels);
+                Collection<Symbol> lexPredSigns = lexicon.getSymbolsForPredicate(key, coartRels);
                 if (lexPredSigns != null) { signs.addAll(lexPredSigns); }
                 Collection<TypeChangingRule> lexPredRules = grammar.rules.getRulesForPred(key);
                 if (lexPredRules != null) { typeChangingRules.addAll(lexPredRules); }
             }
             // add signs and rules for indexed rel
             if (rel != null) {
-                Collection<Symbol> indexedRelSigns = lexicon.getSignsFromRel(rel);
+                Collection<Symbol> indexedRelSigns = lexicon.getSymbolsForRelation(rel);
                 if (indexedRelSigns != null) { signs.addAll(indexedRelSigns); }
                 Collection<TypeChangingRule> indexedRelRules = grammar.rules.getRulesForRel(rel);
                 if (indexedRelRules != null) { typeChangingRules.addAll(indexedRelRules); }
@@ -1509,7 +1509,7 @@ public class EdgeFactory
     private void initNoSemEdges() {
         // lookup signs by special index rel constant NO_SEM_FLAG
         lexicon.setSupertagger(null); // turn off hypertagger first
-        Collection<Symbol> noSemSigns = lexicon.getSignsFromRel(Lexicon.NO_SEM_FLAG);
+        Collection<Symbol> noSemSigns = lexicon.getSymbolsForRelation(Lexicon.NO_SEM_FLAG);
         lexicon.setSupertagger(hypertagger); // reset hypertagger
         if (noSemSigns == null) return;
         // sets for accumulating no sem edges

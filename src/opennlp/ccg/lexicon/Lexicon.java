@@ -312,7 +312,7 @@ public class Lexicon {
 	 * Expands inheritsFrom links to feature equations for those features not
 	 * explicitly listed.
 	 */
-	public void expandInheritsFrom(Category cat) {
+	private void expandInheritsFrom(Category cat) {
 		expandInheritsFrom(cat, null);
 	}
 
@@ -416,13 +416,13 @@ public class Lexicon {
 	/**
 	 * Returns the lexical signs indexed by the given rel, or null if none.
 	 */
-	public Collection<Symbol> getSignsFromRel(String rel) {
+	public Collection<Symbol> getSymbolsForRelation(String rel) {
 		// check cache (if not doing supertagging)
 		if (_supertagger == null) {
 			RelLookup lookup = new RelLookup(rel);
 			RelLookup retLookup = (RelLookup) lookupCache.getInterned(lookup);
 			if (retLookup != null)
-				return retLookup.signs;
+				return retLookup.symbols;
 		}
 		// lookup signs via preds
 		Collection<String> preds = (Collection<String>) _relsToPreds.get(rel);
@@ -432,7 +432,7 @@ public class Lexicon {
 		// cache non-null result (if not doing supertagging)
 		if (_supertagger == null && retval != null) {
 			RelLookup lookup = new RelLookup(rel);
-			lookup.signs = retval;
+			lookup.symbols = retval;
 			lookupCache.intern(lookup);
 		}
 		return retval;
@@ -460,7 +460,7 @@ public class Lexicon {
 	 * special token (date, time, etc.); otherwise, null is returned.
 	 * Coarticulations are applied for the given rels, if non-null.
 	 */
-	public Collection<Symbol> getSignsFromPred(String pred, List<String> coartRels) {
+	public Collection<Symbol> getSymbolsForPredicate(String pred, List<String> coartRels) {
 		// check cache (if not doing supertagging)
 		if (_supertagger == null) {
 			PredLookup lookup = new PredLookup(pred, coartRels);
@@ -577,29 +577,6 @@ public class Lexicon {
 	}
 
 	/**
-	 * For a string of 1 or more surface words, return all of the lexical
-	 * entries for each word as a list of sign hashes. Tokenization is performed
-	 * using the configured tokenizer.
-	 *
-	 * @param w the words in string format
-	 * @return a list of sign hashes
-	 * @exception LexException thrown if word not found
-	 */
-	public List<SymbolHash> getEntriesFromWords(String s) throws LexException {
-		List<SymbolHash> entries = new ArrayList<SymbolHash>();
-		List<Word> words = tokenizer.tokenize(s);
-		for (Iterator<Word> it = words.iterator(); it.hasNext();) {
-			Word w = it.next();
-			SymbolHash signs = getSignsFromWord(w);
-			if (signs.size() == 0) {
-				throw new LexException("Word not in lexicon: \"" + w + "\"");
-			}
-			entries.add(signs);
-		}
-		return entries;
-	}
-
-	/**
 	 * For a given word, return all of its surface word's lexical entries. If
 	 * the word is not listed in the lexicon, the tokenizer is consulted to see
 	 * if it is a special token (date, time, etc.); otherwise an exception is
@@ -610,7 +587,7 @@ public class Lexicon {
 	 * @return a sign hash
 	 * @exception LexException thrown if word not found
 	 */
-	public SymbolHash getSignsFromWord(Word w) throws LexException {
+	public SymbolHash getSymbolsForWord(Word w) throws LexException {
 		// reduce word to its core, removing coart attrs if any
 		Word surfaceWord = Word.createSurfaceWord(w);
 		Word coreWord = (surfaceWord.attrsIntersect(_coartAttrs)) ? Word.createCoreSurfaceWord(
@@ -1189,7 +1166,7 @@ public class Lexicon {
 	// nb: equality is checked just on the rel, to check for a cached lookup
 	private static class RelLookup {
 		String rel;
-		Collection<Symbol> signs;
+		Collection<Symbol> symbols;
 
 		RelLookup(String s) {
 			rel = s;

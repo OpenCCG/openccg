@@ -26,17 +26,22 @@ import opennlp.ccg.lexicon.Word;
 
 /**
  * A set of signs, unique up to surface words.
- * Signs with lower derivational complexity are kept during insertion.
+ * 
+ * WARNING: Signs with lower derivational complexity are kept during insertion.
  *
- * @author      Jason Baldridge
- * @author      Gann Bierner
- * @author      Michael White
- * @version     $Revision: 1.13 $, $Date: 2009/12/21 02:15:44 $
+ * @author Jason Baldridge
+ * @author Gann Bierner
+ * @author Michael White
+ * @author Daniel Couto-Vale
+ * @version $Revision: 1.13 $, $Date: 2009/12/21 02:15:44 $
  */
 public class SymbolHash extends THashSet {
-
-	private static final long serialVersionUID = 1L;
 	
+	/**
+	 * Generated serial version UID
+	 */
+	private static final long serialVersionUID = -6570863529126436679L;
+
 	/** Hashing strategy that uses Sign's surfaceWordHashCode and surfaceWordEquals methods. */
     protected static TObjectHashingStrategy surfaceWordHashingStrategy = new TObjectHashingStrategy() {
 		private static final long serialVersionUID = 1L;

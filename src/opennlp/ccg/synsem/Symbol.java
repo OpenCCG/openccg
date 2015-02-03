@@ -32,7 +32,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * A CCG sign, consisting of a list of words paired with a category. Signs may
+ * A CCG symbol, consisting of a list of words paired with a category. Symbols may
  * contain arbitrary data objects which are ignored in equality checking.
  * 
  * WARNING: Non-serializable data objects are filtered during serialization.
@@ -62,9 +62,9 @@ public class Symbol implements EntityRealizer, Serializable {
 	private DerivationHistory history;
 
 	/**
-	 * The lexical head
+	 * The indexed head
 	 */
-	private Symbol lexHead;
+	private Symbol indexedHead;
 
 	/**
 	 * List of transient data objects, for retrieval by class.
@@ -77,14 +77,14 @@ public class Symbol implements EntityRealizer, Serializable {
 	 * @param words the words
 	 * @param category the category
 	 * @param history the history
-	 * @param lexHead the lex head
+	 * @param indexedHead the indexed head
 	 */
 	@SuppressWarnings("unchecked")
-	private Symbol(List<Word> words, Category category, DerivationHistory history, Symbol lexHead) {
+	private Symbol(List<Word> words, Category category, DerivationHistory history, Symbol indexedHead) {
 		this.words = (List<Word>) Interner.globalIntern(words);
 		this.category = category;
 		this.history = history != null ? history : new DerivationHistory(this);
-		this.lexHead = lexHead != null ? lexHead : this;
+		this.indexedHead = indexedHead != null ? indexedHead : this;
 	}
 
 	/**
@@ -101,8 +101,8 @@ public class Symbol implements EntityRealizer, Serializable {
 	 * Constructor with words and derivation history formed from the given
 	 * inputs, rule and lex head.
 	 */
-	private Symbol(Category category, Symbol[] inputs, Rule rule, Symbol lexHead) {
-		this(getRemainingWords(inputs, 0), category, null, lexHead);
+	private Symbol(Category category, Symbol[] inputs, Rule rule, Symbol indexedHead) {
+		this(getRemainingWords(inputs, 0), category, null, indexedHead);
 		this.history = new DerivationHistory(inputs, this, rule);
 	}
 
@@ -275,7 +275,7 @@ public class Symbol implements EntityRealizer, Serializable {
 
 	/** Returns the lexical head. */
 	public final Symbol getLexHead() {
-		return lexHead;
+		return indexedHead;
 	}
 
 	/** Returns a hash code for this sign. */
@@ -688,11 +688,11 @@ public class Symbol implements EntityRealizer, Serializable {
 	 */
 	public final Symbol getSignHeadedByDep(LexDependency lexDependency) {
 		// check same head
-		if (!isIndexed() && lexHead == lexDependency.lexHead) {
+		if (!isIndexed() && indexedHead == lexDependency.lexHead) {
 			Symbol[] inputs = history.getInputs();
 			for (int i = 0; i < inputs.length; i++) {
 				// check for match
-				if (inputs[i].lexHead == lexDependency.lexDep)
+				if (inputs[i].indexedHead == lexDependency.lexDep)
 					return inputs[i]; // found it
 				// otherwise recurse
 				Symbol retval = inputs[i].getSignHeadedByDep(lexDependency);

@@ -535,7 +535,7 @@ public class Testbed {
 				// NB: there's no guarantee of getting the right arg roles if the word-cat pair is observed 
 				lexicon.setSupertagger(supertaggerStandIn);
 				supertaggerStandIn.setTag(simpleCat); 
-				SymbolHash lexSigns = lexicon.getSignsFromWord(w);
+				SymbolHash lexSigns = lexicon.getSymbolsForWord(w);
 
 				if (semClass == null || semClass.length() == 0)
 					semClass = "NoClass";

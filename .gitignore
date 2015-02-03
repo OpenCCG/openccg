@@ -11,8 +11,6 @@
 *.mod
 vocab.*
 !vocab.flm
-.project
-.classpath
 .settings
 bin2
 bin/ccg2xml.py

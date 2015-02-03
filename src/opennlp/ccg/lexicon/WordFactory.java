@@ -5,7 +5,7 @@ import java.util.List;
 import opennlp.ccg.util.Pair;
 
 /**
- * A word factory interface.
+ * A factory of words.
  * 
  * @author Daniel Couto-Vale
  */

@@ -1,12 +1,13 @@
 package opennlp.ccg.lexicon;
 
 /**
- * An association between structures of different strata/layers. In the morphological stratum/layer,
- * which is either graphological or phonological, there is a muster, which is either a form or a set
- * of form features that can be recognized in a character sequence. In the lexicogrammatical stratum
- * /layer, there is a struct, which contains grammatical functions (POS), grammatical features, and
- * a lexical term/item. In the rhetoricosemantic stratum/layer, there is a rhetoricosemantic device,
- * which is either a named entity class or a named entity.
+ * An association between structures of different strata/layers. In the
+ * morphological stratum/layer, there is a muster, which is composed of a form
+ * and a tone or a caps. In the lexicogrammatical stratum/layer, there is a
+ * struct, which is composed of grammatical functions, grammatical features, and
+ * a lexical term. In the rhetoricosemantic stratum/layer, there is a
+ * rhetoricosemantic device, which is composed of a named entity and/or a named
+ * entity class. Each structure of the associations is an associate. 
  * 
  * @author Daniel Couto-Vale
  */

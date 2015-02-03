@@ -121,7 +121,7 @@ public class FactoredNgramModel extends NgramScorer
     	for (int j=0; j < keysList.size(); j++) {
     		Object key = keysList.get(j);
     		if (key instanceof String) {
-    			featureKeysList.add(Tokenizer.WORD_ATTR);
+    			featureKeysList.add(Tokenizer.WORD_ASSOCIATE);
     			featureKeysList.add((String)key);
     		}
     		else if (!(key instanceof FactorKey)) {
@@ -200,7 +200,7 @@ public class FactoredNgramModel extends NgramScorer
         // get val for this attr
         String val = w.getFormalAttributeValue(attr);
         // check for sem class replacement for form or stem
-        if (attr == Tokenizer.WORD_ATTR || attr == Tokenizer.STEM_ATTR) {
+        if (attr == Tokenizer.WORD_ASSOCIATE || attr == Tokenizer.TERM_ASSOCIATE) {
             String scr = semClassReplacement(w);
             if (scr != null) val = scr;
         }

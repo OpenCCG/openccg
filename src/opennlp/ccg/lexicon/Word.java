@@ -127,7 +127,7 @@ abstract public class Word implements Serializable, Comparable<Word> {
     // factory methods
     
     /** The word factory to use. */
-    protected static WordFactory wordFactory = new FullWord.Factory();
+    protected static WordFactory wordFactory = new FullWordFactory();
 
     // NB: could try different factory methods for concrete words, but 
     //     it's unclear whether it makes much difference

@@ -68,7 +68,7 @@ public class DebugHelper {
 			//System.out.println(tagInfo);
 			//System.out.println(tagInfo.size());
 			init = false;
-
+			inp.close();
 		}
 
 		catch (IOException e) {

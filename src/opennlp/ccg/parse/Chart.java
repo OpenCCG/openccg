@@ -668,8 +668,10 @@ public class Chart {
 			_size = _table.length;
 			_numUnpackingEdges = 0;
 		} catch (ClassNotFoundException e) {
+			in.close();
             throw (RuntimeException) new RuntimeException().initCause(e);
 		}
+		in.close();
 	}
 	
 	

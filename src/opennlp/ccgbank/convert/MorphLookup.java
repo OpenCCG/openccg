@@ -49,6 +49,8 @@ public class MorphLookup {
 			stemMap.put(key, stem);
 			stemMap.put(key2, stem);
 		}
+		wordsReader.close();
+		stemsReader.close();
 	}
 	
 	/** Returns the stem for the given word and pos, or the empty string if none. */

@@ -70,6 +70,7 @@ public class ApposTally {
 				cueList.add(line);
 			//System.out.println(line);
 		}
+		br.close();
 	}
 
 	//Proc which traps, stores id of each sentence in a global var 

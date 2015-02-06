@@ -337,6 +337,7 @@ public class RuleGroup implements Serializable {
     			supercatRuleCombos.add(new SupercatRuleCombo(tokens[0], tokens[1], tokens[2]));
     		}
     	}
+    	in.close();
     }
     
     

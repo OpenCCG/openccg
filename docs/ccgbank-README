@@ -101,6 +101,11 @@ can install it for use as follows:
 
 $ mv gigaword4.5g.kenlm.bin $OPENCCG_HOME/ccgbank/models/realizer/.
 
+As noted in the main README, to use the very large LM, you'll also
+need to set the library load path:
+
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$OPENCCG_HOME/lib
+
 If the file gigaword4.5g.kenlm.bin is not found, the Treebank-trained
 trigram model is reused as a stand-in, which will negatively impact
 realization quality to some extent.  In principle it should also be

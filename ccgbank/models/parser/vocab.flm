@@ -1,0 +1,71 @@
+
+## flm file for determining the vocab
+
+13
+ 
+## headword (W) unigram
+
+W : 0 w.count w.lm 1
+  0 0
+
+## headword top (WT) 
+
+WT : 0 wt.count wt.lm 1
+  0 0
+
+## headword sibling (WS)
+
+WS : 0 ws.count ws.lm 1
+  0 0
+
+## expansion (E)
+
+E : 0 e.count e.lm 1
+  0 0
+
+## head (H) cat
+
+H : 0 h.count h.lm 1
+  0 0
+
+## parent (P) cat
+
+P : 0 p.count p.lm 1
+  0 0
+
+## lexcat parent (CP)
+
+CP : 0 cp.count cp.lm 1
+  0 0
+
+## lexcat top (CT)
+
+CT : 0 ct.count ct.lm 1
+  0 0
+
+## head postag top (TT)
+
+TT : 0 tt.count tt.lm 1
+  0 0
+
+## head postag parent (T)
+
+T : 0 t.count t.lm 1
+  0 0
+
+## sibling (S) cat
+
+S : 0 s.count s.lm 1
+  0 0
+
+## lexcat sibling (CS)
+
+CS : 0 cs.count cs.lm 1
+  0 0
+
+## head postag sibling (TS)
+
+TS : 0 ts.count ts.lm 1
+  0 0
+
+

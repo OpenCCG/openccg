@@ -75,6 +75,7 @@ public class SRILM_FactoredScorerMaker extends SRILM_ScorerMaker {
             }
         }
         out.close();
+        br.close();
     }
     
     /**

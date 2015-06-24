@@ -1,0 +1,21 @@
+
+## flm file for determining the vocab
+
+3
+ 
+## word (W) unigram
+
+W : 0 w.count w.lm 1
+  0 0
+
+## supertag (T) unigram
+
+T : 0 t.count t.lm 1
+  0 0
+
+## pos tag (P) unigram 
+
+P : 0 p.count p.lm 1
+  0 0
+
+

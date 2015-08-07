@@ -151,7 +151,7 @@ public class TextCCG {
               ":r", ":sel", ":2xml", ":2tb", ":2apml", ":tl", ":notl", ":el", ":noel",
               ":nbtl", ":nonbtl", ":pv", ":nopv", ":cpv", ":nocpv", ":upon", ":upoff", 
               ":t", ":toff", ":inc", ":noinc",
-              ":ion", ":ioff", ":con", ":coff", ":flon", ":floff", ":ccon", ":ccoff", ":pon", ":poff",
+              ":ion", ":ioff", ":mion", ":mioff", ":con", ":coff", ":flon", ":floff", ":ccon", ":ccoff", ":pon", ":poff",
               ":q", ":h"};
 		LineReader lineReader = LineReader.createLineReader(completions);
 		
@@ -207,6 +207,7 @@ public class TextCCG {
                 prefs.putInt(Parser.PARSE_CELL_PRUNING_VALUE, Parser.NO_PRUNING);
                 prefs.putBoolean(Parser.PARSE_LAZY_UNPACKING, true);
                 prefs.putBoolean(EdgeFactory.USE_INDEXING, true);
+                prefs.putBoolean(EdgeFactory.ALLOW_MISSING_INDEX_COMBOS, false);		
                 prefs.putBoolean(EdgeFactory.USE_CHUNKS, true);
                 prefs.putBoolean(EdgeFactory.USE_FEATURE_LICENSING, true);
                 prefs.putBoolean(opennlp.ccg.realize.Chart.USE_COMBOS, true);
@@ -336,6 +337,10 @@ public class TextCCG {
                 prefs.putBoolean(EdgeFactory.USE_INDEXING, true);
             } else if (input.equals(":indexing off") || input.equals(":ioff")) {
                 prefs.putBoolean(EdgeFactory.USE_INDEXING, false);
+            } else if (input.equals(":missing index combos on") || input.equals(":mion")) {
+                prefs.putBoolean(EdgeFactory.ALLOW_MISSING_INDEX_COMBOS, true);		
+            } else if (input.equals(":missing index combos off") || input.equals(":mioff")) {
+                prefs.putBoolean(EdgeFactory.ALLOW_MISSING_INDEX_COMBOS, false);		
             } else if (input.equals(":chunks on") || input.equals(":con")) {
                 prefs.putBoolean(EdgeFactory.USE_CHUNKS, true);
             } else if (input.equals(":chunks off") || input.equals(":coff")) {
@@ -673,6 +678,8 @@ public class TextCCG {
         System.out.println();
         System.out.println("  :ion\t\t\tturn index filtering on");
         System.out.println("  :ioff\t\t\tturn index filtering off");
+        System.out.println("  :mion\t\t\tturn missing index combos on");
+        System.out.println("  :mioff\t\tturn missing index combos off");
         System.out.println("  :con\t\t\tturn LF chunks on");
         System.out.println("  :coff\t\t\tturn LF chunks off");
         System.out.println("  :flon\t\t\tturn feature licensing on");
@@ -746,11 +753,13 @@ public class TextCCG {
         System.out.println("  show incomplete:\t" + ((showinc) ? "on" : "off")); 
         System.out.println();
         boolean indexing = prefs.getBoolean(EdgeFactory.USE_INDEXING, true);
+	boolean missingIndexCombos = prefs.getBoolean(EdgeFactory.ALLOW_MISSING_INDEX_COMBOS, false);		
         boolean chunks = prefs.getBoolean(EdgeFactory.USE_CHUNKS, true);
         boolean licensing = prefs.getBoolean(EdgeFactory.USE_FEATURE_LICENSING, true);
         boolean combos = prefs.getBoolean(opennlp.ccg.realize.Chart.USE_COMBOS, true);
         boolean packing = prefs.getBoolean(opennlp.ccg.realize.Chart.USE_PACKING, false);
         System.out.println("  index filtering:\t" + ((indexing) ? "on" : "off"));
+        System.out.println("  missing index combos:\t" + ((missingIndexCombos) ? "on" : "off"));
         System.out.println("  chunks:\t\t" + ((chunks) ? "on" : "off"));
         System.out.println("  licensing:\t\t" + ((licensing) ? "on" : "off"));
         System.out.println("  combos:\t\t" + ((combos) ? "on" : "off"));

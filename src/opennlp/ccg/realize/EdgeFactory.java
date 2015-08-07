@@ -44,6 +44,9 @@ public class EdgeFactory
     /** Preference key for whether to use indexing to filter edges to combine. */
     public static final String USE_INDEXING = "Use Indexing";
     
+    /** Preference key for whether to (exceptionally) allow categories with no target cat index nominal to combine. */
+    public static final String ALLOW_MISSING_INDEX_COMBOS = "Allow Missing Index Combos";
+    
     /** Preference key for whether to use LF chunks to filter edges to combine. */
     public static final String USE_CHUNKS = "Use Chunks";
     
@@ -141,6 +144,9 @@ public class EdgeFactory
      */
     public boolean useIndexing = true;
 
+    // flag for whether to (exceptionally) allow categories with no target cat index nominal to combine
+    private boolean allowMissingIndexCombos = false;
+    
     // flag for whether to use chunks
     private boolean useChunks = true;
     
@@ -204,6 +210,7 @@ public class EdgeFactory
         
         Preferences prefs = Preferences.userNodeForPackage(TextCCG.class);
         useIndexing = prefs.getBoolean(USE_INDEXING, true);
+	allowMissingIndexCombos = prefs.getBoolean(ALLOW_MISSING_INDEX_COMBOS,false);
         useChunks = prefs.getBoolean(USE_CHUNKS, true);
         useFeatureLicensing = prefs.getBoolean(USE_FEATURE_LICENSING, true);
 
@@ -1137,15 +1144,22 @@ public class EdgeFactory
         List<Edge> newEdges = null;
         // when using indexing:
         if (useIndexing) {
+            // check for intersecting indices
+            if (edge.indicesIntersect(next)) {
+                newEdges = createNewEdges(edge, next, collectCombos, true);
+            }
             // check for PairedWith relation
-            if (anyPairedNominals && pairedWith(edge, next)) {
+            else if (anyPairedNominals && pairedWith(edge, next)) {
                 newEdges = createNewEdges(edge, next, collectCombos, false);
             }
             else if (anyPairedNominals && pairedWith(next, edge)) {
                 newEdges = createNewEdges(next, edge, collectCombos, false);
             }
-            // check for intersecting indices
-            else if (edge.indicesIntersect(next)) {
+	    // check for a missing index nominal on the target cat,
+	    // which can indicate a type-raised category that needs to combine
+	    // before its indices become adjacent
+            else if (allowMissingIndexCombos && (edge.getIndexNominal() == null || next.getIndexNominal() == null))
+	    {
                 newEdges = createNewEdges(edge, next, collectCombos, true);
             }
             else { return Collections.emptyList(); }

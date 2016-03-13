@@ -494,6 +494,7 @@
       <arg value="${novel.file}.dir/nertext-nolabs"/>
       <arg value="${novel.file}.dir/tb.xml"/>
       <arg value="-nbestListSize"/> <arg value="${nbest.list.size}"/>
+      <arg value="-includederivs"/>
     </java>
   </target>
 

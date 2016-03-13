@@ -41,6 +41,7 @@ import opennlp.ccg.synsem.LF;
 import opennlp.ccg.synsem.Sign;
 import opennlp.ccg.synsem.SignScorer;
 import opennlp.ccg.test.RegressionInfo;
+import opennlp.ccg.test.DerivMaker;
 import opennlp.ccgbank.extract.Testbed;
 
 /**
@@ -57,8 +58,9 @@ public class Parse {
         String usage = "Usage: java opennlp.ccg.Parse \n" + 
         	"  (-g <grammarfile>) \n" + 
         	"  -parsescorer <scorerclass> \n" +
-        	"  (-supertagger <supertaggerclass> | -stconfig <configfile>) \n" +
+        	"  -supertagger <supertaggerclass> | -stconfig <configfile> \n" +
 	        "  (-nbestListSize <nbestListSize>) \n" +
+	        "  (-includederivs) \n" +
         	"  <inputfile> <outputfile>";
         
         if (args.length == 0 || args[0].equals("-h")) {
@@ -72,17 +74,20 @@ public class Parse {
         String outputfile = null;
         String parseScorerClass = null;
         String supertaggerClass = null, stconfig = null;
-	int nbestListSize = 1;
+        boolean includederivs = false;
+        int nbestListSize = 1;
+        
         for (int i = 0; i < args.length; i++) {
-            if (args[i].equals("-g")) { grammarfile = args[++i]; continue; }
+        	if (args[i].equals("-g")) { grammarfile = args[++i]; continue; }
             if (args[i].equals("-parsescorer")) { parseScorerClass = args[++i]; continue; }
             if (args[i].equals("-supertagger")) { supertaggerClass = args[++i]; continue; }
             if (args[i].equals("-stconfig")) { stconfig = args[++i]; continue; }
-	    if (args[i].equals("-nbestListSize")) { nbestListSize = Integer.parseInt(args[++i]); continue; }
+            if (args[i].equals("-nbestListSize")) { nbestListSize = Integer.parseInt(args[++i]); continue; }
+            if (args[i].equals("-includederivs")) { includederivs = true; continue; }
             if (inputfile == null) { inputfile = args[i]; continue; }
             outputfile = args[i];
         }
-	if (nbestListSize < 1) nbestListSize = 1;
+        if (nbestListSize < 1) nbestListSize = 1;
 
         if (inputfile == null || outputfile == null || 
         	parseScorerClass == null || (supertaggerClass == null && stconfig == null)) 
@@ -144,52 +149,58 @@ public class Parse {
         	try {
         		// parse it
         		System.out.println(line);
-			parser.parse(line);
-			int numParses = Math.min(nbestListSize, parser.getResult().size());
-			for (int i=0; i < numParses; i++) {
-			    Sign thisParse = parser.getResult().get(i);
-			    // convert lf
-			    Category cat = thisParse.getCategory();
-			    LF convertedLF = null;
-			    String predInfo = null;
-			    if (cat.getLF() != null) {
-				// convert LF
-				LF flatLF = cat.getLF();
-				cat = cat.copy();
-				Nominal index = cat.getIndexNominal(); 
-				convertedLF = HyloHelper.compactAndConvertNominals(flatLF, index, thisParse);
-				// get pred info
-				predInfoMap.clear();
-				Testbed.extractPredInfo(flatLF, predInfoMap);
-				predInfo = Testbed.getPredInfo(predInfoMap);
-			    }
-			    // add test item, sign
-			    Element item = RegressionInfo.makeTestItem(grammar, line, 1, convertedLF);
-			    String actualID = (nbestListSize == 1) ? id : id + "-" + (i+1);
-			    item.setAttribute("info", actualID);
-			    outRoot.addContent(item);
-			    signMap.put(actualID, thisParse);
-			    // Add parsed words as a separate LF element
-			    Element fullWordsElt = new Element("full-words");
-			    fullWordsElt.addContent(tokenizer.format(thisParse.getWords()));
-			    item.addContent(fullWordsElt);
-			    if (predInfo != null) {
-				Element predInfoElt = new Element("pred-info");
-				predInfoElt.setAttribute("data", predInfo);
-				item.addContent(predInfoElt);
-			    }
-			}
-		} catch (ParseException e) {
-		    System.out.println("Unable to parse!");
-		    // add test item with zero parses
-		    Element item = RegressionInfo.makeTestItem(grammar, line, 0, null);
-		    item.setAttribute("info", id);
-		    outRoot.addContent(item);
-		}
-		count++;
+        		parser.parse(line);
+        		int numParses = Math.min(nbestListSize, parser.getResult().size());
+        		for (int i=0; i < numParses; i++) {
+        			Sign thisParse = parser.getResult().get(i);
+        			// convert lf
+        			Category cat = thisParse.getCategory();
+        			LF convertedLF = null;
+        			String predInfo = null;
+        			if (cat.getLF() != null) {
+        				// convert LF
+        				LF flatLF = cat.getLF();
+        				cat = cat.copy();
+        				Nominal index = cat.getIndexNominal(); 
+        				convertedLF = HyloHelper.compactAndConvertNominals(flatLF, index, thisParse);
+        				// get pred info
+        				predInfoMap.clear();
+        				Testbed.extractPredInfo(flatLF, predInfoMap);
+        				predInfo = Testbed.getPredInfo(predInfoMap);
+        			}
+        			// add test item, sign
+        			Element item = RegressionInfo.makeTestItem(grammar, line, 1, convertedLF);
+        			String actualID = (nbestListSize == 1) ? id : id + "-" + (i+1);
+        			item.setAttribute("info", actualID);
+        			item.setAttribute("test","true");
+        			outRoot.addContent(item);
+        			signMap.put(actualID, thisParse);
+        			// Add parsed words as a separate LF element
+        			Element fullWordsElt = new Element("full-words");
+        			fullWordsElt.addContent(tokenizer.format(thisParse.getWords()));
+        			item.addContent(fullWordsElt);
+        			if (predInfo != null) {
+        				Element predInfoElt = new Element("pred-info");
+        				predInfoElt.setAttribute("data", predInfo);
+        				item.addContent(predInfoElt);
+        			}
+        			if (includederivs) {
+        				Element derivElt = new Element("deriv");
+        				derivElt.addContent(DerivMaker.makeDeriv(thisParse));
+        				item.addContent(derivElt);
+        			}
+        		}
+        	} catch (ParseException e) {
+        		System.out.println("Unable to parse!");
+        		// add test item with zero parses
+        		Element item = RegressionInfo.makeTestItem(grammar, line, 0, null);
+        		item.setAttribute("info", id);
+        		outRoot.addContent(item);
+        	}
+        	count++;
         }
         System.out.println();
-        
+
 		// write test doc, saved signs
         System.out.println("Writing parses to " + outputfile);
 		XMLOutputter outputter = new XMLOutputter(Format.getPrettyFormat());

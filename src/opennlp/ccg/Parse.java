@@ -61,6 +61,7 @@ public class Parse {
         	"  -supertagger <supertaggerclass> | -stconfig <configfile> \n" +
 	        "  (-nbestListSize <nbestListSize>) \n" +
 	        "  (-includederivs) \n" +
+	        "  (-includescores) \n" +
         	"  <inputfile> <outputfile>";
         
         if (args.length == 0 || args[0].equals("-h")) {
@@ -75,6 +76,7 @@ public class Parse {
         String parseScorerClass = null;
         String supertaggerClass = null, stconfig = null;
         boolean includederivs = false;
+        boolean includescores = false;
         int nbestListSize = 1;
         
         for (int i = 0; i < args.length; i++) {
@@ -84,6 +86,7 @@ public class Parse {
             if (args[i].equals("-stconfig")) { stconfig = args[++i]; continue; }
             if (args[i].equals("-nbestListSize")) { nbestListSize = Integer.parseInt(args[++i]); continue; }
             if (args[i].equals("-includederivs")) { includederivs = true; continue; }
+            if (args[i].equals("-includescores")) { includescores = true; continue; }
             if (inputfile == null) { inputfile = args[i]; continue; }
             outputfile = args[i];
         }
@@ -188,6 +191,10 @@ public class Parse {
         				Element derivElt = new Element("deriv");
         				derivElt.addContent(DerivMaker.makeDeriv(thisParse));
         				item.addContent(derivElt);
+        			}
+        			if (includescores) {
+        				String score = parser.getScores().get(i).toString();
+        				item.setAttribute("score", score);
         			}
         		}
         	} catch (ParseException e) {

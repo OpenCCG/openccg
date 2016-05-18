@@ -114,19 +114,20 @@
       <arg value="-pos"/>
       <arg value="-P"/> <arg value="${ht.models.dir}/posprior.flm"/>
       <arg value="-v"/> <arg value="${ht.models.dir}/vocab.train"/>
-    	<arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
-	<arg value="-o"/> <arg value="${pos.feats}"/>
-    	<arg value="-d"/> <arg line="${ht.corpus.dir}"/>
-    	<arg line="${training.dirs}"/>
+      <arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+      <arg value="-an"/> <arg value="${argnames}"/>
+      <arg value="-o"/> <arg value="${pos.feats}"/>
+      <arg value="-d"/> <arg line="${ht.corpus.dir}"/>
+      <arg line="${training.dirs}"/>
     </java>
-    <!-- <echo message="Filtering POS training features by frequency"/> -->
-    <!-- <exec executable="python">
+    <echo message="Filtering POS training features by frequency"/>
+    <exec executable="python">
       <arg value="bin/filter_feats.py"/>
       <arg value="-i"/> <arg value="${pos.feats}"/>
       <arg value="-o"/> <arg value="${ht.feats.dir}/pos.feats.tmp"/>
       <arg line="-n 1 -f 5"/>
     </exec>
-    <move file="${ht.feats.dir}/pos.feats.tmp" tofile="${pos.feats}"/> -->
+    <move file="${ht.feats.dir}/pos.feats.tmp" tofile="${pos.feats}"/>
   </target>
 
   <target name="check-pos-model" depends="init">
@@ -171,6 +172,7 @@
       <arg value="-V"/> <arg value="${ht.models.dir}/vocab.train"/> 
 -->
       <arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+      <arg value="-an"/> <arg value="${argnames}"/>
       <arg value="-o"/> <arg value="${ht.feats}"/>
       <arg value="-d"/> <arg line="${ht.corpus.dir}"/>
       <arg line="${training.dirs}"/>
@@ -229,6 +231,7 @@
       <arg value="-V"/> <arg value="${ht.models.dir}/vocab.train"/> 
 -->
       <arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+      <arg value="-an"/> <arg value="${argnames}"/>
       <arg value="-o"/> <arg value="${ht2.feats}"/>
       <arg value="-d"/> <arg line="${ht.corpus.dir}"/>
       <arg value="-y"/> <arg line="${ht.mod}"/>
@@ -244,7 +247,7 @@
     <move file="${ht.feats.dir}/ht2.feats.tmp" tofile="${ht2.feats}"/>
   </target>
   
-<target name="check-ht2-model" depends="init">
+  <target name="check-ht2-model" depends="init">
     <uptodate targetfile="${ht2.mod}" property="ht2.mod.uptodate">
       <srcfiles dir="${basedir}" includes="${ht2.feats}"/>
     </uptodate>
@@ -260,6 +263,18 @@
       <arg line="-v --lbfgs -c 0 -i 250 -g 1"/>
       <arg value="-m"/> <arg value="${ht2.mod}"/>
     </exec>
+  </target>
+
+  <target name="test-ht2">
+    <echo message="Testing hypertagging-2pass model on dev set to ${log.dir}/ht2.dev.log"/>
+    <java classname="opennlp.ccg.realize.hypertagger.ZLMaxentHypertagger" 
+	  output="${log.dir}/ht2.dev.out" error="${log.dir}/ht2.dev.err">
+      <arg value="-c"/> <arg value="${ht.models.dir}/ht2.config"/>
+      <arg value="-g"/> <arg value="${grammar.dir}/grammar.xml"/>
+      <arg value="-o"/> <arg value="${log.dir}/ht2.dev.log"/>
+      <arg value="-d"/> <arg value="${ht.corpus.dir}"/>
+      <arg line="00"/>
+    </java>
   </target>
 
 

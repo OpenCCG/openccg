@@ -22,6 +22,7 @@ public class TagExtract {
 	private static File htPriorModelFile;
 	private static File posVocabFile;
 	private static File htVocabFile;
+	private static String argnames;
 	private TagExtractor tex;
 	private BufferedWriter output;
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -69,6 +70,7 @@ public class TagExtract {
 		OptionSpec<File> ht_vocab_s = o.acceptsAll(asList("V", "ht-prior-vocab")).withRequiredArg().ofType(File.class).describedAs("HT prior vocab filename");
 		OptionSpec<File> pos_vocab_s = o.acceptsAll(asList("v", "pos-prior-vocab")).withRequiredArg().ofType(File.class).describedAs("POS prior vocab filename");
 		OptionSpec<File> corpusDir_s = o.acceptsAll(asList("d", "lf-dir")).withRequiredArg().ofType(File.class).describedAs("Directory to change to before searching for XML files");
+		OptionSpec<String> argnames_s = o.acceptsAll(asList("an", "argnames")).withRequiredArg().describedAs("Names of argument roles in format name(:shortname)?");
 		OptionSet options = o.parse(args);
 		/* if -h (help) is given, print message and exit */
 		if (options.has("h") || args.length == 0) {
@@ -84,33 +86,40 @@ public class TagExtract {
 		posVocabFile = options.valueOf(pos_vocab_s);
 		htPriorModelFile = options.valueOf(htPrior_s);
 		htVocabFile = options.valueOf(ht_vocab_s);
+		argnames = options.valueOf(argnames_s);
 		if(options.has("q"))
 			quiet = true;
 		LFLoader lfs = new LFLoader(options.valueOf(gr_s), options.valueOf(corpusDir_s), options.nonOptionArguments());
 		if(options.has("pos")) {
 			TagExtractor tex = new ZLPOSTagger();
+			// mww: set arg names
+			if (argnames != null) debug("Setting arg names to " + argnames + "\n");
+			tex.setArgNames(argnames); // uses default names if null
 			if(posPriorModelFile != null && posVocabFile != null) {
-				debug("Loading POS model priors from " + posPriorModelFile);
-				debug("Loading POS model vocab from " + posVocabFile);
+				debug("Loading POS model priors from " + posPriorModelFile + "\n");
+				debug("Loading POS model vocab from " + posVocabFile + "\n");
 				tex.loadPriorModel(posPriorModelFile, posVocabFile);
 			}
-			debug("Extracting POS features...");
+			debug("Extracting POS features..." + "\n");
 			t = new TagExtract(tex);
 		}
 		else {
 			// extracting hypertags
 			// using GS pos tags
 			TagExtractor tex = new ZLMaxentHypertagger();
+			// mww: set arg names
+			if (argnames != null) debug("Setting arg names to " + argnames + "\n");
+			tex.setArgNames(argnames); // uses default names if null
 			if(htPriorModelFile != null && htVocabFile != null) {
-				debug("Loading HT model priors from " + htPriorModelFile);
-				debug("Loading HT model vocab from " + htVocabFile);
+				debug("Loading HT model priors from " + htPriorModelFile + "\n");
+				debug("Loading HT model vocab from " + htVocabFile + "\n");
 				tex.loadPriorModel(htPriorModelFile,htVocabFile);
 			}
 			if(hyperModelFile != null) {
-				debug("Loading proto-HT model from " + hyperModelFile);
+				debug("Loading proto-HT model from " + hyperModelFile + "\n");
 				tex.loadProtoModel(hyperModelFile);
 			}
-			debug("Extracting hypertagger features...");
+			debug("Extracting hypertagger features..." + "\n");
 			t = new TagExtract(tex);
 		}
 		t.setOutput(output);
@@ -124,7 +133,7 @@ public class TagExtract {
 					//debug("LFs extracted:       " + lfcount + "\r");
 				} catch (FeatureExtractionException e) {
 					debug("In LF #" + lfi.getLFNum() + ":\n");
-					debug(e.toString());
+					debug(e.toString() + "\n");
 				}
 		}
 		output.close();

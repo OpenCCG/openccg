@@ -51,17 +51,17 @@ public class ZLPOSTagger extends TagExtractor {
 		}
 	}
 
-	public ZLPOSTagger() {
-
-	}
+	public ZLPOSTagger() { super(); }
 
 	public ZLPOSTagger(ZLMaxentModel model) {
+		this();
 		this.model = model;
 		this.prefixLength = 4;
 		this.suffixLength = 4;
 		this.beta = 0.35; // 0.4 delivers 1.08 POStags/pred
 	}
 	public ZLPOSTagger(ZLMaxentModel model, POSPriorModel priorModel) {
+		this();
 		this.model = model;
 		this.prefixLength = 4;
 		this.suffixLength = 4;
@@ -79,12 +79,12 @@ public class ZLPOSTagger extends TagExtractor {
 	 * 
 	 * FO -- fan-out, i.e. number of children
 	 * PN -- predicate name
-	 * RN -- parent name XXX needs updating for multiple parents
-	 * RT -- parent relation XXX see above
+	 * RN -- parent name 
+	 * RT -- parent relation
 	 * CT -- type of child
 	 * CN -- name of child
 	 * NA -- number of Argument children
-	 * A0N, A1N, ... -- names of argument children
+	 * A0N, A1N, ... -- names of argument children (by default)
 	 * PX -- prefix (N characters)
 	 * SX -- suffix (M characters)
 	 * HD -- has a digit
@@ -93,11 +93,11 @@ public class ZLPOSTagger extends TagExtractor {
 	 * @param n The graph node to extract features from
 	 * @return An array of strings representing the features
 	 */	
+	// mww: switched to configurable arg names
 	@SuppressWarnings("boxing")
 	protected FeatureList getFeatures(LfGraphNode n) {
 		FeatureList feats = new FeatureList();
 		int argchildren = 0;
-		Pattern argpat = Pattern.compile("Arg([0-9])");
 		feats.addFeature("PN", n.getPredicateName());
 		feats.addFeature("FO", Integer.toString(n.getNumChildren()));
 		// add name of parent, if any parent, and parent relation
@@ -121,19 +121,20 @@ public class ZLPOSTagger extends TagExtractor {
 			feats.addFeature("CT", lnk.getLabel());
 			if(lnk.getTarget() != null) { 
 				feats.addFeature("CN", lnk.getTarget().getPredicateName());
-				Matcher m = argpat.matcher(lnk.getLabel());
-				if(m.matches()) {
+				// mww: use short arg name
+				String shortArgName = argNameMap.get(lnk.getLabel());
+				if (shortArgName != null) {
 					// increment argchild count
-					// XXX note that this breaks if the args have meaningful labels, e.g. "Patient"!
 					argchildren++;
-					int argnum = Integer.parseInt(m.group(1));
-					feats.addFeature("A" + argnum + "N", lnk.getTarget().getPredicateName());
+					feats.addFeature(shortArgName + "N", lnk.getTarget().getPredicateName());
 					// add class info for arg child, if applicable
 					String cls = lnk.getTarget().getPred().getNominal().toString();
 					// string is in X:Y:Z format. Remove 'X:' leaving 'Y:Z'.
 					if(cls.indexOf(':') > 0) {
 						String cfeat = cls.substring(cls.indexOf(':') + 1);
-						feats.addFeature("X" + argnum + "D", cfeat);
+						// mww: for backwards compatibility
+						String argNumOrName = (shortArgName.startsWith("A")) ? shortArgName.substring(1) : shortArgName;
+						feats.addFeature("X" + argNumOrName + "D", cfeat);
 					}
 				}
 			}

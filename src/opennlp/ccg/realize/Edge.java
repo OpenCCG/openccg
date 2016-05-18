@@ -108,6 +108,12 @@ public class Edge extends Tracker
         return (completeness == 1.0);
     }
     
+    /**
+     * Returns the nominal which is the value of the index feature on the 
+     * sign's target cat, or null if none.
+     */
+    public Nominal getIndexNominal() { return sign.getCategory().getIndexNominal(); }
+    
 
     /**
      * Returns true iff this edge can combine with the given tracker 

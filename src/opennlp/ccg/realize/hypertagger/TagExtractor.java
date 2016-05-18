@@ -279,9 +279,10 @@ public abstract class TagExtractor {
 	protected List<SatOp> preds;
 	protected List<SatOp> flatLF;
 	protected int maxIndex;
+	protected Map<String,String> argNameMap; // mww: map from arg names to short arg names
 	
 
-	public  TagExtractor() { }
+	public TagExtractor() {	argNameMap = new HashMap<String,String>(); }
 	
 	public void setLF(LF lf) throws FeatureExtractionException {
 		LFID++;
@@ -481,6 +482,23 @@ public abstract class TagExtractor {
 		return;
 	} 
 
+	// mww: sets configurable arg names 
+	/**
+	 * Sets the arg name map to the given names.
+	 * @param argnames Space-delimited arg names in format name(:shortname)?.
+	 *   Defaults to "Arg0:A0 Arg1:A1 Arg1a:A1a Arg1b:A1b Arg2:A2 Arg2a:A2a Arg2b:A2b Arg3:A3 Arg4:A4 Arg5:A5".
+	 */
+	protected void setArgNames(String argnames) {
+		argNameMap.clear();
+		// default is augmented propbank arg names
+		if (argnames == null) argnames = "Arg0:A0 Arg1:A1 Arg1a:A1a Arg1b:A1b Arg2:A2 Arg2a:A2a Arg2b:A2b Arg3:A3 Arg4:A4 Arg5:A5";
+		String[] nameslist = argnames.split("\\s+");
+		for (String argname : nameslist) {
+			String[] namepair = argname.split(":");
+			if (namepair.length == 2) argNameMap.put(namepair[0], namepair[1]);
+			else if (namepair.length == 1) argNameMap.put(namepair[0], namepair[1]);
+		}
+	}
 }
 
 

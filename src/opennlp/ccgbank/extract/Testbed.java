@@ -21,7 +21,6 @@
 package opennlp.ccgbank.extract;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 import opennlp.ccgbank.CCGBankTaskSources;
@@ -29,7 +28,6 @@ import opennlp.ccgbank.CCGBankTaskTestbed;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.grammar.RuleGroup;
 import opennlp.ccg.hylo.*;
-
 import opennlp.ccg.lexicon.*;
 import opennlp.ccg.parse.ParseException;
 import opennlp.ccg.synsem.*;
@@ -49,11 +47,13 @@ import org.jdom.output.XMLOutputter;
 public class Testbed {
 
 	// the grammar
-	// private Grammar grammar;
+	private Grammar grammar;
 	private Lexicon lexicon;
-
 	private RuleGroup rules;
 
+	// supertagger stand-in
+	private SupertaggerStandIn supertaggerStandIn = new SupertaggerStandIn();
+	
 	// results of following deriv
 	private Sign sign = null;
 
@@ -87,8 +87,7 @@ public class Testbed {
 			CCGBankTaskTestbed testbed) throws IOException {
 		grammarFile = new File(targetDirectory, "grammar.xml");
 
-		Grammar grammar = new Grammar(grammarFile.toURI().toURL(), true);
-
+		this.grammar = new Grammar(grammarFile.toURI().toURL(), true);
 		this.lexicon = grammar.lexicon;
 		this.rules = grammar.rules;
 
@@ -103,16 +102,10 @@ public class Testbed {
 
 		ccgBankTaskTestbed.log("Creating test files:");
 
-		// load grammar
-		URL grammarURL = grammarFile.toURI().toURL();
-		ccgBankTaskTestbed.log("Loading grammar from URL: " + grammarURL);
-		Grammar grammar = new Grammar(grammarURL);
+		// config grammar
 		Tokenizer tokenizer = grammar.lexicon.tokenizer;
 		grammar.prefs.showFeats = true;
 		grammar.prefs.showSem = ccgBankTaskTestbed.isShowsSem();
-
-		this.lexicon = grammar.lexicon;
-		this.rules = grammar.rules;
 
 		// ensure test dir exists
 		File testDir = new File(targetDirectory, "test");
@@ -127,13 +120,13 @@ public class Testbed {
 		PrintWriter predsPW = null;
 		PrintWriter treePW = null;
 		File textFile = ccgBankTaskTestbed.getText();
-		File textscFile=new File(textFile.getParent()+"/"+textFile.getName().replaceFirst("text-","textsc-"));
 		File factorsFile = ccgBankTaskTestbed.getFactors();
 		File combosFile = ccgBankTaskTestbed.getCombos(); 
 		File predsFile = ccgBankTaskTestbed.getPreds(); 
 		File treeFile = ccgBankTaskTestbed.getTree();
 		
 		if (textFile != null) {
+			File textscFile=new File(textFile.getParent()+"/"+textFile.getName().replaceFirst("text-","textsc-"));
 			ccgBankTaskTestbed.log("Writing text to: " + textFile);
 			ccgBankTaskTestbed.log("Writing class-replaced text to: " + textscFile);
             textFile.getParentFile().mkdirs(); 
@@ -359,7 +352,7 @@ public class Testbed {
 	}
 
 	// recurse through deriv, returning signs
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private SignHash followDerivR(Element derivElt) throws ParseException {
 		String eltName = derivElt.getName();
 		// follow deriv, applying combinatory rules
@@ -370,6 +363,17 @@ public class Testbed {
 			String simpleCat = derivElt.getAttributeValue("stag");
 			List childElts = derivElt.getChildren();
 			int numChildren = childElts.size();
+			if (numChildren == 0)
+				throw new ParseException(header
+						+ ": no child elements for TreeNode for cat: " + cat);
+			// if no cat element present, adjust list with an initial dummy node, 
+			// to avoid code changes in what follows
+			Element elt0 = (Element) childElts.get(0);
+			String elt0name = elt0.getName();
+			if (elt0name.equals("Treenode") || elt0name.equals("Leafnode")) {
+				childElts.add(0, new Element("dummy"));
+				numChildren++;
+			}
 			if (numChildren != 2 && numChildren != 3)
 				throw new ParseException(header
 						+ ": wrong number of child elements: " + numChildren
@@ -527,14 +531,19 @@ public class Testbed {
 				// nb: for now, need to ignore rel for non-VB pos
 				if (!pos.startsWith("VB"))
 					rel = null;
+				// lex lookup with required supertag
+				// NB: there's no guarantee of getting the right arg roles if the word-cat pair is observed 
+				lexicon.setSupertagger(supertaggerStandIn);
+				supertaggerStandIn.setTag(simpleCat); 
 				SignHash lexSigns = lexicon.getSignsFromWord(w);
 
 				if (semClass == null || semClass.length() == 0)
 					semClass = "NoClass";
 
-				// add lex signs, filtered by supercat and rel, reindexed
-				// also check number with matching pos
+				// add lex signs, filtered by rel, reindexed
+				// also check number with matching pos, match on no class
 				int matchPOS = 0;
+				boolean matchNoClass = false;
 				for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
 					Sign s = it.next();
 
@@ -544,29 +553,38 @@ public class Testbed {
 						morphClass = "NoClass";
 
 					Category lexcat = s.getCategory();
-					String supertag = lexcat.getSupertag();
 					LF lexLF = lexcat.getLF();
 
-					if ((!semClass.equals(morphClass))
-							|| !simpleCat.equals(supertag)
+					// allow any class if no sem class given
+					if (!(semClass.equals("NoClass") || semClass.equals(morphClass))
 							|| !containsPred(lexLF, rel)
 							|| !containsRoles(lexLF, roles)
 							|| !containsRel(lexLF, indexRel, s)) {
-						//System.out.println("Mismatch: simpleCat is " + simpleCat + ", supertag is " + supertag);
 						it.remove();
 					}
 					else {
 						UnifyControl.reindex(lexcat);
-						if (s.getWords().get(0).getPOS().equals(pos))
+						if (wTemp.getPOS().equals(pos)) {
 							matchPOS++;
+							if (semClass.equals("NoClass") && morphClass.equals("NoClass"))
+								matchNoClass = true;
+						}
 					}
 				}
 				// filter by pos unless none match
 				if (matchPOS > 0) {
 					for (Iterator<Sign> it = lexSigns.asSignSet().iterator(); it.hasNext();) {
 						Sign s = it.next();
-						if (!s.getWords().get(0).getPOS().equals(pos))
-							it.remove();
+						Word wTemp = s.getWords().get(0);
+						if (!wTemp.getPOS().equals(pos)) {
+							it.remove(); continue;
+						}
+						// filter by mismatched class if apropos
+						if (matchNoClass) {
+							String morphClass = wTemp.getSemClass();
+							if (morphClass != null && morphClass.length() != 0)
+								it.remove();
+						}
 					}
 				}
 				if (lexSigns.isEmpty())
@@ -870,4 +888,26 @@ public class Testbed {
 	
 	// escapes a string using DefaultTokenizer
 	private static String escape(String s) { return DefaultTokenizer.escape(s); }
+	
+	// stands in for a supertagger during lex lookup
+	private static class SupertaggerStandIn implements SupertaggerAdapter {
+		// map for a single key
+		private Map<String,Double> map = new HashMap<String,Double>(2);
+		public Map<String,Double> getSupertags() { return map; }
+		
+		// set tag
+		void setTag(String tag) { map.clear(); map.put(tag, 1.0); }
+		
+		// dummy implementations
+		public void setIncludeGold(boolean includeGold) {}
+		public void resetBeta() {}
+		public void resetBetaToMax() {}
+		public void nextBeta() {}
+		public void previousBeta() {}
+		public boolean hasMoreBetas() { return false; }
+		public boolean hasLessBetas() { return false; }
+		public double[] getBetas() { return new double[]{1.0}; }
+		public void setBetas(double[] betas) {}
+		public double getCurrentBetaValue() { return 1.0; }
+	}
 }

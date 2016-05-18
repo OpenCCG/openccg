@@ -1,0 +1,5 @@
+#!/bin/sh
+# Usage: ccg-parse -h
+. ccg-env
+"$JAVA" $JAVA_ARGS opennlp.ccg.Parse $@
+

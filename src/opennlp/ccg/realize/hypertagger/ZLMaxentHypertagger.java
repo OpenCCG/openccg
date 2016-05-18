@@ -76,7 +76,6 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 	String LFNum;
 	protected double[] betas;
 	int currentBeta;
-
 	//Flag which indicates whether gold std tags need to be ensured during tag prediction
 	//Gold std tag info for perceptron training (event generation)
 	private boolean goldStdTagInsert=false;
@@ -121,11 +120,11 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 	 * 
 	 * FO -- fan-out, i.e. number of children
 	 * PN -- predicate name
-	 * RN -- parent name XXX needs updating for multiple parents
+	 * RN -- parent name 
 	 * CT -- type of child
-	 * A1N, A2N, ... -- Arg1 name, Arg2 name, ... 
-	 * A1P, A2P, ... -- Arg1 POS tag, Arg2 POS tag, ...
-	 * M1P, M2P, ... -- same, but for modifiers (non-arg children)
+	 * A1N, A2N, ... -- Arg1 name, Arg2 name, ... (by default)
+	 * A1P, A2P, ... -- Arg1 POS tag, Arg2 POS tag, ... (by default)
+	 * MP -- Modifier POS tag (non-arg children)
 	 * PP -- parent's POS tag, if any parent
 	 * CN -- name of child
 	 * NA -- number of Argument children
@@ -136,7 +135,7 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 	 * ZT -- tense=value
 	 * ZP -- partic=value
 	 * XC -- semantic class of node, if applicable
-	 * XnD -- semantic class of argument child node n, if applicable
+	 * XnD -- semantic class of argument child node n, if applicable (by default)
 	 * XP -- semantic class of parent node, if applicable
 	 * XM -- semantic class of non-arg child node, if applicable
 	 * CS -- child supertag
@@ -145,21 +144,16 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 	 * MS -- modifier supertag
 	 * 
 	 */
+	// mww: switched to configurable arg names
 	void fillFeatures(LfGraphNode n, FeatureList f) {
-		Pattern argpat;
-		argpat = Pattern.compile("Arg([0-9])");
-
 
 		f.addFeatureWithProb("FO",  Integer.toString(n.getNumChildren()));
-
 
 		for(String att : n.getAttribs().keySet()) {
 			f.addFeatureWithProb("Z" + att.substring(0,1).toUpperCase(), n.getAttribs().get(att));
 		}
 
-
 		f.addFeatureWithProb("PN",  n.getPredicateName());
-
 
 		if(n.getMultiParents().size() > 0) {
 			for(LfGraphNode parent : n.getMultiParents() ) {
@@ -190,21 +184,21 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 			if(lnk.getTarget() != null) {
 				// how could it be null? 
 				f.addFeatureWithProb("CN", lnk.getTarget().getPredicateName());
-				Matcher m = argpat.matcher(lnk.getLabel());
-				if(m.matches()) {
+				// mww: use short arg name
+				String shortArgName = argNameMap.get(lnk.getLabel());
+				if (shortArgName != null) {
 					// increment argchild count
-					// XXX note that this breaks if the args have meaningful labels, e.g. "Patient"!
 					argchildren++;
-					int argnum = Integer.parseInt(m.group(1));
-					// quick hack for AxN feature:
-					f.addFeatureWithProb("A" + argnum + "N", lnk.getTarget().getPredicateName());
-					f.addFeatureWithProb("A"+ argnum + "P", getPOS(lnk.getTarget()) );
+					f.addFeatureWithProb(shortArgName + "N", lnk.getTarget().getPredicateName());
+					f.addFeatureWithProb(shortArgName + "P", getPOS(lnk.getTarget()) );
 					// add class info for arg child, if applicable
 					String cls = lnk.getTarget().getPred().getNominal().toString();
 					// string is in X:Y:Z format. Remove 'X:' leaving 'Y:Z'.
 					if(cls != null && cls.indexOf(':') > 0) {
 						String cfeat = cls.substring(cls.indexOf(':') + 1);
-						f.addFeatureWithProb("X" + argnum + "D", cfeat);
+						// mww: for backwards compatibility
+						String argNumOrName = (shortArgName.startsWith("A")) ? shortArgName.substring(1) : shortArgName;
+						f.addFeatureWithProb("X" + argNumOrName + "D", cfeat);
 					}
 				}
 				else {
@@ -310,6 +304,7 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 			this.postagger = new ZLPOSTagger(posModel);
 			postagger.setPrefixLength(4);
 			postagger.setSuffixLength(4);
+			postagger.argNameMap = this.argNameMap; // share the arg name map
 		}
 		this.hypertagModelFilename = hyperModelFile;
 		this.hypertagModel = new ZLMaxentModel();
@@ -327,6 +322,7 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 	public ZLMaxentHypertagger(ZLPOSTagger ptag, File hyperModelFile) {
 		this();
 		this.postagger = ptag;
+		this.postagger.argNameMap = this.argNameMap; // share the arg name map
 		this.hypertagModelFilename = hyperModelFile;
 		this.hypertagModel = new ZLMaxentModel();
 		this.hypertagModel.load(hyperModelFile);
@@ -346,6 +342,7 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 		this.postagger = new ZLPOSTagger(posModel);
 		postagger.setPrefixLength(4);
 		postagger.setSuffixLength(4);
+		postagger.argNameMap = this.argNameMap; // share the arg name map
 	}
 
 	public static ZLMaxentHypertagger ZLMaxentHypertaggerFactory(String configFile) throws IOException {
@@ -410,6 +407,9 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 			hypertagger.protoHTModel = new ZLMaxentModel(protoHTModelPath);
 			System.err.println("Two-pass model instantiated. Initializing hyperdrive.");
 		}
+		// mww: add argnames
+		String argnames = opts.get("argnames");
+		hypertagger.setArgNames(argnames);
 		return hypertagger;
 	}
 
@@ -899,7 +899,9 @@ public class ZLMaxentHypertagger extends TagExtractor implements Hypertagger {
 		}
 		ArrayList<BufferedWriter> errFiles = new ArrayList<BufferedWriter>();
 		for(int i = 0; i < ht.betas.length; i++) {
-			BufferedWriter b = new BufferedWriter(new FileWriter(new File("tagdict.err.out." + i)));
+			File logdir = new File("logs");
+			if (!logdir.exists()) logdir.mkdirs();
+			BufferedWriter b = new BufferedWriter(new FileWriter(new File("logs/tagdict.err.out." + i)));
 			b.write("### beta = " + ht.betas[i] + "\n");
 			errFiles.add(b);
 		}

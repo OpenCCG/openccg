@@ -391,7 +391,7 @@ public final class Slash implements Unifiable, Mutable, Serializable {
 			sb.append(sup).append("{").append("+").append("} ");
 		if (_ability == INERT)
 			sb.append(sup).append("{").append("-").append("} ");
-		if ((modTeX != "") && ((_ability == ACTIVE) || (_ability == ACTIVE))) {
+		if ((modTeX != "") && (_ability == ACTIVE)) {
 			if ((_dir == R))
 				sb.append("\\hspace{-1.45mm} ");
 			else if (_dir == L)

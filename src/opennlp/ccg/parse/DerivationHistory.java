@@ -117,8 +117,9 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
         return max;
     }
     
-    /** Returns the complexity of the derivation, as the sum of 
-        the number of steps, plus the number of type-raising, composition or 
+    /** Returns the complexity of the derivation as the sum of 
+        the number of steps, plus the number of non-application steps, 
+        plus the number of type-raising, composition or 
         substitution steps, plus the number of crossing steps, 
         plus the arities of the categories. */
     public int complexity() {
@@ -127,7 +128,8 @@ public class DerivationHistory implements Serializable, Comparable<DerivationHis
         if (_noHistory) { _complexity = retval; return retval; } 
         retval++;
         String ruleName = _rule.name();
-        if (ruleName.length() > 1 && (ruleName.charAt(0) == '>' || ruleName.charAt(0) == '<')) {
+        if (ruleName.length() > 1) { 
+        	retval++;
             if (ruleName.charAt(1) == 'T' || ruleName.charAt(1) == 'B' || ruleName.charAt(1) == 'S') {
                 retval++;
                 if (ruleName.length() == 3 && ruleName.charAt(2) == 'x') retval++;

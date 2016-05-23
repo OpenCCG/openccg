@@ -15,14 +15,22 @@ import opennlp.ccg.test._
 import opennlp.ccg.realize._
 
 object Config {
-  val argrels = List("sbj","obj","iobj","vc","prd","oprd","prt","pmod","sub") //,"prp")
-  val optrels = List("sub") //,"prp")
-  val lexonlyrels = List("im")
+//  val argrels = List("sbj","obj","iobj","vc","prd","oprd","prt","pmod","sub") //,"prp")
+//  val optrels = List("sub") //,"prp")
+//  val lexonlyrels = List("im")
+  val argrels = List("nsubj","nsubjpass","csubj","expl","dobj","iobj","xcomp","ccomp")
+  val optrels = List("case") //,"prp")
+  val invrels = List("aux","auxpass","cop","case","mark")
+  val lexrels = List("mwe","compound:prt") // nb: in principle could require these to use cats like prt[up]
+  val lexonlycats = List("mwe","prt")
+  val nonargcats = List("n")
   val defaultcat = new AtomCat("np")
+  val firstConjRel = "conj1" // "coord1"
+  val secondConjRel = "conj2" // "coord2"
 //  val node_max = 8
 //  val agenda_max = 12
-  val node_max = 10
-  val agenda_max = 20
+  val node_max = 20
+  val agenda_max = 30
 //  val log_sort = true
   val log_sort = false
 }
@@ -387,6 +395,29 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
 	else (retval, None)
   }
   
+  // NB: in principle it would be better to add inheritsFrom to target cat
+  // TODO add composition case
+  def extendInvCat(headCat:Category, invCat:AtomCat, relPredIdx:Int, rightward:Boolean) = {
+	val invCatCopy = invCat.copy()
+	UnifyControl.reindex(invCatCopy)
+	val lf = invCatCopy.getLF
+	invCatCopy.setLF(null)
+	val headCatCopy = headCat.copy()
+	headCatCopy.setLF(null)
+	UnifyControl.addIndices(headCatCopy)
+	UnifyControl.reindex(headCatCopy)
+    val args = new ArgStack()
+	if (headCat.isInstanceOf[ComplexCat]) {
+	  val headCatCopyArgs = headCatCopy.asInstanceOf[ComplexCat].getArgStack
+	  args.add(headCatCopyArgs.copy)
+	}
+    if (rightward) args.add(new BasicArg(new Slash('/',"^"), headCatCopy))
+    else args.add(new BasicArg(new Slash('\\',"^"), headCatCopy))
+    invCatCopy.asInstanceOf[TargetCat].getFeatureStructure()
+    val retcat = new ComplexCat(invCatCopy.asInstanceOf[TargetCat], args, lf)
+	retcat
+  }
+
   def makeEdge(cat:Category, sign:Sign, bitset:BitSet) = {
     // replace supertag in word 
     // nb: assuming a single word, as usual
@@ -409,9 +440,10 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
     }
   }
   
-  def isArgRel(rel:String) = { Config.argrels.contains(rel) }
+  def isArgRel(rel:String) = { Config.argrels.contains(rel) || Config.lexrels.contains(rel) }
+  def isInvRel(rel:String) = { Config.invrels.contains(rel) }
   def isModRel(rel:String)  = {
-    (!Config.argrels.contains(rel) && !Config.lexonlyrels.contains(rel)) || Config.optrels.contains(rel) 
+    (!isArgRel(rel) && !isInvRel(rel)) || Config.optrels.contains(rel) 
   }
   
   def combineEdges(node:TreeNode):Unit = {
@@ -423,8 +455,9 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
     
     // TODO consider treating all secondary deps as args, in order to handle eg "in which" in 2402
     val argDeps = for (dep <- node.deps if isArgRel(dep._1)) yield dep 
+    val invDeps = for (dep <- node.deps if isInvRel(dep._1)) yield dep 
     val modDeps = for (dep <- node.deps if isModRel(dep._1)) yield dep 
-    val coordDeps = for (dep <- node.deps if dep._1 == "coord1" || dep._1 == "coord2") yield dep
+    val coordDeps = for (dep <- node.deps if dep._1 == Config.firstConjRel || dep._1 == Config.secondConjRel) yield dep
     if (coordDeps.size == 2 && argDeps.isEmpty) {
       val coord1Dep = coordDeps.get(0)
       val coord1DepKid = node.kids.find(kid => kid.id == coord1Dep._2).get
@@ -461,15 +494,20 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
           val sign = edge.getSign
           if (nextKid.isEmpty) {
             // nb: don't actually know whether this should be right or left! (trying both)
-            val nextCatRs = extendCat(sign.getCategory, Config.defaultcat, dep, true) 
-            makeAndAddEdges(nextCatRs, sign, nextBitSet, withNext)
             val nextCatLs = extendCat(sign.getCategory, Config.defaultcat, dep, false) 
             makeAndAddEdges(nextCatLs, sign, nextBitSet, withNext)
+            val nextCatRs = extendCat(sign.getCategory, Config.defaultcat, dep, true) 
+            makeAndAddEdges(nextCatRs, sign, nextBitSet, withNext)
           }
           else {
             for (next <- edgesById(nextKid.get.id) if !next.getSign.getDerivationHistory.ruleIsTypeRaising) {
-              val nextCats = extendCat(sign.getCategory, next.getSign.getCategory, dep, rightward)
-    		  makeAndAddEdges(nextCats, sign, nextBitSet, withNext)
+              val nextCat = next.getSign.getCategory
+              val nextCatType = if (nextCat.isInstanceOf[AtomCat]) 
+                nextCat.asInstanceOf[AtomCat].getType else null
+              if (!Config.nonargcats.contains(nextCatType)) {
+                val nextCats = extendCat(sign.getCategory, nextCat, dep, rightward)
+                makeAndAddEdges(nextCats, sign, nextBitSet, withNext)
+              }
 		    }
 		  }
 		}
@@ -560,6 +598,25 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
       }
     }
     
+    // combines the given current and next edges, adding to the agenda
+    def applyBinaryRules(current:EdgeSpan, next:EdgeSpan, currentFirst:Boolean) = {
+      if (current.edge.indicesIntersect(next.edge)) {
+        val results = if  (currentFirst)
+          generalRules.applyBinaryRules(current.edge.getSign, next.edge.getSign)
+		else
+		  generalRules.applyBinaryRules(next.edge.getSign, current.edge.getSign)
+//		out.println("Trying: \n" + next.edge + " + \n" + current.edge)
+		for (result <- results) {
+		  val bitset = current.edge.bitset.clone().asInstanceOf[BitSet]
+		  bitset.or(next.edge.bitset)
+		  val newEdge = edgeFactory.makeEdge(result,bitset) 
+		  out.println("derived: " + newEdge)
+		  val span = if (currentFirst) (current.span._1,next.span._2) else (next.span._1,current.span._2)
+		  agenda += EdgeSpan(newEdge, span)
+		}
+      }
+    }
+    
     // combines the next edge with those in the chart and does unary rules, 
     // adding the results to the agenda
     def doEdgeCombos(next:EdgeSpan) = {
@@ -581,7 +638,7 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
     	  	  if next.edge.meetsLfChunkConstraints(ruleInst) }
           applyRuleInst(ruleInst, next)
       }
-      // do binary rules and modifier rule instances
+      // do binary rules, modifier rule instances and new inverted cats
       for { current <- chart 
     	  	if !(current eq next)
     	  	if adjacent(current.span._2, next.span._1) || adjacent(next.span._2, current.span._1)
@@ -590,21 +647,8 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
     	  	if next.edge.meetsLfChunkConstraints(current.edge) 
       } {
         val currentFirst = (current.span._2 < next.span._1)
-        if (current.edge.indicesIntersect(next.edge)) {
-          val results = if  (currentFirst)
-            generalRules.applyBinaryRules(current.edge.getSign, next.edge.getSign)
-          else
-        	generalRules.applyBinaryRules(next.edge.getSign, current.edge.getSign)
-//          out.println("Trying: \n" + next.edge + " + \n" + current.edge)
-          for (result <- results) {
-            val bitset = current.edge.bitset.clone().asInstanceOf[BitSet]
-            bitset.or(next.edge.bitset)
-            val newEdge = edgeFactory.makeEdge(result,bitset) 
-            out.println("derived: " + newEdge)
-            val span = if (currentFirst) (current.span._1,next.span._2) else (next.span._1,current.span._2)
-            agenda += EdgeSpan(newEdge, span)
-          }
-        }
+        // first do binary rules with existing cats
+        applyBinaryRules(current, next, currentFirst)
         // create and apply modifier unary rule instances
         val currentContainsHead = (current.span._1 <= node.id && node.id <= current.span._2)
         // ensure that we have a head edge and a mod edge
@@ -616,23 +660,65 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
           val modDep = modDeps.find(dep => dep._2 == modES.span._1 && dep._2 == modES.span._2)
           if (modDep != None) {
             val relPredIdx = relPredIdxs(node.id).get(modDep.get).get
+            val headCat = headES.edge.getSign.getCategory
+	        val modCat = modES.edge.getSign.getCategory
             if (!headES.edge.bitset.get(relPredIdx) && !modES.edge.bitset.get(relPredIdx) &&
                 !headES.edge.getSign.getDerivationHistory.ruleIsTypeRaising &&
-                !modES.edge.getSign.getDerivationHistory.ruleIsTypeRaising) 
+                !modES.edge.getSign.getDerivationHistory.ruleIsTypeRaising &&
+                !Config.lexonlycats.contains(modCat.getTarget.asInstanceOf[AtomCat].getType)) 
             {
-	          val modCat = modES.edge.getSign.getCategory
-	          val headCat = headES.edge.getSign.getCategory
               val (ruleInst, ruleInst2Opt) = makeRuleInst(headCat, modCat, relPredIdx, rightward)
               applyRuleInst(ruleInst, modES)
 //              out.println("new rule needed: " + ruleInst)
               if (ruleInst2Opt != None) {
                 val ruleInst2 = ruleInst2Opt.get
                 applyRuleInst(ruleInst2, modES)
-                out.println("new rule2 needed: " + ruleInst2)
+//                out.println("new rule2 needed: " + ruleInst2)
               }
             }
           }
         }
+        // create and combine with cat that has an inverted relation:
+        // ensure that we have a head edge and an inverted edge
+        if (nextContainsHead ^ currentContainsHead) {
+          val headES = if (nextContainsHead) next else current
+          val invES = if (nextContainsHead) current else next
+          val rightward = (invES == current && currentFirst) || (invES == next && !currentFirst)
+          // find inv rel
+          val invDep = invDeps.find(dep => dep._2 == invES.span._1 && dep._2 == invES.span._2)
+          if (invDep != None) {
+            val relPredIdx = relPredIdxs(node.id).get(invDep.get).get
+            val headCat = headES.edge.getSign.getCategory
+	        val invCat = invES.edge.getSign.getCategory
+	        val headCatType = if (headCat.isInstanceOf[AtomCat])
+	          headCat.asInstanceOf[AtomCat].getType else null
+            if (!headES.edge.bitset.get(relPredIdx) && invES.edge.bitset.get(relPredIdx) &&
+                !headES.edge.getSign.getDerivationHistory.ruleIsTypeRaising &&
+                !invES.edge.getSign.getDerivationHistory.ruleIsTypeRaising &&
+                invCat.isInstanceOf[AtomCat] && !Config.nonargcats.contains(headCatType))
+            {
+              // TODO - handle non-lexical cases involving MWEs
+              if (invES.edge.getSign.isLexical) {
+                val invCatAC = invCat.asInstanceOf[AtomCat]
+        		val extendedCat = extendInvCat(headCat, invCatAC, relPredIdx, rightward)
+//        		out.println("new inverted cat needed: " + extendedCat)
+        		val newSign = new Sign(invES.edge.getSign.getWords, extendedCat)
+                val bitset = invES.edge.bitset.clone().asInstanceOf[BitSet]
+        		val newEdge = edgeFactory.makeEdge(newSign,bitset)
+        		out.println("new inverted cat needed: " + newEdge)
+        		val newES = EdgeSpan(newEdge, invES.span)
+        		val actuallyAdded = addEdgeToChart(newES)
+        		if (actuallyAdded) {
+        		  applyBinaryRules(newES, headES, rightward)
+        		}
+              }
+              else {
+                out.println("*** warning, new inverted cat needed for non-lexical edge ***")
+                out.println(invES.edge)
+              }
+            }
+          }
+        }    
       }
     }
     

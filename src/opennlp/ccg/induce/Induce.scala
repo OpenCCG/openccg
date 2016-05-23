@@ -19,13 +19,13 @@ import opennlp.ccgbank.extract.Testbed
 object Induce extends App {
 
   val openccghome = "/Users/mwhite/dev/github/openccg"
-  val working_dir = "/Users/mwhite/dev/hmmm/scala/convert_deps/out"
+  val working_dir = "/Users/mwhite/dev/scala/convert_deps/out"
     
-//  val partition = "dev"
+  val partition = "dev"
 //  val partition = "train"
 //  val partition = "test"
 //  val partition = "others"
-  val partition = "24"
+//  val partition = "24"
 
   val sects = partition match {
     case "dev" => Array("00")

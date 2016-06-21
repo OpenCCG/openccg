@@ -190,6 +190,8 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
 
   case class EdgeSpan(edge:Edge, span:(Int,Int))
   
+  def nomid(id:Int) = { f"w$id%03d" }
+
   // adds arg cats to back or front of arg stack, depending on direction, 
   // and assuming args given in reverse order
   // if arg cat has arity > 1, also uses result of arg cat to allow 
@@ -204,12 +206,12 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
       else new ArgStack()
     val argCatCopy = argCat.copy()
     argCatCopy.setLF(null)
-    argCatCopy.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+id))
+    argCatCopy.getTarget().getFeatureStructure().setFeature("index", new NominalAtom(nomid(id)))
     UnifyControl.reindex(argCatCopy)
     if (rightward) args.add(new BasicArg(new Slash('/',">"), argCatCopy))
     else args.addFront(new BasicArg(new Slash('\\',"<"), argCatCopy))
     val headNom = catCopy.getIndexNominal().copy().asInstanceOf[Nominal]
-    val depRel = new Diamond(new ModeLabel(rel), new NominalAtom("w"+id))
+    val depRel = new Diamond(new ModeLabel(rel), new NominalAtom(nomid(id)))
     val lf = HyloHelper.append(catCopy.getLF(), new SatOp(headNom, depRel))
     val retcat = if (catCopy.isInstanceOf[ComplexCat]) {
       catCopy.setLF(lf)
@@ -243,18 +245,18 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
     val lexConjCat = lexConjSign.getCategory
     val lf0 = lexConjCat.getLF.copy()
     val headNom = lexConjCat.getIndexNominal().copy().asInstanceOf[Nominal]
-    val coord1DepRel = new Diamond(new ModeLabel(coord1Rel), new NominalAtom("w"+coord1Id))
-    val coord2DepRel = new Diamond(new ModeLabel(coord2Rel), new NominalAtom("w"+coord2Id))
+    val coord1DepRel = new Diamond(new ModeLabel(coord1Rel), new NominalAtom(nomid(coord1Id)))
+    val coord2DepRel = new Diamond(new ModeLabel(coord2Rel), new NominalAtom(nomid(coord2Id)))
     val lf1 = HyloHelper.append(lf0, new SatOp(headNom, coord1DepRel))
     val lf = HyloHelper.append(lf1, new SatOp(headNom, coord2DepRel))
     val coord1DepCatCopy = coord1DepCat.copy()
     coord1DepCatCopy.setLF(null)
     UnifyControl.reindex(coord1DepCatCopy)
     val coord2DepCat = coord1DepCatCopy.copy()
-    coord2DepCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+coord2Id))
+    coord2DepCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom(nomid(coord2Id)))
     UnifyControl.reindex(coord2DepCat)
     val resultCat = coord2DepCat.copy()
-    resultCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom("w"+lexConjId))
+    resultCat.getTarget().getFeatureStructure().setFeature("index", new NominalAtom(nomid(lexConjId)))
     UnifyControl.reindex(resultCat)
     val args = if (resultCat.isInstanceOf[ComplexCat]) 
       resultCat.asInstanceOf[ComplexCat].getArgStack() 

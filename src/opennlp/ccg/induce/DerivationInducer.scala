@@ -348,6 +348,7 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
 	}
   }
   
+  // TODO look into vp\vp cats for <Bx?
   def makeRuleInst(headCat:Category, modCat:Category, relPredIdx:Int, rightward:Boolean) = {
 	val modCatCopy = modCat.copy()
 	modCatCopy.setLF(null)
@@ -613,8 +614,25 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
 		  bitset.or(next.edge.bitset)
 		  val newEdge = edgeFactory.makeEdge(result,bitset) 
 		  out.println("derived: " + newEdge)
-		  val span = if (currentFirst) (current.span._1,next.span._2) else (next.span._1,current.span._2)
-		  agenda += EdgeSpan(newEdge, span)
+		  // NB: only combine with type-raised arg if functor also type-raised;  
+		  //     this should really be migrated to applyBinaryRules
+		  val dh = newEdge.getSign.getDerivationHistory
+		  val ruleIsForwards = dh.getRule.name.startsWith(">")
+		  val args = dh.getInputs.asInstanceOf[Array[Sign]]
+		  val argL = args(0)
+		  val argR = args(1)
+		  val onlyArgIsTypeRaised = 
+		    ((ruleIsForwards && !argL.isTypeRaised && argR.isTypeRaised) ||
+		     (!ruleIsForwards && argL.isTypeRaised && !argR.isTypeRaised)) 
+		  if (onlyArgIsTypeRaised) {
+//		    out.println("skipping, only the arg is type raised with " + dh.getRule.name + "!")
+//		    out.println("first: " + argL)
+//		    out.println("second: " + argR)
+		  }
+		  else {
+		    val span = if (currentFirst) (current.span._1,next.span._2) else (next.span._1,current.span._2)
+		    agenda += EdgeSpan(newEdge, span)		    
+		  }
 		}
       }
     }

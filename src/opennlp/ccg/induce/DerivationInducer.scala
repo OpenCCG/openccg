@@ -22,7 +22,6 @@ object Config {
   val optrels = List("case") //,"prp")
   val invrels = List("aux","auxpass","cop","case","mark")
   val lexrels = List("mwe","compound:prt") // nb: in principle could require these to use cats like prt[up]
-  val lexonlycats = List("mwe","prt")
   val nonargcats = List("n")
   val defaultcat = new AtomCat("np")
   val firstConjRel = "conj1" // "coord1"
@@ -679,13 +678,14 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
           // check whether mod rel already covered
           val modDep = modDeps.find(dep => dep._2 == modES.span._1 && dep._2 == modES.span._2)
           if (modDep != None) {
+            val rel = modDep.get._1 
             val relPredIdx = relPredIdxs(node.id).get(modDep.get).get
             val headCat = headES.edge.getSign.getCategory
 	        val modCat = modES.edge.getSign.getCategory
             if (!headES.edge.bitset.get(relPredIdx) && !modES.edge.bitset.get(relPredIdx) &&
                 !headES.edge.getSign.getDerivationHistory.ruleIsTypeRaising &&
                 !modES.edge.getSign.getDerivationHistory.ruleIsTypeRaising &&
-                !Config.lexonlycats.contains(modCat.getTarget.asInstanceOf[AtomCat].getType)) 
+                !Config.lexrels.contains(rel))
             {
               val (ruleInst, ruleInst2Opt) = makeRuleInst(headCat, modCat, relPredIdx, rightward)
               applyRuleInst(ruleInst, modES)

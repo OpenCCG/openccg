@@ -24,8 +24,8 @@ object Config {
   val lexrels = List("mwe","compound:prt") // nb: in principle could require these to use cats like prt[up]
   val nonargcats = List("n")
   val defaultcat = new AtomCat("np")
-  val firstConjRel = "conj1" // "coord1"
-  val secondConjRel = "conj2" // "coord2"
+  val firstConjRel = "coord1" // "conj1"
+  val secondConjRel = "coord2" // "conj2"
 //  val node_max = 8
 //  val agenda_max = 12
   val node_max = 20

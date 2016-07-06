@@ -28,8 +28,8 @@ object Config {
   val secondConjRel = "coord2" // "conj2"
 //  val node_max = 8
 //  val agenda_max = 12
-  val node_max = 20
-  val agenda_max = 30
+  val node_max = 50 //20
+  val agenda_max = 72 //30
 //  val log_sort = true
   val log_sort = false
 }

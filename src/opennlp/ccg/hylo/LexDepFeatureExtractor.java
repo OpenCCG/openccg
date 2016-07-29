@@ -614,6 +614,8 @@ public class LexDepFeatureExtractor implements FeatureExtractor {
 	 * punctuation (as determined by isPunct), and doesn't count each word in a collapsed NE separately.  
 	 */ 
 	protected int depLen() {
+		if (isPunct(currentDep.lexDep.getWords().get(0))) return 0; 
+		if (isPunct(currentDep.lexHead.getWords().get(0))) return 0; 
 		List<Word> words = currentSign.getWords();
 		int min = Math.min(currentHeadIndex, currentDepIndex);
 		int max = Math.max(currentHeadIndex, currentDepIndex);

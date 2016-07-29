@@ -67,14 +67,31 @@ public class SatOp extends HyloFormula {
     protected LexSemOrigin _origin = null;
     
     /**
+     * The sign or unary rule which initially introduced this predication, if 
+     * the origin was transferred.
+     */
+    protected LexSemOrigin _initial_origin = null;
+    
+    /**
      * Gets the sign or unary rule which introduced this predication (or null if none).
      */
     public LexSemOrigin getOrigin() { return _origin; }
     
     /**
-     * Sets the sign or unary rule which introduced this predication.
+     * Sets the sign or unary rule which introduced this predication, 
+     * transferring the current origin (if any) to the initial origin.
      */
-    public void setOrigin(LexSemOrigin origin) { _origin = origin; }
+    public void setOrigin(LexSemOrigin origin) { _initial_origin = _origin; _origin = origin; }
+    
+    /**
+     * Gets the sign or unary rule which initially introduced this predication (or null if none).
+     */
+    public LexSemOrigin getInitialOrigin() { return _initial_origin; }
+    
+    /**
+     * Sets the sign or unary rule which initially introduced this predication.
+     */
+    public void setInitialOrigin(LexSemOrigin initialOrigin) { _initial_origin = initialOrigin; }
     
     
     // the real contents of the satop

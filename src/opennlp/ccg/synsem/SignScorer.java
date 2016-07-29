@@ -50,5 +50,21 @@ public interface SignScorer
     	Random random = new Random();
         public double score(Sign sign, boolean complete) { return random.nextDouble(); }
     };
+
+    /** 
+     * A scorer that defers to the given scorer for signs that are substrings of the given target, 
+     * otherwise returns negative infinity.
+     */
+    public class TargetScorer implements SignScorer {
+    	String target; SignScorer scorer;
+    	public TargetScorer(String target, SignScorer scorer) {
+    		this.target = target; this.scorer = scorer;
+		}
+        public double score(Sign sign, boolean complete) {
+        	if (target.contains(sign.getOrthography()))
+        		return scorer.score(sign, complete);
+        	else return Double.NEGATIVE_INFINITY;
+        }
+    }
 }
 

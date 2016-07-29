@@ -71,8 +71,24 @@ public class Sign implements LexSemOrigin, Serializable {
         _cat = cat;
         _history = dh;
         _lexHead = lexHead;
+        if (dh != null) updateOrigins();
     }
 
+    /** Changes origins of any preds from a type-changing rule to the lex head. */
+    protected void updateOrigins() {
+        // change origin of any preds from type-changing rules to the lex head 
+        if (_history.getRule() instanceof TypeChangingRule) {
+        	TypeChangingRule tcr = (TypeChangingRule) _history.getRule();
+        	if (tcr.getResult().getLF() != null) {
+            	LF lf = _cat.getLF();
+            	for (SatOp pred : HyloHelper.getPreds(lf)) {
+            		if (pred.getOrigin() == tcr) 
+            			pred.setOrigin(_lexHead);
+            	}
+        	}
+        }
+    }
+    
     /** Constructor with no additional derivation history. */
     public Sign(List<Word> words, Category cat) {
         this(words, cat, null, null);
@@ -162,6 +178,7 @@ public class Sign implements LexSemOrigin, Serializable {
     protected Sign(Category cat, Sign[] inputs, Rule rule, Sign lexHead) {
         this(getRemainingWords(inputs, 0), cat, null, lexHead);
         _history = new DerivationHistory(inputs, this, rule);
+        updateOrigins();
     }
     
     // returns the remaining words in a structure sharing way
@@ -547,6 +564,29 @@ public class Sign implements LexSemOrigin, Serializable {
 		Sign[] inputs = _history.getInputs();
         for (int i = 0; i < inputs.length; i++) {
         	unfilledDeps.addAll(inputs[i].getUnfilledDeps());
+        }
+        // as well as from type-changing rule, if apropos
+        if (_history.getRule() instanceof TypeChangingRule) {
+        	TypeChangingRule tcr = (TypeChangingRule) _history.getRule();
+        	if (tcr.getResult().getLF() != null) {
+        		LF lf = this.getCategory().getLF();
+        		Sign lexHead = inputs[0].getLexHead();
+        		List<SatOp> preds = HyloHelper.getPreds(lf);
+        		List<SatOp> newPreds = new ArrayList<SatOp>();
+        		for (SatOp pred : preds) {
+        			// need first pred from lex head
+        			if (pred.getOrigin() == lexHead && pred.getInitialOrigin() == null) { 
+        				newPreds.add(pred); break; 
+    				}
+        		}
+        		for (SatOp pred : preds) {
+        			// and ones from type changing rule
+        			if (pred.getInitialOrigin() == tcr) newPreds.add(pred);
+        		}
+        		LF combinedLF = HyloHelper.getLF(newPreds);
+    			List<LexDependency> unfilledDepsTCR = HyloHelper.getUnfilledLexDeps(combinedLF);
+        		unfilledDeps.addAll(unfilledDepsTCR);
+        	}
         }
         // calculate filled deps
         List<LexDependency> filledDeps = HyloHelper.getFilledLexDeps(unfilledDeps, _cat.getLF());

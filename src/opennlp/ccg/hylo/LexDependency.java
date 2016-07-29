@@ -34,6 +34,8 @@ import opennlp.ccg.synsem.*;
  * @author Michael White
  * @version     $Revision: 1.2 $, $Date: 2011/08/26 21:31:52 $
  */ 
+// NB: It would be more efficient to change the category classes to directly keep 
+//     track these dependencies, but that would entail considerable redesign.
 public class LexDependency {
 
 	/** The lexical head. */

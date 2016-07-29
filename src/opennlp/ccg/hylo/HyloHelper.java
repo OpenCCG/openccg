@@ -408,6 +408,19 @@ public class HyloHelper {
     }
     
     /**
+     * Returns an LF consisting of the given preds, either as a single SatOp
+     * or a conjunction of the given preds.
+     */
+    @SuppressWarnings("unchecked")
+    public static LF getLF(List<SatOp> preds) { 
+    	if (preds.size() == 1) return preds.get(0);
+    	else {
+    		List<?> predsList = preds;
+    		return new Op(Op.CONJ, (List<LF>)predsList);
+    	}
+    }
+    
+    /**
      * Returns the first elementary predication from the given LF, which is assumed to be either 
      * a conjunction of elementary predications or a single elementary predication; 
      * otherwise returns null.

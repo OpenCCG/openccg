@@ -52,6 +52,9 @@ public class FeatureList implements FeatureVector {
 	
 	/** Constructor from feature vector. */
 	public FeatureList(FeatureVector fv) {
+		int size = fv.size();
+		features = new ArrayList<Alphabet.Feature>(size);
+		values = new ArrayList<Float>(size);
 		for (Iterator it = fv.iterator(); it.hasNext(); ) 
 			add(it.nextFeature(), it.nextValue());
 	}

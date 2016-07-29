@@ -100,20 +100,28 @@ public class Model {
 	public Alphabet getAlphabet() { return alphabet; }
 	
 	
+	/** Resizes the weights if necessary to match the alphabet size. */
+	protected void checkSize() { 
+		if (alphabet.size() == weights.length) return;
+		double[] oldWeights = weights;
+		weights = new double[alphabet.size()];
+		System.arraycopy(oldWeights, 0, weights, 0, oldWeights.length);
+	}
+	
 	/** Returns the weight for the given index. */
-	public double getWeight(int index) { return weights[index]; }
+	public double getWeight(int index) { checkSize(); return weights[index]; }
 	
 	/** Returns the weight for the given feature. */
-	public double getWeight(String feat) { return weights[alphabet.index(feat).getIndex()]; }
+	public double getWeight(String feat) { checkSize(); return weights[alphabet.index(feat).getIndex()]; }
 	
 	/** Returns the weight for the given feature. */
-	public double getWeight(Alphabet.Feature f) { return weights[f.getIndex()]; }
+	public double getWeight(Alphabet.Feature f) { checkSize(); return weights[f.getIndex()]; }
 	
 	/** Sets the weight for the given index. */
-	public void setWeight(int index, double weight) { weights[index] = weight; }
+	public void setWeight(int index, double weight) { checkSize(); weights[index] = weight; }
 	
 	/** Sets the weight for the given feature. */
-	public void setWeight(String feat, double weight) { weights[alphabet.index(feat).getIndex()] = weight; }
+	public void setWeight(String feat, double weight) { checkSize(); weights[alphabet.index(feat).getIndex()] = weight; }
 
 	/** Sets the weight for the given feature. */
 	public void setWeight(Alphabet.Feature f, double weight) { weights[f.getIndex()] = weight; }
@@ -121,6 +129,7 @@ public class Model {
 	
 	/** Returns the dot product of the weights and features. */
 	public double score(FeatureVector fv) {
+		checkSize(); 
 		double retval = 0.0;
 		for (FeatureVector.Iterator it = fv.iterator(); it.hasNext(); ) {
 			Feature feat = it.nextFeature();
@@ -135,6 +144,7 @@ public class Model {
 	
 	/** Adds the feature vector values to the weights. */
 	public void add(FeatureVector fv) {
+		checkSize(); 
 		for (FeatureVector.Iterator it = fv.iterator(); it.hasNext(); ) {
 			Feature feat = it.nextFeature();
 			Float value = it.nextValue();
@@ -146,6 +156,7 @@ public class Model {
 	
 	/** Subtracts the feature vector values from the weights. */
 	public void subtract(FeatureVector fv) {
+		checkSize(); 
 		for (FeatureVector.Iterator it = fv.iterator(); it.hasNext(); ) {
 			Feature feat = it.nextFeature();
 			Float value = it.nextValue();
@@ -158,6 +169,7 @@ public class Model {
 	
 	/** Adds the given model's weights to this model.  The models are assumed to share the same alphabet. */
 	public void add(Model model) {
+		checkSize(); 
 		for (int i=0; i < weights.length; i++) {
 			weights[i] += model.weights[i];
 		}
@@ -180,7 +192,7 @@ public class Model {
 	
 	/** Sets this model's weights to the given model's ones, where the alphabets intersect. */
 	public void set(Model model) {
-		zero();
+		checkSize(); zero();
 		for (int i=0; i < model.weights.length; i++) {
 			Alphabet.Feature f = model.alphabet.feature(i);
 			Alphabet.Feature f0 = alphabet.index(f);

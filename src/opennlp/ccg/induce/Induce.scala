@@ -118,6 +118,15 @@ object Induce extends App {
     }
   }
 
+  def makeBestRuleGroup() = {
+    val updatedRules = new RuleGroup(grammar)
+    for (rule <- grammar.rules.getBinaryRules) updatedRules.addRule(rule)
+    for (rule <- grammar.rules.getUnaryRules if !rule.isInstanceOf[TypeChangingRule]) updatedRules.addRule(rule)
+    for (rule <- grammar.rules.getUnaryRules if rule.isInstanceOf[TypeChangingRule]) updatedRules.addRule(rule)
+    for (rule <- ruleMap.values if bestRules.contains(rule.name)) updatedRules.addRule(rule)
+    updatedRules
+  }
+  
   // cats and words from best derivations
   val bestLexCats = HashSet[(Category,String)]()
   val bestWords = HashSet[Word]()
@@ -134,6 +143,21 @@ object Induce extends App {
     else {
 	  for (child <- hist.getInputs) getLexItems(child)
     }
+  }
+  
+  def saveLexicon(lexicon_fn:String) = {
+    val cats = ListBuffer[Category]()
+    val tags = ListBuffer[String]()
+    for ((cat,pos) <- bestLexCats) {
+      cats += cat
+      tags += pos
+    }
+    grammar.toLexiconXml(cats, tags, lexicon_fn)
+  }
+  
+  def saveMorph(morph_fn:String) = {
+    val wordList = ListBuffer[Word]() ++ bestWords
+    grammar.toMorphXml(wordList, morph_fn)
   }
   
   // stats
@@ -173,16 +197,20 @@ object Induce extends App {
           val sign = edge.getSign
           completeSigns += sign
           itemIds += inducer.getId
-          factorsPW.println(grammar.lexicon.tokenizer.format(sign.getWords))
-          val newcombos = ListBuffer[String]()
-          Testbed.newCombos(sign, newcombos, combos)
-          for (combo <- newcombos) { combosPW.println(combo) }
-          predsPW.println(Testbed.getPredInfo(sign.getCategory.getLF))
           totalComplexity += sign.getDerivationHistory.complexity
           if (edge.score == 0) 
             totalZeros += 1 
           else 
             totalLogScore += Math.log10(edge.score)
+          // update best rules, cats and words
+          getTCRs(sign)
+          getLexItems(sign)
+          // update factors, combos,preds
+          factorsPW.println(grammar.lexicon.tokenizer.format(sign.getWords))
+          val newcombos = ListBuffer[String]()
+          Testbed.newCombos(sign, newcombos, combos)
+          for (combo <- newcombos) { combosPW.println(combo) }
+          predsPW.println(Testbed.getPredInfo(sign.getCategory.getLF))
         }
       } catch {
         case exc:Exception => {
@@ -205,10 +233,6 @@ object Induce extends App {
     out.println("saving complete signs to " + testbed_fn)
     RegressionInfo.writeTestbed(grammar, completeSigns, itemIds, testbed_fn)
     out.println()
-    
-    // update best rules, cats and words
-    for (sign <- completeSigns) getTCRs(sign)
-    for (sign <- completeSigns) getLexItems(sign)
   }
   
   for (sect <- sects) {
@@ -267,12 +291,7 @@ object Induce extends App {
   val rules_fn = grammarsdir + "/rules.xml"
   out.println("saving rules to " + rules_fn)
   print('.')
-  val updatedRules = new RuleGroup(grammar)
-  for (rule <- grammar.rules.getBinaryRules) updatedRules.addRule(rule)
-  for (rule <- grammar.rules.getUnaryRules if !rule.isInstanceOf[TypeChangingRule]) updatedRules.addRule(rule)
-  for (rule <- grammar.rules.getUnaryRules if rule.isInstanceOf[TypeChangingRule]) updatedRules.addRule(rule)
-  val numExistingUnaries = updatedRules.getUnaryRules.size
-  for (rule <- ruleMap.values if bestRules.contains(rule.name)) updatedRules.addRule(rule)
+  val updatedRules = makeBestRuleGroup() 
   val numRules = updatedRules.getBinaryRules.size + updatedRules.getUnaryRules.size 
   updatedRules.toXml(rules_fn)
   out.println("saved " + numRules + " rules")
@@ -280,22 +299,15 @@ object Induce extends App {
   val lexicon_fn = grammarsdir + "/lexicon.xml"
   out.println("saving categories to " + lexicon_fn)
   print('.')
-  val cats = ListBuffer[Category]()
-  val tags = ListBuffer[String]()
-  for ((cat,pos) <- bestLexCats) {
-    cats += cat
-    tags += pos
-  }
-  grammar.toLexiconXml(cats, tags, lexicon_fn)
-  out.println("saved " + cats.size + " cats")
+  saveLexicon(lexicon_fn)
+  out.println("saved " + bestLexCats.size + " cats")
 
   // TODO compare to converted words??
   val morph_fn = grammarsdir + "/morph2.xml" 
   out.println("saving words to " + morph_fn)
   print('.')
-  val wordList = ListBuffer[Word]() ++ bestWords
-  grammar.toMorphXml(wordList, morph_fn)
-  out.println("saved " + wordList.size + " words")
+  saveMorph(morph_fn)
+  out.println("saved " + bestWords.size + " words")
   out.println()
   println()
 

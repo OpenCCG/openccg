@@ -40,7 +40,11 @@ object Induce extends App {
 
   val firstPass = true
 //  val firstPass = false
-    
+
+  // NB: for some reason, nbest option finding very few alt derivations??
+//  val nbest = true
+  val nbest = false
+  
   val log_fn = working_dir + "/logs/inducecats." + partition + ".log"
   println("logging to " + log_fn)
   val out = new PrintWriter(new FileWriter(log_fn))
@@ -163,6 +167,7 @@ object Induce extends App {
   // stats
   var totalBest = 0
   var totalComplete = 0
+  var totalNBestComplete = 0
   var numErrors = 0
   var totalItems = 0
   var totalComplexity = 0
@@ -175,6 +180,18 @@ object Induce extends App {
 		  combosPW:PrintWriter, combos:HashSet[String], 
 		  predsPW:PrintWriter) = {
     
+    def updateRulesCatsWords(sign:Sign):Unit = {
+      // update best rules, cats and words
+      getTCRs(sign)
+      getLexItems(sign)
+      // update factors, combos, preds
+      factorsPW.println(grammar.lexicon.tokenizer.format(sign.getWords))
+      val newcombos = ListBuffer[String]()
+      Testbed.newCombos(sign, newcombos, combos)
+      for (combo <- newcombos) { combosPW.println(combo) }
+      predsPW.println(Testbed.getPredInfo(sign.getCategory.getLF))
+  }
+  
     // load testbed
     val tb_fn = srcdir + "/" + fileid + ".xml"
     out.println("***** loading testbed " + fileid)
@@ -186,6 +203,7 @@ object Induce extends App {
     // derive edges for each item, retaining complete signs and their ids
     val bestEdges = new ListBuffer[Edge]()
     val completeSigns = new ListBuffer[Sign]()
+    val allCompleteSigns = new ListBuffer[Sign]()
     val itemIds = new ListBuffer[String]()
     for (itemno <- 0 until rinfo.numberOfItems) {
       textPW.println(rinfo.getItem(itemno).sentence)
@@ -196,21 +214,25 @@ object Induce extends App {
         if (edge.complete) {
           val sign = edge.getSign
           completeSigns += sign
-          itemIds += inducer.getId
           totalComplexity += sign.getDerivationHistory.complexity
           if (edge.score == 0) 
             totalZeros += 1 
           else 
             totalLogScore += Math.log10(edge.score)
-          // update best rules, cats and words
-          getTCRs(sign)
-          getLexItems(sign)
-          // update factors, combos,preds
-          factorsPW.println(grammar.lexicon.tokenizer.format(sign.getWords))
-          val newcombos = ListBuffer[String]()
-          Testbed.newCombos(sign, newcombos, combos)
-          for (combo <- newcombos) { combosPW.println(combo) }
-          predsPW.println(Testbed.getPredInfo(sign.getCategory.getLF))
+          if (nbest) {
+            for ((nbEdge,i) <- inducer.getResults.zipWithIndex) {
+              val nbSign = nbEdge.getSign
+              allCompleteSigns += nbSign
+              val nbId = inducer.getId + "_" + i
+              itemIds += nbId
+              updateRulesCatsWords(nbSign)
+            }
+          }
+          else {
+            allCompleteSigns += sign
+            itemIds += inducer.getId
+            updateRulesCatsWords(sign)
+          }
         }
       } catch {
         case exc:Exception => {
@@ -224,14 +246,16 @@ object Induce extends App {
   
     totalBest += bestEdges.size
     totalComplete += completeSigns.size
+    totalNBestComplete += allCompleteSigns.size
     totalItems += rinfo.numberOfItems
     out.print("derived " + bestEdges.size + " edges with " + completeSigns.size + " complete signs ")
+    if (nbest) out.print("and " + allCompleteSigns.size + " n-best complete signs ")
     out.println("out of a total of " + rinfo.numberOfItems + " items")
     out.println()
 
     val testbed_fn = outdir + "/" + fileid + ".xml"
     out.println("saving complete signs to " + testbed_fn)
-    RegressionInfo.writeTestbed(grammar, completeSigns, itemIds, testbed_fn)
+    RegressionInfo.writeTestbed(grammar, allCompleteSigns, itemIds, testbed_fn)
     out.println()
   }
   
@@ -275,6 +299,7 @@ object Induce extends App {
 
   out.println("***** finished derivations")
   out.print("in total, derived " + totalBest + " edges with " + totalComplete + " complete signs ")
+  if (nbest) out.print("and " + totalNBestComplete + " n-best complete signs ")
   out.println("out of a total of " + totalItems + " items")
   out.println("with " + numErrors + " errors in total")
   val avgComplexity = 1.0 * totalComplexity / totalComplete

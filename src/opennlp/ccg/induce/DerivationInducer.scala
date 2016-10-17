@@ -160,6 +160,9 @@ class DerivationInducer(grammar:Grammar, generalRules:RuleGroup, ruleMap:HashMap
   /** Returns the best edge resulting from the derivation. */
   def getResult() = { rzchart.bestEdge }
   
+  /** Returns the n-best edges resulting from the derivation. */
+  def getResults() = { rzchart.bestEdges }
+  
   /** Returns the id for the current item. */
   def getId() = { item.getId }
   

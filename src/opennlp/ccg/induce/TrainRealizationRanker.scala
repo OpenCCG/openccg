@@ -76,7 +76,30 @@ object TrainRealizationRanker extends App {
     val targetScorer = new SignScorer.TargetScorer(target, signScorer)
     realizer.realize(lf, targetScorer)
     val chart = realizer.getChart
-    chart.bestEdge
+    val bestEdge = chart.bestEdge
+    val bestEdges = chart.bestEdges
+    (bestEdge, bestEdges)
+  }
+  
+  def updateModel(good:List[Edge], bad:List[Edge]) = {
+    out.println("updating model")
+    val goodModel = new Model(alphabet)
+    for (e <- good) {
+      val feats = featureExtractor.extractFeatures(e.getSign, e.complete)
+      goodModel.add(feats)
+    }
+    goodModel.multiply(1.0 / good.size)
+    val badModel = new Model(alphabet)
+    for (e <- bad) {
+      val feats = featureExtractor.extractFeatures(e.getSign, e.complete)
+      badModel.subtract(feats)
+    }
+    badModel.multiply(1.0 / bad.size)
+    model.add(goodModel)
+    model.add(badModel)
+    val model_fn = working_dir + "/logs/model.txt"
+    out.println("saving model to " + model_fn)
+    model.save(model_fn)
   }
   
   // update model on file
@@ -93,40 +116,73 @@ object TrainRealizationRanker extends App {
       val item = rinfo.getItem(itemno)
       out.println("item " + itemno + ": " + item.sentence)
       out.println()
+      def exact(e:Edge) = { item.sentence.equals(e.getSign.getOrthography) }
       try {
         val lf = getLF(item)
         // find gold
-        val goldEdge = findBestGoldRealization(lf, item.sentence)
+        val (goldEdge, goldEdges) = findBestGoldRealization(lf, item.sentence)
+        val goldExact = exact(goldEdge)
         out.println("gold best realization: " + goldEdge.getSign.getOrthography)
         out.println("complete: " + goldEdge.complete)
+        out.println("exact: " + goldExact)
         out.println("complexity: " + goldEdge.getSign.getDerivationHistory.complexity)
         out.println("score: " + goldEdge.score)
         out.println(goldEdge.getSign.getDerivationHistory)
-        val goldFeats = featureExtractor.extractFeatures(goldEdge.getSign, goldEdge.complete)
-//        out.println(new FeatureList(goldFeats))
         out.println()
         // find model best
-        // TODO - early update
-        realizer.realize(lf)
-        val chart = realizer.getChart
-        val bestEdge = chart.bestEdge
-        out.println("model best realization: " + bestEdge.getSign.getOrthography)
-        out.println("complete: " + bestEdge.complete)
-//        out.println(bestEdge)
-        out.println("complexity: " + bestEdge.getSign.getDerivationHistory.complexity)
-        out.println("score: " + bestEdge.score)
-        out.println(bestEdge.getSign.getDerivationHistory)
-        val bestFeats = featureExtractor.extractFeatures(bestEdge.getSign, bestEdge.complete)
-//        out.println(new FeatureList(bestFeats))
-        out.println()
-        // TODO - loss-sensitive over n-best
-        out.println("updating model")
-        model.add(goldFeats)
-        model.subtract(bestFeats)
-        val model_fn = working_dir + "/logs/model.txt"
-        out.println("saving model to " + model_fn)
-        model.save(model_fn)
-        out.println()
+        // TODO - early update ...
+        if (goldEdge.complete && goldExact) {
+          for (gEdge <- goldEdges) {
+	        out.println("gold best realization: " + gEdge.getSign.getOrthography)
+	        out.println("complete: " + gEdge.complete)
+	        out.println("exact: " + exact(gEdge))
+	        out.println("complexity: " + gEdge.getSign.getDerivationHistory.complexity)
+	        out.println("score: " + gEdge.score)
+          }
+          out.println()
+          val earlyUpdatePS = new EarlyUpdatePruningStrategy(item.sentence, new NBestPruningStrategy())
+          realizer.pruningStrategy = earlyUpdatePS
+          realizer.realize(lf)
+          realizer.pruningStrategy = null
+          val chart = realizer.getChart
+          val bestEdge = chart.bestEdge
+          val bestEdges = chart.bestEdges
+          val bestExact = exact(bestEdge)
+          out.println("model best realization: " + bestEdge.getSign.getOrthography)
+          out.println("complete: " + bestEdge.complete)
+          out.println("exact: " + bestExact)
+          //out.println(bestEdge)
+          out.println("complexity: " + bestEdge.getSign.getDerivationHistory.complexity)
+          out.println("score: " + bestEdge.score)
+          out.println(bestEdge.getSign.getDerivationHistory)
+          out.println()
+          if (!earlyUpdatePS.good.isEmpty) {
+            val good = earlyUpdatePS.good.asInstanceOf[List[Edge]]
+            val bad = earlyUpdatePS.bad.asInstanceOf[List[Edge]]
+            out.println("early update: found " + good.size + " good and " + bad.size + " bad")
+            out.println("good:")
+            for (e <- good) { out.println(e.getSign.getOrthography) }
+            out.println("bad:")
+            for (e <- bad) { out.println(e.getSign.getOrthography) }
+            updateModel(good, bad)
+          }
+          // TODO - loss-sensitive over n-best
+          else if (!bestExact) {
+            val right = goldEdges.filter(exact(_))
+            val wrong = bestEdges.filterNot(exact(_))
+            out.println("found " + right.size + " right and " + wrong.size + " wrong")
+            val minRight = right.minBy(_.score).score
+            val maxWrong = wrong.maxBy(_.score).score
+            out.println("min right is " + minRight + " and max wrong is " + maxWrong)
+            val good = right.filter(_.score < maxWrong)
+            val bad = wrong.filter(_.score > minRight)
+            out.println("found " + good.size + " good and " + bad.size + " bad")
+            if (good.size > 0 && bad.size > 0) {
+              updateModel(good.asInstanceOf[List[Edge]], bad.asInstanceOf[List[Edge]])
+            }
+            out.println()
+          }
+        }
       }
       catch {
         case thrwbl:Throwable => thrwbl.printStackTrace(out)
@@ -136,7 +192,7 @@ object TrainRealizationRanker extends App {
   }
   
   // do each epoch
-  for (epoch <- 0 to 2) {
+  for (epoch <- 0 to 4) {
     out.println("*** starting epoch " + epoch)
     out.println()
     // do each section

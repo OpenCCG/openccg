@@ -105,7 +105,7 @@ public class Compacter {
                 }
             }
         }
-        
+
         // break any remaining cycles in parent relationships
         for (Iterator<Nominal> it = parents.keySet().iterator(); it.hasNext(); ) {
         	Nominal nom = it.next();
@@ -121,7 +121,7 @@ public class Compacter {
         
         // ensure sorted
         HyloHelper.sort(preds);
-        
+
         // combine preds on same nominal
         // also: gather any duplicate preds 
         List<SatOp> combinedPreds = new ArrayList<SatOp>(preds.size());
@@ -233,8 +233,8 @@ public class Compacter {
         retPreds.addAll(multipleParentPreds);
         if (retPreds.size() == 1) { retval = retPreds.get(0); }
         else { retval = new Op(Op.CONJ, retPreds); }
-        
-        // tmp
+
+        // tmp?
         for (SatOp dup : dupPreds) {
         	Nominal nom = dup.getNominal();
         	Nominal dupParent = findDupParent(retval, dup, nom);

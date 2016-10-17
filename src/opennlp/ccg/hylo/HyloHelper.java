@@ -699,7 +699,7 @@ public class HyloHelper {
     public static void sort(List<? extends LF> preds) {
         Collections.sort(preds, predComparator);
     }
-
+    
     // compares elementary predications
     private static final Comparator<LF> predComparator = new Comparator<LF>() {
         public int compare(LF lf1, LF lf2){

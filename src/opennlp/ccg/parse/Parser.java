@@ -22,6 +22,7 @@ import opennlp.ccg.TextCCG;
 import opennlp.ccg.lexicon.*;
 import opennlp.ccg.synsem.*;
 import opennlp.ccg.grammar.*;
+import opennlp.ccg.hylo.Converter;
 import opennlp.ccg.hylo.EPsScorer;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.Nominal;
@@ -132,6 +133,9 @@ public class Parser
     // lazy unpacking flag to use
     private boolean lazyUnpackingToUse = true;
     
+    // flag for whether to use word positions
+    private boolean useWordPositions = true;
+
     // current chart
     private Chart chart = null;
     
@@ -207,6 +211,7 @@ public class Parser
     	else cellPruneValToUse = prefs.getInt(PARSE_CELL_PRUNING_VALUE, NO_PRUNING);
     	if (lazyUnpacking != null) lazyUnpackingToUse = lazyUnpacking;
     	else lazyUnpackingToUse = prefs.getBoolean(PARSE_LAZY_UNPACKING, true);
+    	useWordPositions = prefs.getBoolean(Converter.USE_WORD_POSITIONS_FOR_ATOM_CONVERSION, true);
     	// supertagger case: iterative beta-best
     	if (supertagger != null) {
     		parseWithSupertagger(words);
@@ -219,9 +224,12 @@ public class Parser
             UnifyControl.startUnifySequence();
             // get entries for each word
             List<SignHash> entries = new ArrayList<SignHash>(words.size());
-            for (Word w : words) {
-            	entries.add(lexicon.getSignsFromWord(w));
+            for (int i=0; i < words.size(); i++) {
+                Word word = words.get(i);
+                if (useWordPositions) lexicon.setWordIndex(i);
+        		entries.add(lexicon.getSignsFromWord(word));
             }
+            lexicon.setWordIndex(-1);
             lexTime = (int) (System.currentTimeMillis() - lexStartTime);
             // do parsing
             parseEntries(entries);
@@ -260,14 +268,16 @@ public class Parser
     	    	// init
             	long lexStartTime = System.currentTimeMillis();
     	        UnifyControl.startUnifySequence();
-                // get filtered entries for each word
+    	        // get filtered entries for each word
                 List<SignHash> entries = new ArrayList<SignHash>(words.size());
                 supertagger.mapWords(words);
                 for (int i=0; i < words.size(); i++) {
-                	supertagger.setWord(i);
                     Word word = words.get(i);
+                	supertagger.setWord(i);
+                	if (useWordPositions) lexicon.setWordIndex(i);
             		entries.add(lexicon.getSignsFromWord(word));
                 }
+                lexicon.setWordIndex(-1);
                 lexTime = (int) (System.currentTimeMillis() - lexStartTime);
                 // do parsing
                 parseEntries(entries);

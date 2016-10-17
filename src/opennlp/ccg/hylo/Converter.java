@@ -63,9 +63,11 @@ public class Converter {
     	converter.convertNoms(lf, root);
         converter.skipAbsentProp = false;
     	converter.convertNoms(lf, root);
-    	// return converted nominal root, if any
+    	// return existing nominal root atom or converted nominal root, if any
     	Nominal retval = null;
-    	if (nominalRoot != null) {
+    	if (nominalRoot instanceof NominalAtom) 
+    		retval = nominalRoot;
+    	else if (nominalRoot != null) {
     		retval = converter.nominalMap.get(nominalRoot);
     	}
     	return retval;

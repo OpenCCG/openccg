@@ -201,7 +201,7 @@ public class Chart {
 		Cell cell = get(x, y);
 		boolean retval = false;
 		// make edge
-		Edge edge = new Edge(w);
+		Edge edge = makeEdge(w);
 		if (w.isLexical()) edge.setWordPos(x);
 		// get representative edge
 		Edge rep = cell.get(edge);
@@ -319,6 +319,14 @@ public class Chart {
     	return cell.list.isEmpty();
     }
     
+    // makes and scores an edge
+	private Edge makeEdge(Sign sign) {
+        Edge retval = new Edge(sign); 
+        boolean complete = (sign.getWords().size() == _size);
+        retval.setScore(_signScorer.score(sign, complete));
+        return retval;
+	}
+	
     
 	//-----------------------------------------------------------
 	// Unpacking 
@@ -365,9 +373,6 @@ public class Chart {
             // AND: unpack inputs, make alts, add to merged
             unpackAlt(alt, unpacked, startedUnpacking, merged);
         }
-        // score
-        boolean complete = (edge.sign.getWords().size() == _size);
-        for (Edge m : merged.asEdgeSet()) { m.setScore(_signScorer.score(m.sign, complete)); }
         // sort
         List<Edge> mergedList = new ArrayList<Edge>(merged.asEdgeSet());
         Collections.sort(mergedList, edgeComparator);
@@ -409,7 +414,7 @@ public class Chart {
         	((AbstractRule)rule).applyRule(combo, results); // TODO: bypass rule app for efficiency? (requires doing something about var subst)
         	if (results.isEmpty()) continue; // (rare?)
             Sign sign = results.get(0); // assuming single result
-            merged.insert(new Edge(sign)); // make edge for new alt
+            merged.insert(makeEdge(sign)); // make edge for new alt
             _numUnpackingEdges++;
         }
 	}
@@ -633,11 +638,8 @@ public class Chart {
     	((AbstractRule)rule).applyRule(combo, results); // TODO: bypass rule app for efficiency? (requires doing something about var subst)
     	if (results.isEmpty()) return null; // (rare?)
         Sign sign = results.get(0); // assuming single result
-        Edge retval = new Edge(sign); // make edge for new combo
+        Edge retval = makeEdge(sign); // make edge for new combo
         _numUnpackingEdges++;
-        // score it
-        boolean complete = (sign.getWords().size() == _size);
-        retval.setScore(_signScorer.score(sign, complete));
         // done 
 		return retval;
 	}
@@ -648,7 +650,6 @@ public class Chart {
 		while (cands.size() > _pruneVal) cands.remove(cands.size()-1);
 	}
 	
-    
 	//-----------------------------------------------------------
 
 	/** Saves the chart entries to the given file. */

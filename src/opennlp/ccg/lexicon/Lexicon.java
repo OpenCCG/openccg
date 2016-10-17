@@ -55,6 +55,9 @@ public class Lexicon {
     // supertagger
     private SupertaggerAdapter _supertagger = null;
     
+    // current word index (-1 if none)
+    private int _wordIndex = -1;
+    
     // various maps
     private GroupMap<Word,MorphItem> _words;
     private GroupMap<String,Object> _stems;
@@ -118,6 +121,9 @@ public class Lexicon {
     
     /** Sets the supertagger (null if none). */
     public void setSupertagger(SupertaggerAdapter supertagger) { _supertagger = supertagger; }
+    
+    /** Sets the current word index (-1 if none). */
+    public void setWordIndex(int wordIndex) { _wordIndex = wordIndex; }
     
     
     /** Loads the lexicon and morph files. */
@@ -793,6 +799,9 @@ public class Lexicon {
 	        propagateDistributiveAttrs(cat);
 	        expandInheritsFrom(cat);
 	        
+	        // replace nom var with atom based on word index
+	        replaceNomVarWithWordIndexAtom(cat);
+	        
 	        // merge stem, pos, sem class from morph item, plus supertag from cat
 	        Word word = Word.createFullWord(w, mi.getWord(), cat.getSupertag());
 
@@ -829,6 +838,34 @@ public class Lexicon {
 	                "' in unifying sem class in cat: \n" + cat
 	            );
         	}
+        }
+    }
+    
+    // replace nominal var with atom based on word index, if apropos
+    private void replaceNomVarWithWordIndexAtom(Category cat) {
+    	LF lf = cat.getLF();
+        if (_wordIndex >= 0 && lf != null) {
+	        Nominal indexNom = cat.getIndexNominal();
+	        if (indexNom instanceof NominalVar) {
+		        Nominal headNom = null;
+		        List<SatOp> preds = HyloHelper.flatten(lf);
+		        // caution: only replace when there's just one lex pred 
+	        	SatOp onlyLexPred = null;
+		        for (SatOp lexpred : preds) {
+		        	if (HyloHelper.isLexPred(lexpred)) {
+		        		if (onlyLexPred == null) onlyLexPred = lexpred;
+		        		else { onlyLexPred = null; break; }
+		        	}
+		        }
+		        if (onlyLexPred != null) headNom = onlyLexPred.getNominal();
+		        // do replacement if found
+		        if (headNom != null) {
+		        	Nominal nomAtom = new NominalAtom("w"+_wordIndex, indexNom.getType());
+		        	NOM_TO_REPLACE = headNom;
+		        	NOM_TO_REPLACE_WITH = nomAtom;
+		        	cat.deepMap(nominalReplacer);
+		        }
+	        }
         }
     }
     
@@ -880,7 +917,43 @@ public class Lexicon {
         }
     };
 
+    // the nominal to replace using the nominalReplacer
+    private Nominal NOM_TO_REPLACE = null;
 
+    // the nominal to replace with using the nominalReplacer
+    private Nominal NOM_TO_REPLACE_WITH = null;
+
+    // mod function to replace NOM_TO_REPLACE with NOM_TO_REPLACE_WITH
+    private ModFcn nominalReplacer = new ModFcn() {
+        public void modify(Mutable m) {
+        	if (m instanceof SatOp) {
+        		SatOp satop = (SatOp) m;
+        		if (satop.getNominal().equals(NOM_TO_REPLACE))
+        			satop.setNominal(NOM_TO_REPLACE_WITH);
+        	}
+        	else if (m instanceof Diamond) {
+        		Diamond rel = (Diamond) m; 
+        		if (rel.getArg().equals(NOM_TO_REPLACE))
+        			rel.setArg(NOM_TO_REPLACE_WITH);
+            }
+            else if (m instanceof Op) {
+                Op op = (Op) m;
+                List<LF> args = op.getArguments();
+                if (args.get(0).equals(NOM_TO_REPLACE))
+                	args.set(0, NOM_TO_REPLACE_WITH);
+            }
+            else if (m instanceof FeatureStructure) {
+                FeatureStructure fs = (FeatureStructure) m;
+                for (Iterator<String> it = fs.getAttributes().iterator(); it.hasNext(); ) {
+                    String attr = it.next();
+                    if (fs.getValue(attr).equals(NOM_TO_REPLACE))
+                    	fs.setFeature(attr, NOM_TO_REPLACE_WITH);
+                }
+            }
+        }
+    };
+
+    
     // a cache for macro adders
     private Map<MorphItem, MacroAdder> macAdderMap = new HashMap<MorphItem, MacroAdder>();
     

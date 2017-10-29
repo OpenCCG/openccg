@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+  <lf>
+    <node id="d1:action" pred="drive" mood="imp">
+      <rel name="Actor">
+        <node id="p1:animate-being" pred="pro2"/>
+      </rel>
+      <one-of>
+        <rel name="Direction">
+          <node id="w1:direction" pred="west"/>
+        </rel>
+        <rel name="Path">
+          <node id="t1:path" pred="toward">
+            <rel name="Ref">
+	      <node id="h1:place" pred="Harvard_Yard"/>
+            </rel>
+          </node>
+        </rel>
+      </one-of>
+      <rel name="Dist">
+        <node id="m1:dist" pred="mile" num="sg">
+	  <one-of>
+	    <atts det="a"/>
+	    <atts det="about">
+	      <rel name="Card"> 
+		<node id="n1:num" pred="1"/>
+	      </rel>
+	    </atts>
+	  </one-of>
+        </node>
+      </rel>
+      <rel name="Loc">
+        <node id="o1:location" pred="on">
+          <rel name="Ref">
+            <node id="c1:road" pred="Cambridge_Street"/>
+          </rel>
+        </node>
+      </rel>
+      <opt>
+        <rel name="Path">
+          <node id="f1:path" pred="from">
+            <rel name="Ref">
+	      <node id="m2:place" pred="mid-Cambridge"/>
+            </rel>
+          </node>
+        </rel>
+      </opt>
+    </node>
+  </lf>
+  <target>from mid-Cambridge , drive west on Cambridge_Street for about 1 mile .</target>
+  <target>from mid-Cambridge , drive on Cambridge_Street toward Harvard_Yard for a mile .</target>
+  <target>drive west on Cambridge_Street for a mile .</target>
+  <target>drive on Cambridge_Street toward Harvard_Yard for about 1 mile .</target>
+</xml>

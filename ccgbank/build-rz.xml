@@ -342,15 +342,15 @@
     </exec>
   </target>
 
-  <target name="test-realizer-perceptron2-23" depends="copy-test-morph,load-prefs-test">
+  <target name="test-realizer-perceptron-lstm-23" depends="copy-test-morph,load-prefs-test">
     <echo>Realizing test section to ${log.dir}/realize.perceptron2.test.log</echo>
-    <exec executable="ccg-test" dir="${basedir}" output="${log.dir}/realize.perceptron2.test.log">
+    <exec executable="ccg-test" dir="${basedir}" output="${log.dir}/realize.perceptron.lstm.test.log">
       <arg value="-Drealizer.model.name=${realizer.model.name}"/>
       <arg value="-noparsing"/>
       <arg value="-g"/> <arg value="${extract.dir}/grammar.xml"/>
       <arg value="-hypertagger"/> <arg value="opennlp.ccg.realize.lstm_hypertagger.LSTMHypertagger"/>
       <arg value="-scorer"/> <arg value="plugins.MyRealizerPerceptronScorer"/>
-      <arg value="-bleu"/> <arg value="${log.dir}/realize.perceptron2.test.bleu"/>
+      <arg value="-bleu"/> <arg value="${log.dir}/realize.perceptron.lstm.test.bleu"/>
       <arg value="-realserdir"/> <arg value="${log.dir}/ser2-test"/>
       <arg value="${test.dir}/23"/>
     </exec>

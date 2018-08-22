@@ -542,6 +542,12 @@ Finally, add the 'maxent' binary (under 'maxent-20061005/src/opt')
 to your PATH environment variable.
 
 
+Realization using LSTM Hypertagger
+==================================
+
+
+
+
 References
 ==========
 

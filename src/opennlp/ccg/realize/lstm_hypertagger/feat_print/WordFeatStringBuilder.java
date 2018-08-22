@@ -16,9 +16,9 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
 
-package opennlp.ccg.realize.feat_print;
+package opennlp.ccg.realize.lstm_hypertagger.feat_print;
 import java.util.List;
-import opennlp.ccg.realize.feat_extract.WordFeatures;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.WordFeatures;
 
 public class WordFeatStringBuilder {
 	public static final String FEAT_SEP = "|";

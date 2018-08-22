@@ -16,14 +16,13 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
 
-package opennlp.ccg.realize.feat_extract;
+package opennlp.ccg.realize.lstm_hypertagger.feat_extract;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.Map;
 import java.util.Set;
 import org.jdom2.Element;
-
-import opennlp.ccg.realize.feat_extract.Exceptions.NoPredicatesException;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.Exceptions.NoPredicatesException;
 
 public class WordInfoMap {
 	private String sentence;

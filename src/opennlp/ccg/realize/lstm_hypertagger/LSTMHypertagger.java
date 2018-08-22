@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.*;
 
-import opennlp.ccg.realize.feat_extract.WordInfoMap;
-import opennlp.ccg.realize.linearizer.*;
-import opennlp.ccg.realize.feat_extract.Exceptions.NoPredicatesException;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.WordInfoMap;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.Exceptions.NoPredicatesException;
+import opennlp.ccg.realize.lstm_hypertagger.linearizer.*;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.SatOp;
 import opennlp.ccg.realize.Hypertagger;

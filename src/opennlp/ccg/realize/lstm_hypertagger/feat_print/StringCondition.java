@@ -16,7 +16,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
 
-package opennlp.ccg.realize.feat_print;
+package opennlp.ccg.realize.lstm_hypertagger.feat_print;
 
 public interface StringCondition {
 	public boolean match(String str);

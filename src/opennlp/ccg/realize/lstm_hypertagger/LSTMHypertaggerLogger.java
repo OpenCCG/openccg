@@ -20,8 +20,8 @@ package opennlp.ccg.realize.lstm_hypertagger;
 import java.io.IOException;
 import java.util.logging.*;
 
-import opennlp.ccg.realize.feat_extract.LogicalForm;
-import opennlp.ccg.realize.linearizer.LinConfig;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.LogicalForm;
+import opennlp.ccg.realize.lstm_hypertagger.linearizer.LinConfig;
 
 public class LSTMHypertaggerLogger {
 	public static Logger LOGGER = Logger.getLogger(LSTMHypertaggerLogger.class.getName());

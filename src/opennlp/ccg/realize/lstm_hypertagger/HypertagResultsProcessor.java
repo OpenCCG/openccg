@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import opennlp.ccg.realize.feat_extract.WordInfoMap;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.SatOp;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.WordInfoMap;
 
 public class HypertagResultsProcessor {
 	public Map<String, Double> filter(Map<String, Double> tags, double beta) {

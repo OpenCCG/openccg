@@ -16,7 +16,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
 
-package opennlp.ccg.realize.linearizer;
+package opennlp.ccg.realize.lstm_hypertagger.linearizer;
 
 /** Linearization configuration object */
 public class LinConfig {

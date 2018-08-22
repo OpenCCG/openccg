@@ -10,10 +10,11 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.junit.Test;
 
-import opennlp.ccg.realize.feat_extract.LogicalForm;
 import opennlp.ccg.grammar.Grammar;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.SatOp;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.LogicalForm;
+import opennlp.ccg.realize.lstm_hypertagger.hylo_feat_extract.HyloFlatLFParser;
 import opennlp.ccg.synsem.LF;
 import opennlp.ccg.test.RegressionInfo;
 

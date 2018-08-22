@@ -16,7 +16,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
 
-package opennlp.ccg.realize.hylo_feat_extract;
+package opennlp.ccg.realize.lstm_hypertagger.hylo_feat_extract;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import opennlp.ccg.realize.feat_extract.*;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.Nominal;
 import opennlp.ccg.hylo.Op;
 import opennlp.ccg.hylo.SatOp;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.*;
 import opennlp.ccg.synsem.LF;
 
 public class HyloFlatLFParser {

@@ -27,10 +27,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import opennlp.ccg.realize.feat_extract.LogicalForm;
-import opennlp.ccg.realize.feat_print.AnnotSeqPrinter;
-import opennlp.ccg.realize.hylo_feat_extract.HyloFlatLFParser;
-import opennlp.ccg.realize.linearizer.*;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.LogicalForm;
+import opennlp.ccg.realize.lstm_hypertagger.feat_print.AnnotSeqPrinter;
+import opennlp.ccg.realize.lstm_hypertagger.hylo_feat_extract.HyloFlatLFParser;
+import opennlp.ccg.realize.lstm_hypertagger.linearizer.*;
 import opennlp.ccg.hylo.HyloHelper;
 import opennlp.ccg.hylo.SatOp;
 

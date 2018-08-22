@@ -16,15 +16,15 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //////////////////////////////////////////////////////////////////////////////
 
-package opennlp.ccg.realize.linearizer;
+package opennlp.ccg.realize.lstm_hypertagger.linearizer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import opennlp.ccg.realize.feat_extract.LogicalForm;
-import opennlp.ccg.realize.feat_extract.WordFeatures;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.LogicalForm;
+import opennlp.ccg.realize.lstm_hypertagger.feat_extract.WordFeatures;
 
 public class OracleLinearizer extends Linearizer {
 	//TODO: Can't add parentheses in properly yet

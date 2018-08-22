@@ -4,6 +4,8 @@ Code in this folder was adapted from the [taggerflow repository](https://github.
 
 Modifications include added files and added code in existing files. Added files and directories are listed in the summary of modifications below. Added or modified code in existing files is marked with "### ADDED FOR HYPERTAGGER ###" or "### MODIFIED FOR HYPERTAGGER ###" at beginning and end of changed code segment.
 
+Files in this folder (\<OPENCCG\_HOME\>/src/hypertagger\_lstm) are licensed under the Apache License version 2.
+
 ## Summary of Modifications
 * \* is used below as wildcard for file names
 * Added allrel\_\* sub-directories to data folder
@@ -23,7 +25,7 @@ Modifications include added files and added code in existing files. Added files 
 * Python 2.7
 
 ## External Downloads
-There are some large files needed to run the LSTM hypertagger. These are in the lstm\_files.zip ZIP folder. After unzipping the folder, copy the subdirectories and their contents to this folder (\<OPENCCG\_HOME\>/src/hypertagger_lstm).
+There are some large files needed to run the LSTM hypertagger. These are in the lstm\_files.zip ZIP folder. After unzipping the folder, copy the subdirectories and their contents to this folder (\<OPENCCG\_HOME\>/src/hypertagger\_lstm).
 
 ## Training and Evaluation
 * `python taggerflow.py grid.json`

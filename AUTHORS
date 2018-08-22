@@ -5,8 +5,10 @@ Main Authors:
          Michael White <mwhite -at- inf.ed.ac.uk>
      CCG-to-XML:
          Ben Wing <ben -at- 666.com>
-     Hypertagger:
+     MaxEnt Hypertagger:
          Dominic Espinosa <espinosa -at- ling.osu.edu>
+     LSTM Hypertagger:
+         Reid Fu <fu.349 -at- buckeyemail.osu.edu>
      Supertagger:
          Dennis Mehay <mehay -at- ling.osu.edu>
      Disjunctivizer:

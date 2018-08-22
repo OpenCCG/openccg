@@ -29,18 +29,18 @@ OPENCCG_SRC="$OPENCCG_HOME/src"
 OPENCCG_CLASSES="$OPENCCG_HOME/output/classes"
 OPENCCG_JAR="$OPENCCG_HOME/lib/openccg.jar"
 case `uname` in
-  CYGWIN* ) DIRLIBS="$OPENCCG_LIB/trove.jar;$OPENCCG_LIB/jdom.jar;$OPENCCG_LIB/jline.jar;$OPENCCG_LIB/jopt-simple.jar"
+  CYGWIN* ) DIRLIBS="$OPENCCG_LIB/trove.jar;$OPENCCG_LIB/jdom.jar;$OPENCCG_LIB/jdom2.jar;$OPENCCG_LIB/commons-lang3-3.0.jar;$OPENCCG_LIB/jline.jar;$OPENCCG_LIB/jopt-simple.jar"
             CP="${OPENCCG_JAR};${DIRLIBS};."
   ;;
-  * ) DIRLIBS="$OPENCCG_LIB/trove.jar:$OPENCCG_LIB/jdom.jar:$OPENCCG_LIB/jline.jar:$OPENCCG_LIB/jopt-simple.jar"
+  * ) DIRLIBS="$OPENCCG_LIB/trove.jar:$OPENCCG_LIB/jdom.jar:$OPENCCG_LIB/jdom2.jar:$OPENCCG_LIB/commons-lang3-3.0.jar:$OPENCCG_LIB/jline.jar:$OPENCCG_LIB/jopt-simple.jar"
       CP="${OPENCCG_JAR}:${DIRLIBS}:."
   ;;
 esac
 # variant for use with 'build compile' option, if desired:
 #CP="${OPENCCG_CLASSES}:${OPENCCG_SRC}:${DIRLIBS}"
 JAVA="$JAVA_HOME/bin/java"
-JAVA_MEM="-Xmx256m"
+#JAVA_MEM="-Xmx256m"
 #JAVA_MEM="-Xmx2048m"
-#JAVA_MEM="-Xmx8g"
+JAVA_MEM="-Xmx8g"
 #JAVA_MEM="-Xmx16g"
 JAVA_ARGS="$JAVA_MEM -classpath $CP -Dfile.encoding=UTF8"

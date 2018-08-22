@@ -22,6 +22,9 @@ Modifications include added files and added code in existing files. Added files 
  * https://www.tensorflow.org/versions/r0.11/get_started/os_setup.html#pip-installation
 * Python 2.7
 
+## External Downloads
+There are some large files needed to run the LSTM hypertagger. These are in the lstm\_files.zip ZIP folder. After unzipping the folder, copy the subdirectories and their contents to this folder (\<OPENCCG\_HOME\>/src/hypertagger_lstm).
+
 ## Training and Evaluation
 * `python taggerflow.py grid.json`
   * Trains a supertagging model.

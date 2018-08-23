@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+/** Script for calculating accuray and beta values corresponding to different multi-tag levels */
 public class TagCompare {
 	public enum AccType {NORMAL, UNK_PREDS, UNK_PREDTAGS};
 	private List<String> goldTags = new LinkedList<>();

@@ -7,6 +7,10 @@ import java.util.List;
 import java.util.Map;
 import org.junit.Test;
 
+/**
+ * Unit tests for HypertaggerResults class
+ * @author Reid Fu
+ */
 public class TestHypertaggerResults {	
 	@Test
 	public void test0() {

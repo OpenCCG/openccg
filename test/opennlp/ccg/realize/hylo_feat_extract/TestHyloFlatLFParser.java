@@ -18,6 +18,10 @@ import opennlp.ccg.realize.lstm_hypertagger.hylo_feat_extract.HyloFlatLFParser;
 import opennlp.ccg.synsem.LF;
 import opennlp.ccg.test.RegressionInfo;
 
+/**
+ * Unit tests for HyloFlatLFParser class
+ * @author Reid Fu
+ */
 public class TestHyloFlatLFParser {
 	static String GRAMMAR_FILE = "/home/reid/projects/research/ccg/openccg/ccgbank/extract/grammar.xml";
 	private HyloFlatLFParser uut = new HyloFlatLFParser();

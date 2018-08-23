@@ -9,6 +9,10 @@ import org.junit.Test;
 //import opennlp.ccg.hylo.*;
 //import opennlp.ccg.synsem.LF;
 
+/**
+ * Unit tests for HypertagResultsProcessor class
+ * @author Reid Fu
+ */
 public class TestHypertagResultsProcessor {
 	private HypertagResultsProcessor uut = new HypertagResultsProcessor();
 	

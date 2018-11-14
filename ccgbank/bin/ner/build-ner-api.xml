@@ -33,7 +33,7 @@
   
   <target name="compile-ner-app" depends="init">
     <echo message="classpath ${stanford.core.nlp}"/>
-    <javac classpath="${stanford.core.nlp}" srcdir="./NERApp/src/" destdir="./NERApp/src/"/>
+    <javac includeantruntime="false" classpath="${stanford.core.nlp}" srcdir="./NERApp/src/" destdir="./NERApp/src/"/>
   </target>
 
   <target name="jar-ner-app" depends="compile-ner-app">

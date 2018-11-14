@@ -54,38 +54,38 @@ public class NERApp {
       for(String classMod : classifierMods) { if(classMod != null) { numClassifiers++; } }
       switch (numClassifiers) {
           case 1:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0]);
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0]);
 	      break;
           case 2:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1]);
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1]);
 	      break;
           case 3:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2]);
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2]);
 	      break;
           case 4:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3]);
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3]);
 	      break;
           case 5:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4]);
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4]);
 	      break;
           case 6:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
 						     classifierMods[5]);
 	      break;
           case 7:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
 						     classifierMods[5], classifierMods[6]);
 	      break;
           case 8:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
 						     classifierMods[5], classifierMods[6], classifierMods[7]);
 	      break;
           case 9:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
 						     classifierMods[5], classifierMods[6], classifierMods[7], classifierMods[8]);
 	      break;
           case 10:
-	      classifier = new NERClassifierCombiner(true, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
+	      classifier = new NERClassifierCombiner(true, false, false, classifierMods[0], classifierMods[1], classifierMods[2], classifierMods[3], classifierMods[4],
 						     classifierMods[5], classifierMods[6], classifierMods[7], classifierMods[8], classifierMods[9]);
 	      break;
           default:

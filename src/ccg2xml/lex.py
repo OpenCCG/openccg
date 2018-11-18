@@ -251,7 +251,7 @@ class Lexer:
     # input() - Push a new string into the lexer
     # ------------------------------------------------------------
     def input(self,s):
-        if not isinstance(s,types.StringType):
+        if not isinstance(s, (unicode, types.StringType)):
             raise ValueError, "Expected a string"
         self.lexdata = s
         self.lexpos = 0

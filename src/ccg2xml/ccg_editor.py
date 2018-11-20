@@ -17,20 +17,21 @@
 # This code is based on PyEdit version 1.1, from Oreilly's Programming
 # Python, 2nd Edition, 2001, by Mark Lutz.
 
-from Tkinter import *  # base widgets, constants
-from tkFileDialog import *  # standard dialogs
-from tkMessageBox import *
-from tkSimpleDialog import *
-from tkColorChooser import askcolor
-from string import split, atoi
-import sys, os, string, md5
+from tkinter import *  # base widgets, constants
+from tkinter.filedialog import *  # standard dialogs
+from tkinter.messagebox import *
+from tkinter.simpledialog import *
+from tkinter.colorchooser import askcolor
+import sys
+import os
+import hashlib
 import ccg2xml
 import Tree
 import re
 
-START     = '1.0'                          # index of first char: row=1,col=0
-SEL_FIRST = SEL + '.first'                 # map sel tag to index
-SEL_LAST  = SEL + '.last'                  # same as 'sel.last'
+START = '1.0'  # index of first char: row=1,col=0
+SEL_FIRST = SEL + '.first'  # map sel tag to index
+SEL_LAST = SEL + '.last'  # same as 'sel.last'
 
 FontScale = 0                              # use bigger font on linux
 if sys.platform[:3] != 'win':              # and other non-windows boxes
@@ -55,8 +56,8 @@ class CTab(Frame):
     def __init__(self, parent, cfile, tabname):
         Frame.__init__(self, parent)
         self.parent = parent
+        self.tabname = tabname
         self.cfile = cfile
-        self.toolbar = None
         self.checkbar = None
         self.menubar = [
             ('File', 0,
@@ -136,7 +137,7 @@ class CTab(Frame):
 class CEdit(CTab):
     def __init__(self, parent, cfile):
         CTab.__init__(self, parent, cfile, 'Edit')
-        self.debugFrame= None
+        self.debugFrame = None
 
         # Add a frame here, so that debug mode can be enabled
         # by embedding other objects within this frame
@@ -215,18 +216,17 @@ class CEdit(CTab):
         self.text.focus()
 
     def showLineNums(self):
-        #Make the list of lines editable
+        # Make the list of lines editable
         self.lineList.config(state=NORMAL)
         textData = self.cfile.getAllText()
-        listOfLines = textData.split('\n')
+        listOfLines = textData.splitlines()
         for num in range(1,len(listOfLines)):
             self.lineList.insert(END,"%s\n" % num)
-        #Now that we are done changing the number of lines,
-        #we reset the text to be uneditable
+        # Now that we are done changing the number of lines,
+        # we reset the text to be uneditable
         self.lineList.config(state=NORMAL)
 
     def onValidate(self, editFrame, cfile):
-        #showwarning(title= 'Sorry', message='Validate and debug feature coming soon!')
         # Destroy previous display of debug or error messages
         # if present
         if self.debugFrame:
@@ -390,7 +390,7 @@ class CWords(CTab):
         for x in ccg2xml.morph_xml:
             assert x[0] == 'entry'
             self.wordList.insert (END, ccg2xml.getprop('word', x[1]))
-            #print ccg2xml.getprop('word', x[1])
+            # print(ccg2xml.getprop('word', x[1]))
 
 class CLexicon(CTab):
     class lexicon_vars(object):
@@ -700,7 +700,7 @@ class CTestbed(CTab):
         # Make the column containing the sentences grow to include all
         # extra space
         self.child.columnconfigure(1, weight=1)
-        for i in xrange(len(self.cfile.curparse.testbed_statements)):
+        for i in range(len(self.cfile.curparse.testbed_statements)):
             x = self.cfile.curparse.testbed_statements[i]
             assert x[0] == 'item'
             x = x[1]
@@ -741,7 +741,7 @@ class CTestbed(CTab):
 
         # Change the text on the button, and also pass the rest
         # of the arguments so that the grid for the statements can be reset
-        self.edit.config(text='Done', command= self.save_testbed)
+        self.edit.config(text='Done', command=self.save_testbed)
 
         # Changing the mode of the cfile object here,
         # so that once the user clicks done,
@@ -965,7 +965,7 @@ class CFile(object):
             self.makeMenubar()
             self.makeToolbar(mode)
             self.makeCheckbar()
-            #print "Reinit being called now... "
+            # print("Reinit being called now...")
             self.main.reinit()
             # Pack the main widget after the toolbar, so it goes below it.
             self.main.pack(side=TOP, expand=YES, fill=BOTH)
@@ -1095,10 +1095,10 @@ class CFile(object):
     def onInfo(self):
         text  = self.getAllText()                  # added on 5/3/00 in 15 mins
         bytes = len(text)                          # words uses a simple guess:
-        lines = len(string.split(text, '\n'))      # any separated by whitespace
-        words = len(string.split(text))
+        lines = len(text.splitlines())      # any separated by whitespace
+        words = len(text.split())
         index = self.main.text.index(INSERT)
-        where = tuple(string.split(index, '.'))
+        where = tuple(index.split('.'))
 
         showinfo('CCG Editor Information',
                  'Current location:\n\n' +
@@ -1119,7 +1119,7 @@ class CFile(object):
         self.main.text.focus()
         if line is not None:
             maxindex = self.main.text.index(END+'-1c')
-            maxline  = atoi(split(maxindex, '.')[0])
+            maxline  = int(maxindex.split('.')[0])
             if line > 0 and line <= maxline:
                 self.main.text.mark_set(INSERT, '%d.0' % line)      # goto line
                 self.main.text.tag_remove(SEL, '1.0', END)          # delete selects
@@ -1170,46 +1170,16 @@ class CFile(object):
     def pickColor(self, part):
         (triple, hexstr) = askcolor()
         if hexstr:
-            apply(self.modes['Edit'].text.config, (), {part: hexstr})
-            apply(self.modes['Display'].text.config, (), {part: hexstr})
+            self.modes['Edit'].text.config(*(), **{part: hexstr})
+            self.modes['Display'].text.config(*(), **{part: hexstr})
 
-#     def onRunCode(self, parallelmode=1):
-#         """
-#         run Python code being edited--not an ide, but handy;
-#         tries to run in file's dir, not cwd (may be pp2e root);
-#         inputs and adds command-line arguments for script files;
-#         code's stdin/out/err = editor's start window, if any;
-#         but parallelmode uses start to open a dos box for i/o;
-#         """
-#         from PP2E.launchmodes import System, Start, Fork
-#         filemode = 0
-#         thefile  = str(self.getFileName())
-#         cmdargs  = askstring('CCG Editor', 'Commandline arguments?') or ''
-#         if os.path.exists(thefile):
-#             filemode = askyesno('CCG Editor', 'Run from file?')
-#         if not filemode:                                    # run text string
-#             namespace = {'__name__': '__main__'}            # run as top-level
-#             sys.argv = [thefile] + string.split(cmdargs)    # could use threads
-#             exec self.getAllText() + '\n' in namespace      # exceptions ignored
-#         elif askyesno('CCG Editor', 'Text saved in file?'):
-#             mycwd = os.getcwd()                             # cwd may be root
-#             os.chdir(os.path.dirname(thefile) or mycwd)     # cd for filenames
-#             thecmd  = thefile + ' ' + cmdargs
-#             if not parallelmode:                            # run as file
-#                 System(thecmd, thecmd)()                    # block editor
-#             else:
-#                 if sys.platform[:3] == 'win':               # spawn in parallel
-#                     Start(thecmd, thecmd)()                 # or use os.spawnv
-#                 else:
-#                     Fork(thecmd, thecmd)()                  # spawn in parallel
-#             os.chdir(mycwd)
 
     #####################
     # File menu commands
     #####################
 
     def getSignature(self, contents):
-        return md5.md5(contents).digest()
+        return hashlib.md5(contents.encode('utf-8')).digest()
 
     def my_askopenfilename(self):      # objects remember last result dir/file
         if not self.openDialog:

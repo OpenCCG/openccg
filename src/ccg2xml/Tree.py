@@ -9,9 +9,9 @@
 # Thanks to Laurent Claustre <claustre@esrf.fr> for sending lots of helpful
 # bug reports.
 #
-# This copyright license is intended to be similar to the FreeBSD license. 
+# This copyright license is intended to be similar to the FreeBSD license.
 #
-# Copyright 1998 Gene Cash All rights reserved. 
+# Copyright 1998 Gene Cash All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -76,18 +76,18 @@
 #           I didn't pass "master" properly to the Canvas superclass. Sigh.
 #           One step forward, one step back.
 
-import Tkdnd
-from Tkinter import *
+import tkinter.dnd
+from tkinter import *
 
 #------------------------------------------------------------------------------
 def report_callback_exception():
     """report exception on sys.stderr."""
     import traceback
     import sys
-    
+
     sys.stderr.write("Exception in Tree control callback\n")
     traceback.print_exc()
-    
+
 #------------------------------------------------------------------------------
 class Struct:
     """Helper object for add_node() method"""
@@ -116,7 +116,7 @@ class Node:
 
     Please note that methods prefixed PVT_* are not meant to be used by
     client programs."""
-    
+
     def __init__(self, parent_node, id, collapsed_icon, x, y,
                  parent_widget=None, expanded_icon=None, label=None,
                  expandable_flag=0):
@@ -200,7 +200,7 @@ class Node:
             return self.parent_node.child_nodes[i]
         else:
             return None
-        
+
     def next_visible(self):
         """Return next lower visible node"""
         n=self
@@ -216,7 +216,7 @@ class Node:
             n=n.parent_node
         # we're at bottom
         return self
-    
+
     def prev_visible(self):
         """Return next higher visible node"""
         n=self
@@ -229,7 +229,7 @@ class Node:
                 return j.PVT_last()
         else:
             return n
-                
+
     def children(self):
         """Return list of node's children"""
         return self.child_nodes[:]
@@ -249,7 +249,7 @@ class Node:
     def expandable(self):
         """Returns true if node can be expanded (i.e. if it's a folder)"""
         return self.expandable_flag
-    
+
     def full_id(self):
         """Return list of IDs of all parents and node ID"""
         if self.parent_node:
@@ -261,7 +261,7 @@ class Node:
         """Expand node if possible"""
         if not self.expanded_flag:
             self.PVT_set_state(1)
-        
+
     def collapse(self):
         """Collapse node if possible"""
         if self.expanded_flag:
@@ -273,7 +273,7 @@ class Node:
         sw=self.widget
         if not self.parent_node and me_too:
             # can't delete the root node
-            raise ValueError, "can't delete root node"
+            raise ValueError("can't delete root node")
         self.PVT_delete_subtree()
         # move everything up so that distance to next subnode is correct
         n=self.next_visible()
@@ -307,18 +307,18 @@ class Node:
         node's add_node() function to generate the list of nodes."""
         i=self.parent_node.child_nodes.index(self)
         self.parent_node.PVT_insert(nodes, i, self.prev_visible())
-    
+
     def insert_after(self, nodes):
         """Insert list of nodes as siblings after this node.  Call parent
         node's add_node() function to generate the list of nodes."""
         i=self.parent_node.child_nodes.index(self)+1
         self.parent_node.PVT_insert(nodes, i, self.PVT_last())
-        
+
     def insert_children(self, nodes):
         """Insert list of nodes as children of this node.  Call node's
         add_node() function to generate the list of nodes."""
         self.PVT_insert(nodes, 0, self)
-        
+
     def toggle_state(self):
         """Toggle node's state between expanded and collapsed, if possible"""
         if self.expandable_flag:
@@ -326,12 +326,12 @@ class Node:
                 self.PVT_set_state(0)
             else:
                 self.PVT_set_state(1)
-                
+
     # ----- functions for drag'n'drop support -----
     def PVT_enter(self, event):
         """detect mouse hover for drag'n'drop"""
         self.widget.target=self
-        
+
     def dnd_end(self, target, event):
         """Notification that dnd processing has been ended. It DOES NOT imply
         that we've been dropped somewhere useful, we could have just been
@@ -351,7 +351,7 @@ class Node:
         while n.child_nodes:
             n=n.child_nodes[-1]
         return n
-    
+
     def PVT_find(self, search):
         """Used by searching functions"""
         if self.id != search[0]:
@@ -360,7 +360,7 @@ class Node:
         if len(search) == 1:
             return self
         # get list of children IDs
-        i=map(lambda x: x.id, self.child_nodes)
+        i=[x.id for x in self.child_nodes]
         # if there is a child that matches, search it
         try:
             return self.child_nodes[i.index(search[1])].PVT_find(search[1:])
@@ -373,7 +373,7 @@ class Node:
         the new nodes are inserted. "below" is node which new children should
         appear immediately below."""
         if not self.expandable_flag:
-            raise TypeError, 'not an expandable node'
+            raise TypeError('not an expandable node')
         # for speed
         sw=self.widget
         # expand and insert children
@@ -409,7 +409,7 @@ class Node:
             self.PVT_cleanup_lines()
             self.PVT_update_scrollregion()
             sw.move_cursor(sw.pos)
-        
+
     def PVT_set_state(self, state):
         """Common code forexpanding/collapsing folders. It's not re-entrant,
         and there are certain cases in which we can be called again before
@@ -477,7 +477,7 @@ class Node:
             sw.move_cursor(self)
         # now subnodes will be properly garbage collected
         self.child_nodes=[]
-        
+
     def PVT_unbind_all(self):
         """Unbind callbacks so node gets garbage-collected. This wasn't easy
         to figure out the proper way to do this.  See also tag_bind() for the
@@ -495,7 +495,7 @@ class Node:
         bbox1=self.widget.bbox(self.widget.root.symbol, self.label)
         bbox2=self.widget.bbox('all')
         self.widget.dtag('move')
-        self.widget.addtag('move', 'overlapping', 
+        self.widget.addtag('move', 'overlapping',
                            bbox2[0], bbox1[3], bbox2[2], bbox2[3])
         # untag cursor & node so they don't get moved too
         self.widget.dtag(self.widget.cursor_box, 'move')
@@ -503,12 +503,12 @@ class Node:
         self.widget.dtag(self.label, 'move')
         # now do the move of all the tagged objects
         self.widget.move('move', 0, dist)
-    
+
     def PVT_click(self, event):
         """Handle mouse clicks by kicking off possible drag'n'drop
         processing"""
         if self.widget.drop_callback:
-            if Tkdnd.dnd_start(self, event):
+            if tkinter.dnd.dnd_start(self, event):
                 x1, y1, x2, y2=self.widget.bbox(self.symbol)
                 self.x_off=(x1-x2)/2
                 self.y_off=(y1-y2)/2
@@ -528,7 +528,7 @@ class Tree(Canvas):
                  *args, **kw_args):
         # pass args to superclass (new idiom from Python 2.2)
         Canvas.__init__(self, master, *args, **kw_args)
-        
+
         # this allows to subclass Node and pass our class in
         self.node_class=node_class
         # keep track of node bindings
@@ -590,7 +590,7 @@ class Tree(Canvas):
                              expanded_icon=self.expanded_icon,
                              x=dist_x, y=dist_y, parent_widget=self)
         # configure for scrollbar(s)
-        x1, y1, x2, y2=self.bbox('all') 
+        x1, y1, x2, y2=self.bbox('all')
         self.configure(scrollregion=(x1, y1, x2+5, y2+5))
         # add a cursor
         self.cursor_box=self.create_rectangle(0, 0, 0, 0)
@@ -603,7 +603,7 @@ class Tree(Canvas):
         self.bind('<Next>', self.pagedown)
         self.bind('<Prior>', self.pageup)
         # arrow-up/arrow-down
-        self.bind('<Down>', self.next)
+        self.bind('<Down>', self.__next__)
         self.bind('<Up>', self.prev)
         # arrow-left/arrow-right
         self.bind('<Left>', self.ascend)
@@ -620,15 +620,15 @@ class Tree(Canvas):
     def PVT_mousefocus(self, event):
         """Soak up event argument when moused-over"""
         self.focus_set()
-        
+
     # ----- PUBLIC METHODS -----
     def tag_bind(self, tag, seq, *args, **kw_args):
         """Keep track of callback bindings so we can delete them later. I
         shouldn't have to do this!!!!"""
         # pass args to superclass
-        func_id=apply(Canvas.tag_bind, (self, tag, seq)+args, kw_args)
+        func_id = Canvas.tag_bind(self, tag, seq, *args, **kw_args)
         # save references
-        self.bindings[tag]=self.bindings.get(tag, [])+[(seq, func_id)]
+        self.bindings[tag] = self.bindings.get(tag, [])+[(seq, func_id)]
 
     def add_list(self, list=None, name=None, id=None, flag=0,
                  expanded_icon=None, collapsed_icon=None):
@@ -668,22 +668,22 @@ class Tree(Canvas):
     def find_full_id(self, search):
         """Search for a node"""
         return self.root.PVT_find(search)
-    
+
     def cursor_node(self, search):
         """Return node under cursor"""
         return self.pos
-        
+
     def see(self, *items):
         """Scroll (in a series of nudges) so items are visible"""
-        x1, y1, x2, y2=apply(self.bbox, items)
-        while x2 > self.canvasx(0)+self.winfo_width():
-            old=self.canvasx(0)
+        x1, y1, x2, y2 = self.bbox(*items)
+        while x2 > self.canvasx(0) + self.winfo_width():
+            old = self.canvasx(0)
             self.xview('scroll', 1, 'units')
             # avoid endless loop if we can't scroll
             if old == self.canvasx(0):
                 break
-        while y2 > self.canvasy(0)+self.winfo_height():
-            old=self.canvasy(0)
+        while y2 > self.canvasy(0) + self.winfo_height():
+            old = self.canvasy(0)
             self.yview('scroll', 1, 'units')
             if old == self.canvasy(0):
                 break
@@ -698,14 +698,14 @@ class Tree(Canvas):
             self.yview('scroll', -1, 'units')
             if old == self.canvasy(0):
                 break
-            
+
     def move_cursor(self, node):
         """Move cursor to node"""
         self.pos=node
         x1, y1, x2, y2=self.bbox(node.symbol, node.label)
         self.coords(self.cursor_box, x1-1, y1-1, x2+1, y2+1)
         self.see(node.symbol, node.label)
-    
+
     def toggle(self, event=None):
         """Expand/collapse subtree"""
         self.pos.toggle_state()
@@ -713,7 +713,7 @@ class Tree(Canvas):
     def next(self, event=None):
         """Move to next lower visible node"""
         self.move_cursor(self.pos.next_visible())
-            
+
     def prev(self, event=None):
         """Move to next higher visible node"""
         self.move_cursor(self.pos.prev_visible())
@@ -733,7 +733,7 @@ class Tree(Canvas):
                 self.move_cursor(self.pos.child_nodes[0])
                 return
         # if no subnodes, move to next sibling
-        self.next()
+        next(self)
 
     def first(self, event=None):
         """Go to root node"""
@@ -762,7 +762,7 @@ class Tree(Canvas):
             n=n.next_visible()
         self.yview('scroll', 1, 'pages')
         self.move_cursor(n)
-        
+
     # ----- functions for drag'n'drop support -----
     def where(self, event):
         """Determine drag location in canvas coordinates. event.x & event.y
@@ -775,7 +775,7 @@ class Tree(Canvas):
         x=self.canvasx(event.x_root-x_org)
         y=self.canvasy(event.y_root-y_org)
         return x, y
-    
+
     def dnd_accept(self, source, event):
         """Accept dnd messages, i.e. we're a legit drop target, and we do
         implement d&d functions."""
@@ -797,7 +797,7 @@ class Tree(Canvas):
         else:
             self.dnd_symbol=self.create_image(x, y,
                                               image=source.collapsed_icon)
-        self.dnd_label=self.create_text(x+self.text_offset, y, 
+        self.dnd_label=self.create_text(x+self.text_offset, y,
                                         text=source.get_label(),
                                         justify='left',
                                         anchor='w')
@@ -847,11 +847,11 @@ if __name__ == '__main__':
     # argument is the node object being expanded
     # should call add_node()
     def get_contents(node):
-        path=apply(os.path.join, node.full_id())
+        path = os.path.join(*node.full_id())
         for filename in os.listdir(path):
-            full=os.path.join(path, filename)
-            name=filename
-            folder=0
+            full = os.path.join(path, filename)
+            name = filename
+            folder = 0
             if os.path.isdir(full):
                 # it's a directory
                 folder=1
@@ -904,5 +904,5 @@ if __name__ == '__main__':
 
     # expand out the root
     t.root.expand()
-    
+
     root.mainloop()

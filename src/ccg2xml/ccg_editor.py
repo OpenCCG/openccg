@@ -573,7 +573,7 @@ class CFeatures(CTab):
                 expands=1
             else:
                 expands=0
-        self.t.add_node(name=x,flag=expands)
+            self.t.add_node(name=x, flag=expands)
 
     # Expand the tree rooted at node recursively
     def expand_tree(self, node):
@@ -719,12 +719,12 @@ class CTestbed(CTab):
             numparse = ccg2xml.getprop('numOfParses', x)
             string = ccg2xml.getprop('string', x)
 
-        # How many parses of the sentence are produced?
-        self.makelab('%s' % numparse, i+2, 0)
+            # How many parses of the sentence are produced?
+            self.makelab('%s' % numparse, i+2, 0)
 
-        # Print the sentence itself
-        self.makelab('%s%s' % (numparse == 0 and '*' or '', string),
-                     i+2, 1, anchor=W)
+            # Print the sentence itself
+            self.makelab('%s%s' % (numparse == 0 and '*' or '', string),
+                         i+2, 1, anchor=W)
 
         self.cnv.create_window(0, 0, anchor='nw', window=self.child)
 

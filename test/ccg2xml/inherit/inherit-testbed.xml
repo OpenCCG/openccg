@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression name="../../ccg-format-grammars/inherit/inherit.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../testbed.xsd">
+  <item string="John sleeps" numOfParses="1"/>
+  <item string="John saw Fido" numOfParses="1"/>
+  <item string="John gave Fido food" numOfParses="1"/>
+  <item string="John gave food to Fido" numOfParses="1"/>
+</regression>

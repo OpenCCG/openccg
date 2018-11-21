@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ccg-lexicon name="../../ccg-format-grammars/tiny/tiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../lexicon.xsd">
+  <distributive-features attrs="owner info"/>
+  <licensing-features>
+    <feat attr="owner" location="args-only" instantiate="false"/>
+    <feat attr="form" val="emb" location="target-only"/>
+    <feat attr="form" val="inf" location="target-only"/>
+    <feat attr="form" val="adj" location="target-only"/>
+    <feat attr="form" val="q" license-marked-cats="true" also-licensed-by="q-base"/>
+    <feat attr="form" val="wh" license-marked-cats="true" also-licensed-by="q-base"/>
+  </licensing-features>
+  <relation-sorting order="foo * bar baz"/>
+  <family name="Det" indexRel="det" pos="Det" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="PERS" val="3rd"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="det">
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="the"/>
+    <member stem="some"/>
+    <member stem="a"/>
+  </family>
+  <family name="Prep-Nom" pos="Prep" indexRel="*NoSem*" closed="true">
+    <entry name="Nominal">
+      <complexcat>
+        <atomcat type="pp">
+          <fs inheritsFrom="3">
+            <feat attr="lex" val="[*DEFAULT*]"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="CASE" val="acc"/>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </entry>
+    <member stem="for"/>
+  </family>
+  <family name="Conj" pos="Conj" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="np">
+          <fs>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="index">
+              <lf>
+                <nomvar name="X0"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="*"/>
+        <atomcat type="np">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="X1"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="X2"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X0">
+            <prop name="and"/>
+            <diamond mode="First">
+              <nomvar name="L1"/>
+              <prop name="elem"/>
+              <diamond mode="Item">
+                <nomvar name="X1"/>
+              </diamond>
+              <diamond mode="Next">
+                <nomvar name="L2"/>
+                <prop name="elem"/>
+                <diamond mode="Item">
+                  <nomvar name="X2"/>
+                </diamond>
+              </diamond>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  <family name="DollarTest" pos="DollarTest" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+        <slash dir="\" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash dir="\" mode="&lt;"/>
+          <atomcat type="np">
+            <fs/>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-2">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <complexcat>
+          <atomcat type="np">
+            <fs/>
+          </atomcat>
+          <slash/>
+          <dollar name="1"/>
+        </complexcat>
+        <slash dir="\" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash dir="\" mode="&lt;"/>
+          <atomcat type="np">
+            <fs/>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+  </family>
+  <family name="N" pos="N" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="n">
+        <fs id="2">
+          <feat attr="index">
+            <lf>
+              <nomvar name="X"/>
+            </lf>
+          </feat>
+          <feat attr="NUM">
+            <featvar name="NUM"/>
+          </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <member stem="book"/>
+    <member stem="DVD"/>
+    <member stem="glass"/>
+    <member stem="church"/>
+    <member stem="flower"/>
+    <member stem="bath"/>
+    <member stem="teacher"/>
+    <member stem="lady"/>
+    <member stem="boy"/>
+    <member stem="policeman"/>
+  </family>
+  <family name="Pro" pos="Pro" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="np">
+        <fs id="2">
+          <feat attr="index">
+            <lf>
+              <nomvar name="X"/>
+            </lf>
+          </feat>
+          <feat attr="NUM">
+            <featvar name="NUM"/>
+          </feat>
+          <feat attr="PERS">
+            <featvar name="PERS"/>
+          </feat>
+          <feat attr="CASE">
+            <featvar name="CASE"/>
+          </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <member stem="pro1"/>
+    <member stem="pro2"/>
+    <member stem="pro3f"/>
+    <member stem="pro3m"/>
+    <member stem="pro3n"/>
+  </family>
+  <family name="IntransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="go"/>
+    <member stem="sleep"/>
+    <member stem="eat" pred="manjar"/>
+  </family>
+  <family name="TransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="index">
+              <lf>
+                <nomvar name="Y"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="buy"/>
+    <member stem="rent"/>
+    <member stem="eat" pred="manjar"/>
+  </family>
+  <family name="DitransBenV" pos="V" closed="true">
+    <entry name="DTV">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="index">
+              <lf>
+                <nomvar name="Y"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&lt;"/>
+        <atomcat type="np">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Z"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+            <diamond mode="Beneficiary">
+              <nomvar name="Z:animate-being"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="NP-PPfor">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="pp">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Z"/>
+              </lf>
+            </feat>
+            <feat attr="lex" val="for"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="index">
+              <lf>
+                <nomvar name="Y"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+            <diamond mode="Beneficiary">
+              <nomvar name="Z:animate-being"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="buy"/>
+    <member stem="rent"/>
+  </family>
+</ccg-lexicon>

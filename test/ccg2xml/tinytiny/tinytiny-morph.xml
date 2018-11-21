@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph name="../../ccg-format-grammars/tinytiny/tinytiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd">
+  <entry word="." pos="Punc" stem="."/>
+  <entry word="," pos="Punc" stem=","/>
+  <entry word="?" pos="Punc" stem="?"/>
+  <entry word="the" pos="Det" stem="the"/>
+  <entry word="a" macros="@sg" pos="Det" stem="a"/>
+  <entry word="I" macros="@1st @sg @nom @sg-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="me" macros="@1st @sg @acc @sg-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="we" macros="@1st @pl @nom @pl-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="us" macros="@1st @pl @acc @pl-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="book" macros="@sg @sg-X" pos="N" stem="book" class="thing"/>
+  <entry word="books" macros="@pl @pl-X" pos="N" stem="book" class="thing"/>
+  <entry word="peach" macros="@sg @sg-X" pos="N" stem="peach" class="thing"/>
+  <entry word="peaches" macros="@pl @pl-X" pos="N" stem="peach" class="thing"/>
+  <entry word="boy" macros="@sg @sg-X" pos="N" stem="boy" class="person"/>
+  <entry word="boys" macros="@pl @pl-X" pos="N" stem="boy" class="person"/>
+  <entry word="policeman" macros="@sg @sg-X" pos="N" stem="policeman" class="person"/>
+  <entry word="policemen" macros="@pl @pl-X" pos="N" stem="policeman" class="person"/>
+  <entry word="go" macros="@pres @non-3rd @sg" pos="V" stem="go"/>
+  <entry word="goes" macros="@pres @3rd @sg" pos="V" stem="go"/>
+  <entry word="go" macros="@pres @pl" pos="V" stem="go"/>
+  <entry word="went" macros="@past" pos="V" stem="go"/>
+  <entry word="sleep" macros="@pres @non-3rd @sg" pos="V" stem="sleep"/>
+  <entry word="sleeps" macros="@pres @3rd @sg" pos="V" stem="sleep"/>
+  <entry word="sleep" macros="@pres @pl" pos="V" stem="sleep"/>
+  <entry word="slept" macros="@past" pos="V" stem="sleep"/>
+  <entry word="eat" macros="@pres @non-3rd @sg" pos="V" stem="eat"/>
+  <entry word="eats" macros="@pres @3rd @sg" pos="V" stem="eat"/>
+  <entry word="eat" macros="@pres @pl" pos="V" stem="eat"/>
+  <entry word="ate" macros="@past" pos="V" stem="eat"/>
+  <entry word="see" macros="@pres @non-3rd @sg" pos="V" stem="see"/>
+  <entry word="sees" macros="@pres @3rd @sg" pos="V" stem="see"/>
+  <entry word="see" macros="@pres @pl" pos="V" stem="see"/>
+  <entry word="saw" macros="@past" pos="V" stem="see"/>
+  <entry word="setverb" macros="@pres @non-3rd @sg" pos="V" stem="setverb"/>
+  <entry word="setverbs" macros="@pres @3rd @sg" pos="V" stem="setverb"/>
+  <entry word="setverb" macros="@pres @pl" pos="V" stem="setverb"/>
+  <entry word="setverbed" macros="@past" pos="V" stem="setverb"/>
+  <macro name="@1st">
+    <fs id="2">
+      <feat attr="PERS" val="1st"/>
+    </fs>
+  </macro>
+  <macro name="@2nd">
+    <fs id="2">
+      <feat attr="PERS" val="2nd"/>
+    </fs>
+  </macro>
+  <macro name="@3rd">
+    <fs id="2">
+      <feat attr="PERS" val="3rd"/>
+    </fs>
+  </macro>
+  <macro name="@acc">
+    <fs id="2">
+      <feat attr="CASE" val="acc"/>
+    </fs>
+  </macro>
+  <macro name="@nom">
+    <fs id="2">
+      <feat attr="CASE" val="nom"/>
+    </fs>
+  </macro>
+  <macro name="@non-3rd">
+    <fs id="2">
+      <feat attr="PERS" val="non-3rd"/>
+    </fs>
+  </macro>
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl">
+    <fs id="2">
+      <feat attr="NUM" val="pl"/>
+    </fs>
+  </macro>
+  <macro name="@pl-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="pl-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@sg">
+    <fs id="2">
+      <feat attr="NUM" val="sg"/>
+    </fs>
+  </macro>
+  <macro name="@sg-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="sg-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+</morph>

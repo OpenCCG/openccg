@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph name="../../ccg-format-grammars/tiny/tiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd">
+  <entry word="the" pos="Det" stem="the"/>
+  <entry word="some" pos="Det" stem="some"/>
+  <entry word="a" macros="@sg" pos="Det" stem="a"/>
+  <entry word="for" pos="Prep" stem="for"/>
+  <entry word="I" macros="@1st @sg @nom @sg-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="me" macros="@1st @sg @acc @sg-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="we" macros="@1st @pl @nom @pl-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="us" macros="@1st @pl @acc @pl-X" pos="Pro" stem="pro1" class="animate-being"/>
+  <entry word="you" macros="@2nd" pos="Pro" stem="pro2" class="animate-being"/>
+  <entry word="she" macros="@3rd @sg @nom @sg-X" pos="Pro" stem="pro3f" class="animate-being"/>
+  <entry word="her" macros="@3rd @sg @acc @sg-X" pos="Pro" stem="pro3f" class="animate-being"/>
+  <entry word="he" macros="@3rd @sg @nom @sg-X" pos="Pro" stem="pro3m" class="animate-being"/>
+  <entry word="him" macros="@3rd @sg @acc @sg-X" pos="Pro" stem="pro3m" class="animate-being"/>
+  <entry word="it" macros="@3rd @sg @sg-X" pos="Pro" stem="pro3n" class="thing"/>
+  <entry word="they" macros="@3rd @pl @nom @pl-X" pos="Pro" stem="pro3n"/>
+  <entry word="them" macros="@3rd @pl @acc @pl-X" pos="Pro" stem="pro3n"/>
+  <entry word="book" macros="@sg @sg-X" pos="N" stem="book" class="thing"/>
+  <entry word="books" macros="@pl @pl-X" pos="N" stem="book" class="thing"/>
+  <entry word="DVD" macros="@sg @sg-X" pos="N" stem="DVD" class="thing"/>
+  <entry word="DVDs" macros="@pl @pl-X" pos="N" stem="DVD" class="thing"/>
+  <entry word="glass" macros="@sg @sg-X" pos="N" stem="glass" class="thing"/>
+  <entry word="glasses" macros="@pl @pl-X" pos="N" stem="glass" class="thing"/>
+  <entry word="church" macros="@sg @sg-X" pos="N" stem="church" class="thing"/>
+  <entry word="churches" macros="@pl @pl-X" pos="N" stem="church" class="thing"/>
+  <entry word="flower" macros="@sg @sg-X" pos="N" stem="flower" class="thing"/>
+  <entry word="flowers" macros="@pl @pl-X" pos="N" stem="flower" class="thing"/>
+  <entry word="bath" macros="@sg @sg-X" pos="N" stem="bath" class="thing"/>
+  <entry word="baths" macros="@pl @pl-X" pos="N" stem="bath" class="thing"/>
+  <entry word="teacher" macros="@sg @sg-X" pos="N" stem="teacher" class="person"/>
+  <entry word="teachers" macros="@pl @pl-X" pos="N" stem="teacher" class="person"/>
+  <entry word="lady" macros="@sg @sg-X" pos="N" stem="lady" class="person"/>
+  <entry word="ladies" macros="@pl @pl-X" pos="N" stem="lady" class="person"/>
+  <entry word="boy" macros="@sg @sg-X" pos="N" stem="boy" class="person"/>
+  <entry word="boys" macros="@pl @pl-X" pos="N" stem="boy" class="person"/>
+  <entry word="policeman" macros="@sg @sg-X" pos="N" stem="policeman" class="person"/>
+  <entry word="policemen" macros="@pl @pl-X" pos="N" stem="policeman" class="person"/>
+  <entry word="buy" macros="@pres @non-3rd @sg" pos="V" stem="buy"/>
+  <entry word="buys" macros="@pres @3rd @sg" pos="V" stem="buy"/>
+  <entry word="buy" macros="@pres @pl" pos="V" stem="buy"/>
+  <entry word="bought" macros="@past" pos="V" stem="buy"/>
+  <entry word="rent" macros="@pres @non-3rd @sg" pos="V" stem="rent"/>
+  <entry word="rents" macros="@pres @3rd @sg" pos="V" stem="rent"/>
+  <entry word="rent" macros="@pres @pl" pos="V" stem="rent"/>
+  <entry word="rented" macros="@past" pos="V" stem="rent"/>
+  <entry word="go" macros="@pres @non-3rd @sg" pos="V" stem="go"/>
+  <entry word="goes" macros="@pres @3rd @sg" pos="V" stem="go"/>
+  <entry word="go" macros="@pres @pl" pos="V" stem="go"/>
+  <entry word="went" macros="@past" pos="V" stem="go"/>
+  <entry word="sleep" macros="@pres @non-3rd @sg" pos="V" stem="sleep"/>
+  <entry word="sleeps" macros="@pres @3rd @sg" pos="V" stem="sleep"/>
+  <entry word="sleep" macros="@pres @pl" pos="V" stem="sleep"/>
+  <entry word="slept" macros="@past" pos="V" stem="sleep"/>
+  <entry word="eat" macros="@pres @non-3rd @sg" pos="V" stem="eat" pred="manjar"/>
+  <entry word="eats" macros="@pres @3rd @sg" pos="V" stem="eat" pred="manjar"/>
+  <entry word="eat" macros="@pres @pl" pos="V" stem="eat" pred="manjar"/>
+  <entry word="ate" macros="@past" pos="V" stem="eat" pred="manjar"/>
+  <macro name="@1st">
+    <fs id="2">
+      <feat attr="PERS" val="1st"/>
+    </fs>
+  </macro>
+  <macro name="@2nd">
+    <fs id="2">
+      <feat attr="PERS" val="2nd"/>
+    </fs>
+  </macro>
+  <macro name="@3rd">
+    <fs id="2">
+      <feat attr="PERS" val="3rd"/>
+    </fs>
+  </macro>
+  <macro name="@acc">
+    <fs id="2">
+      <feat attr="CASE" val="acc"/>
+    </fs>
+  </macro>
+  <macro name="@nom">
+    <fs id="2">
+      <feat attr="CASE" val="nom"/>
+    </fs>
+  </macro>
+  <macro name="@non-3rd">
+    <fs id="2">
+      <feat attr="PERS" val="non-3rd"/>
+    </fs>
+  </macro>
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl">
+    <fs id="2">
+      <feat attr="NUM" val="pl"/>
+    </fs>
+  </macro>
+  <macro name="@pl-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="pl-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@sg">
+    <fs id="2">
+      <feat attr="NUM" val="sg"/>
+    </fs>
+  </macro>
+  <macro name="@sg-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="sg-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+</morph>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types name="../../ccg-format-grammars/inherit/inherit.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../types.xsd">
+  <type name="case"/>
+  <type name="nom" parents="case"/>
+  <type name="acc" parents="case"/>
+</types>

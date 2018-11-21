@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ccg-lexicon name="../../ccg-format-grammars/tinytiny/tinytiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../lexicon.xsd">
+  <family name="Punc" pos="Punc" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="punc">
+        <fs/>
+      </atomcat>
+    </entry>
+    <member stem="."/>
+    <member stem=","/>
+    <member stem="?"/>
+  </family>
+  <family name="Det" indexRel="det" pos="Det" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="PERS" val="3rd"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="det">
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="the"/>
+    <member stem="a"/>
+  </family>
+  <family name="N" pos="N" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="n">
+        <fs id="2">
+          <feat attr="index">
+            <lf>
+              <nomvar name="X"/>
+            </lf>
+          </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <member stem="book"/>
+    <member stem="peach"/>
+    <member stem="boy"/>
+    <member stem="policeman"/>
+  </family>
+  <family name="Pro" pos="Pro" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="np">
+        <fs id="2">
+          <feat attr="index">
+            <lf>
+              <nomvar name="X"/>
+            </lf>
+          </feat>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <member stem="pro1"/>
+  </family>
+  <family name="IntransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="go"/>
+    <member stem="sleep"/>
+    <member stem="eat"/>
+  </family>
+  <family name="TransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="np">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="np">
+          <fs id="3">
+            <feat attr="index">
+              <lf>
+                <nomvar name="Y"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="eat"/>
+    <member stem="see"/>
+  </family>
+  <family name="SetargV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <setarg>
+          <slash dir="\" mode="&lt;"/>
+          <atomcat type="np">
+            <fs id="2">
+              <feat attr="index">
+                <lf>
+                  <nomvar name="X"/>
+                </lf>
+              </feat>
+              <feat attr="CASE" val="nom"/>
+            </fs>
+          </atomcat>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="np">
+            <fs id="3">
+              <feat attr="index">
+                <lf>
+                  <nomvar name="Y"/>
+                </lf>
+              </feat>
+              <feat attr="CASE" val="acc"/>
+            </fs>
+          </atomcat>
+        </setarg>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="setverb"/>
+  </family>
+</ccg-lexicon>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression name="../../ccg-format-grammars/tiny/tiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../testbed.xsd">
+  <item string="the teacher buys the policeman a book" numOfParses="1"/>
+  <item string="the teacher buys the policemen some flowers" numOfParses="1"/>
+  <item string="the teachers buy a book" numOfParses="3"/>
+  <item string="she buys it" numOfParses="3"/>
+  <item string="she buy it" numOfParses="0"/>
+  <item string="she buy buy" known="true" numOfParses="0"/>
+  <item string="they buys it" numOfParses="0"/>
+  <item string="she buys the flower for him" numOfParses="1"/>
+  <item string="she buys the flower for he" numOfParses="0"/>
+  <item string="her buys the flower for him" numOfParses="0"/>
+  <item string="he rented her a DVD" numOfParses="1"/>
+  <item string="he rented a DVD for her" numOfParses="1"/>
+  <item string="he rented a DVD her" numOfParses="0"/>
+</regression>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules name="../../src/ccg2xml/grammar_template.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../rules.xsd">
+  <application dir="forward"/>
+  <application dir="backward"/>
+  <composition harmonic="true" dir="forward"/>
+  <composition harmonic="true" dir="backward"/>
+  <substitution harmonic="true" dir="forward"/>
+  <substitution harmonic="true" dir="backward"/>
+  <typeraising dir="forward" useDollar="false"/>
+  <typeraising dir="backward" useDollar="true"/>
+  <composition harmonic="false" dir="forward"/>
+  <composition harmonic="false" dir="backward"/>
+  <substitution harmonic="false" dir="forward"/>
+  <substitution harmonic="false" dir="backward"/>
+</rules>

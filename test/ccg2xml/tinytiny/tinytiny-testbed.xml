@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression name="../../ccg-format-grammars/tinytiny/tinytiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../testbed.xsd">
+  <item string="the policemen eat" numOfParses="2"/>
+  <item string="the boys eat" numOfParses="2"/>
+  <item string="the boys eat the peaches" numOfParses="1"/>
+  <item string="the policeman sleeps" numOfParses="1"/>
+  <item string="the policemen sleeps" numOfParses="0"/>
+  <item string="the policemen sleep" numOfParses="1"/>
+  <item string="the policeman sleeps the peach" numOfParses="0"/>
+  <item string="the policeman saw me" numOfParses="1"/>
+  <item string="the policeman saw I" numOfParses="0"/>
+  <item string="I see the book" numOfParses="1"/>
+  <item string="I sees the book" numOfParses="0"/>
+  <item string="I see a book" numOfParses="1"/>
+  <item string="I see a books" numOfParses="0"/>
+</regression>

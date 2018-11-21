@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types name="../../ccg-format-grammars/tiny/tiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../types.xsd">
+  <type name="CASE"/>
+  <type name="nom" parents="CASE"/>
+  <type name="acc" parents="CASE"/>
+  <type name="NUM"/>
+  <type name="sg" parents="NUM"/>
+  <type name="pl" parents="NUM"/>
+  <type name="sem-num"/>
+  <type name="sg-X" parents="sem-num"/>
+  <type name="pl-X" parents="sem-num"/>
+  <type name="TENSE"/>
+  <type name="past" parents="TENSE"/>
+  <type name="pres" parents="TENSE"/>
+  <type name="PERS"/>
+  <type name="non-3rd" parents="PERS"/>
+  <type name="3rd" parents="PERS"/>
+  <type name="1st" parents="non-3rd"/>
+  <type name="2nd" parents="non-3rd"/>
+  <type name="ontology"/>
+  <type name="sem-obj" parents="ontology"/>
+  <type name="phys-obj" parents="sem-obj"/>
+  <type name="situation" parents="sem-obj"/>
+  <type name="animate-being" parents="phys-obj"/>
+  <type name="thing" parents="phys-obj"/>
+  <type name="person" parents="animate-being"/>
+  <type name="change" parents="situation"/>
+  <type name="state" parents="situation"/>
+  <type name="action" parents="change"/>
+  <type name="entity"/>
+  <type name="being" parents="entity"/>
+  <type name="nothingness" parents="entity"/>
+  <type name="thing2" parents="being"/>
+  <type name="animate" parents="being"/>
+  <type name="irrational-being" parents="animate"/>
+  <type name="rational-being" parents="animate"/>
+  <type name="fish" parents="irrational-being"/>
+  <type name="mammal" parents="irrational-being"/>
+  <type name="dog-like" parents="mammal"/>
+  <type name="cat" parents="mammal"/>
+  <type name="horse" parents="mammal"/>
+  <type name="dog" parents="dog-like"/>
+  <type name="wolf" parents="dog-like"/>
+  <type name="man" parents="rational-being"/>
+  <type name="woman" parents="rational-being"/>
+  <type name="intersex" parents="man woman"/>
+  <type name="centaur" parents="horse man"/>
+  <type name="werewolf" parents="wolf man"/>
+  <type name="mermaid" parents="fish woman"/>
+  <type name="owner"/>
+  <type name="info"/>
+  <type name="form"/>
+  <type name="dcl-base" parents="form"/>
+  <type name="q-base" parents="form"/>
+  <type name="base" parents="form"/>
+  <type name="emb" parents="form"/>
+  <type name="inf" parents="form"/>
+  <type name="adj" parents="form"/>
+  <type name="ng" parents="form"/>
+  <type name="dcl" parents="dcl-base"/>
+  <type name="fronted" parents="dcl-base"/>
+  <type name="q" parents="q-base"/>
+  <type name="wh" parents="q-base"/>
+</types>

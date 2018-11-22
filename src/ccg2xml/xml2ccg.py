@@ -103,7 +103,15 @@ class XMLGrammar:
 
         # Print all toplevel features (all others are thus printed implicitly)
         feature_string = '\n\n  '.join(str(f) for f in features.values() if f.toplevel)
-        return 'feature {{\n  {}\n}}'.format(feature_string)
+
+        # Relation sorting can also be specified
+        rel_sort_str = ''
+        rel_sort = self.lexicon.find('relation-sorting')
+        if rel_sort is not None:
+            rel_sort_str = rel_sort.get('order')
+            rel_sort_str = '\n\nrelation-sorting: {};'.format(rel_sort_str)
+
+        return 'feature {{\n  {}\n}}'.format(feature_string) + rel_sort_str
 
     @property
     def ccg_words(self):

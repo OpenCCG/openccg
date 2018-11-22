@@ -85,8 +85,11 @@ class XMLGrammar:
         # Traverse again to add all children to their parents (second pass to
         # ensure all parents exist)
         for feature in features.values():
-            for parent in feature.xml.get('parents', '').split():
-                features[parent].children.append(feature)
+            parents = feature.xml.get('parents', '').split()
+            if parents:
+                if len(parents) > 1:
+                    feature.additional_parents = parents[1:]
+                features[parents[0]].children.append(feature)
 
         # Determine which features are distributive
         dist_features = self.lexicon.find('distributive-features')
@@ -278,11 +281,15 @@ class Feature:
         # Denoted with ! in ccg, found in lexicon in distributive-features
         self.distributive = False
 
+        # Explicit parents in case of multiple inheritance
+        self.additional_parents = []
+
     def __str__(self, depth=0):
-        fmt = '{dist}{name}{syntactic}{licensing}{colon}{children}{semicolon}'
+        fmt = '{dist}{name}{syntactic}{licensing}{parents}{colon}{children}{semicolon}'
 
         dist = ''
         syntactic = ''
+        parents = ''
         colon = ''
         children = ' '.join(child.__str__(depth+1) for child in self.children)
         semicolon = ''
@@ -297,6 +304,8 @@ class Feature:
                 colon = ': '
             semicolon = ';'
         else:
+            if self.additional_parents:
+                parents = '[{}]'.format(' '.join(self.additional_parents))
             if children:
                 if depth > 0:
                     children = ' {{\n  {spaces}{children}\n{spaces}}}\n{spaces}'\
@@ -313,11 +322,11 @@ class Feature:
         return fmt.format(dist=dist,
                           name=self.name,
                           syntactic=syntactic,
+                          parents=parents,
                           colon=colon,
                           children=children,
                           semicolon=semicolon,
-                          licensing=licensing,
-                          )
+                          licensing=licensing)
 
 
 def xml2ccg():

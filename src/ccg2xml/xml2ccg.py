@@ -231,7 +231,9 @@ class XMLGrammar:
             known = '! ' if item.get('known') == 'true' else ''
             line = fmt.format(known=known,
                               string=item.get('string'),
-                              numOfParses=item.get('numOfParses'))
+                              # Omitting the number is, according to tiny.ccg,
+                              # maybe equivalent to 1
+                              numOfParses=item.get('numOfParses', '1'))
             lines.append(line)
         testbed_section = 'testbed {\n' + '\n'.join(lines) + '\n}'
         return testbed_section

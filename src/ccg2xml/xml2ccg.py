@@ -3,6 +3,7 @@
 import argparse
 import sys
 import xml.etree.ElementTree as ET
+from collections import OrderedDict
 from pathlib import Path
 from datetime import datetime as dt
 
@@ -71,7 +72,38 @@ class XMLGrammar:
 
     @property
     def ccg_features(self):
-        return 'features {\n}'
+        """Generates a feature { ... } string for the ccg file."""
+        if self.types is None:
+            return 'feature {\n}'
+
+        # Get all types / features from types.xml
+        features = OrderedDict()
+        for type_ in self.types.iter('type'):
+            feature = Feature(type_)
+            features[feature.name] = feature
+
+        # Traverse again to add all children to their parents (second pass to
+        # ensure all parents exist)
+        for feature in features.values():
+            for parent in feature.xml.get('parents', '').split():
+                features[parent].children.append(feature)
+
+        # Determine which features are distributive
+        dist_features = self.lexicon.find('distributive-features')
+        if dist_features is not None:
+            for feature_name in dist_features.get('attrs', '').split():
+                features[feature_name].distributive = True
+
+        # Determine licensing features
+        lic_features = self.lexicon.find('licensing-features')
+        if lic_features is not None:
+            for feat in lic_features.iter('feat'):
+                feature_name = feat.get('val', feat.get('attr'))
+                features[feature_name].licensing_features.update(feat.attrib)
+
+        # Print all toplevel features (all others are thus printed implicitly)
+        feature_string = '\n\n  '.join(str(f) for f in features.values() if f.toplevel)
+        return 'feature {{\n  {}\n}}'.format(feature_string)
 
     @property
     def ccg_words(self):
@@ -123,6 +155,63 @@ class XMLGrammar:
         return GRAMMAR_TEMPLATE.format(grammar_name=' {}.ccg '.format(self.path.stem),
                                        conversion_date=dt.now().isoformat(),
                                        **sections)
+
+
+class Feature:
+    def __init__(self, xml_type):
+        self.xml = xml_type
+        # found in types.xml
+        self.name = xml_type.get('name')
+        # toplevel if it has no parents
+        self.toplevel = xml_type.get('parents') is None
+
+        self.syntactic_features = []
+        self.licensing_features = {}
+        self.children = []
+
+        # Denoted with ! in ccg, found in lexicon in distributive-features
+        self.distributive = False
+
+    def __str__(self, depth=0):
+        fmt = '{dist}{name}{syntactic}{licensing}{colon}{children}{semicolon}'
+
+        dist = ''
+        syntactic = ''
+        colon = ''
+        children = ' '.join(child.__str__(depth+1) for child in self.children)
+        semicolon = ''
+        licensing = ''
+
+        if self.toplevel:
+            dist = '!' if self.distributive else ''
+            if self.syntactic_features:
+                syntactic = '<{}>'.format(','.join(self.syntactic_features))
+            # TODO: macros are similar to syntatic
+            if self.children:
+                colon = ': '
+            semicolon = ';'
+        else:
+            if children:
+                if depth > 0:
+                    children = ' {{\n  {spaces}{children}\n{spaces}}}\n{spaces}'\
+                        .format(spaces='  ' * depth, children=children)
+                else:
+                    children = '{{{}}}'.format(children)
+
+        if self.licensing_features:
+            licensing = ', '.join('{}={}'.format(k, v)
+                                  for k, v in self.licensing_features.items()
+                                  if k not in ['attr', 'val'])
+            licensing = '(' + licensing + ')'
+
+        return fmt.format(dist=dist,
+                          name=self.name,
+                          syntactic=syntactic,
+                          colon=colon,
+                          children=children,
+                          semicolon=semicolon,
+                          licensing=licensing,
+                          )
 
 
 def xml2ccg():

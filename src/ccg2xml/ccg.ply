@@ -292,8 +292,6 @@ def error(lineno, format, *arg):
 
 # Write formatted arguments to stderr, with Warning: printed.
 def warning(lineno, format, *arg):
-    global warning_count
-    warning_count += 1
     error_or_warning('Warning', lineno, format, *arg)
 
 # Write formatted arguments to stdout.

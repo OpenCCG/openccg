@@ -70,6 +70,17 @@ def compare_grammar_tree(left, right):
         left: The left tree.
         right: The right tree.
     """
+    # Special cases
+    def compare_type_elements(l, r):
+        """Compares two <type ... /> elements."""
+        if l.tag != 'type' != r.tag:
+            return False
+        if l.get('name') != r.get('name'):
+            return False
+        if sorted(l.get('parents').split()) != sorted(r.get('parents').split()):
+            return False
+        return True
+
     def tree_sort_key(elem):
         return elem.tag + str(elem.attrib)
 
@@ -82,7 +93,11 @@ def compare_grammar_tree(left, right):
         if l.tag != r.tag:
             return False, (l, r)
         if l.attrib != r.attrib:
-            return False, (l, r)
+            for comp in [compare_type_elements]:
+                if comp(l, r):
+                    break
+            else:  # If none of the special comparisons breaks, return False
+                return False, (l, r)
 
     return True, (None, None)
 

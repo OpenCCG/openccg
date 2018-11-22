@@ -119,7 +119,90 @@ class XMLGrammar:
 
     @property
     def ccg_rules(self):
-        return ''
+        """Create the rule section for a ccg file.
+
+        Due to simplicity, this algorithm just assumes a reset of all defaults
+        and marks each rule explicitly.
+        """
+        if self.rules is None:
+            return ''
+        # TODO(shoeffner): The rule parsing is likely not done yet, but only
+        # parses the tiny-rules.xml properly. Especially "pro-drop" (i.e.
+        # typechange rules) is not implemented yet.
+
+        directions = {
+            'forward': '+',
+            'backward': '-'
+        }
+
+        def create_simple_rules(tag, rulename):
+            """Parses simple rules for a tag into the rules rulename and
+            xrulename.
+
+            If the attribute harmonic is true, the normal rule is modified
+            according to the dir attribute (forward = +, backward = -),
+            if harmonic is false, the cross-rulename (xrulename) is modified.
+
+            The results are e.g.:
+
+                app +;
+                xapp +-;
+
+            for tag applications with the rulename app, in which the
+            harmonic = false rules were given for both directions, while for
+            the harmonic = true rules, only the forward direction was given.
+
+            Returns:
+                A list of rule strings, e.g. ['app +;', 'xapp +-;']
+            """
+            rule = ''
+            xrule = ''
+            for item in self.rules.iter(tag):
+                if item.get('harmonic', 'true') == 'true':
+                    rule += directions[item.get('dir')]
+                else:
+                    xrule += directions[item.get('dir')]
+            if rule:
+                rule = '{} {};'.format(rulename, rule)
+            if xrule:
+                xrule = 'x{} {};'.format(rulename, xrule)
+            return [rule, xrule]
+
+        def create_typeraise_rules():
+            """Parses all typeraise rules.
+
+            This works similar to the create_simple_rules function, but
+            typeraise rules don't have the harmonic argument but useDollar,
+            as well as additional subelements.
+            """
+            rules = []
+            for item in self.rules.iter('typeraising'):
+                rule = 'typeraise {}'.format(directions[item.get('dir')])
+                if item.get('useDollar', 'false') == 'true':
+                    rule += ' $'
+
+                # complex rule: argument => result
+                if item.text is not None:
+                    # TODO(shoeffner): tiny-rules also has <fs/>, which is not
+                    # handled yet. This is in general very simple so far.
+                    argument = item.find('arg').find('atomcat').get('type')
+                    result = item.find('result').find('atomcat').get('type')
+                    rule += ': {} => {}'.format(argument, result)
+
+                rules.append(rule + ';')
+            return rules
+
+        rules = ['no;']  # Remove all defaults
+        rules += create_simple_rules('application', 'app')
+        rules += create_simple_rules('composition', 'comp')
+        rules += create_simple_rules('substitution', 'sub')
+        rules += create_typeraise_rules()
+        # TODO(shoeffner): add typechange rules
+
+        rule_section = 'rule {{\n  {}\n}}'.format('\n  '.join(r for r in rules if r))
+        # Not sure if this is needed, but just in case put forward first
+        rule_section = rule_section.replace('-+', '+-')
+        return rule_section
 
     @property
     def ccg_lexicon(self):

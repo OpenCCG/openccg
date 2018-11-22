@@ -127,18 +127,31 @@ class XMLGrammar:
 
     @property
     def ccg_testbed(self):
+        """Creates the ccg testbed.
+
+        The testbed is as a section with a list of sentences and parse numbers:
+
+        testbed {
+          one sentence: 1;
+          another sentence: 2;
+          wrong sentence: 0;
+          ! known failure: 0;
+        }
+        """
         if self.testbed is None:
             return 'testbed {\n}'
 
-        fmt = '  {string}: {numOfParses};'
+        fmt = '  {known}{string}: {numOfParses};'
 
         lines = []
         for item in self.testbed.iter('item'):
-            line = fmt.format(string=item.get('string'),
+            known = '! ' if item.get('known') == 'true' else ''
+            line = fmt.format(known=known,
+                              string=item.get('string'),
                               numOfParses=item.get('numOfParses'))
             lines.append(line)
-
-        return 'testbed {\n' + '\n'.join(lines) + '\n}'
+        testbed_section = 'testbed {\n' + '\n'.join(lines) + '\n}'
+        return testbed_section
 
     @property
     def ccg(self):

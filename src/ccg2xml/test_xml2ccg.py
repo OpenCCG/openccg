@@ -2,6 +2,9 @@ import functools
 import sys
 import unittest
 
+import xml.etree.ElementTree as ET
+import xml.dom.minidom as minidom
+
 from io import StringIO
 from pathlib import Path
 from shutil import rmtree
@@ -60,6 +63,30 @@ class SysOut:
         sys.stdout = self.original_stdout
 
 
+def compare_grammar_tree(left, right):
+    """Compares two XML tree structures.
+
+    Args:
+        left: The left tree.
+        right: The right tree.
+    """
+    def tree_sort_key(elem):
+        return elem.tag + str(elem.attrib)
+
+    # findall('*') selects children, so the root element is skipped on purpose,
+    # as its "name" attribute differs depending on how ccg2xml is called.
+    iter_left = sorted(left.findall('*'), key=tree_sort_key)
+    iter_right = sorted(right.findall('*'), key=tree_sort_key)
+
+    for l, r in zip(iter_left, iter_right):
+        if l.tag != r.tag:
+            return False, (l, r)
+        if l.attrib != r.attrib:
+            return False, (l, r)
+
+    return True, (None, None)
+
+
 def compare_xmls(test_instance, grammar):
     """Loads the TEST and TEMP grammars specified by grammar using XMLGrammar.
 
@@ -80,12 +107,13 @@ def compare_xmls(test_instance, grammar):
 
     test_map = {}
     for fn in XMLGrammar.valid_filenames:
+        test, problem = compare_grammar_tree(getattr(original, fn),
+                                             getattr(generated, fn))
         test_map[fn] = {
-            'original': getattr(original, fn),
-            'generated': getattr(generated, fn)
+            'original': problem[0],
+            'generated': problem[1],
+            'test': test,
         }
-        # TODO(shoeffner): ElementTrees are not == comparable
-        test_map[fn]['test'] = test_map[fn]['original'] == test_map[fn]['generated']
 
     assert all(test_map[k]['test'] for k in test_map.keys()), generate_message(test_map)
 
@@ -109,16 +137,27 @@ def generate_message(test_map):
     """
     tmpl = """{fn} test failed:
     Generated:
-        {generated}
+    {generated}
 
     Original:
-        {original}
+    {original}
     """
     messages = []
+
+    def prettify(xml):
+        lines = []
+        pretty = minidom.parseString(ET.tostring(xml)).toprettyxml()
+        for line in pretty.splitlines():
+            if len(line.strip()) != 0:
+                lines.append(line)
+        return '\n    '.join(lines)
+
     for k, v in test_map.items():
         if v['test']:
             continue
-        messages.append(tmpl.format(fn=k, **v))
+        generated = prettify(v['generated'])
+        original = prettify(v['original'])
+        messages.append(tmpl.format(fn=k, generated=generated, original=original))
 
     return '\n'.join(['The two grammars do not match.'] + messages)
 
@@ -145,6 +184,7 @@ def test_grammar(grammar):
 
             with ccg2xml_argv(grammar), SysIn() as sin:
                 sin.write(generated_ccg)
+                sin.seek(0)
                 ccg2xml()
 
             compare_xmls(self, grammar)

@@ -70,7 +70,7 @@ class XMLGrammar:
             return self.cache[attr]
         return object.__getattribute__(self, attr)
 
-    @property
+    @property  # noqa: MC0001 ("too complex")
     def ccg_features(self):
         """Generates a feature { ... } string for the ccg file."""
         if self.types is None:
@@ -81,6 +81,26 @@ class XMLGrammar:
         for type_ in self.types.iter('type'):
             feature = Feature(type_)
             features[feature.name] = feature
+
+        # Get all feature structure ids from morph.xml
+        for macro in self.morph.iter('macro'):
+            # Simple numeric id
+            if macro.find('fs') is not None:
+                fs = macro.find('fs')
+                feature_id = fs.get('id')
+                feature = fs.find('feat').get('attr')
+            # <diamond mode=""> declaration
+            elif macro.find('lf') is not None:
+                feature = macro.get('name')[1:]
+                lf = macro.find('lf')
+                feature_id = lf.find('satop').get('nomvar')
+                mode = lf.find('satop').find('diamond').get('mode')
+                if feature_id != mode:
+                    feature_id = '{}:{}'.format(feature_id, mode)
+            else:
+                # TODO(shoeffner): Is there actually a different case?
+                continue
+            features[feature].feature_struct_ids.append(feature_id)
 
         # Traverse again to add all children to their parents (second pass to
         # ensure all parents exist)
@@ -114,7 +134,8 @@ class XMLGrammar:
             rel_sort_str = rel_sort.get('order')
             rel_sort_str = '\n\nrelation-sorting: {};'.format(rel_sort_str)
 
-        return 'feature {{\n  {}\n}}'.format(feature_string) + rel_sort_str
+        feature_sec = 'feature {{\n  {}\n}}'.format(feature_string) + rel_sort_str
+        return feature_sec
 
     @property
     def ccg_words(self):
@@ -274,7 +295,6 @@ class Feature:
         # toplevel if it has no parents
         self.toplevel = xml_type.get('parents') is None
 
-        self.syntactic_features = []
         self.licensing_features = {}
         self.children = []
 
@@ -283,6 +303,15 @@ class Feature:
 
         # Explicit parents in case of multiple inheritance
         self.additional_parents = []
+
+        # Feature structure IDs
+        self.feature_struct_ids = []
+
+    def _gather_feature_struct_ids(self):
+        features = self.feature_struct_ids.copy()
+        for child in self.children:
+            features += child._gather_feature_struct_ids()
+        return list(set(features))
 
     def __str__(self, depth=0):
         fmt = '{dist}{name}{syntactic}{licensing}{parents}{colon}{children}{semicolon}'
@@ -297,9 +326,11 @@ class Feature:
 
         if self.toplevel:
             dist = '!' if self.distributive else ''
-            if self.syntactic_features:
-                syntactic = '<{}>'.format(','.join(self.syntactic_features))
-            # TODO: macros are similar to syntatic
+
+            # gather feature structure ids from all children
+            features = self._gather_feature_struct_ids()
+            if features:
+                syntactic = '<{}>'.format(','.join(features))
             if self.children:
                 colon = ': '
             semicolon = ';'

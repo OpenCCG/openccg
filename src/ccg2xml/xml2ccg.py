@@ -134,8 +134,8 @@ class XMLGrammar:
             rel_sort_str = rel_sort.get('order')
             rel_sort_str = '\n\nrelation-sorting: {};'.format(rel_sort_str)
 
-        feature_sec = 'feature {{\n  {}\n}}'.format(feature_string) + rel_sort_str
-        return feature_sec
+        feature_section = 'feature {{\n  {}\n}}'.format(feature_string) + rel_sort_str
+        return feature_section
 
     @property
     def ccg_words(self):
@@ -259,7 +259,7 @@ class XMLGrammar:
         # TODO(shoeffner): add typechange rules
 
         rule_section = 'rule {{\n  {}\n}}'.format('\n  '.join(r for r in rules if r))
-        # Not sure if this is needed, but just in case put forward first
+        # Not sure if this is needed, but just in case put forward (+) first
         rule_section = rule_section.replace('-+', '+-')
         return rule_section
 

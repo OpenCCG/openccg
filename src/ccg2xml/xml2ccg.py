@@ -143,12 +143,9 @@ class XMLGrammar:
             return ''
 
         # Find all words
-        words = []
-        for entry in self.morph.iter('entry'):
-            word = Word(entry)
-            words.append(word)
+        words = map(Word, self.morph.iter('entry'))
 
-        # Note that at this point '\n'.join(str(w) for w in words) should
+        # Note that at this point '\n'.join(map(str,  words)) should
         # already be a valid ccg file. However, it is better to compress this
         # format a little bit, thus the words can be merged into groups. This
         # is still less elegant than macros, but to infer plural-s or
@@ -259,7 +256,7 @@ class XMLGrammar:
         # TODO(shoeffner): add typechange rules
 
         rule_section = 'rule {{\n  {}\n}}'.format('\n  '.join(r for r in rules if r))
-        # Not sure if this is needed, but just in case put forward (+) first
+        # @shoeffner: Not sure if this is needed, but just in case put forward (+) first
         rule_section = rule_section.replace('-+', '+-')
         return rule_section
 
@@ -407,6 +404,10 @@ class Word:
         self.features = [m[1:] for m in xml_entry.get('macros', '').split()]
 
     def header(self):
+        """Returns the header part of a word, that is its steam, family,
+        and possible attributes, such as classes. The header is always
+        prefixed by 'word'.
+        """
         fmt = 'word {stem}{family_colon}{family}{attr}'
 
         family_colon = ':' if self.family else ''
@@ -420,6 +421,15 @@ class Word:
                           attr=attr)
 
     def body(self, explicit=False):
+        """Returns the body part of a word, that is its form and features,
+        of which there are macro names.
+
+        Args:
+            explicit: If explicit is True, the form will be assumed to be
+                      different from its stem, even if they are the same.
+                      This is important for word group, where the stem also
+                      equals one of the inflected forms.
+        """
         fmt = '{form}{features};'
 
         form = ''

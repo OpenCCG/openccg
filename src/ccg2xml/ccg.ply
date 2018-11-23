@@ -1871,8 +1871,9 @@ def make_word_morph_xml():
             elif y in pos_hash:
                 pos = y
             else:
-                error(None, 'Family/part-of-speech %s not found (word declaration %s)',
+                error(None, 'Family/part-of-speech "%s" not found (word declaration "%s")',
                       y, word)
+                raise ValueError('Family/part-of-speech "%s" not found (word declaration "%s")' % (y, word))
             if pos not in word_pos_list:
                 word_pos_list += [pos]
         for y in word_pos_list:

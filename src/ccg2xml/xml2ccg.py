@@ -139,7 +139,42 @@ class XMLGrammar:
 
     @property
     def ccg_words(self):
-        return ''
+        if self.morph is None:
+            return ''
+
+        # Find all words
+        words = []
+        for entry in self.morph.iter('entry'):
+            word = Word(entry)
+            words.append(word)
+
+        # Note that at this point '\n'.join(str(w) for w in words) should
+        # already be a valid ccg file. However, it is better to compress this
+        # format a little bit, thus the words can be merged into groups. This
+        # is still less elegant than macros, but to infer plural-s or
+        # 3rd-person singular-s macros is rather difficult, so we leave it as
+        # this for now.
+
+        # Merge words with the same header into groups
+        word_groups = {}
+        for word in words:
+            header = word.header()
+            if header not in word_groups:
+                word_groups[header] = []
+            word_groups[header].append(word)
+
+        # Format groups or single words
+        word_strings = []
+        for header, group in word_groups.items():
+            if len(group) == 1:
+                word_strings.append(str(group[0]))
+            else:
+                bodies = '\n  '.join(w.body(True) for w in group)
+                word_string = '{} {{\n  {}\n}}'
+                word_strings.append(word_string.format(header, bodies))
+
+        words_section = '\n'.join(word_strings)
+        return words_section
 
     @property
     def ccg_rules(self):
@@ -359,6 +394,57 @@ class Feature:
                           semicolon=semicolon,
                           licensing=licensing)
 
+
+class Word:
+    def __init__(self, xml_entry):
+        self.xml = xml_entry
+        self.form = xml_entry.get('word')  # inflected form
+        self.stem = xml_entry.get('stem')
+        self.family = xml_entry.get('pos', '')
+        # TODO(shoeffner): Handle pred, excluded, coart as additional
+        # attributes
+        self.attributes = xml_entry.get('class', '').split()
+        self.features = [m[1:] for m in xml_entry.get('macros', '').split()]
+
+    def header(self):
+        fmt = 'word {stem}{family_colon}{family}{attr}'
+
+        family_colon = ':' if self.family else ''
+        attr = ''
+        if self.attributes:
+            attr = '({})'.format(','.join(self.attributes))
+
+        return fmt.format(stem=self.stem,
+                          family_colon=family_colon,
+                          family=self.family,
+                          attr=attr)
+
+    def body(self, explicit=False):
+        fmt = '{form}{features};'
+
+        form = ''
+        features = ''
+        if self.form != self.stem or explicit:
+            form = self.form + ': '
+        if self.features:
+            features = ' '.join(self.features)
+
+        return fmt.format(form=form,
+                          features=features)
+
+    def __str__(self):
+        fmt = '{header}{colon}{body}'
+
+        colon = ''
+        if self.form != self.stem:
+            colon = ' '
+            fmt = '{header}{colon}{{\n  {body}\n}}'
+        elif self.features:
+            colon = ': '
+
+        return fmt.format(header=self.header(),
+                          colon=colon,
+                          body=self.body())
 
 def xml2ccg():
     """Entry point of the program."""

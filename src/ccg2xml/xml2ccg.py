@@ -174,6 +174,90 @@ class XMLGrammar:
         words_section = '\n'.join(word_strings)
         return words_section
 
+    def _create_simple_rules(self, tag, rulename):
+        """Parses simple rules for a tag into the rules rulename and
+        xrulename.
+
+        If the attribute harmonic is true, the normal rule is modified
+        according to the dir attribute (forward = +, backward = -),
+        if harmonic is false, the cross-rulename (xrulename) is modified.
+
+        The results are e.g.:
+
+            app +;
+            xapp +-;
+
+        for tag applications with the rulename app, in which the
+        harmonic = false rules were given for both directions, while for
+        the harmonic = true rules, only the forward direction was given.
+
+        Returns:
+            A list of rule strings, e.g. ['app +;', 'xapp +-;']
+        """
+        directions = {
+            'forward': '+',
+            'backward': '-'
+        }
+
+        rule = ''
+        xrule = ''
+        for item in self.rules.iter(tag):
+            if item.get('harmonic', 'true') == 'true':
+                rule += directions[item.get('dir')]
+            else:
+                xrule += directions[item.get('dir')]
+        if rule:
+            rule = '{} {};'.format(rulename, rule)
+        if xrule:
+            xrule = 'x{} {};'.format(rulename, xrule)
+        return [rule, xrule]
+
+    def _create_typeraising_rules(self):
+        """Parses all typeraising rules.
+
+        This works similar to the create_simple_rules function, but
+        typeraise rules don't have the harmonic argument but useDollar,
+        as well as additional subelements.
+        """
+        directions = {
+            'forward': '+',
+            'backward': '-'
+        }
+
+        rules = []
+        for item in self.rules.iter('typeraising'):
+            rule = 'typeraise {}'.format(directions[item.get('dir')])
+            if item.get('useDollar', 'false') == 'true':
+                rule += ' $'
+
+            # complex rule: argument => result
+            if item.find('arg') is not None and item.find('result') is not None:
+                argument = CategoryParser().parse_cat(item.find('arg').find('*'))
+                result = CategoryParser().parse_cat(item.find('result').find('*'))
+                rule += ': {} => {}'.format(argument, result)
+
+            rules.append(rule + ';')
+        return rules
+
+    def _create_typechanging_rules(self):
+        """Parses all typechanging rules.
+
+        This works similar to the create_typeraising_rules function,
+        typechanging rules have a slightly different format.
+        """
+        rules = []
+        for item in self.rules.iter('typechanging'):
+            rule = 'typechange'
+
+            # complex rule: argument => result
+            if item.find('arg') is not None and item.find('result') is not None:
+                argument = CategoryParser().parse_cat(item.find('arg').find('*'))
+                result = CategoryParser().parse_cat(item.find('result').find('*'))
+                rule += ': {} => {}'.format(argument, result)
+
+            rules.append(rule + ';')
+        return rules
+
     @property
     def ccg_rules(self):
         """Create the rule section for a ccg file.
@@ -183,76 +267,13 @@ class XMLGrammar:
         """
         if self.rules is None:
             return ''
-        # TODO(shoeffner): The rule parsing is likely not done yet, but only
-        # parses the tiny-rules.xml properly. Especially "pro-drop" (i.e.
-        # typechange rules) is not implemented yet.
-
-        directions = {
-            'forward': '+',
-            'backward': '-'
-        }
-
-        def create_simple_rules(tag, rulename):
-            """Parses simple rules for a tag into the rules rulename and
-            xrulename.
-
-            If the attribute harmonic is true, the normal rule is modified
-            according to the dir attribute (forward = +, backward = -),
-            if harmonic is false, the cross-rulename (xrulename) is modified.
-
-            The results are e.g.:
-
-                app +;
-                xapp +-;
-
-            for tag applications with the rulename app, in which the
-            harmonic = false rules were given for both directions, while for
-            the harmonic = true rules, only the forward direction was given.
-
-            Returns:
-                A list of rule strings, e.g. ['app +;', 'xapp +-;']
-            """
-            rule = ''
-            xrule = ''
-            for item in self.rules.iter(tag):
-                if item.get('harmonic', 'true') == 'true':
-                    rule += directions[item.get('dir')]
-                else:
-                    xrule += directions[item.get('dir')]
-            if rule:
-                rule = '{} {};'.format(rulename, rule)
-            if xrule:
-                xrule = 'x{} {};'.format(rulename, xrule)
-            return [rule, xrule]
-
-        def create_typeraise_rules():
-            """Parses all typeraise rules.
-
-            This works similar to the create_simple_rules function, but
-            typeraise rules don't have the harmonic argument but useDollar,
-            as well as additional subelements.
-            """
-            rules = []
-            for item in self.rules.iter('typeraising'):
-                rule = 'typeraise {}'.format(directions[item.get('dir')])
-                if item.get('useDollar', 'false') == 'true':
-                    rule += ' $'
-
-                # complex rule: argument => result
-                if item.text is not None:
-                    argument = item.find('arg').find('atomcat').get('type')
-                    result = item.find('result').find('atomcat').get('type')
-                    rule += ': {} => {}'.format(argument, result)
-
-                rules.append(rule + ';')
-            return rules
 
         rules = ['no;']  # Remove all defaults
-        rules += create_simple_rules('application', 'app')
-        rules += create_simple_rules('composition', 'comp')
-        rules += create_simple_rules('substitution', 'sub')
-        rules += create_typeraise_rules()
-        # TODO(shoeffner): add typechange rules
+        rules += self._create_simple_rules('application', 'app')
+        rules += self._create_simple_rules('composition', 'comp')
+        rules += self._create_simple_rules('substitution', 'sub')
+        rules += self._create_typeraising_rules()
+        rules += self._create_typechanging_rules()
 
         rule_section = 'rule {{\n  {}\n}}'.format('\n  '.join(r for r in rules if r))
         # @shoeffner: Not sure if this is needed, but just in case put forward (+) first

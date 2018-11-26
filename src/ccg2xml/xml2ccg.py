@@ -402,9 +402,11 @@ class Word:
         self.form = xml_entry.get('word')  # inflected form
         self.stem = xml_entry.get('stem')
         self.family = xml_entry.get('pos', '')
-        # TODO(shoeffner): Handle pred, excluded, coart as additional
-        # attributes
         self.attributes = xml_entry.get('class', '').split()
+        for key in ['pred', 'excluded', 'coart']:
+            val = xml_entry.get(key)
+            if val is not None:
+                self.attributes.append('{}={}'.format(key, val))
         self.features = [m[1:] for m in xml_entry.get('macros', '').split()]
 
     def header(self):

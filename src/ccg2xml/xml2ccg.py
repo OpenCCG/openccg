@@ -239,8 +239,6 @@ class XMLGrammar:
 
                 # complex rule: argument => result
                 if item.text is not None:
-                    # TODO(shoeffner): tiny-rules also has <fs/>, which is not
-                    # handled yet. This is in general very simple so far.
                     argument = item.find('arg').find('atomcat').get('type')
                     result = item.find('result').find('atomcat').get('type')
                     rule += ': {} => {}'.format(argument, result)
@@ -262,7 +260,13 @@ class XMLGrammar:
 
     @property
     def ccg_lexicon(self):
-        return ''
+        if self.lexicon is None:
+            return ''
+
+        families = map(Family, self.lexicon.iter('family'))
+
+        lexicon_section = '\n\n'.join(map(str, families))
+        return lexicon_section
 
     @property
     def ccg_testbed(self):
@@ -455,6 +459,187 @@ class Word:
         return fmt.format(header=self.header(),
                           colon=colon,
                           body=self.body())
+
+
+class FamilyEntry:
+    def __init__(self, xml_entry):
+        self.name = xml_entry.get('name')
+        self.category = self.parse_cat(xml_entry.find('*'))
+
+    def __str__(self):
+        fmt = 'entry{name}: {catstring};'
+
+        name = ' ' + self.name if not self.name.startswith('Entry-') else ''
+        catstring = self.category
+
+        return fmt.format(name=name, catstring=catstring).replace('[*DEFAULT*]', '*')
+
+    def parse_cat(self, cat):
+        if cat.tag == 'complexcat':
+            return self.parse_complexcat(cat)
+        elif cat.tag == 'atomcat':
+            return self.parse_atomcat(cat)
+        elif cat.tag == 'slash':
+            return self.parse_slash(cat)
+        elif cat.tag == 'dollar':
+            return self.parse_dollar(cat)
+        elif cat.tag == 'lf':
+            return ': ' + self.parse_lf(cat)
+        else:
+            raise ValueError('Unknown tag {}'.format(str(cat)))
+
+    def parse_complexcat(self, complexcat):
+        return ''.join(map(self.parse_cat, complexcat))
+
+    def parse_atomcat(self, atomcat):
+        fmt = '{type}{fs}'
+        type_ = atomcat.get('type', '')
+        fs = []
+        lf = []
+        for elem in atomcat:
+            if elem.tag == 'fs':
+                fs.append(self.parse_fs(elem))
+            elif elem.tag == 'lf':
+                fmt = '{type}{fs}: {lf}'
+                lf.append(self.parse_lf(elem))
+        if lf:
+            return fmt.format(type=type_, fs=''.join(fs), lf=''.join(lf))
+        return fmt.format(type=type_, fs=''.join(fs))
+
+    def parse_slash(self, slash):
+        mode = slash.get('mode', '')
+        dir = slash.get('dir', '')
+        if mode == '' and slash == '':
+            return ''
+        if dir == '/' and mode == '>':
+            mode = ''
+        if dir == '\\' and mode == '<':
+            mode = ''
+        return ' {}{} '.format(dir, mode)
+
+    def parse_dollar(self, dollar):
+        return '${}'.format(dollar.get('name', ''))
+
+    def parse_diamond(self, diamond):
+        if len(diamond) == 1:
+            fmt = '<{mode}>{name}'
+            mode = diamond.get('mode', '')
+            name = diamond.find('*').get('name', '')
+            return fmt.format(mode=mode, name=name)
+        fmt = '<{mode}>({props})'
+        mode = diamond.get('mode', '')
+        dstrings = []
+        for elem in diamond:
+            if elem.tag == 'diamond':
+                dstrings.append(self.parse_diamond(elem))
+            elif elem.tag in ['nomvar', 'prop']:
+                dstrings.append(elem.get('name', ''))
+            else:
+                raise ValueError("Unknown tag inside 'diamond': {}".format(elem.tag))
+            dstrings.append('^')
+        if dstrings[-1] == '^':
+            del dstrings[-1]
+        return fmt.format(mode=mode, props=' '.join(dstrings))
+
+    def parse_lf(self, lf):
+        satop = lf.find('satop')
+        cat = satop.get('nomvar', '')
+
+        catprops = []
+        for elem in satop:
+            if elem.tag == 'prop':
+                catprops.append(elem.get('name', ''))
+            elif elem.tag == 'diamond':
+                diamond = self.parse_diamond(elem)
+                if diamond:
+                    catprops.append(diamond)
+        if len(catprops) > 0:
+            cat += '({})'.format(' '.join(catprops))
+
+        return cat
+
+    def parse_fs(self, fs):
+        result = ''
+
+        id_ = fs.get('id')
+        if id_ is not None:
+            result += '<{id}>'.format(id=id_)
+        else:
+            inherited = fs.get('inheritsFrom')
+            if inherited is not None:
+                result += '<~{}>'.format(inherited)
+
+        features = []
+        for feat in fs:
+            nametag = feat.find('lf') or feat.find('featvar')
+            if nametag is not None:
+                nametag = nametag.find('nomvar') or nametag
+                name = nametag.get('name')
+            else:
+                name = feat.get('attr')
+            val = feat.get('val')
+            if val is not None:
+                name += '={}'.format(val)
+            if name is not None:
+                features.append(name)
+
+        if features:
+            result += '[{}]'.format(' '.join(features))
+
+        return result
+
+
+class FamilyMember:
+    def __init__(self, xml_member):
+        self.stem = xml_member.get('stem')
+        self.props = []
+        for k, v in xml_member.attrib.items():
+            if k in ['stem']:
+                continue
+            self.props.append('{}={}'.format(k, v))
+
+    def __str__(self):
+        return 'member: {stem};'.format(stem=self.stem)
+        if self.props:
+            props = '({})'.format(' '.join(self.props))
+        else:
+            props = ''
+        return 'member: {stem}{props};'.format(stem=self.stem, props=props)
+
+
+class Family:
+    def __init__(self, xml_family):
+        self.xml = xml_family
+        self.name = xml_family.get('name')
+        self.pos = xml_family.get('pos')
+
+        self.entries = [FamilyEntry(entry) for entry in xml_family.iter('entry')]
+        self.members = []
+        if xml_family.get('closed') == 'true':
+            self.members = [FamilyMember(member) for member in xml_family.iter('member')]
+
+        # store all additional attributes, which are not special in some sense
+        captured = ['pos', 'name', 'closed']
+        self.attributes = {k: v for k, v in xml_family.attrib.items() if k not in captured}
+
+    def __str__(self):
+        fmt = ('family {name}{attr} {{\n'
+               '  {entries}\n'
+               '  {members}\n'
+               '}}')
+
+        attributes = [] if self.name == self.pos else [self.pos]
+        attributes += ['{}="{}"'.format(k, v) for k, v in self.attributes.items()]
+        attr = ('(' + ', '.join(attributes) + ')') if attributes else ''
+
+        entries = '\n  '.join(map(str, self.entries))
+        members = '\n  '.join(map(str, self.members))
+
+        return fmt.format(name=self.name,
+                          attr=attr,
+                          entries=entries,
+                          members=members)
+
 
 def xml2ccg():
     """Entry point of the program."""

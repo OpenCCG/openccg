@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import re
 import sys
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
@@ -396,6 +397,12 @@ class Feature:
                           licensing=licensing)
 
 
+def maybe_quote(word):
+    if re.match('.*[^a-zA-Z0-9]+.*', word):
+        return "'{}'".format(word)
+    return word
+
+
 class Word:
     def __init__(self, xml_entry):
         self.xml = xml_entry
@@ -421,7 +428,7 @@ class Word:
         if self.attributes:
             attr = '({})'.format(','.join(self.attributes))
 
-        return fmt.format(stem=self.stem,
+        return fmt.format(stem=maybe_quote(self.stem),
                           family_colon=family_colon,
                           family=self.family,
                           attr=attr)
@@ -466,7 +473,7 @@ class Word:
 class FamilyEntry:
     def __init__(self, xml_entry):
         self.name = xml_entry.get('name')
-        self.category = self.parse_cat(xml_entry.find('*'))
+        self.category = CategoryParser().parse_cat(xml_entry.find('*'))
 
     def __str__(self):
         fmt = 'entry{name}: {catstring};'
@@ -476,11 +483,15 @@ class FamilyEntry:
 
         return fmt.format(name=name, catstring=catstring).replace('[*DEFAULT*]', '*')
 
+
+class CategoryParser:
     def parse_cat(self, cat):
         if cat.tag == 'complexcat':
             return self.parse_complexcat(cat)
         elif cat.tag == 'atomcat':
             return self.parse_atomcat(cat)
+        elif cat.tag == 'setarg':
+            return self.parse_setarg(cat)
         elif cat.tag == 'slash':
             return self.parse_slash(cat)
         elif cat.tag == 'dollar':
@@ -508,6 +519,10 @@ class FamilyEntry:
             return fmt.format(type=type_, fs=''.join(fs), lf=''.join(lf))
         return fmt.format(type=type_, fs=''.join(fs))
 
+    def parse_setarg(self, setarg):
+        results = ''.join(map(self.parse_cat, setarg))
+        return '{{{}}}'.format(results)
+
     def parse_slash(self, slash):
         mode = slash.get('mode', '')
         dir = slash.get('dir', '')
@@ -517,6 +532,8 @@ class FamilyEntry:
             mode = ''
         if dir == '\\' and mode == '<':
             mode = ''
+        if mode == '.':
+            mode = '|'
         return ' {}{} '.format(dir, mode)
 
     def parse_dollar(self, dollar):
@@ -591,24 +608,6 @@ class FamilyEntry:
         return result
 
 
-class FamilyMember:
-    def __init__(self, xml_member):
-        self.stem = xml_member.get('stem')
-        self.props = []
-        for k, v in xml_member.attrib.items():
-            if k in ['stem']:
-                continue
-            self.props.append('{}={}'.format(k, v))
-
-    def __str__(self):
-        return 'member: {stem};'.format(stem=self.stem)
-        if self.props:
-            props = '({})'.format(' '.join(self.props))
-        else:
-            props = ''
-        return 'member: {stem}{props};'.format(stem=self.stem, props=props)
-
-
 class Family:
     def __init__(self, xml_family):
         self.xml = xml_family
@@ -617,8 +616,6 @@ class Family:
 
         self.entries = [FamilyEntry(entry) for entry in xml_family.iter('entry')]
         self.members = []
-        if xml_family.get('closed') == 'true':
-            self.members = [FamilyMember(member) for member in xml_family.iter('member')]
 
         # store all additional attributes, which are not special in some sense
         captured = ['pos', 'name', 'closed']

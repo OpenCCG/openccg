@@ -574,14 +574,20 @@ class CategoryParser:
     def parse_slash(self, slash):
         mode = slash.get('mode', '')
         dir = slash.get('dir', '')
-        if mode == '' and slash == '':
+        if dir == '' and mode == '':
             return ''
-        if dir == '/' and mode == '>':
+        # If only a mode is given, assume default dir for that mode
+        if dir == '':
+            if mode == '.':
+                dir = '|'
+            elif mode == '>':
+                dir = '/'
+            elif mode == '<':
+                dir = '\\'
+        if (dir == '/' and mode == '>') \
+                or (dir == '\\' and mode == '<') \
+                or (dir == '|' and mode == '.'):
             mode = ''
-        if dir == '\\' and mode == '<':
-            mode = ''
-        if mode == '.':
-            mode = '|'
         return ' {}{} '.format(dir, mode)
 
     def parse_dollar(self, dollar):

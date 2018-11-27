@@ -66,6 +66,8 @@ class SysOut:
 def compare_grammar_tree(left, right):
     """Compares two XML tree structures.
 
+    If left is None, the comparison is skipped.
+
     Args:
         left: The left tree.
         right: The right tree.
@@ -82,7 +84,11 @@ def compare_grammar_tree(left, right):
         return True
 
     def tree_sort_key(elem):
-        return elem.tag + str(elem.attrib)
+        return elem.tag + str(sorted('{}={}'.format(*a) for a in elem.attrib.items()))
+
+    # Skip non-existent original files
+    if left is None:
+        return True, (None, None)
 
     # findall('*') selects children, so the root element is skipped on purpose,
     # as its "name" attribute differs depending on how ccg2xml is called.

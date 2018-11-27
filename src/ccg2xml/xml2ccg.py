@@ -89,24 +89,37 @@ class XMLGrammar:
             if macro.find('fs') is not None:
                 fs = macro.find('fs')
                 feature_id = fs.get('id')
-                feature = fs.find('feat').get('attr')
+                feature = fs.get('attr')
+                if fs.find('feat') is not None:
+                    feature = fs.find('feat').get('attr')
             # <diamond mode=""> declaration
             elif macro.find('lf') is not None:
                 feature = macro.get('name')[1:]
                 lf = macro.find('lf')
-                feature_id = lf.find('satop').get('nomvar')
-                mode = lf.find('satop').find('diamond').get('mode')
+                satop = lf.find('satop')
+                feature_id = maybe_quote(satop.get('nomvar'))
+                if satop.find('diamond') is not None:
+                    mode = satop.find('diamond').get('mode')
+                else:
+                    mode = satop.find('prop').get('name')
                 if feature_id != mode:
                     feature_id = '{}:{}'.format(feature_id, mode)
             else:
                 # TODO(shoeffner): Is there actually a different case?
                 continue
-            features[feature].feature_struct_ids.append(feature_id)
+            try:
+                features[feature].feature_struct_ids.append(feature_id)
+            except KeyError:
+                features[feature] = Feature()
+                features[feature].name = feature
+                features[feature].feature_struct_ids.append(feature_id)
 
         # Traverse again to add all children to their parents (second pass to
         # ensure all parents exist)
         for feature in features.values():
-            parents = feature.xml.get('parents', '').split()
+            parents = []
+            if feature.xml is not None:
+                parents = feature.xml.get('parents', '').split()
             if parents:
                 if len(parents) > 1:
                     feature.additional_parents = parents[1:]
@@ -346,12 +359,17 @@ class XMLGrammar:
 
 
 class Feature:
-    def __init__(self, xml_type):
-        self.xml = xml_type
-        # found in types.xml
-        self.name = xml_type.get('name')
-        # toplevel if it has no parents
-        self.toplevel = xml_type.get('parents') is None
+    def __init__(self, xml_type=None):
+        if xml_type is None:
+            self.xml = None
+            self.name = None
+            self.toplevel = False
+        else:
+            self.xml = xml_type
+            # found in types.xml
+            self.name = xml_type.get('name')
+            # toplevel if it has no parents
+            self.toplevel = xml_type.get('parents') is None
 
         self.licensing_features = {}
         self.children = []
@@ -409,7 +427,7 @@ class Feature:
             licensing = '(' + licensing + ')'
 
         return fmt.format(dist=dist,
-                          name=self.name,
+                          name=maybe_quote(self.name),
                           syntactic=syntactic,
                           parents=parents,
                           colon=colon,
@@ -419,8 +437,13 @@ class Feature:
 
 
 def maybe_quote(word):
-    if re.match('.*[^a-zA-Z0-9]+.*', word):
-        return "'{}'".format(word)
+    if re.match('.*[^a-zA-Z0-9-_*]+.*', word):
+        if "'" in word and '"' in word:
+            raise ValueError('Can not handle single and double quotes in a single word:  {}'.format(word))
+        elif "'" in word:
+            return '"{}"'.format(word)
+        else:
+            return "'{}'".format(word)
     return word
 
 
@@ -428,7 +451,9 @@ class Word:
     def __init__(self, xml_entry):
         self.xml = xml_entry
         self.form = xml_entry.get('word')  # inflected form
-        self.stem = xml_entry.get('stem')
+        self.stem = xml_entry.get('stem', self.form)
+        self.form = maybe_quote(self.form)
+        self.stem = maybe_quote(self.stem)
         self.family = xml_entry.get('pos', '')
         self.attributes = xml_entry.get('class', '').split()
         for key in ['pred', 'excluded', 'coart']:
@@ -449,9 +474,9 @@ class Word:
         if self.attributes:
             attr = '({})'.format(','.join(self.attributes))
 
-        return fmt.format(stem=maybe_quote(self.stem),
+        return fmt.format(stem=self.stem,
                           family_colon=family_colon,
-                          family=self.family,
+                          family=maybe_quote(self.family),
                           attr=attr)
 
     def body(self, explicit=False):
@@ -469,9 +494,11 @@ class Word:
         form = ''
         features = ''
         if self.form != self.stem or explicit:
-            form = self.form + ': '
+            form = self.form
+            if self.features:
+                form += ': '
         if self.features:
-            features = ' '.join(self.features)
+            features = ' '.join(map(maybe_quote, self.features))
 
         return fmt.format(form=form,
                           features=features)
@@ -499,7 +526,7 @@ class FamilyEntry:
     def __str__(self):
         fmt = 'entry{name}: {catstring};'
 
-        name = ' ' + self.name if not self.name.startswith('Entry-') else ''
+        name = ' ' + maybe_quote(self.name) if not self.name.startswith('Entry-') else ''
         catstring = self.category
 
         return fmt.format(name=name, catstring=catstring).replace('[*DEFAULT*]', '*')
@@ -527,7 +554,7 @@ class CategoryParser:
 
     def parse_atomcat(self, atomcat):
         fmt = '{type}{fs}'
-        type_ = atomcat.get('type', '')
+        type_ = maybe_quote(atomcat.get('type', ''))
         fs = []
         lf = []
         for elem in atomcat:
@@ -563,7 +590,7 @@ class CategoryParser:
     def parse_diamond(self, diamond):
         if len(diamond) == 1:
             fmt = '<{mode}>{name}'
-            mode = diamond.get('mode', '')
+            mode = maybe_quote(diamond.get('mode', ''))
             name = diamond.find('*').get('name', '')
             return fmt.format(mode=mode, name=name)
         fmt = '<{mode}>({props})'
@@ -619,7 +646,7 @@ class CategoryParser:
                 name = feat.get('attr')
             val = feat.get('val')
             if val is not None:
-                name += '={}'.format(val)
+                name += '={}'.format(maybe_quote(val))
             if name is not None:
                 features.append(name)
 
@@ -648,14 +675,14 @@ class Family:
                '  {members}\n'
                '}}')
 
-        attributes = [] if self.name == self.pos else [self.pos]
-        attributes += ['{}="{}"'.format(k, v) for k, v in self.attributes.items()]
+        attributes = [] if self.name == self.pos else [maybe_quote(self.pos)]
+        attributes += ['{}="{}"'.format(maybe_quote(k), maybe_quote(v)) for k, v in self.attributes.items()]
         attr = ('(' + ', '.join(attributes) + ')') if attributes else ''
 
         entries = '\n  '.join(map(str, self.entries))
         members = '\n  '.join(map(str, self.members))
 
-        return fmt.format(name=self.name,
+        return fmt.format(name=maybe_quote(self.name),
                           attr=attr,
                           entries=entries,
                           members=members)

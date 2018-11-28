@@ -63,6 +63,31 @@ class SysOut:
         sys.stdout = self.original_stdout
 
 
+def compare_type_elements(left, right):
+    """Compares two <type ... /> elements."""
+    if left.tag != 'type' != right.tag:
+        return False
+    if left.get('name') != right.get('name'):
+        return False
+    if sorted(left.get('parents').split()) != sorted(right.get('parents').split()):
+        return False
+    return True
+
+
+def compare_file_tags(left, right):
+    """Compares two elements with a file attribute <... file="..." />.
+    Returns True if they are the same, except for different filenames."""
+    if 'file' not in left.attrib.keys() and 'file' not in right.attrib.keys():
+        return False
+    if left.tag != right.tag:
+        return False
+    return True
+
+
+def tree_sort_key(elem):
+    return elem.tag + str(sorted('{}={}'.format(*a) for a in elem.attrib.items()))
+
+
 def compare_grammar_tree(left, right):
     """Compares two XML tree structures.
 
@@ -72,38 +97,40 @@ def compare_grammar_tree(left, right):
         left: The left tree.
         right: The right tree.
     """
-    # Special cases
-    def compare_type_elements(l, r):
-        """Compares two <type ... /> elements."""
-        if l.tag != 'type' != r.tag:
-            return False
-        if l.get('name') != r.get('name'):
-            return False
-        if sorted(l.get('parents').split()) != sorted(r.get('parents').split()):
-            return False
-        return True
-
-    def tree_sort_key(elem):
-        return elem.tag + str(sorted('{}={}'.format(*a) for a in elem.attrib.items()))
 
     # Skip non-existent original files
     if left is None:
         return True, (None, None)
 
+    for l in left.findall('entry'):
+        if l.get('stem') is None and l.get('word') is not None:
+            l.attrib['stem'] = l.get('word')
+
     # findall('*') selects children, so the root element is skipped on purpose,
     # as its "name" attribute differs depending on how ccg2xml is called.
-    iter_left = sorted(left.findall('*'), key=tree_sort_key)
-    iter_right = sorted(right.findall('*'), key=tree_sort_key)
+    list_left = sorted(left.findall('*'), key=tree_sort_key)
+    list_right = sorted(right.findall('*'), key=tree_sort_key)
 
-    for l, r in zip(iter_left, iter_right):
-        if l.tag != r.tag:
-            return False, (l, r)
-        if l.attrib != r.attrib:
-            for comp in [compare_type_elements]:
+    iter_right = iter(list_right)
+    r = None
+    for l in list_left:
+        equal = False
+        first_r = None
+        while not equal:
+            try:
+                r = next(iter_right)
+                if first_r is None:
+                    first_r = r
+            except StopIteration:
+                return False, (l, first_r)
+
+            if l.tag == r.tag and l.attrib == r.attrib:
+                break
+
+            for comp in [compare_type_elements, compare_file_tags]:
                 if comp(l, r):
+                    equal = True
                     break
-            else:  # If none of the special comparisons breaks, return False
-                return False, (l, r)
 
     return True, (None, None)
 

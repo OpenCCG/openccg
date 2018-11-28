@@ -782,7 +782,7 @@ def macrosub(macdef, args, lineno):
     else:
         # Otherwise, make a copy of the text and substitute the arguments
         # into it.
-        text = text[:]
+        text = copy.deepcopy(text)
         args = dict(list(zip(macdef.args, args)))
         l = len(text)
         x = 0
@@ -1878,7 +1878,7 @@ def make_word_morph_xml():
                 word_pos_list += [pos]
         for y in word_pos_list:
             # Make a copy of the word's XML and set the POS appropriately.
-            entry = x[:]
+            entry = copy.deepcopy(x)
             putprop('pos', y, entry[1])
             xml += [entry]
     return xml

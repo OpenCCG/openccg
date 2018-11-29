@@ -326,6 +326,11 @@ class TestXML2CCG(unittest.TestCase):
         """
         pass
 
+    @test_grammar('diaspace')
+    def test_diaspace(self):
+        """${OPENCCG_HOME}/ccg-format-grammars/diaspace/diaspace.ccg"""
+        pass
+
     @classmethod
     def tearDownClass(cls):
         """Removes the temp data after the tests."""

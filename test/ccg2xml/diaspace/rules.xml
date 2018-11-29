@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Copyright (C) 2003 Jason Baldridge and Michael White 
+Copyright (C) 2004 Michael White, Geert-Jan M. Kruijff (typechanging rules)
+Copyright (C) 2005 Geert-Jan M. Kruijff
+Adopted from the moloko rules. 
+-->
+<rules name="diaspace-english" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../openccg/grammars/rules.xsd">
+  <application dir="forward"/>
+  <application dir="backward"/>
+  <composition dir="forward" harmonic="true"/>
+  <composition dir="forward" harmonic="false"/>
+  <composition dir="backward" harmonic="true"/>
+  <composition dir="backward" harmonic="false"/>
+  
+  <!-- <typeraising dir="forward" useDollar="true"/>-->
+  <typeraising dir="forward" useDollar="false">
+    <arg>
+      <atomcat type="pper"/>
+    </arg>
+  </typeraising>
+  
+  <!--  <typeraising dir="backward" useDollar="false"/> -->
+  
+  <substitution dir="forward" harmonic="true"/>
+  <substitution dir="forward" harmonic="false"/>
+  <substitution dir="backward" harmonic="true"/>
+  <substitution dir="backward" harmonic="false"/>
+  
+</rules>

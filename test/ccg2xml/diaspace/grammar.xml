@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- ====================================================================================
+Title:       grammar.xml
+Copyright:   Copyright (c) 2008-2014 SFB-TR 8. All rights reserved.
+Licence:     This file is free software; you can redistribute it and/or modify
+             it under the terms of the GNU Lesser General Public License as published by
+             the Free Software Foundation; either version 2.1, or (at your option)
+             any later version.
+
+             This file is distributed in the hope that it will be useful,
+             but  WITHOUT ANY WARRANTY; without even the implied warranty of
+             MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+             GNU Lesser General Public License for more details.
+
+
+======================================================================================== -->
+
+<!-- ====================================================================================
+ 
+ Grammar description file. 
+ 
+ Author : Rob Ross 
+ 
+======================================================================================== -->
+<grammar name="english" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../openccg/grammars/grammar.xsd">
+  
+  <lexicon file="lexicon.xml"/>
+  <morphology file="morph.xml"/>
+  <rules file="rules.xml"/>
+  <types file="types.xml"/>
+  
+</grammar>

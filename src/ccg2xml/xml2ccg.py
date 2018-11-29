@@ -81,10 +81,14 @@ class XMLGrammar:
         features = OrderedDict()
         for type_ in self.types.iter('type'):
             feature = Feature(type_)
+            if feature.name in features:
+                raise KeyError('Feature {} specified twice in types.'.format(feature.name))
             features[feature.name] = feature
 
+        special_macros = []
         # Get all feature structure ids from morph.xml
         for macro in self.morph.iter('macro'):
+            feature_val = None
             # Simple numeric id
             if macro.find('fs') is not None:
                 fs = macro.find('fs')
@@ -92,6 +96,15 @@ class XMLGrammar:
                 feature = fs.get('attr')
                 if fs.find('feat') is not None:
                     feature = fs.find('feat').get('attr')
+                    feature_val = fs.find('feat').get('val')
+                if fs.get('val') is not None:
+                    feature_val = fs.get('val')
+                    special_macro = SpecialMacro(macro.get('name'),
+                                                 feature_id,
+                                                 feature,
+                                                 feature_val)
+                    special_macros.append(special_macro)
+                    continue
             # <diamond mode=""> declaration
             elif macro.find('lf') is not None:
                 feature = macro.get('name')[1:]
@@ -99,7 +112,8 @@ class XMLGrammar:
                 satop = lf.find('satop')
                 feature_id = maybe_quote(satop.get('nomvar'))
                 if satop.find('diamond') is not None:
-                    mode = satop.find('diamond').get('mode')
+                    diamond = satop.find('diamond')
+                    mode = diamond.get('mode')
                 else:
                     mode = satop.find('prop').get('name')
                 if feature_id != mode:
@@ -109,8 +123,8 @@ class XMLGrammar:
                 continue
             try:
                 features[feature].feature_struct_ids.append(feature_id)
-            except KeyError:
-                features[feature] = Feature()
+            except KeyError:  # New feature from a macro definition
+                features[feature] = Feature(xml_type=macro, val=feature_val)
                 features[feature].name = feature
                 features[feature].feature_struct_ids.append(feature_id)
 
@@ -120,10 +134,22 @@ class XMLGrammar:
             parents = []
             if feature.xml is not None:
                 parents = feature.xml.get('parents', '').split()
+                prop = feature.xml.find('./lf/satop/diamond/prop')
+                if prop is not None:
+                    name = prop.get('name')
+                    if name in features:
+                        sf = SimpleFeature(name)
+                        feature.children.append(sf)
+                        feature.toplevel = True
             if parents:
                 if len(parents) > 1:
-                    feature.additional_parents = parents[1:]
+                    feature.additional_parents += parents[1:]
                 features[parents[0]].children.append(feature)
+
+        for feature in special_macros:
+            if feature.attr in features:
+                feature.additional_parents += feature.attr
+            features[feature.attr + feature.name] = feature
 
         # Determine which features are distributive
         dist_features = self.lexicon.find('distributive-features')
@@ -359,7 +385,7 @@ class XMLGrammar:
 
 
 class Feature:
-    def __init__(self, xml_type=None):
+    def __init__(self, xml_type=None, val=None):
         if xml_type is None:
             self.xml = None
             self.name = None
@@ -367,10 +393,11 @@ class Feature:
         else:
             self.xml = xml_type
             # found in types.xml
-            self.name = xml_type.get('name')
+            self.name = xml_type.get('name').replace('@', '')
             # toplevel if it has no parents
             self.toplevel = xml_type.get('parents') is None
 
+        self.val = val
         self.licensing_features = {}
         self.children = []
 
@@ -399,6 +426,13 @@ class Feature:
         children = ' '.join(child.__str__(depth+1) for child in self.children)
         semicolon = ''
         licensing = ''
+
+        if self.val is not None:  # Special feature
+            if depth == 0:
+                return '{}<{}>: {}:{};'.format(maybe_quote(self.name),
+                                               ','.join(self.feature_struct_ids),
+                                               maybe_quote(self.xml.get('attr')),
+                                               maybe_quote(self.val))
 
         if self.toplevel:
             dist = '!' if self.distributive else ''
@@ -434,6 +468,57 @@ class Feature:
                           children=children,
                           semicolon=semicolon,
                           licensing=licensing)
+
+
+class SimpleFeature(Feature):
+    def __init__(self, name):
+        super().__init__()
+        self.name = name
+
+    def __str__(self, depth=0):
+        if depth != 0 and self.additional_parents:
+            return '{}[{}]'.format(maybe_quote(self.name),
+                                   ' '.join(map(maybe_quote, self.additional_parents)))
+        return maybe_quote(self.name)
+
+
+class SpecialMacro(Feature):
+    """Allows to do create explicit feature instructions.
+
+        <macro name="@acc0">
+          <fs id="0" attr="case" val="p-case"/>
+        </macro>
+
+    is converted to
+
+        case<0>: acc0:p-case;
+    """
+
+    def __init__(self, name, feature_id, feature, val):
+        super().__init__()
+        self.toplevel = True
+        self.name = name.replace('@', '')
+        self.id = feature_id
+        self.attr = feature
+        self.val = val
+
+    def __str__(self, depth=0):
+        if depth == 0:
+            fs = ['{}<{}>: {}:{};'.format(maybe_quote(self.attr),
+                                          maybe_quote(self.id),
+                                          maybe_quote(self.name),
+                                          maybe_quote(self.val))]
+            # A toplevel special feature consideres its children as siblings
+            for f in self.children:
+                fs.append('{}<{}>: {}:{};'.format(maybe_quote(f.attr),
+                                                  maybe_quote(f.id),
+                                                  maybe_quote(f.name),
+                                                  maybe_quote(f.val)))
+            return '\n  '.join(fs)
+
+        else:
+            return '{}:{}'.format(maybe_quote(self.name),
+                                  maybe_quote(self.val))
 
 
 def maybe_quote(word):

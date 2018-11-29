@@ -84,6 +84,49 @@ def compare_file_tags(left, right):
     return True
 
 
+def flatten_morph_macros_with_fs_feat_val(tree):
+    """ccg2xml does not handle the special case mentioned in tiny ccg correctly.
+
+    A feature of the form
+
+        case<0>: acc0:p-case;
+
+    should be converted to
+
+        <macro name="@acc0">
+          <fs id="0" attr="case" val="p-case"/>
+        </macro>
+
+    but instead is converted to
+
+        <macro name="@acc0">
+          <fs id="0">
+            <feat attr="case" val="p-case" />
+          </fs>
+        </macro>
+
+    So far, it seems that this is the only case where feat actually gets
+    assigned a val, thus this method fixes the situation by replacing
+    all fs inside a macro inside the tree with a single-element version if and
+    only if a val is present for the feat element.
+    """
+    for macro in tree.findall('macro'):
+        fs = macro.find('fs')
+        if fs is None:
+            continue
+        feat = fs.find('feat')
+        if feat is None:
+            continue
+        val = feat.get('val')
+        if val is None:
+            continue
+
+        fs.attrib['attr'] = feat.get('attr')
+        fs.attrib['val'] = val
+        fs.remove(feat)
+    return tree
+
+
 def tree_sort_key(elem):
     return elem.tag + str(sorted('{}={}'.format(*a) for a in elem.attrib.items()))
 
@@ -105,6 +148,8 @@ def compare_grammar_tree(left, right):
     for l in left.findall('entry'):
         if l.get('stem') is None and l.get('word') is not None:
             l.attrib['stem'] = l.get('word')
+
+    right = flatten_morph_macros_with_fs_feat_val(right)
 
     # findall('*') selects children, so the root element is skipped on purpose,
     # as its "name" attribute differs depending on how ccg2xml is called.

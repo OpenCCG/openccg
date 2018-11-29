@@ -437,7 +437,7 @@ class Feature:
 
 
 def maybe_quote(word):
-    if re.match('.*[^a-zA-Z0-9-_*]+.*', word):
+    if re.match('.*[^a-zA-Z0-9-+%_*]+.*', word):
         if "'" in word and '"' in word:
             raise ValueError('Can not handle single and double quotes in a single word:  {}'.format(word))
         elif "'" in word:

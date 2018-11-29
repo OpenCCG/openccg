@@ -62,6 +62,15 @@ class XMLGrammar:
         self.cache = {}
 
     def __getattribute__(self, attr):
+        """Allows to access the file contents of an XMLGrammar in a more
+        pythonic way.
+
+        grammar = XMLGrammar('example-grammar')
+        grammar.morph
+
+        will be the xml root element of example-grammar/prefix-morph.xml.
+        This works identically for grammar, morph, lexicon, rules, types, and testbed.
+        """
         if attr in XMLGrammar.valid_filenames:
             try:
                 if attr not in self.cache:
@@ -119,7 +128,8 @@ class XMLGrammar:
                 if feature_id != mode:
                     feature_id = '{}:{}'.format(feature_id, mode)
             else:
-                # TODO(shoeffner): Is there actually a different case?
+                # TODO(shoeffner): Is there actually a different case? ccg2xml
+                # can not create more than this.
                 continue
             try:
                 features[feature].feature_struct_ids.append(feature_id)
@@ -146,6 +156,8 @@ class XMLGrammar:
                     feature.additional_parents += parents[1:]
                 features[parents[0]].children.append(feature)
 
+        # Add special macros and keep the inheritance structure intact by
+        # adding finding their parents
         for feature in special_macros:
             if feature.attr in features:
                 feature.additional_parents += feature.attr
@@ -179,6 +191,15 @@ class XMLGrammar:
 
     @property
     def ccg_words(self):
+        """Generates a flat list of word entries.
+
+        Most ccg files contain macros to make e.g. 3rd pers sg simpler. We
+        do not have access to these macros and we don't try anything fancy
+        to infer them, thus the section will be blown up a lot compared to a
+        manually crafted words section.
+
+        Note that grouping is performed where possible.
+        """
         if self.morph is None:
             return ''
 
@@ -321,6 +342,9 @@ class XMLGrammar:
 
     @property
     def ccg_lexicon(self):
+        """The lexicon is a printout of all families.
+        Families are parsed inside the Family class.
+        """
         if self.lexicon is None:
             return ''
 
@@ -417,6 +441,12 @@ class Feature:
         return list(set(features))
 
     def __str__(self, depth=0):
+        """Features are represented in various different ways depending on
+        the feature hierarchy, available information, and their function as
+        either a type or a macro. The __str__ function tries to capture all
+        these nuances with a basic format and some shortcuts for special
+        features (i.e. implicit macro features).
+        """
         fmt = '{dist}{name}{syntactic}{licensing}{parents}{colon}{children}{semicolon}'
 
         dist = ''
@@ -471,6 +501,12 @@ class Feature:
 
 
 class SimpleFeature(Feature):
+    """A SimpleFeature is an implicit feature which is only a single name entry.
+
+    It is likely that this occurs only in slightly incorrect hand-written xml
+    grammars, however the results seem to fix most issues inside the
+    (re-)generated xml grammar.
+    """
     def __init__(self, name):
         super().__init__()
         self.name = name
@@ -522,6 +558,15 @@ class SpecialMacro(Feature):
 
 
 def maybe_quote(word):
+    """In ccg, atoms must match /[a-zA-Z0-9-+%_*]+/ or be a quoted string. If
+    an atom from an xml file does not match that expression, it will be quoted.
+
+    If an expression contains ' and ", this function raises a ValueError -- the
+    easiest way to solve this is to change the grammar xml files. (Note that no
+    escaping is taken into account).
+    If only one type of quotes is present, the other type is used to quote the
+    string, which is again allowed in ccg.
+    """
     if re.match('.*[^a-zA-Z0-9-+%_*]+.*', word):
         if "'" in word and '"' in word:
             raise ValueError('Can not handle single and double quotes in a single word:  {}'.format(word))
@@ -618,7 +663,13 @@ class FamilyEntry:
 
 
 class CategoryParser:
+    """The CategoryParser recursively parses family rules.
+
+    Usually, just the parse_cat function should be called."""
     def parse_cat(self, cat):
+        """This function directs the parsing to the correct function depending
+        on the categories xml tag name. It prepends <lf> values with a colon.
+        """
         if cat.tag == 'complexcat':
             return self.parse_complexcat(cat)
         elif cat.tag == 'atomcat':

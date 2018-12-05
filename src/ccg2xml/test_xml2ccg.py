@@ -131,6 +131,19 @@ def tree_sort_key(elem):
     return elem.tag + str(sorted('{}={}'.format(*a) for a in elem.attrib.items()))
 
 
+def recursive_tree_comparison(left, right):
+    if left.tag != right.tag:
+        return False
+    elif left.attrib != right.attrib:
+        return False
+    elif left.find('*') is not None and right.find('*') is None:
+        return False
+    elif left.find('*') is None:
+        return True
+    else:
+        return all(recursive_tree_comparison(l, r) for l, r in zip(iter(left), iter(right)))
+
+
 def compare_grammar_tree(left, right):
     """Compares two XML tree structures.
 
@@ -169,7 +182,7 @@ def compare_grammar_tree(left, right):
             except StopIteration:
                 return False, (l, first_r)
 
-            if l.tag == r.tag and l.attrib == r.attrib:
+            if recursive_tree_comparison(l, r):
                 break
 
             for comp in [compare_type_elements, compare_file_tags]:

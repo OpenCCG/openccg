@@ -162,6 +162,7 @@ def compare_grammar_tree(left, right):
         if l.get('stem') is None and l.get('word') is not None:
             l.attrib['stem'] = l.get('word')
 
+    left = flatten_morph_macros_with_fs_feat_val(left)
     right = flatten_morph_macros_with_fs_feat_val(right)
 
     # findall('*') selects children, so the root element is skipped on purpose,

@@ -291,10 +291,13 @@ class XMLGrammar:
                 rule += ' $'
 
             # complex rule: argument => result
-            if item.find('arg') is not None and item.find('result') is not None:
+            if item.find('arg') is not None:
                 argument = CategoryParser().parse_cat(item.find('arg').find('*'))
+                rule += ': {}'.format(argument)
+
+            if item.find('result') is not None:
                 result = CategoryParser().parse_cat(item.find('result').find('*'))
-                rule += ': {} => {}'.format(argument, result)
+                rule += '=> {}'.format(result)
 
             rules.append(rule + ';')
         return rules
@@ -666,12 +669,12 @@ class CategoryParser:
     """The CategoryParser recursively parses family rules.
 
     Usually, just the parse_cat function should be called."""
-    def parse_cat(self, cat):
+    def parse_cat(self, cat, depth=0):
         """This function directs the parsing to the correct function depending
         on the categories xml tag name. It prepends <lf> values with a colon.
         """
         if cat.tag == 'complexcat':
-            return self.parse_complexcat(cat)
+            return self.parse_complexcat(cat, depth=depth)
         elif cat.tag == 'atomcat':
             return self.parse_atomcat(cat)
         elif cat.tag == 'setarg':
@@ -685,8 +688,12 @@ class CategoryParser:
         else:
             raise ValueError('Unknown tag {}'.format(str(cat)))
 
-    def parse_complexcat(self, complexcat):
-        return ''.join(map(self.parse_cat, complexcat))
+    def parse_complexcat(self, complexcat, depth=0):
+        if depth > 0:
+            fmt = '({})'
+        else:
+            fmt = '{}'
+        return fmt.format(''.join(map(lambda x: self.parse_cat(x, depth+1), complexcat)))
 
     def parse_atomcat(self, atomcat):
         fmt = '{type}{fs}'
@@ -779,16 +786,21 @@ class CategoryParser:
                 result += '<~{}>'.format(inherited)
 
         features = []
-        for feat in fs:
-            nametag = feat.find('lf') or feat.find('featvar')
+        for feat in fs.iter('feat'):
+            if feat.get('attr') == 'index':
+                nametag = feat.find('lf/nomvar')
+                features.append(nametag.get('name'))
+                continue
+            nametag = feat.find('featvar')
+            name = feat.get('attr')
             if nametag is not None:
                 nametag = nametag.find('nomvar') or nametag
-                name = nametag.get('name')
-            else:
-                name = feat.get('attr')
+                nomvar_name = nametag.get('name')
+                if nomvar_name.lower() != name:
+                    name = nomvar_name
             val = feat.get('val')
             if val is not None:
-                name += '={}'.format(maybe_quote(val))
+                name += '={}'.format(maybe_quote(val) if val != '[*DEFAULT*]' else val)
             if name is not None:
                 features.append(name)
 
@@ -805,7 +817,7 @@ class Family:
         self.pos = xml_family.get('pos')
 
         self.entries = [FamilyEntry(entry) for entry in xml_family.iter('entry')]
-        self.members = []
+        self.members = [maybe_quote(member.get('stem')) for member in xml_family.iter('member')]
 
         # store all additional attributes, which are not special in some sense
         captured = ['pos', 'name', 'closed']
@@ -822,7 +834,9 @@ class Family:
         attr = ('(' + ', '.join(attributes) + ')') if attributes else ''
 
         entries = '\n  '.join(map(str, self.entries))
-        members = '\n  '.join(map(str, self.members))
+        members = ''
+        if len(self.members) > 0:
+            members = 'member: ' + (', '.join(self.members)) + ';'
 
         return fmt.format(name=maybe_quote(self.name),
                           attr=attr,

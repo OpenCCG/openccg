@@ -2105,6 +2105,8 @@ class CSFamily(CSBlock):
         # CFG production rules, using CSFamily.prod.lineno and endlineno
         self.text.config(takefocus=True)
         idx = self.text.search('family ' + self.name, "START")
+        idx = idx or self.text.search("family '" + self.name + "'", "START")
+        idx = idx or self.text.search('family "' + self.name + '"', "START")
         self.text.mark_set(CURRENT, idx)
         self.text.see(CURRENT)
 
@@ -2116,6 +2118,8 @@ class CSFamily(CSBlock):
     # Finished editing
     # def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame, homeButton, undoButton):
     def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame):
+        if self.text is None:
+            return
         # We force the text contents of the cfile object to copy over
         # all that is presently in the current text-box
         cfile.setAllText(self.text.get(1.0,END))

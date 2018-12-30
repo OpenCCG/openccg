@@ -33,7 +33,7 @@
     <property name="build.dest" value="./output/classes"/>
     <property name="build.gen" value="${top.dir}/output/gen"/>
     <property name="build.javadocs" value="${docs.dir}/api"/>
-  	
+
     <path id="build.classpath">
       <pathelement location="${lib.dir}/ant-junit.jar"/>
       <pathelement location="${lib.dir}/ant-launcher.jar"/>
@@ -57,7 +57,7 @@
     <filter token="log" value="true"/>
     <filter token="verbose" value="true"/>
   </target>
-  
+
 
   <!-- =================================================================== -->
   <!-- Help on usage                                                       -->
@@ -81,7 +81,7 @@
     <echo message=""/>
     <echo message=""/>
   </target>
-  
+
 
   <!-- =================================================================== -->
   <!-- Prepares the build directories                                      -->
@@ -93,7 +93,7 @@
     <mkdir dir="${build.gen}"/>
   </target>
 
-  
+
   <!-- Runs JavaCC (parser generator)                                      -->
   <!-- =================================================================== -->
   <target name="javacc"
@@ -101,21 +101,20 @@
           description="generates parser using javacc">
     <mkdir dir="${build.gen}/opennlp/ccgbank/parse"/>
     <copy file="${src.dir}/opennlp/ccgbank/parse/SimpleNode.java"
-	  todir="${build.gen}/opennlp/ccgbank/parse"/>
+          todir="${build.gen}/opennlp/ccgbank/parse"/>
     <jjtree target="${src.dir}/opennlp/ccgbank/parse/CCGbankDerivation.jjt"
-	    javacchome="${lib.dir}"
-	    outputdirectory="${build.gen}/opennlp/ccgbank/parse"
-	    />
+            javacchome="${lib.dir}"
+            outputdirectory="${build.gen}/opennlp/ccgbank/parse" />
     <javacc target="${build.gen}/opennlp/ccgbank/parse/CCGbankDerivation.jj"
-	    outputdirectory="${build.gen}/opennlp/ccgbank/parse"
-	    javacchome="${lib.dir}/"/>
+            outputdirectory="${build.gen}/opennlp/ccgbank/parse"
+            javacchome="${lib.dir}/" />
   </target>
 
 
   <!-- =================================================================== -->
   <!-- Compiles the source directory                                       -->
   <!-- =================================================================== -->
-  <target name="compile" 
+  <target name="compile"
           depends="javacc"
           description="compiles the source code">
     <!-- compile generated JavaCC classes-->
@@ -125,37 +124,37 @@
            deprecation="${deprecation}"
            classpathref="build.classpath"
            nowarn="true"
-	   includeAntRuntime="false"
+           includeAntRuntime="false"
            excludes="**/.backup.orig/**"
-           optimize="${optimize}"/> 
+           optimize="${optimize}"/>
     <javac srcdir="${src.dir}"
            destdir="${build.dest}"
            debug="${debug}"
            deprecation="${deprecation}"
            classpathref="build.classpath"
            nowarn="true"
-	   includeAntRuntime="false"
+           includeAntRuntime="false"
            excludes="**/.backup.orig/**,srilmbridge/,kenlm/"
            optimize="${optimize}">
     </javac>
     <subant antfile="${src.dir}/ccg2xml/build.xml" buildpath="${basedir}"/>
   </target>
-	
-  
+
+
   <!-- =================================================================== -->
   <!-- Creates the jar file                                                -->
   <!-- =================================================================== -->
-  <target name="package" 
+  <target name="package"
           depends="compile"
           description="generates the openccg.jar file (default)">
     <jar jarfile="${lib.dir}/${name}.jar">
       <fileset dir="${build.dest}">
-		<include name="**"/>
-		<exclude name="**/alignment/*Test*.class"/>
-		<exclude name="**/disjunctivizer/*Test*.class"/>
-		<exclude name="**/hylo/graph/*Test*.class"/>
-		<exclude name="**/util/*Test*.class"/>
-	  </fileset>
+        <include name="**"/>
+        <exclude name="**/alignment/*Test*.class"/>
+        <exclude name="**/disjunctivizer/*Test*.class"/>
+        <exclude name="**/hylo/graph/*Test*.class"/>
+        <exclude name="**/util/*Test*.class"/>
+      </fileset>
       <fileset dir="${src.dir}" includes="**/*.xsl"/>
       <fileset dir="${src.dir}" includes="**/*.properties"/>
       <!-- for grammardoc -->
@@ -164,7 +163,7 @@
     </jar>
   </target>
 
-  
+
   <!-- =================================================================== -->
   <!-- Creates the release file                                            -->
   <!--                                                                     -->
@@ -174,17 +173,17 @@
   <!-- =================================================================== -->
   <target name="release" depends="document,package">
     <subant antfile="${docs.dir}/build.xml" buildpath="${basedir}"
-	    target="clean"/>
+            target="clean"/>
     <antcall target="clean"/>
     <tar tarfile="${name}-${version}.tar">
-      <tarfileset mode="755" 
+      <tarfileset mode="755"
                   dir="../"
                   includes="${name}/bin/** ${name}/ccgbank/bin/**"/>
-      <tarfileset dir="../" 
-                  includes="${name}/**" 
+      <tarfileset dir="../"
+                  includes="${name}/**"
                   excludes="${name}/.* **/CVS **/bin/ **/.backup.orig/ ${name}/classes/** ${name}/output/** ${name}/src/srilmbridge/** ${name}/grammars/**/test/ ${name}/grammars/**/apml/"/>
     </tar>
-    <gzip src="${name}-${version}.tar" 
+    <gzip src="${name}-${version}.tar"
           zipfile="../${name}-${version}.tgz" />
     <delete file="${name}-${version}.tar" />
   </target>
@@ -199,7 +198,7 @@
   <!--     3. cd cd /home/groups/o/op/openccg/htdocs                       -->
   <!--     4. put index.html                                               -->
   <!-- =================================================================== -->
-  <target name="homepage" 
+  <target name="homepage"
           depends="init,document"
           description="generates the API documentation">
     <tar tarfile="${name}-homepage.tar"
@@ -219,7 +218,7 @@
     <mkdir dir="${build.javadocs}"/>
     <javadoc packagenames="${packages}"
              destdir="${build.javadocs}"
-			 classpathref="build.classpath"
+             classpathref="build.classpath"
              author="true"
              version="true"
              use="true"
@@ -228,15 +227,15 @@
              windowtitle="${name}"
              doctitle="The ${Name} API v${version}"
              bottom="Copyright &#169; ${year} Jason Baldridge, Gann Bierner, Michael White and additional contributors. All Rights Reserved.">
-	  <sourcepath>
-		<pathelement path="${src.dir}"/>
-		<pathelement path="${build.gen}"/>
-	  </sourcepath>
-	  <link href="http://docs.oracle.com/javase/6/docs/api/"/>
-	  <link href="http://jgrapht.org/javadoc/"/>
+      <sourcepath>
+        <pathelement path="${src.dir}"/>
+        <pathelement path="${build.gen}"/>
+      </sourcepath>
+      <link href="http://docs.oracle.com/javase/6/docs/api/"/>
+      <link href="http://jgrapht.org/javadoc/"/>
       <link href="http://www.jdom.org/docs/apidocs/"/>
-	</javadoc>
-  	<subant antfile="${docs.dir}/build.xml" buildpath="${basedir}"/>
+    </javadoc>
+    <subant antfile="${docs.dir}/build.xml" buildpath="${basedir}"/>
   </target>
 
 
@@ -245,17 +244,17 @@
   <!-- =================================================================== -->
   <target name="test" depends="compile">
     <javac srcdir="${test.dir}" destdir="${build.dest}"
-	   classpathref="build.classpath" debug="on" includeAntRuntime="false"/>
+           classpathref="build.classpath" debug="on" includeAntRuntime="false"/>
 
     <junit haltonerror="true" fork="off" includeantruntime="false">
       <classpath>
         <pathelement location="${build.dest}"/>
         <pathelement path="${java.class.path}"/>
-      	<pathelement location="${lib.dir}/jdom.jar"/>
-      	<pathelement location="${lib.dir}/jgrapht-jdk1.6.jar"/>
-      	<pathelement location="${lib.dir}/junit-4.10.jar"/>
-      	<pathelement location="${lib.dir}/serializer.jar"/>
-      	<pathelement location="${lib.dir}/trove.jar"/>
+        <pathelement location="${lib.dir}/jdom.jar"/>
+        <pathelement location="${lib.dir}/jgrapht-jdk1.6.jar"/>
+        <pathelement location="${lib.dir}/junit-4.10.jar"/>
+        <pathelement location="${lib.dir}/serializer.jar"/>
+        <pathelement location="${lib.dir}/trove.jar"/>
       </classpath>
       <formatter type="plain" usefile="false" />
       <batchtest>
@@ -270,12 +269,12 @@
   <!-- =================================================================== -->
   <!-- Cleans targets                                                      -->
   <!-- =================================================================== -->
-  <target name="clean" 
+  <target name="clean"
           depends="init"
           description="cleans up the directory">
     <delete dir="${build.dir}"/>
     <subant antfile="${src.dir}/ccg2xml/build.xml" buildpath="${basedir}"
-	    target="clean"/>
+            target="clean"/>
     <delete>
       <fileset dir="${bin.dir}" includes="*.pyc"/>
     </delete>
@@ -283,8 +282,7 @@
 
   <target name="cleandocs" depends="init" description="cleans up the API docs directory, and extra pdf docs">
     <delete dir="${build.javadocs}"/>
-    <subant antfile="${docs.dir}/build.xml" buildpath="${basedir}"
-	    target="clean"/>
+    <subant antfile="${docs.dir}/build.xml" buildpath="${basedir}" target="clean"/>
   </target>
 
 </project>

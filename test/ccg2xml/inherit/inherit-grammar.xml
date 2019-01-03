@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar name="../../ccg-format-grammars/inherit/inherit.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../grammar.xsd">
+  <lexicon file="inherit-lexicon.xml"/>
+  <morphology file="inherit-morph.xml"/>
+  <rules file="inherit-rules.xml"/>
+  <types file="inherit-types.xml"/>
+</grammar>

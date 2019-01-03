@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression name="../../src/ccg2xml/grammar_template.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../testbed.xsd"/>

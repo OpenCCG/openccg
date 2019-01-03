@@ -1,0 +1,1282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph name="../../ccg-format-grammars/arabic/arabic.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd">
+  <entry word="wa" pos="Conj" stem="wa"/>
+  <entry word="anna" pos="Comp" stem="anna"/>
+  <entry word="inna" pos="Comp" stem="inna"/>
+  <entry word="maa" macros="@3rd" pos="Pro" stem="maa" class="thing"/>
+  <entry word="man" macros="@3rd" pos="Pro" stem="man" class="person"/>
+  <entry word="li" pos="Prep" stem="li"/>
+  <entry word="fii" pos="Prep" stem="fii"/>
+  <entry word="haadhaa" macros="@sg @m" pos="Det" stem="haadhaa"/>
+  <entry word="haadhihi" macros="@sg @f" pos="Det" stem="haadhaa"/>
+  <entry word="ha_ulaahi" macros="@pl" pos="Det" stem="haadhaa"/>
+  <entry word="haadhaani" macros="@du @m @nom" pos="Det" stem="haadhaa"/>
+  <entry word="haadhayni" macros="@du @m @acc" pos="Det" stem="haadhaa"/>
+  <entry word="haadhayni" macros="@du @m @gen" pos="Det" stem="haadhaa"/>
+  <entry word="haataani" macros="@du @f @nom" pos="Det" stem="haadhaa"/>
+  <entry word="haatayni" macros="@du @f @acc" pos="Det" stem="haadhaa"/>
+  <entry word="haatayni" macros="@du @f @gen" pos="Det" stem="haadhaa"/>
+  <entry word="dhaalik" macros="@sg @m" pos="Det" stem="dhaalik"/>
+  <entry word="tilka" macros="@sg @f" pos="Det" stem="dhaalik"/>
+  <entry word="ulaa_ika" macros="@pl" pos="Det" stem="dhaalik"/>
+  <entry word="dhaanika" macros="@du @m @nom" pos="Det" stem="dhaalik"/>
+  <entry word="dhaynika" macros="@du @m @acc" pos="Det" stem="dhaalik"/>
+  <entry word="dhaynika" macros="@du @m @gen" pos="Det" stem="dhaalik"/>
+  <entry word="taanika" macros="@du @f @nom" pos="Det" stem="dhaalik"/>
+  <entry word="taynika" macros="@du @f @acc" pos="Det" stem="dhaalik"/>
+  <entry word="taynika" macros="@du @f @gen" pos="Det" stem="dhaalik"/>
+  <entry word="al-ladhii" macros="@sg @m" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-latii" macros="@sg @f" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-ladhiina" macros="@pl @m" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-laati" macros="@pl @f" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-ladhaani" macros="@du @m @nom" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-ladhayni" macros="@du @m @acc" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-ladhayni" macros="@du @m @gen" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-lataani" macros="@du @f @nom" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-latayni" macros="@du @f @acc" pos="Rel" stem="al-ladhii"/>
+  <entry word="al-latayni" macros="@du @f @gen" pos="Rel" stem="al-ladhii"/>
+  <entry word="ana" macros="@1st @1st-X @sg @sg-X" pos="Pro" stem="pro"/>
+  <entry word="anta" macros="@2nd @2nd-X @sg @sg-X @m" pos="Pro" stem="pro"/>
+  <entry word="anti" macros="@2nd @2nd-X @sg @sg-X @f" pos="Pro" stem="pro"/>
+  <entry word="huwa" macros="@3rd @3rd-X @sg @sg-X @m" pos="Pro" stem="pro"/>
+  <entry word="hiya" macros="@3rd @3rd-X @sg @sg-X @f" pos="Pro" stem="pro"/>
+  <entry word="naHnu" macros="@1st @1st-X @pl @pl-X" pos="Pro" stem="pro"/>
+  <entry word="antun" macros="@2nd @2nd-X @pl @pl-X @m" pos="Pro" stem="pro"/>
+  <entry word="antunna" macros="@2nd @2nd-X @pl @pl-X @f" pos="Pro" stem="pro"/>
+  <entry word="hum" macros="@3rd @3rd-X @pl @pl-X @m" pos="Pro" stem="pro"/>
+  <entry word="hunna" macros="@3rd @3rd-X @pl @pl-X @f" pos="Pro" stem="pro"/>
+  <entry word="ii" macros="@1st @1st-X @sg @sg-X" pos="Cli" stem="ii"/>
+  <entry word="nii" macros="@1st @1st-X @sg @sg-X" pos="Cli" stem="nii"/>
+  <entry word="ka" macros="@2nd @2nd-X @sg @sg-X @m" pos="Cli" stem="ka"/>
+  <entry word="ki" macros="@2nd @2nd-X @sg @sg-X @f" pos="Cli" stem="ki"/>
+  <entry word="hu" macros="@3rd @3rd-X @sg @sg-X @m" pos="Cli" stem="hu"/>
+  <entry word="haa" macros="@3rd @3rd-X @sg @sg-X @f" pos="Cli" stem="haa"/>
+  <entry word="naa" macros="@1st @1st-X @pl @pl-X" pos="Cli" stem="naa"/>
+  <entry word="kum" macros="@2nd @2nd-X @pl @pl-X @m" pos="Cli" stem="kum"/>
+  <entry word="kunna" macros="@2nd @2nd-X @pl @pl-X @f" pos="Cli" stem="kunna"/>
+  <entry word="hum" macros="@3rd @3rd-X @pl @pl-X @m" pos="Cli" stem="hum"/>
+  <entry word="hunna" macros="@3rd @3rd-X @pl @pl-X @f" pos="Cli" stem="hunna"/>
+  <entry word="kitaabun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaaban" macros="@sg @sg-X @m @acc @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kitaabu" macros="@sg @sg-X @m @nom @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kitaaba" macros="@sg @sg-X @m @acc @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kitaabi" macros="@sg @sg-X @m @gen @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaaba" macros="@sg @sg-X @m @acc @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabi" macros="@sg @sg-X @m @gen @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabaani" macros="@du @du-X @m @nom @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabayni" macros="@du @du-X @m @acc @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabayni" macros="@du @du-X @m @gen @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kitaabaani" macros="@du @du-X @m @nom @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kitaabayni" macros="@du @du-X @m @acc @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kitaabayni" macros="@du @du-X @m @gen @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabaa" macros="@du @du-X @m @nom @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabay" macros="@du @du-X @m @acc @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kitaabay" macros="@du @du-X @m @gen @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kutubun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kutuban" macros="@sg @pl-X @f @acc @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kutubin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kutubu" macros="@sg @pl-X @f @nom @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kutuba" macros="@sg @pl-X @f @acc @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="al-kutubi" macros="@sg @pl-X @f @gen @def" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kutubu" macros="@sg @pl-X @f @nom @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kutuba" macros="@sg @pl-X @f @acc @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="kutubi" macros="@sg @pl-X @f @gen @cons" pos="N" stem="kitaab" class="thing"/>
+  <entry word="waqtun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtu" macros="@sg @sg-X @m @nom @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqta" macros="@sg @sg-X @m @acc @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqti" macros="@sg @sg-X @m @gen @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqta" macros="@sg @sg-X @m @acc @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqti" macros="@sg @sg-X @m @gen @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtaani" macros="@du @du-X @m @nom @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtayni" macros="@du @du-X @m @acc @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtayni" macros="@du @du-X @m @gen @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtaani" macros="@du @du-X @m @nom @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtayni" macros="@du @du-X @m @acc @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtayni" macros="@du @du-X @m @gen @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtaa" macros="@du @du-X @m @nom @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtay" macros="@du @du-X @m @acc @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtay" macros="@du @du-X @m @gen @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatan" macros="@sg @pl-X @f @acc @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-_awqaatu" macros="@sg @pl-X @f @nom @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-_awqaata" macros="@sg @pl-X @f @acc @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-_awqaati" macros="@sg @pl-X @f @gen @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatu" macros="@sg @pl-X @f @nom @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaata" macros="@sg @pl-X @f @acc @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaati" macros="@sg @pl-X @f @gen @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="Harfun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Harfu" macros="@sg @sg-X @m @nom @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Harfa" macros="@sg @sg-X @m @acc @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Harfi" macros="@sg @sg-X @m @gen @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfa" macros="@sg @sg-X @m @acc @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfi" macros="@sg @sg-X @m @gen @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfaani" macros="@du @du-X @m @nom @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfayni" macros="@du @du-X @m @acc @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfayni" macros="@du @du-X @m @gen @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Harfaani" macros="@du @du-X @m @nom @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Harfayni" macros="@du @du-X @m @acc @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Harfayni" macros="@du @du-X @m @gen @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfaa" macros="@du @du-X @m @nom @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfay" macros="@du @du-X @m @acc @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Harfay" macros="@du @du-X @m @gen @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Huruufun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="Huruufan" macros="@sg @pl-X @f @acc @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="Huruufin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Huruufu" macros="@sg @pl-X @f @nom @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Huruufa" macros="@sg @pl-X @f @acc @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="al-Huruufi" macros="@sg @pl-X @f @gen @def" pos="N" stem="Harf" class="thing"/>
+  <entry word="Huruufu" macros="@sg @pl-X @f @nom @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Huruufa" macros="@sg @pl-X @f @acc @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="Huruufi" macros="@sg @pl-X @f @gen @cons" pos="N" stem="Harf" class="thing"/>
+  <entry word="darsun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="darsan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="darsin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-darsu" macros="@sg @sg-X @m @nom @def" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-darsa" macros="@sg @sg-X @m @acc @def" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-darsi" macros="@sg @sg-X @m @gen @def" pos="N" stem="dars" class="thing"/>
+  <entry word="darsu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="darsa" macros="@sg @sg-X @m @acc @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="darsi" macros="@sg @sg-X @m @gen @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="darsaani" macros="@du @du-X @m @nom @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="darsayni" macros="@du @du-X @m @acc @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="darsayni" macros="@du @du-X @m @gen @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-darsaani" macros="@du @du-X @m @nom @def" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-darsayni" macros="@du @du-X @m @acc @def" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-darsayni" macros="@du @du-X @m @gen @def" pos="N" stem="dars" class="thing"/>
+  <entry word="darsaa" macros="@du @du-X @m @nom @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="darsay" macros="@du @du-X @m @acc @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="darsay" macros="@du @du-X @m @gen @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="duruusun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="duruusan" macros="@sg @pl-X @f @acc @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="duruusin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-duruusu" macros="@sg @pl-X @f @nom @def" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-duruusa" macros="@sg @pl-X @f @acc @def" pos="N" stem="dars" class="thing"/>
+  <entry word="ad-duruusi" macros="@sg @pl-X @f @gen @def" pos="N" stem="dars" class="thing"/>
+  <entry word="duruusu" macros="@sg @pl-X @f @nom @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="duruusa" macros="@sg @pl-X @f @acc @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="duruusi" macros="@sg @pl-X @f @gen @cons" pos="N" stem="dars" class="thing"/>
+  <entry word="waqtun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtu" macros="@sg @sg-X @m @nom @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqta" macros="@sg @sg-X @m @acc @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqti" macros="@sg @sg-X @m @gen @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqta" macros="@sg @sg-X @m @acc @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqti" macros="@sg @sg-X @m @gen @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtaani" macros="@du @du-X @m @nom @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtayni" macros="@du @du-X @m @acc @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtayni" macros="@du @du-X @m @gen @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtaani" macros="@du @du-X @m @nom @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtayni" macros="@du @du-X @m @acc @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-waqtayni" macros="@du @du-X @m @gen @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtaa" macros="@du @du-X @m @nom @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtay" macros="@du @du-X @m @acc @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="waqtay" macros="@du @du-X @m @gen @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatan" macros="@sg @pl-X @f @acc @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-_awqaatu" macros="@sg @pl-X @f @nom @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-_awqaata" macros="@sg @pl-X @f @acc @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="al-_awqaati" macros="@sg @pl-X @f @gen @def" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaatu" macros="@sg @pl-X @f @nom @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaata" macros="@sg @pl-X @f @acc @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="_awqaati" macros="@sg @pl-X @f @gen @cons" pos="N" stem="waqt" class="thing"/>
+  <entry word="sigaaratun" macros="@sg @sg-X @f @nom @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratan" macros="@sg @sg-X @f @acc @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratin" macros="@sg @sg-X @f @gen @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sigaaratu" macros="@sg @sg-X @f @nom @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sigaarata" macros="@sg @sg-X @f @acc @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sigaarati" macros="@sg @sg-X @f @gen @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratu" macros="@sg @sg-X @f @nom @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaarata" macros="@sg @sg-X @f @acc @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaarati" macros="@sg @sg-X @f @gen @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaarataani" macros="@du @du-X @f @nom @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratayni" macros="@du @du-X @f @acc @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratayni" macros="@du @du-X @f @gen @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sigaarataani" macros="@du @du-X @f @nom @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sigaaratayni" macros="@du @du-X @f @acc @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sigaaratayni" macros="@du @du-X @f @gen @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaarataa" macros="@du @du-X @f @nom @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratay" macros="@du @du-X @f @acc @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sigaaratay" macros="@du @du-X @f @gen @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sagaayirun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sagaayiran" macros="@sg @pl-X @f @acc @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sagaayirin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sagaayiru" macros="@sg @pl-X @f @nom @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sagaayira" macros="@sg @pl-X @f @acc @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="as-sagaayiri" macros="@sg @pl-X @f @gen @def" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sagaayiru" macros="@sg @pl-X @f @nom @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sagaayira" macros="@sg @pl-X @f @acc @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="sagaayiri" macros="@sg @pl-X @f @gen @cons" pos="N" stem="sigaara" class="thing"/>
+  <entry word="madiinatun" macros="@sg @sg-X @f @nom @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatan" macros="@sg @sg-X @f @acc @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatin" macros="@sg @sg-X @f @gen @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-madiinatu" macros="@sg @sg-X @f @nom @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-madiinata" macros="@sg @sg-X @f @acc @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-madiinati" macros="@sg @sg-X @f @gen @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatu" macros="@sg @sg-X @f @nom @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinata" macros="@sg @sg-X @f @acc @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinati" macros="@sg @sg-X @f @gen @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinataani" macros="@du @du-X @f @nom @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatayni" macros="@du @du-X @f @acc @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatayni" macros="@du @du-X @f @gen @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-madiinataani" macros="@du @du-X @f @nom @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-madiinatayni" macros="@du @du-X @f @acc @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-madiinatayni" macros="@du @du-X @f @gen @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinataa" macros="@du @du-X @f @nom @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatay" macros="@du @du-X @f @acc @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="madiinatay" macros="@du @du-X @f @gen @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="mudunun" macros="@sg @pl-X @f @nom @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="mudunan" macros="@sg @pl-X @f @acc @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="mudunin" macros="@sg @pl-X @f @gen @indef" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-mudunu" macros="@sg @pl-X @f @nom @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-muduna" macros="@sg @pl-X @f @acc @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="al-muduni" macros="@sg @pl-X @f @gen @def" pos="N" stem="madiina" class="thing"/>
+  <entry word="mudunu" macros="@sg @pl-X @f @nom @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="muduna" macros="@sg @pl-X @f @acc @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="muduni" macros="@sg @pl-X @f @gen @cons" pos="N" stem="madiina" class="thing"/>
+  <entry word="rajulun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rajulu" macros="@sg @sg-X @m @nom @def" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rajula" macros="@sg @sg-X @m @acc @def" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rajuli" macros="@sg @sg-X @m @gen @def" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rajula" macros="@sg @sg-X @m @acc @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rajuli" macros="@sg @sg-X @m @gen @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulaani" macros="@du @du-X @m @nom @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulayni" macros="@du @du-X @m @acc @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulayni" macros="@du @du-X @m @gen @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rajulaani" macros="@du @du-X @m @nom @def" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rajulayni" macros="@du @du-X @m @acc @def" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rajulayni" macros="@du @du-X @m @gen @def" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulaa" macros="@du @du-X @m @nom @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulay" macros="@du @du-X @m @acc @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rajulay" macros="@du @du-X @m @gen @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rijaalun" macros="@pl @pl-X @m @nom @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="rijaalan" macros="@pl @pl-X @m @acc @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="rijaalin" macros="@pl @pl-X @m @gen @indef" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rijaalu" macros="@pl @pl-X @m @nom @def" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rijaala" macros="@pl @pl-X @m @acc @def" pos="N" stem="rajul" class="person"/>
+  <entry word="ar-rijaali" macros="@pl @pl-X @m @gen @def" pos="N" stem="rajul" class="person"/>
+  <entry word="rijaalu" macros="@pl @pl-X @m @nom @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rijaala" macros="@pl @pl-X @m @acc @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="rijaali" macros="@pl @pl-X @m @gen @cons" pos="N" stem="rajul" class="person"/>
+  <entry word="waladun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="walad" class="person"/>
+  <entry word="waladan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="walad" class="person"/>
+  <entry word="waladin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="walad" class="person"/>
+  <entry word="al-waladu" macros="@sg @sg-X @m @nom @def" pos="N" stem="walad" class="person"/>
+  <entry word="al-walada" macros="@sg @sg-X @m @acc @def" pos="N" stem="walad" class="person"/>
+  <entry word="al-waladi" macros="@sg @sg-X @m @gen @def" pos="N" stem="walad" class="person"/>
+  <entry word="waladu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="walad" class="person"/>
+  <entry word="walada" macros="@sg @sg-X @m @acc @cons" pos="N" stem="walad" class="person"/>
+  <entry word="waladi" macros="@sg @sg-X @m @gen @cons" pos="N" stem="walad" class="person"/>
+  <entry word="waladaani" macros="@du @du-X @m @nom @indef" pos="N" stem="walad" class="person"/>
+  <entry word="waladayni" macros="@du @du-X @m @acc @indef" pos="N" stem="walad" class="person"/>
+  <entry word="waladayni" macros="@du @du-X @m @gen @indef" pos="N" stem="walad" class="person"/>
+  <entry word="al-waladaani" macros="@du @du-X @m @nom @def" pos="N" stem="walad" class="person"/>
+  <entry word="al-waladayni" macros="@du @du-X @m @acc @def" pos="N" stem="walad" class="person"/>
+  <entry word="al-waladayni" macros="@du @du-X @m @gen @def" pos="N" stem="walad" class="person"/>
+  <entry word="waladaa" macros="@du @du-X @m @nom @cons" pos="N" stem="walad" class="person"/>
+  <entry word="waladay" macros="@du @du-X @m @acc @cons" pos="N" stem="walad" class="person"/>
+  <entry word="waladay" macros="@du @du-X @m @gen @cons" pos="N" stem="walad" class="person"/>
+  <entry word="_awlaadun" macros="@pl @pl-X @m @nom @indef" pos="N" stem="walad" class="person"/>
+  <entry word="_awlaadan" macros="@pl @pl-X @m @acc @indef" pos="N" stem="walad" class="person"/>
+  <entry word="_awlaadin" macros="@pl @pl-X @m @gen @indef" pos="N" stem="walad" class="person"/>
+  <entry word="al-_awlaadu" macros="@pl @pl-X @m @nom @def" pos="N" stem="walad" class="person"/>
+  <entry word="al-_awlaada" macros="@pl @pl-X @m @acc @def" pos="N" stem="walad" class="person"/>
+  <entry word="al-_awlaadi" macros="@pl @pl-X @m @gen @def" pos="N" stem="walad" class="person"/>
+  <entry word="_awlaadu" macros="@pl @pl-X @m @nom @cons" pos="N" stem="walad" class="person"/>
+  <entry word="_awlaada" macros="@pl @pl-X @m @acc @cons" pos="N" stem="walad" class="person"/>
+  <entry word="_awlaadi" macros="@pl @pl-X @m @gen @cons" pos="N" stem="walad" class="person"/>
+  <entry word="Taalibun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taaliban" macros="@sg @sg-X @m @acc @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Taalibu" macros="@sg @sg-X @m @nom @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Taaliba" macros="@sg @sg-X @m @acc @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Taalibi" macros="@sg @sg-X @m @gen @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taaliba" macros="@sg @sg-X @m @acc @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibi" macros="@sg @sg-X @m @gen @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibaani" macros="@du @du-X @m @nom @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibayni" macros="@du @du-X @m @acc @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibayni" macros="@du @du-X @m @gen @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Taalibaani" macros="@du @du-X @m @nom @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Taalibayni" macros="@du @du-X @m @acc @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Taalibayni" macros="@du @du-X @m @gen @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibaa" macros="@du @du-X @m @nom @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibay" macros="@du @du-X @m @acc @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Taalibay" macros="@du @du-X @m @gen @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Tullaabun" macros="@pl @pl-X @m @nom @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="Tullaaban" macros="@pl @pl-X @m @acc @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="Tullaabin" macros="@pl @pl-X @m @gen @indef" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Tullaabu" macros="@pl @pl-X @m @nom @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Tullaaba" macros="@pl @pl-X @m @acc @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="aT-Tullaabi" macros="@pl @pl-X @m @gen @def" pos="N" stem="Taalib" class="person"/>
+  <entry word="Tullaabu" macros="@pl @pl-X @m @nom @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Tullaaba" macros="@pl @pl-X @m @acc @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="Tullaabi" macros="@pl @pl-X @m @gen @cons" pos="N" stem="Taalib" class="person"/>
+  <entry word="bintun" macros="@sg @sg-X @f @nom @indef" pos="N" stem="bint" class="person"/>
+  <entry word="bintan" macros="@sg @sg-X @f @acc @indef" pos="N" stem="bint" class="person"/>
+  <entry word="bintin" macros="@sg @sg-X @f @gen @indef" pos="N" stem="bint" class="person"/>
+  <entry word="al-bintu" macros="@sg @sg-X @f @nom @def" pos="N" stem="bint" class="person"/>
+  <entry word="al-binta" macros="@sg @sg-X @f @acc @def" pos="N" stem="bint" class="person"/>
+  <entry word="al-binti" macros="@sg @sg-X @f @gen @def" pos="N" stem="bint" class="person"/>
+  <entry word="bintu" macros="@sg @sg-X @f @nom @cons" pos="N" stem="bint" class="person"/>
+  <entry word="binta" macros="@sg @sg-X @f @acc @cons" pos="N" stem="bint" class="person"/>
+  <entry word="binti" macros="@sg @sg-X @f @gen @cons" pos="N" stem="bint" class="person"/>
+  <entry word="bintaani" macros="@du @du-X @f @nom @indef" pos="N" stem="bint" class="person"/>
+  <entry word="bintayni" macros="@du @du-X @f @acc @indef" pos="N" stem="bint" class="person"/>
+  <entry word="bintayni" macros="@du @du-X @f @gen @indef" pos="N" stem="bint" class="person"/>
+  <entry word="al-bintaani" macros="@du @du-X @f @nom @def" pos="N" stem="bint" class="person"/>
+  <entry word="al-bintayni" macros="@du @du-X @f @acc @def" pos="N" stem="bint" class="person"/>
+  <entry word="al-bintayni" macros="@du @du-X @f @gen @def" pos="N" stem="bint" class="person"/>
+  <entry word="bintaa" macros="@du @du-X @f @nom @cons" pos="N" stem="bint" class="person"/>
+  <entry word="bintay" macros="@du @du-X @f @acc @cons" pos="N" stem="bint" class="person"/>
+  <entry word="bintay" macros="@du @du-X @f @gen @cons" pos="N" stem="bint" class="person"/>
+  <entry word="_abnaatun" macros="@pl @pl-X @f @nom @indef" pos="N" stem="bint" class="person"/>
+  <entry word="_abnaatan" macros="@pl @pl-X @f @acc @indef" pos="N" stem="bint" class="person"/>
+  <entry word="_abnaatin" macros="@pl @pl-X @f @gen @indef" pos="N" stem="bint" class="person"/>
+  <entry word="al-_abnaatu" macros="@pl @pl-X @f @nom @def" pos="N" stem="bint" class="person"/>
+  <entry word="al-_abnaata" macros="@pl @pl-X @f @acc @def" pos="N" stem="bint" class="person"/>
+  <entry word="al-_abnaati" macros="@pl @pl-X @f @gen @def" pos="N" stem="bint" class="person"/>
+  <entry word="_abnaatu" macros="@pl @pl-X @f @nom @cons" pos="N" stem="bint" class="person"/>
+  <entry word="_abnaata" macros="@pl @pl-X @f @acc @cons" pos="N" stem="bint" class="person"/>
+  <entry word="_abnaati" macros="@pl @pl-X @f @gen @cons" pos="N" stem="bint" class="person"/>
+  <entry word="mudarrisun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisu" macros="@sg @sg-X @m @nom @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisa" macros="@sg @sg-X @m @acc @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisi" macros="@sg @sg-X @m @gen @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisa" macros="@sg @sg-X @m @acc @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisi" macros="@sg @sg-X @m @gen @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisaani" macros="@du @du-X @m @nom @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisayni" macros="@du @du-X @m @acc @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisayni" macros="@du @du-X @m @gen @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisaani" macros="@du @du-X @m @nom @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisayni" macros="@du @du-X @m @acc @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisayni" macros="@du @du-X @m @gen @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisaa" macros="@du @du-X @m @nom @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisay" macros="@du @du-X @m @acc @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisay" macros="@du @du-X @m @gen @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisuuna" macros="@pl @pl-X @m @nom @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisiina" macros="@pl @pl-X @m @acc @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisiina" macros="@pl @pl-X @m @gen @indef" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisuuna" macros="@pl @pl-X @m @nom @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisiina" macros="@pl @pl-X @m @acc @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="al-mudarrisiina" macros="@pl @pl-X @m @gen @def" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisuu" macros="@pl @pl-X @m @nom @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisii" macros="@pl @pl-X @m @acc @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="mudarrisii" macros="@pl @pl-X @m @gen @cons" pos="N" stem="mudarris" class="person"/>
+  <entry word="imra_atun" macros="@sg @sg-X @f @nom @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atan" macros="@sg @sg-X @f @acc @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atin" macros="@sg @sg-X @f @gen @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="al-mar_atu" macros="@sg @sg-X @f @nom @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="al-mar_ata" macros="@sg @sg-X @f @acc @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="al-mar_ati" macros="@sg @sg-X @f @gen @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atu" macros="@sg @sg-X @f @nom @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_ata" macros="@sg @sg-X @f @acc @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_ati" macros="@sg @sg-X @f @gen @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_ataani" macros="@du @du-X @f @nom @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atayni" macros="@du @du-X @f @acc @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atayni" macros="@du @du-X @f @gen @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="al-mar_ataani" macros="@du @du-X @f @nom @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="al-mar_atayni" macros="@du @du-X @f @acc @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="al-mar_atayni" macros="@du @du-X @f @gen @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_ataa" macros="@du @du-X @f @nom @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atay" macros="@du @du-X @f @acc @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="imra_atay" macros="@du @du-X @f @gen @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="nisaa_un" macros="@pl @pl-X @f @nom @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="nisaa_an" macros="@pl @pl-X @f @acc @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="nisaa_in" macros="@pl @pl-X @f @gen @indef" pos="N" stem="imra_a" class="person"/>
+  <entry word="an-nisaa_u" macros="@pl @pl-X @f @nom @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="an-nisaa_a" macros="@pl @pl-X @f @acc @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="an-nisaa_i" macros="@pl @pl-X @f @gen @def" pos="N" stem="imra_a" class="person"/>
+  <entry word="nisaa_u" macros="@pl @pl-X @f @nom @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="nisaa_a" macros="@pl @pl-X @f @acc @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="nisaa_i" macros="@pl @pl-X @f @gen @cons" pos="N" stem="imra_a" class="person"/>
+  <entry word="_axun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="_axan" macros="@sg @sg-X @m @acc @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="_axin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_axu" macros="@sg @sg-X @m @nom @def" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_axa" macros="@sg @sg-X @m @acc @def" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_axi" macros="@sg @sg-X @m @gen @def" pos="N" stem="_ax" class="person"/>
+  <entry word="_axuu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_axaa" macros="@sg @sg-X @m @acc @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_axii" macros="@sg @sg-X @m @gen @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_axaani" macros="@du @du-X @m @nom @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="_axayni" macros="@du @du-X @m @acc @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="_axayni" macros="@du @du-X @m @gen @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_axaani" macros="@du @du-X @m @nom @def" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_axayni" macros="@du @du-X @m @acc @def" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_axayni" macros="@du @du-X @m @gen @def" pos="N" stem="_ax" class="person"/>
+  <entry word="_axaa" macros="@du @du-X @m @nom @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_axay" macros="@du @du-X @m @acc @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_axay" macros="@du @du-X @m @gen @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_ixwaanun" macros="@pl @pl-X @m @nom @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="_ixwaanan" macros="@pl @pl-X @m @acc @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="_ixwaanin" macros="@pl @pl-X @m @gen @indef" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_ixwaanu" macros="@pl @pl-X @m @nom @def" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_ixwaana" macros="@pl @pl-X @m @acc @def" pos="N" stem="_ax" class="person"/>
+  <entry word="al-_ixwaani" macros="@pl @pl-X @m @gen @def" pos="N" stem="_ax" class="person"/>
+  <entry word="_ixwaanu" macros="@pl @pl-X @m @nom @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_ixwaana" macros="@pl @pl-X @m @acc @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_ixwaani" macros="@pl @pl-X @m @gen @cons" pos="N" stem="_ax" class="person"/>
+  <entry word="_abun" macros="@sg @sg-X @m @nom @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="_aban" macros="@sg @sg-X @m @acc @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="_abin" macros="@sg @sg-X @m @gen @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abu" macros="@sg @sg-X @m @nom @def" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_aba" macros="@sg @sg-X @m @acc @def" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abi" macros="@sg @sg-X @m @gen @def" pos="N" stem="_ab" class="person"/>
+  <entry word="_abuu" macros="@sg @sg-X @m @nom @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abaa" macros="@sg @sg-X @m @acc @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abii" macros="@sg @sg-X @m @gen @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abaani" macros="@du @du-X @m @nom @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="_abayni" macros="@du @du-X @m @acc @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="_abayni" macros="@du @du-X @m @gen @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abaani" macros="@du @du-X @m @nom @def" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abayni" macros="@du @du-X @m @acc @def" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abayni" macros="@du @du-X @m @gen @def" pos="N" stem="_ab" class="person"/>
+  <entry word="_abaa" macros="@du @du-X @m @nom @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abay" macros="@du @du-X @m @acc @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abay" macros="@du @du-X @m @gen @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abnaa_un" macros="@pl @pl-X @m @nom @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="_abnaa_an" macros="@pl @pl-X @m @acc @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="_abnaa_in" macros="@pl @pl-X @m @gen @indef" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abnaa_u" macros="@pl @pl-X @m @nom @def" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abnaa_a" macros="@pl @pl-X @m @acc @def" pos="N" stem="_ab" class="person"/>
+  <entry word="al-_abnaa_i" macros="@pl @pl-X @m @gen @def" pos="N" stem="_ab" class="person"/>
+  <entry word="_abnaa_u" macros="@pl @pl-X @m @nom @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abnaa_a" macros="@pl @pl-X @m @acc @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="_abnaa_i" macros="@pl @pl-X @m @gen @cons" pos="N" stem="_ab" class="person"/>
+  <entry word="kuntu" macros="@past @1st @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="kunta" macros="@past @2nd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="kunti" macros="@past @2nd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="kaana" macros="@past @3rd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="kaanat" macros="@past @3rd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="kuntumaa" macros="@past @2nd @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="kaanaa" macros="@past @3rd @m @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="kaanataa" macros="@past @3rd @f @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="kunnaa" macros="@past @1st @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="kuntum" macros="@past @2nd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="kuntunna" macros="@past @2nd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="kaanuu" macros="@past @3rd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="kunna" macros="@past @3rd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="_akuunu" macros="@pres @indic @1st @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunu" macros="@pres @indic @2nd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuuniina" macros="@pres @indic @2nd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunu" macros="@pres @indic @3rd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunu" macros="@pres @indic @3rd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunaani" macros="@pres @indic @2nd @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunaani" macros="@pres @indic @3rd @m @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunaani" macros="@pres @indic @3rd @f @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="nakuunu" macros="@pres @indic @1st @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="takunna" macros="@pres @indic @2nd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakunna" macros="@pres @indic @3rd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="_akuuna" macros="@pres @subj @1st @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuuna" macros="@pres @subj @2nd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunii" macros="@pres @subj @2nd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuuna" macros="@pres @subj @3rd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuuna" macros="@pres @subj @3rd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunaa" macros="@pres @subj @2nd @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunaa" macros="@pres @subj @3rd @m @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunaa" macros="@pres @subj @3rd @f @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="nakuuna" macros="@pres @subj @1st @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="takunna" macros="@pres @subj @2nd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakunna" macros="@pres @subj @3rd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="_akun" macros="@pres @juss @1st @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takun" macros="@pres @juss @2nd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunii" macros="@pres @juss @2nd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakun" macros="@pres @juss @3rd @m @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takun" macros="@pres @juss @3rd @f @sg" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunaa" macros="@pres @juss @2nd @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunaa" macros="@pres @juss @3rd @m @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunaa" macros="@pres @juss @3rd @f @du" pos="V" stem="kaan" pred="be"/>
+  <entry word="nakun" macros="@pres @juss @1st @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="takuunuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="takunna" macros="@pres @juss @2nd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakuunuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="yakunna" macros="@pres @juss @3rd @f @pl" pos="V" stem="kaan" pred="be"/>
+  <entry word="nimtu" macros="@past @1st @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimta" macros="@past @2nd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimti" macros="@past @2nd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="naama" macros="@past @3rd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="naamat" macros="@past @3rd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimtumaa" macros="@past @2nd @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="naamaa" macros="@past @3rd @m @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="naamataa" macros="@past @3rd @f @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimnaa" macros="@past @1st @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimtum" macros="@past @2nd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimtunna" macros="@past @2nd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="naamuu" macros="@past @3rd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nimna" macros="@past @3rd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="_anaamu" macros="@pres @indic @1st @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamu" macros="@pres @indic @2nd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamiina" macros="@pres @indic @2nd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamu" macros="@pres @indic @3rd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamu" macros="@pres @indic @3rd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamaani" macros="@pres @indic @2nd @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamaani" macros="@pres @indic @3rd @m @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamaani" macros="@pres @indic @3rd @f @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nanaamu" macros="@pres @indic @1st @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanamna" macros="@pres @indic @2nd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanamna" macros="@pres @indic @3rd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="_anaama" macros="@pres @subj @1st @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaama" macros="@pres @subj @2nd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamii" macros="@pres @subj @2nd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaama" macros="@pres @subj @3rd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaama" macros="@pres @subj @3rd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamaa" macros="@pres @subj @2nd @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamaa" macros="@pres @subj @3rd @m @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamaa" macros="@pres @subj @3rd @f @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nanaama" macros="@pres @subj @1st @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanamna" macros="@pres @subj @2nd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanamna" macros="@pres @subj @3rd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="_anam" macros="@pres @juss @1st @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanam" macros="@pres @juss @2nd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamii" macros="@pres @juss @2nd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanam" macros="@pres @juss @3rd @m @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanam" macros="@pres @juss @3rd @f @sg" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamaa" macros="@pres @juss @2nd @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamaa" macros="@pres @juss @3rd @m @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamaa" macros="@pres @juss @3rd @f @du" pos="V" stem="naam" pred="sleep"/>
+  <entry word="nanam" macros="@pres @juss @1st @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanaamuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="tanamna" macros="@pres @juss @2nd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanaamuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="yanamna" macros="@pres @juss @3rd @f @pl" pos="V" stem="naam" pred="sleep"/>
+  <entry word="qultu" macros="@past @1st @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="qulta" macros="@past @2nd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="qulti" macros="@past @2nd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="qaala" macros="@past @3rd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="qaalat" macros="@past @3rd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="qultumaa" macros="@past @2nd @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="qaalaa" macros="@past @3rd @m @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="qaalataa" macros="@past @3rd @f @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="qulnaa" macros="@past @1st @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="qultum" macros="@past @2nd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="qultunna" macros="@past @2nd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="qaaluu" macros="@past @3rd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="qulna" macros="@past @3rd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="_aquulu" macros="@pres @indic @1st @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulu" macros="@pres @indic @2nd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquuliina" macros="@pres @indic @2nd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquulu" macros="@pres @indic @3rd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulu" macros="@pres @indic @3rd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulaani" macros="@pres @indic @2nd @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquulaani" macros="@pres @indic @3rd @m @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulaani" macros="@pres @indic @3rd @f @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="naquulu" macros="@pres @indic @1st @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquuluuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="taqulna" macros="@pres @indic @2nd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquuluuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaqulna" macros="@pres @indic @3rd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="_aquula" macros="@pres @subj @1st @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquula" macros="@pres @subj @2nd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulii" macros="@pres @subj @2nd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquula" macros="@pres @subj @3rd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquula" macros="@pres @subj @3rd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulaa" macros="@pres @subj @2nd @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquulaa" macros="@pres @subj @3rd @m @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulaa" macros="@pres @subj @3rd @f @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="naquula" macros="@pres @subj @1st @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquuluu" macros="@pres @subj @2nd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="taqulna" macros="@pres @subj @2nd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquuluu" macros="@pres @subj @3rd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaqulna" macros="@pres @subj @3rd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="_aqul" macros="@pres @juss @1st @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taqul" macros="@pres @juss @2nd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulii" macros="@pres @juss @2nd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaqul" macros="@pres @juss @3rd @m @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taqul" macros="@pres @juss @3rd @f @sg" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulaa" macros="@pres @juss @2nd @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquulaa" macros="@pres @juss @3rd @m @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquulaa" macros="@pres @juss @3rd @f @du" pos="V" stem="qaal" pred="say"/>
+  <entry word="naqul" macros="@pres @juss @1st @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="taquuluu" macros="@pres @juss @2nd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="taqulna" macros="@pres @juss @2nd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaquuluu" macros="@pres @juss @3rd @m @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="yaqulna" macros="@pres @juss @3rd @f @pl" pos="V" stem="qaal" pred="say"/>
+  <entry word="katabtu" macros="@past @1st @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="katabta" macros="@past @2nd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="katabti" macros="@past @2nd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="kataba" macros="@past @3rd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="katabat" macros="@past @3rd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="katabtumaa" macros="@past @2nd @du" pos="V" stem="katab" pred="write"/>
+  <entry word="katabaa" macros="@past @3rd @m @du" pos="V" stem="katab" pred="write"/>
+  <entry word="katabataa" macros="@past @3rd @f @du" pos="V" stem="katab" pred="write"/>
+  <entry word="katabnaa" macros="@past @1st @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="katabtum" macros="@past @2nd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="katabtunna" macros="@past @2nd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="katabuu" macros="@past @3rd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="katabna" macros="@past @3rd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="_aktubu" macros="@pres @indic @1st @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubu" macros="@pres @indic @2nd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubiina" macros="@pres @indic @2nd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubu" macros="@pres @indic @3rd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubu" macros="@pres @indic @3rd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubaani" macros="@pres @indic @2nd @du" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubaani" macros="@pres @indic @3rd @m @du" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubaani" macros="@pres @indic @3rd @f @du" pos="V" stem="katab" pred="write"/>
+  <entry word="naktubu" macros="@pres @indic @1st @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubna" macros="@pres @indic @2nd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubna" macros="@pres @indic @3rd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="_aktuba" macros="@pres @subj @1st @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktuba" macros="@pres @subj @2nd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubii" macros="@pres @subj @2nd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktuba" macros="@pres @subj @3rd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktuba" macros="@pres @subj @3rd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubaa" macros="@pres @subj @2nd @du" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubaa" macros="@pres @subj @3rd @m @du" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubaa" macros="@pres @subj @3rd @f @du" pos="V" stem="katab" pred="write"/>
+  <entry word="naktuba" macros="@pres @subj @1st @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubna" macros="@pres @subj @2nd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubna" macros="@pres @subj @3rd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="_aktub" macros="@pres @juss @1st @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktub" macros="@pres @juss @2nd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubii" macros="@pres @juss @2nd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktub" macros="@pres @juss @3rd @m @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktub" macros="@pres @juss @3rd @f @sg" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubaa" macros="@pres @juss @2nd @du" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubaa" macros="@pres @juss @3rd @m @du" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubaa" macros="@pres @juss @3rd @f @du" pos="V" stem="katab" pred="write"/>
+  <entry word="naktub" macros="@pres @juss @1st @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="taktubna" macros="@pres @juss @2nd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="yaktubna" macros="@pres @juss @3rd @f @pl" pos="V" stem="katab" pred="write"/>
+  <entry word="dhahabtu" macros="@past @1st @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabta" macros="@past @2nd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabti" macros="@past @2nd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahaba" macros="@past @3rd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabat" macros="@past @3rd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabtumaa" macros="@past @2nd @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabaa" macros="@past @3rd @m @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabataa" macros="@past @3rd @f @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabnaa" macros="@past @1st @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabtum" macros="@past @2nd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabtunna" macros="@past @2nd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabuu" macros="@past @3rd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="dhahabna" macros="@past @3rd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="_adhhabu" macros="@pres @indic @1st @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabu" macros="@pres @indic @2nd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabiina" macros="@pres @indic @2nd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabu" macros="@pres @indic @3rd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabu" macros="@pres @indic @3rd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabaani" macros="@pres @indic @2nd @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabaani" macros="@pres @indic @3rd @m @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabaani" macros="@pres @indic @3rd @f @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="nadhhabu" macros="@pres @indic @1st @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabna" macros="@pres @indic @2nd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabna" macros="@pres @indic @3rd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="_adhhaba" macros="@pres @subj @1st @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhaba" macros="@pres @subj @2nd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabii" macros="@pres @subj @2nd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhaba" macros="@pres @subj @3rd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhaba" macros="@pres @subj @3rd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabaa" macros="@pres @subj @2nd @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabaa" macros="@pres @subj @3rd @m @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabaa" macros="@pres @subj @3rd @f @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="nadhhaba" macros="@pres @subj @1st @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabna" macros="@pres @subj @2nd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabna" macros="@pres @subj @3rd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="_adhhab" macros="@pres @juss @1st @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhab" macros="@pres @juss @2nd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabii" macros="@pres @juss @2nd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhab" macros="@pres @juss @3rd @m @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhab" macros="@pres @juss @3rd @f @sg" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabaa" macros="@pres @juss @2nd @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabaa" macros="@pres @juss @3rd @m @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabaa" macros="@pres @juss @3rd @f @du" pos="V" stem="dhahab" pred="go"/>
+  <entry word="nadhhab" macros="@pres @juss @1st @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="tadhhabna" macros="@pres @juss @2nd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="yadhhabna" macros="@pres @juss @3rd @f @pl" pos="V" stem="dhahab" pred="go"/>
+  <entry word="_akaltu" macros="@past @1st @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalta" macros="@past @2nd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalti" macros="@past @2nd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akala" macros="@past @3rd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalat" macros="@past @3rd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akaltumaa" macros="@past @2nd @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalaa" macros="@past @3rd @m @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalataa" macros="@past @3rd @f @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalnaa" macros="@past @1st @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akaltum" macros="@past @2nd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akaltunna" macros="@past @2nd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akaluu" macros="@past @3rd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_akalna" macros="@past @3rd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_aakulu" macros="@pres @indic @1st @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulu" macros="@pres @indic @2nd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kuliina" macros="@pres @indic @2nd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulu" macros="@pres @indic @3rd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulu" macros="@pres @indic @3rd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulaani" macros="@pres @indic @2nd @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulaani" macros="@pres @indic @3rd @m @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulaani" macros="@pres @indic @3rd @f @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="na_kulu" macros="@pres @indic @1st @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kuluuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulna" macros="@pres @indic @2nd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kuluuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulna" macros="@pres @indic @3rd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_aakula" macros="@pres @subj @1st @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kula" macros="@pres @subj @2nd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulii" macros="@pres @subj @2nd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kula" macros="@pres @subj @3rd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kula" macros="@pres @subj @3rd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulaa" macros="@pres @subj @2nd @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulaa" macros="@pres @subj @3rd @m @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulaa" macros="@pres @subj @3rd @f @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="na_kula" macros="@pres @subj @1st @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kuluu" macros="@pres @subj @2nd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulna" macros="@pres @subj @2nd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kuluu" macros="@pres @subj @3rd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulna" macros="@pres @subj @3rd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="_aakul" macros="@pres @juss @1st @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kul" macros="@pres @juss @2nd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulii" macros="@pres @juss @2nd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kul" macros="@pres @juss @3rd @m @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kul" macros="@pres @juss @3rd @f @sg" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulaa" macros="@pres @juss @2nd @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulaa" macros="@pres @juss @3rd @m @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulaa" macros="@pres @juss @3rd @f @du" pos="V" stem="_akal" pred="eat"/>
+  <entry word="na_kul" macros="@pres @juss @1st @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kuluu" macros="@pres @juss @2nd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ta_kulna" macros="@pres @juss @2nd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kuluu" macros="@pres @juss @3rd @m @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ya_kulna" macros="@pres @juss @3rd @f @pl" pos="V" stem="_akal" pred="eat"/>
+  <entry word="ra_aytu" macros="@past @1st @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_ayta" macros="@past @2nd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_ayti" macros="@past @2nd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_aa" macros="@past @3rd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_at" macros="@past @3rd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_aytumaa" macros="@past @2nd @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_ayaa" macros="@past @3rd @m @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_ataa" macros="@past @3rd @f @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_aynaa" macros="@past @1st @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_aytum" macros="@past @2nd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_aytunna" macros="@past @2nd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_aw" macros="@past @3rd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="ra_ayna" macros="@past @3rd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="_araa" macros="@pres @indic @1st @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taraa" macros="@pres @indic @2nd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayna" macros="@pres @indic @2nd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yaraa" macros="@pres @indic @3rd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taraa" macros="@pres @indic @3rd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayaani" macros="@pres @indic @2nd @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarayaani" macros="@pres @indic @3rd @m @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayaani" macros="@pres @indic @3rd @f @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="naraa" macros="@pres @indic @1st @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarawna" macros="@pres @indic @2nd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayna" macros="@pres @indic @2nd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarawna" macros="@pres @indic @3rd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarayna" macros="@pres @indic @3rd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="_araa" macros="@pres @subj @1st @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taraa" macros="@pres @subj @2nd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taray" macros="@pres @subj @2nd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yaraa" macros="@pres @subj @3rd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taraa" macros="@pres @subj @3rd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayaa" macros="@pres @subj @2nd @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarayaa" macros="@pres @subj @3rd @m @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayaa" macros="@pres @subj @3rd @f @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="naraa" macros="@pres @subj @1st @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taraw" macros="@pres @subj @2nd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayna" macros="@pres @subj @2nd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yaraw" macros="@pres @subj @3rd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarayna" macros="@pres @subj @3rd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="_ara" macros="@pres @juss @1st @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tara" macros="@pres @juss @2nd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taray" macros="@pres @juss @2nd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yara" macros="@pres @juss @3rd @m @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tara" macros="@pres @juss @3rd @f @sg" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayaa" macros="@pres @juss @2nd @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarayaa" macros="@pres @juss @3rd @m @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayaa" macros="@pres @juss @3rd @f @du" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="nara" macros="@pres @juss @1st @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="taraw" macros="@pres @juss @2nd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="tarayna" macros="@pres @juss @2nd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yaraw" macros="@pres @juss @3rd @m @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="yarayna" macros="@pres @juss @3rd @f @pl" pos="V" stem="ra_ay" pred="see"/>
+  <entry word="_a9Taytu" macros="@past @1st @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Tayta" macros="@past @2nd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Tayti" macros="@past @2nd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Taa" macros="@past @3rd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Tat" macros="@past @3rd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Taytumaa" macros="@past @2nd @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Tayaa" macros="@past @3rd @m @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Tataa" macros="@past @3rd @f @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Taynaa" macros="@past @1st @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Taytum" macros="@past @2nd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Taytunna" macros="@past @2nd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Taw" macros="@past @3rd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_a9Tayna" macros="@past @3rd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_u9Tii" macros="@pres @indic @1st @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tii" macros="@pres @indic @2nd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiina" macros="@pres @indic @2nd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tii" macros="@pres @indic @3rd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tii" macros="@pres @indic @3rd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiyaani" macros="@pres @indic @2nd @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiyaani" macros="@pres @indic @3rd @m @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiyaani" macros="@pres @indic @3rd @f @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="nu9Tii" macros="@pres @indic @1st @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiina" macros="@pres @indic @2nd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiina" macros="@pres @indic @3rd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_u9Tiya" macros="@pres @subj @1st @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiya" macros="@pres @subj @2nd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tii" macros="@pres @subj @2nd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiya" macros="@pres @subj @3rd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiya" macros="@pres @subj @3rd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiyaa" macros="@pres @subj @2nd @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiyaa" macros="@pres @subj @3rd @m @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiyaa" macros="@pres @subj @3rd @f @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="nu9Tiya" macros="@pres @subj @1st @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiina" macros="@pres @subj @2nd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiina" macros="@pres @subj @3rd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="_u9Ti" macros="@pres @juss @1st @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Ti" macros="@pres @juss @2nd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tii" macros="@pres @juss @2nd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Ti" macros="@pres @juss @3rd @m @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Ti" macros="@pres @juss @3rd @f @sg" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiyaa" macros="@pres @juss @2nd @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiyaa" macros="@pres @juss @3rd @m @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiyaa" macros="@pres @juss @3rd @f @du" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="nu9Ti" macros="@pres @juss @1st @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="tu9Tiina" macros="@pres @juss @2nd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="yu9Tiina" macros="@pres @juss @3rd @f @pl" pos="V" stem="_a9Tay" pred="give"/>
+  <entry word="laqiitu" macros="@past @1st @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiita" macros="@past @2nd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiiti" macros="@past @2nd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiya" macros="@past @3rd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiyat" macros="@past @3rd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiitumaa" macros="@past @2nd @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiyaa" macros="@past @3rd @m @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiyataa" macros="@past @3rd @f @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiinaa" macros="@past @1st @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiitum" macros="@past @2nd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiitunna" macros="@past @2nd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="laquu" macros="@past @3rd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="laqiina" macros="@past @3rd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="_alqaa" macros="@pres @indic @1st @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqaa" macros="@pres @indic @2nd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayna" macros="@pres @indic @2nd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqaa" macros="@pres @indic @3rd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqaa" macros="@pres @indic @3rd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayaani" macros="@pres @indic @2nd @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqayaani" macros="@pres @indic @3rd @m @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayaani" macros="@pres @indic @3rd @f @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="nalqaa" macros="@pres @indic @1st @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqawna" macros="@pres @indic @2nd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayna" macros="@pres @indic @2nd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqawna" macros="@pres @indic @3rd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqayna" macros="@pres @indic @3rd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="_alqaa" macros="@pres @subj @1st @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqaa" macros="@pres @subj @2nd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqay" macros="@pres @subj @2nd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqaa" macros="@pres @subj @3rd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqaa" macros="@pres @subj @3rd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayaa" macros="@pres @subj @2nd @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqayaa" macros="@pres @subj @3rd @m @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayaa" macros="@pres @subj @3rd @f @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="nalqaa" macros="@pres @subj @1st @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqaw" macros="@pres @subj @2nd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayna" macros="@pres @subj @2nd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqaw" macros="@pres @subj @3rd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqayna" macros="@pres @subj @3rd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="_alqa" macros="@pres @juss @1st @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqa" macros="@pres @juss @2nd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqay" macros="@pres @juss @2nd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqa" macros="@pres @juss @3rd @m @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqa" macros="@pres @juss @3rd @f @sg" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayaa" macros="@pres @juss @2nd @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqayaa" macros="@pres @juss @3rd @m @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayaa" macros="@pres @juss @3rd @f @du" pos="V" stem="laqii" pred="find"/>
+  <entry word="nalqa" macros="@pres @juss @1st @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqaw" macros="@pres @juss @2nd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="talqayna" macros="@pres @juss @2nd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqaw" macros="@pres @juss @3rd @m @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="yalqayna" macros="@pres @juss @3rd @f @pl" pos="V" stem="laqii" pred="find"/>
+  <entry word="9araftu" macros="@past @1st @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafta" macros="@past @2nd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafti" macros="@past @2nd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafa" macros="@past @3rd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafat" macros="@past @3rd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="9araftumaa" macros="@past @2nd @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafaa" macros="@past @3rd @m @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafataa" macros="@past @3rd @f @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafnaa" macros="@past @1st @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="9araftum" macros="@past @2nd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="9araftunna" macros="@past @2nd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafuu" macros="@past @3rd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="9arafna" macros="@past @3rd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="_a9rifu" macros="@pres @indic @1st @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifu" macros="@pres @indic @2nd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifiina" macros="@pres @indic @2nd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifu" macros="@pres @indic @3rd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifu" macros="@pres @indic @3rd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifaani" macros="@pres @indic @2nd @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifaani" macros="@pres @indic @3rd @m @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifaani" macros="@pres @indic @3rd @f @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="na9rifu" macros="@pres @indic @1st @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifna" macros="@pres @indic @2nd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifna" macros="@pres @indic @3rd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="_a9rifa" macros="@pres @subj @1st @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifa" macros="@pres @subj @2nd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifii" macros="@pres @subj @2nd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifa" macros="@pres @subj @3rd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifa" macros="@pres @subj @3rd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifaa" macros="@pres @subj @2nd @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifaa" macros="@pres @subj @3rd @m @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifaa" macros="@pres @subj @3rd @f @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="na9rifa" macros="@pres @subj @1st @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifna" macros="@pres @subj @2nd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifna" macros="@pres @subj @3rd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="_a9rif" macros="@pres @juss @1st @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rif" macros="@pres @juss @2nd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifii" macros="@pres @juss @2nd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rif" macros="@pres @juss @3rd @m @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rif" macros="@pres @juss @3rd @f @sg" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifaa" macros="@pres @juss @2nd @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifaa" macros="@pres @juss @3rd @m @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifaa" macros="@pres @juss @3rd @f @du" pos="V" stem="9araf" pred="know"/>
+  <entry word="na9rif" macros="@pres @juss @1st @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ta9rifna" macros="@pres @juss @2nd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="ya9rifna" macros="@pres @juss @3rd @f @pl" pos="V" stem="9araf" pred="know"/>
+  <entry word="tafakkartu" macros="@past @1st @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkarta" macros="@past @2nd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkarti" macros="@past @2nd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkara" macros="@past @3rd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkarat" macros="@past @3rd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkartumaa" macros="@past @2nd @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkaraa" macros="@past @3rd @m @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkarataa" macros="@past @3rd @f @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkarnaa" macros="@past @1st @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkartum" macros="@past @2nd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkartunna" macros="@past @2nd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkaruu" macros="@past @3rd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tafakkarna" macros="@past @3rd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="_atafakkaru" macros="@pres @indic @1st @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaru" macros="@pres @indic @2nd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkariina" macros="@pres @indic @2nd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaru" macros="@pres @indic @3rd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaru" macros="@pres @indic @3rd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaraani" macros="@pres @indic @2nd @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaraani" macros="@pres @indic @3rd @m @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaraani" macros="@pres @indic @3rd @f @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="natafakkaru" macros="@pres @indic @1st @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaruuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkarna" macros="@pres @indic @2nd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaruuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkarna" macros="@pres @indic @3rd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="_atafakkara" macros="@pres @subj @1st @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkara" macros="@pres @subj @2nd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkarii" macros="@pres @subj @2nd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkara" macros="@pres @subj @3rd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkara" macros="@pres @subj @3rd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaraa" macros="@pres @subj @2nd @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaraa" macros="@pres @subj @3rd @m @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaraa" macros="@pres @subj @3rd @f @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="natafakkara" macros="@pres @subj @1st @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaruu" macros="@pres @subj @2nd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkarna" macros="@pres @subj @2nd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaruu" macros="@pres @subj @3rd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkarna" macros="@pres @subj @3rd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="_atafakkar" macros="@pres @juss @1st @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkar" macros="@pres @juss @2nd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkarii" macros="@pres @juss @2nd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkar" macros="@pres @juss @3rd @m @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkar" macros="@pres @juss @3rd @f @sg" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaraa" macros="@pres @juss @2nd @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaraa" macros="@pres @juss @3rd @m @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaraa" macros="@pres @juss @3rd @f @du" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="natafakkar" macros="@pres @juss @1st @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkaruu" macros="@pres @juss @2nd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="tatafakkarna" macros="@pres @juss @2nd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkaruu" macros="@pres @juss @3rd @m @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="yatafakkarna" macros="@pres @juss @3rd @f @pl" pos="V" stem="tafakkar" pred="think"/>
+  <entry word="ta9allamtu" macros="@past @1st @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamta" macros="@past @2nd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamti" macros="@past @2nd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allama" macros="@past @3rd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamat" macros="@past @3rd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamtumaa" macros="@past @2nd @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamaa" macros="@past @3rd @m @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamataa" macros="@past @3rd @f @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamnaa" macros="@past @1st @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamtum" macros="@past @2nd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamtunna" macros="@past @2nd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamuu" macros="@past @3rd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="ta9allamna" macros="@past @3rd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="_ata9allamu" macros="@pres @indic @1st @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamu" macros="@pres @indic @2nd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamiina" macros="@pres @indic @2nd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamu" macros="@pres @indic @3rd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamu" macros="@pres @indic @3rd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamaani" macros="@pres @indic @2nd @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamaani" macros="@pres @indic @3rd @m @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamaani" macros="@pres @indic @3rd @f @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="nata9allamu" macros="@pres @indic @1st @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamuuna" macros="@pres @indic @2nd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamna" macros="@pres @indic @2nd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamuuna" macros="@pres @indic @3rd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamna" macros="@pres @indic @3rd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="_ata9allama" macros="@pres @subj @1st @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allama" macros="@pres @subj @2nd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamii" macros="@pres @subj @2nd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allama" macros="@pres @subj @3rd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allama" macros="@pres @subj @3rd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamaa" macros="@pres @subj @2nd @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamaa" macros="@pres @subj @3rd @m @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamaa" macros="@pres @subj @3rd @f @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="nata9allama" macros="@pres @subj @1st @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamuu" macros="@pres @subj @2nd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamna" macros="@pres @subj @2nd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamuu" macros="@pres @subj @3rd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamna" macros="@pres @subj @3rd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="_ata9allam" macros="@pres @juss @1st @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allam" macros="@pres @juss @2nd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamii" macros="@pres @juss @2nd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allam" macros="@pres @juss @3rd @m @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allam" macros="@pres @juss @3rd @f @sg" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamaa" macros="@pres @juss @2nd @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamaa" macros="@pres @juss @3rd @m @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamaa" macros="@pres @juss @3rd @f @du" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="nata9allam" macros="@pres @juss @1st @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamuu" macros="@pres @juss @2nd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="tata9allamna" macros="@pres @juss @2nd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamuu" macros="@pres @juss @3rd @m @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <entry word="yata9allamna" macros="@pres @juss @3rd @f @pl" pos="V" stem="ta9allam" pred="learn"/>
+  <macro name="@1st">
+    <fs id="2">
+      <feat attr="PERS" val="1st"/>
+    </fs>
+  </macro>
+  <macro name="@1st-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="PERS">
+          <prop name="1st-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@2nd">
+    <fs id="2">
+      <feat attr="PERS" val="2nd"/>
+    </fs>
+  </macro>
+  <macro name="@2nd-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="PERS">
+          <prop name="2nd-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@3rd">
+    <fs id="2">
+      <feat attr="PERS" val="3rd"/>
+    </fs>
+  </macro>
+  <macro name="@3rd-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="PERS">
+          <prop name="3rd-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@acc">
+    <fs id="2">
+      <feat attr="CASE" val="acc"/>
+    </fs>
+  </macro>
+  <macro name="@cons">
+    <fs id="2">
+      <feat attr="STATE" val="cons"/>
+    </fs>
+  </macro>
+  <macro name="@def">
+    <fs id="2">
+      <feat attr="STATE" val="def"/>
+    </fs>
+  </macro>
+  <macro name="@du">
+    <fs id="2">
+      <feat attr="NUM" val="du"/>
+    </fs>
+  </macro>
+  <macro name="@du-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="du-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@f">
+    <fs id="2">
+      <feat attr="GEND" val="f"/>
+    </fs>
+  </macro>
+  <macro name="@gen">
+    <fs id="2">
+      <feat attr="CASE" val="gen"/>
+    </fs>
+  </macro>
+  <macro name="@hum">
+    <fs id="2">
+      <feat attr="ANIM" val="hum"/>
+    </fs>
+  </macro>
+  <macro name="@indef">
+    <fs id="2">
+      <feat attr="STATE" val="indef"/>
+    </fs>
+  </macro>
+  <macro name="@indic">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="indic"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@juss">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="juss"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@m">
+    <fs id="2">
+      <feat attr="GEND" val="m"/>
+    </fs>
+  </macro>
+  <macro name="@nom">
+    <fs id="2">
+      <feat attr="CASE" val="nom"/>
+    </fs>
+  </macro>
+  <macro name="@non-cons">
+    <fs id="2">
+      <feat attr="STATE" val="non-cons"/>
+    </fs>
+  </macro>
+  <macro name="@nonhum">
+    <fs id="2">
+      <feat attr="ANIM" val="nonhum"/>
+    </fs>
+  </macro>
+  <macro name="@nonres">
+    <fs id="2">
+      <feat attr="RESUMPTIVE" val="nonres"/>
+    </fs>
+  </macro>
+  <macro name="@past">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="past"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pl">
+    <fs id="2">
+      <feat attr="NUM" val="pl"/>
+    </fs>
+  </macro>
+  <macro name="@pl-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="pl-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@pres">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="pres"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@res">
+    <fs id="2">
+      <feat attr="RESUMPTIVE" val="res"/>
+    </fs>
+  </macro>
+  <macro name="@sg">
+    <fs id="2">
+      <feat attr="NUM" val="sg"/>
+    </fs>
+  </macro>
+  <macro name="@sg-X">
+    <lf>
+      <satop nomvar="X">
+        <diamond mode="NUM">
+          <prop name="sg-X"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+  <macro name="@subj">
+    <lf>
+      <satop nomvar="E">
+        <diamond mode="E">
+          <prop name="subj"/>
+        </diamond>
+      </satop>
+    </lf>
+  </macro>
+</morph>

@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python3 "$OPENCCG_HOME/bin/xml2ccg.py" "$@"

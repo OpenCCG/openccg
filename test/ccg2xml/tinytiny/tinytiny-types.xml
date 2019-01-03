@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types name="../../ccg-format-grammars/tinytiny/tinytiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../types.xsd">
+  <type name="CASE"/>
+  <type name="nom" parents="CASE"/>
+  <type name="acc" parents="CASE"/>
+  <type name="NUM"/>
+  <type name="sg" parents="NUM"/>
+  <type name="pl" parents="NUM"/>
+  <type name="PERS"/>
+  <type name="non-3rd" parents="PERS"/>
+  <type name="3rd" parents="PERS"/>
+  <type name="1st" parents="non-3rd"/>
+  <type name="2nd" parents="non-3rd"/>
+  <type name="TENSE"/>
+  <type name="past" parents="TENSE"/>
+  <type name="pres" parents="TENSE"/>
+  <type name="SEM-NUM"/>
+  <type name="sg-X" parents="SEM-NUM"/>
+  <type name="pl-X" parents="SEM-NUM"/>
+  <type name="ontology"/>
+  <type name="sem-obj" parents="ontology"/>
+  <type name="phys-obj" parents="sem-obj"/>
+  <type name="situation" parents="sem-obj"/>
+  <type name="animate-being" parents="phys-obj"/>
+  <type name="thing" parents="phys-obj"/>
+  <type name="person" parents="animate-being"/>
+  <type name="change" parents="situation"/>
+  <type name="state" parents="situation"/>
+  <type name="action" parents="change"/>
+</types>

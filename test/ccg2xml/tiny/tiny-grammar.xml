@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<grammar name="../../ccg-format-grammars/tiny/tiny.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../grammar.xsd">
+  <lexicon file="tiny-lexicon.xml"/>
+  <morphology file="tiny-morph.xml"/>
+  <rules file="tiny-rules.xml"/>
+  <types file="tiny-types.xml"/>
+</grammar>

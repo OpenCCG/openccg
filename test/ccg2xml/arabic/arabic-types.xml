@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<types name="../../ccg-format-grammars/arabic/arabic.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../types.xsd">
+  <type name="CASE"/>
+  <type name="nom" parents="CASE"/>
+  <type name="acc" parents="CASE"/>
+  <type name="gen" parents="CASE"/>
+  <type name="NUM"/>
+  <type name="sg" parents="NUM"/>
+  <type name="du" parents="NUM"/>
+  <type name="pl" parents="NUM"/>
+  <type name="GEND"/>
+  <type name="m" parents="GEND"/>
+  <type name="f" parents="GEND"/>
+  <type name="STATE"/>
+  <type name="cons" parents="STATE"/>
+  <type name="non-cons" parents="STATE"/>
+  <type name="indef" parents="non-cons"/>
+  <type name="def" parents="non-cons"/>
+  <type name="ANIM"/>
+  <type name="hum" parents="ANIM"/>
+  <type name="nonhum" parents="ANIM"/>
+  <type name="PERS"/>
+  <type name="1st" parents="PERS"/>
+  <type name="2nd" parents="PERS"/>
+  <type name="3rd" parents="PERS"/>
+  <type name="RESUMPTIVE"/>
+  <type name="nonres" parents="RESUMPTIVE"/>
+  <type name="res" parents="RESUMPTIVE"/>
+  <type name="SEM-NUM"/>
+  <type name="sg-X" parents="SEM-NUM"/>
+  <type name="du-X" parents="SEM-NUM"/>
+  <type name="pl-X" parents="SEM-NUM"/>
+  <type name="SEM-PERS"/>
+  <type name="1st-X" parents="SEM-PERS"/>
+  <type name="2nd-X" parents="SEM-PERS"/>
+  <type name="3rd-X" parents="SEM-PERS"/>
+  <type name="TENSE"/>
+  <type name="past" parents="TENSE"/>
+  <type name="pres" parents="TENSE"/>
+  <type name="MOOD"/>
+  <type name="indic" parents="MOOD"/>
+  <type name="subj" parents="MOOD"/>
+  <type name="juss" parents="MOOD"/>
+  <type name="ontology"/>
+  <type name="sem-obj" parents="ontology"/>
+  <type name="phys-obj" parents="sem-obj"/>
+  <type name="situation" parents="sem-obj"/>
+  <type name="animate-being" parents="phys-obj"/>
+  <type name="thing" parents="phys-obj"/>
+  <type name="person" parents="animate-being"/>
+  <type name="change" parents="situation"/>
+  <type name="state" parents="situation"/>
+  <type name="action" parents="change"/>
+</types>

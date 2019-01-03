@@ -15,6 +15,7 @@
   <target name="compile-ccg2xml">
     <antcall target="compile-ccg2xml.1"/>
     <antcall target="compile-ccg2xml.finish"/>
+    <antcall target="xml2ccg.test"/>
     <antcall target="copy-ccg-edit"/>
   </target>
 
@@ -65,11 +66,20 @@
     </copy>
   </target>
 
+  <target name="xml2ccg.test">
+    <echo message="testing xml2ccg"/>
+    <exec executable="python" dir="${ccg2xml.dir}" failonerror="true">
+      <arg value="-m"/>
+      <arg value="unittest"/>
+    </exec>
+  </target>
+
   <target name="copy-ccg-edit">
     <copy todir="${bin.dir}">
       <fileset dir="${ccg2xml.dir}">
         <include name="ccg_editor.py"/>
         <include name="Tree.py"/>
+        <include name="xml2ccg.py"/>
       </fileset>
     </copy>
   </target>
@@ -81,6 +91,7 @@
       </fileset>
       <fileset dir="${bin.dir}">
         <include name="ccg2xml.py"/>
+        <include name="xml2ccg.py"/>
         <include name="lex.py"/>
         <include name="yacc.py"/>
       </fileset>

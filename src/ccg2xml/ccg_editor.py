@@ -17,20 +17,22 @@
 # This code is based on PyEdit version 1.1, from Oreilly's Programming
 # Python, 2nd Edition, 2001, by Mark Lutz.
 
-from Tkinter import *  # base widgets, constants
-from tkFileDialog import *  # standard dialogs
-from tkMessageBox import *
-from tkSimpleDialog import *
-from tkColorChooser import askcolor
-from string import split, atoi
-import sys, os, string, md5
+from tkinter import *  # base widgets, constants
+from tkinter.filedialog import *  # standard dialogs
+from tkinter.messagebox import *
+from tkinter.simpledialog import *
+from tkinter.colorchooser import askcolor
+from tkinter.ttk import *
+import sys
+import os
+import hashlib
 import ccg2xml
 import Tree
 import re
 
-START     = '1.0'                          # index of first char: row=1,col=0
-SEL_FIRST = SEL + '.first'                 # map sel tag to index
-SEL_LAST  = SEL + '.last'                  # same as 'sel.last'
+START = '1.0'  # index of first char: row=1,col=0
+SEL_FIRST = SEL + '.first'  # map sel tag to index
+SEL_LAST = SEL + '.last'  # same as 'sel.last'
 
 FontScale = 0                              # use bigger font on linux
 if sys.platform[:3] != 'win':              # and other non-windows boxes
@@ -47,16 +49,28 @@ openfiles = {}
 filenames = []
 
 
+def set_ttk_styles():
+    sty = Style()
+    sty.configure("Main.TFrame", relief=SUNKEN)
+    sty = Style()
+    sty.configure("Child.TFrame", relief=SUNKEN, border=2)
+    sty = Style()
+    sty.configure("TBSelected.TButton", relief=SUNKEN)
+    sty = Style()
+    sty.configure("TestBed.TLabel", relief=SUNKEN, border=1,
+                  foreground='#77AA77', font=("Helvetica", FontScale+12))
+
+
 class CTab(Frame):
     # Initialize this tab.  Usually called from a subclass.  PARENT is
     # the parent widget, CFILE the CFile object associated with the
     # top-level window, and TABNAME is the name of this tab (that tab
     # will be removed from the toolbar).
     def __init__(self, parent, cfile, tabname):
-        Frame.__init__(self, parent)
+        Frame.__init__(self, parent, style='Main.TFrame')
         self.parent = parent
+        self.tabname = tabname
         self.cfile = cfile
-        self.toolbar = None
         self.checkbar = None
         self.menubar = [
             ('File', 0,
@@ -136,25 +150,25 @@ class CTab(Frame):
 class CEdit(CTab):
     def __init__(self, parent, cfile):
         CTab.__init__(self, parent, cfile, 'Edit')
-        self.debugFrame= None
+        self.debugFrame = None
 
         # Add a frame here, so that debug mode can be enabled
         # by embedding other objects within this frame
-        editFrame = Frame(self, bd=1, bg= 'white')
+        editFrame = Frame(self, style='Child.TFrame')
         editFrame.pack(fill=BOTH, expand=YES, side=TOP)
 
         # Add a button frame, embed the button and
         # link to command for the debug mode
-        btnFrame = Frame(editFrame, bd = 1)
+        btnFrame = Frame(editFrame, style='Child.TFrame')
         btnFrame.grid (row=0, columnspan=3, sticky=NSEW)
 
         vldButton = Button (btnFrame, text='Validate', command = lambda: self.onValidate(editFrame, cfile))
         vldButton.pack(side=RIGHT)
 
         # Put the main edit window in the row below this
-        vbar  = Scrollbar(editFrame)
-        hbar  = Scrollbar(editFrame, orient='horizontal')
-        self.text  = Text(editFrame, padx=5, wrap='none', undo=YES)
+        vbar = Scrollbar(editFrame)
+        hbar = Scrollbar(editFrame, orient='horizontal')
+        self.text = Text(editFrame, padx=5, wrap='none', undo=YES)
 
         vbar.grid(row=1, column=2, sticky=NS)
         hbar.grid(row=2, columnspan=2, sticky=EW)     # pack text last
@@ -215,18 +229,17 @@ class CEdit(CTab):
         self.text.focus()
 
     def showLineNums(self):
-        #Make the list of lines editable
+        # Make the list of lines editable
         self.lineList.config(state=NORMAL)
         textData = self.cfile.getAllText()
-        listOfLines = textData.split('\n')
+        listOfLines = textData.splitlines()
         for num in range(1,len(listOfLines)):
             self.lineList.insert(END,"%s\n" % num)
-        #Now that we are done changing the number of lines,
-        #we reset the text to be uneditable
+        # Now that we are done changing the number of lines,
+        # we reset the text to be uneditable
         self.lineList.config(state=NORMAL)
 
     def onValidate(self, editFrame, cfile):
-        #showwarning(title= 'Sorry', message='Validate and debug feature coming soon!')
         # Destroy previous display of debug or error messages
         # if present
         if self.debugFrame:
@@ -368,7 +381,7 @@ class CWords(CTab):
         if self.child:
             self.child.pack_forget()
 
-        self.child = Frame(self, background='white')
+        self.child = Frame(self, style='Child.TFrame')
         self.child.pack(expand=YES, fill=BOTH)
 
         scrollbar = Scrollbar(self.child, orient=VERTICAL)
@@ -390,7 +403,7 @@ class CWords(CTab):
         for x in ccg2xml.morph_xml:
             assert x[0] == 'entry'
             self.wordList.insert (END, ccg2xml.getprop('word', x[1]))
-            #print ccg2xml.getprop('word', x[1])
+            # print(ccg2xml.getprop('word', x[1]))
 
 class CLexicon(CTab):
     class lexicon_vars(object):
@@ -432,7 +445,7 @@ class CLexicon(CTab):
         if self.mainFrame:
             self.mainFrame.pack_forget()
 
-        self.mainFrame = Frame(self, bd=1, bg='white')
+        self.mainFrame = Frame(self, style='Main.TFrame')
         self.mainFrame.pack_propagate(0)
         self.mainFrame.pack(expand=YES, fill=BOTH)
 
@@ -451,7 +464,7 @@ class CLexicon(CTab):
         xscrollbar.config(command= self.cnv.xview)
         yscrollbar.config(command= self.cnv.yview)
 
-        self.child = Frame(self.cnv, bd=2, relief=SUNKEN, background='white')
+        self.child = Frame(self.cnv, style='Child.TFrame')
 
         self.cnv.create_window(0, 0, anchor='nw', window=self.child)
 
@@ -480,10 +493,9 @@ class CFeatures(CTab):
         if self.child:
             self.child.pack_forget()
 
-        self.child = Frame(self, background='white', width = 847, height = 369)
+        self.child = Frame(self, style='Child.TFrame', width=847, height=369)
         self.child.pack(expand=YES, fill=BOTH)
-        butframe = Frame(self.child, cursor='hand2',
-                         relief=SUNKEN, bd=2)
+        butframe = Frame(self.child, cursor='hand2', style='Child.TFrame')
         butframe.pack(fill=X)
         but1 = Button(butframe, text='Expand All', command=self.expand_all)
         but1.pack(side=LEFT)
@@ -491,10 +503,9 @@ class CFeatures(CTab):
         but2.pack(side=LEFT)
         # Force editing in the same frame: but a lower view:
         # pass self.child as the parent frame
-        self.edit = Button(butframe, text='Edit', command= lambda:self.edit_tree(self.child))
+        self.edit = Button(butframe, text='Edit', command=lambda:self.edit_tree(self.child))
         self.edit.pack(side=RIGHT)
-        featframe = Frame(self.child, bd=2, relief=SUNKEN,
-                          background='white')
+        featframe = Frame(self.child, style='Child.TFrame')
         featframe.pack(expand=YES, fill=BOTH)
         self.cfile.compile_if_needed()
 
@@ -562,7 +573,7 @@ class CFeatures(CTab):
                 expands=1
             else:
                 expands=0
-        self.t.add_node(name=x,flag=expands)
+            self.t.add_node(name=x, flag=expands)
 
     # Expand the tree rooted at node recursively
     def expand_tree(self, node):
@@ -578,7 +589,7 @@ class CFeatures(CTab):
         self.t.root.collapse()
 
     def edit_tree(self, parent):
-        editFrame = Frame(parent, bd=1, background='white')
+        editFrame = Frame(parent, style='Main.TFrame')
 
 
         self.text = Text(editFrame, padx=5, wrap=None, undo = YES, background='white')
@@ -647,8 +658,8 @@ class CTestbed(CTab):
         self.mainFrame = None
         self.newInsert = None
 
-    def makelab(self, text, row, col, **props):
-        lab = Label(self.child, text=text, background='white', **props)
+    def makelab(self, text, row, col, style_name=None, **kwargs):
+        lab = Label(self.child, text=text, style=(style_name or ''), **kwargs)
         # Make the label grow to fill all space allocated for the column
         lab.grid(row=row, column=col, sticky='NSEW')
 
@@ -659,7 +670,7 @@ class CTestbed(CTab):
         if self.mainFrame:
             self.mainFrame.pack_forget()
 
-        self.mainFrame = Frame(self, bd=1, bg='white')
+        self.mainFrame = Frame(self, style='Main.TFrame')
         self.mainFrame.pack(expand=YES, fill=BOTH)
 
         self.mainFrame.grid_rowconfigure(0, weight=1)
@@ -677,14 +688,14 @@ class CTestbed(CTab):
         xscrollbar.config(command=self.cnv.xview)
         yscrollbar.config(command=self.cnv.yview)
 
-        self.child = Frame(self.cnv, bd=2, relief=SUNKEN, background='white')
+        self.child = Frame(self.cnv, style='Child.TFrame')
 
 
         self.child.rowconfigure(1, weight=1)
         self.child.columnconfigure(1, weight=1)
         self.child.pack(expand=YES, fill=BOTH)
 
-        butnFrame = Frame(self.child, relief=SUNKEN, bd=2)
+        butnFrame = Frame(self.child, style='Child.TFrame')
         butnFrame.grid(row=0, sticky='NSEW', columnspan=2)
 
         self.edit = Button(butnFrame, text='Edit', command= self.edit_testbed)
@@ -694,13 +705,13 @@ class CTestbed(CTab):
 
         self.cfile.compile_if_needed()
 
-        self.makelab("Num Parses", 1, 0, bd=1, relief=SUNKEN, fg="#77AA77", font = ("Helvetica", FontScale +12))
-        self.makelab("Sentence", 1, 1, bd=1, relief=SUNKEN, fg="#77AA77", font = ("Helvetica", FontScale +12))
+        self.makelab("Num Parses", 1, 0, 'TestBed.TLabel')
+        self.makelab("Sentence", 1, 1, 'TestBed.TLabel')
 
         # Make the column containing the sentences grow to include all
         # extra space
         self.child.columnconfigure(1, weight=1)
-        for i in xrange(len(self.cfile.curparse.testbed_statements)):
+        for i in range(len(self.cfile.curparse.testbed_statements)):
             x = self.cfile.curparse.testbed_statements[i]
             assert x[0] == 'item'
             x = x[1]
@@ -708,12 +719,12 @@ class CTestbed(CTab):
             numparse = ccg2xml.getprop('numOfParses', x)
             string = ccg2xml.getprop('string', x)
 
-        # How many parses of the sentence are produced?
-        self.makelab('%s' % numparse, i+2, 0)
+            # How many parses of the sentence are produced?
+            self.makelab('%s' % numparse, i+2, 0)
 
-        # Print the sentence itself
-        self.makelab('%s%s' % (numparse == 0 and '*' or '', string),
-                     i+2, 1, anchor=W)
+            # Print the sentence itself
+            self.makelab('%s%s' % (numparse == 0 and '*' or '', string),
+                         i+2, 1, anchor=W)
 
         self.cnv.create_window(0, 0, anchor='nw', window=self.child)
 
@@ -726,11 +737,11 @@ class CTestbed(CTab):
 
     # Edit the testbed
     def edit_testbed(self):
-        self.editFrame = Frame(self.mainFrame, bd=1, background='white')
+        self.editFrame = Frame(self.mainFrame, style='Main.TFrame')
         #self.editFrame.grid(row=len(self.cfile.curparse.testbed_statements)+3, columnspan=2, sticky='NSEW')
         self.editFrame.grid(row=2, columnspan=2, sticky='NSEW')
 
-        self.text = Text(self.editFrame, padx=5, wrap=None, undo = YES, background='white')
+        self.text = Text(self.editFrame, padx=5, wrap=None, undo=YES, background='white')
         vbar = Scrollbar(self.editFrame)
         hbar = Scrollbar(self.editFrame, orient='horizontal')
 
@@ -741,12 +752,12 @@ class CTestbed(CTab):
 
         # Change the text on the button, and also pass the rest
         # of the arguments so that the grid for the statements can be reset
-        self.edit.config(text='Done', command= self.save_testbed)
+        self.edit.config(text='Done', command=self.save_testbed)
 
         # Changing the mode of the cfile object here,
         # so that once the user clicks done,
         # the whole object is recompiled and redisplayed
-        self.cfile.mode= 'Edit'
+        self.cfile.mode = 'Edit'
 
         vbar.pack(side=RIGHT, fill=Y)
         hbar.pack(side=BOTTOM, fill=X)
@@ -765,7 +776,7 @@ class CTestbed(CTab):
         # The positioning of the insert cursor should be happening by parsing the
         # CFG production rules, using CSFamily.prod.lineno and endlineno
         self.text.config(takefocus=True)
-        idx= self.text.search('testbed', "START")
+        idx = self.text.search('testbed', "START")
         if idx:
             self.text.mark_set(CURRENT, idx)
             self.text.see(CURRENT)
@@ -780,8 +791,8 @@ class CTestbed(CTab):
     def save_testbed(self):
         # We force the text contents of the cfile object to copy over
         # all that is presently in the current text-box
-        self.cfile.setAllText(self.text.get(1.0,END))
-        self.edit.config(text='Edit', command= self.edit_testbed)
+        self.cfile.setAllText(self.text.get(1.0, END))
+        self.edit.config(text='Edit', command=self.edit_testbed)
         self.editFrame.pack_forget()
 
         # Recompile whatever was edited and redisplay
@@ -793,11 +804,11 @@ class CTestbed(CTab):
     def new_sentence(self):
         master = Tk()
         master.title('VisCCG: New Sentence for the testbed')
-        sent = Entry(master, bg='#FFFFFF', width = 100)
-        nParses = Entry(master, bg='#FFFFFF', width = 2)
+        sent = Entry(master, width=100)
+        nParses = Entry(master, width=2)
 
-        sLabel = Label (master, text = 'Sentence:')
-        nLabel = Label (master, text = 'Number of parses:')
+        sLabel = Label(master, text='Sentence:')
+        nLabel = Label(master, text='Number of parses:')
 
         sent.focus_set()
 
@@ -861,7 +872,7 @@ class CTestbed(CTab):
         self.cfile.onTestbed()
 
 # Creates the top-level window and populates the widgets below it.
-class CFile(object):
+class CFile:
     #### NOTE NOTE NOTE! Variables declared like this, in the class itself,
     #### are class variables (not instance variables) until they are
     #### assigned to.  If you want pure instance variables, you need to
@@ -896,7 +907,7 @@ class CFile(object):
               ('system',    10+FontScale, 'normal'),
               ('courier',   20+FontScale, 'normal')]
 
-    def __init__(self, file=None):
+    def __init__(self, file=None, parent=None):
         self.file = file
 
         self.openDialog = None
@@ -907,13 +918,7 @@ class CFile(object):
         self.last_save_signature = None
         self.last_compile_signature = None
 
-        # First top-level window is Tk(); rest are Toplevel()
-        global root
-        if not root:
-            root = Tk()
-            self.top = root
-        else:
-            self.top = Toplevel(root)
+        self.top = parent or Toplevel(root)
 
         ccg2xml.late_init_graphics()
         openfiles[self] = True
@@ -965,7 +970,7 @@ class CFile(object):
             self.makeMenubar()
             self.makeToolbar(mode)
             self.makeCheckbar()
-            #print "Reinit being called now... "
+            # print("Reinit being called now...")
             self.main.reinit()
             # Pack the main widget after the toolbar, so it goes below it.
             self.main.pack(side=TOP, expand=YES, fill=BOTH)
@@ -1019,13 +1024,13 @@ class CFile(object):
         """
         if self.main.toolbar:
             self.toolbar_widget = Frame(self.outer, cursor='hand2',
-                                        relief=SUNKEN, bd=2)
+                                        style='Child.TFrame')
             self.toolbar_widget.pack(side=TOP, fill=X)
             for (name, action, where) in self.main.toolbar:
                 but = Button(self.toolbar_widget, text=name,
                              command=action)
                 if name == selected:
-                    but.config(relief=SUNKEN)
+                    but.config(style='TBSelected.TButton')
                 but.pack(where)
 
     def makeCheckbar(self):
@@ -1035,7 +1040,7 @@ class CFile(object):
         """
         if self.main.checkbar:
             self.checkbar_widget = Frame(self.outer, cursor='hand2',
-                                         relief=SUNKEN, bd=2)
+                                         style='Child.TFrame')
             self.checkbar_widget.pack(side=TOP, fill=X)
             for (name, var) in self.main.checkbar:
                 Checkbutton(self.checkbar_widget, text=name,
@@ -1095,10 +1100,10 @@ class CFile(object):
     def onInfo(self):
         text  = self.getAllText()                  # added on 5/3/00 in 15 mins
         bytes = len(text)                          # words uses a simple guess:
-        lines = len(string.split(text, '\n'))      # any separated by whitespace
-        words = len(string.split(text))
+        lines = len(text.splitlines())      # any separated by whitespace
+        words = len(text.split())
         index = self.main.text.index(INSERT)
-        where = tuple(string.split(index, '.'))
+        where = tuple(index.split('.'))
 
         showinfo('CCG Editor Information',
                  'Current location:\n\n' +
@@ -1119,7 +1124,7 @@ class CFile(object):
         self.main.text.focus()
         if line is not None:
             maxindex = self.main.text.index(END+'-1c')
-            maxline  = atoi(split(maxindex, '.')[0])
+            maxline  = int(maxindex.split('.')[0])
             if line > 0 and line <= maxline:
                 self.main.text.mark_set(INSERT, '%d.0' % line)      # goto line
                 self.main.text.tag_remove(SEL, '1.0', END)          # delete selects
@@ -1170,46 +1175,16 @@ class CFile(object):
     def pickColor(self, part):
         (triple, hexstr) = askcolor()
         if hexstr:
-            apply(self.modes['Edit'].text.config, (), {part: hexstr})
-            apply(self.modes['Display'].text.config, (), {part: hexstr})
+            self.modes['Edit'].text.config(*(), **{part: hexstr})
+            self.modes['Display'].text.config(*(), **{part: hexstr})
 
-#     def onRunCode(self, parallelmode=1):
-#         """
-#         run Python code being edited--not an ide, but handy;
-#         tries to run in file's dir, not cwd (may be pp2e root);
-#         inputs and adds command-line arguments for script files;
-#         code's stdin/out/err = editor's start window, if any;
-#         but parallelmode uses start to open a dos box for i/o;
-#         """
-#         from PP2E.launchmodes import System, Start, Fork
-#         filemode = 0
-#         thefile  = str(self.getFileName())
-#         cmdargs  = askstring('CCG Editor', 'Commandline arguments?') or ''
-#         if os.path.exists(thefile):
-#             filemode = askyesno('CCG Editor', 'Run from file?')
-#         if not filemode:                                    # run text string
-#             namespace = {'__name__': '__main__'}            # run as top-level
-#             sys.argv = [thefile] + string.split(cmdargs)    # could use threads
-#             exec self.getAllText() + '\n' in namespace      # exceptions ignored
-#         elif askyesno('CCG Editor', 'Text saved in file?'):
-#             mycwd = os.getcwd()                             # cwd may be root
-#             os.chdir(os.path.dirname(thefile) or mycwd)     # cd for filenames
-#             thecmd  = thefile + ' ' + cmdargs
-#             if not parallelmode:                            # run as file
-#                 System(thecmd, thecmd)()                    # block editor
-#             else:
-#                 if sys.platform[:3] == 'win':               # spawn in parallel
-#                     Start(thecmd, thecmd)()                 # or use os.spawnv
-#                 else:
-#                     Fork(thecmd, thecmd)()                  # spawn in parallel
-#             os.chdir(mycwd)
 
     #####################
     # File menu commands
     #####################
 
     def getSignature(self, contents):
-        return md5.md5(contents).digest()
+        return hashlib.md5(contents.encode('utf-8')).digest()
 
     def my_askopenfilename(self):      # objects remember last result dir/file
         if not self.openDialog:
@@ -1228,7 +1203,7 @@ class CFile(object):
         file = self.my_askopenfilename()
         # FIXME! Only create new window if file exists and is readable
         if file:
-            CFile(file)
+            CFile(file, parent=self.top)
 
     def onFirstOpen(self, file):
         try:
@@ -1274,7 +1249,7 @@ class CFile(object):
         self.switch_to('Features')
 
     def onNew(self):
-        CFile()
+        CFile(parent=self.top)
 
     def getFileName(self):
         return self.currfile
@@ -1322,7 +1297,9 @@ def main():
     else:
         fname = None
 
-    CFile(fname)
+    app_root = Tk()
+    set_ttk_styles()
+    CFile(fname, parent=app_root)
     mainloop()
 
 if __name__ == '__main__':                            # when run as a script

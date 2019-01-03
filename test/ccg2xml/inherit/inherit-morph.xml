@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<morph name="../../ccg-format-grammars/inherit/inherit.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../morph.xsd">
+  <entry word="John" pos="NP" stem="John" pred="john"/>
+  <entry word="Fido" pos="NP" stem="Fido" pred="fido"/>
+  <entry word="food" pos="NP" stem="food" pred="food"/>
+  <entry word="to" pos="PP" stem="to"/>
+  <entry word="sleeps" pos="V" stem="sleeps" pred="sleep"/>
+  <entry word="saw" pos="V" stem="saw" pred="see"/>
+  <entry word="gave" pos="V" stem="gave" pred="give"/>
+</morph>

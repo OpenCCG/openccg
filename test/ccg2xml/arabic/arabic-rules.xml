@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules name="../../ccg-format-grammars/arabic/arabic.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../rules.xsd">
+  <application dir="forward"/>
+  <application dir="backward"/>
+  <composition harmonic="true" dir="forward"/>
+  <composition harmonic="true" dir="backward"/>
+  <substitution harmonic="true" dir="forward"/>
+  <substitution harmonic="true" dir="backward"/>
+  <typechanging name="typechange-1">
+    <arg>
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </arg>
+    <result>
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+      </complexcat>
+    </result>
+  </typechanging>
+  <typechanging name="typechange-2">
+    <arg>
+      <atomcat type="n">
+        <fs inheritsFrom="2">
+          <feat attr="STATE" val="cons"/>
+        </fs>
+      </atomcat>
+    </arg>
+    <result>
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="PERS" val="3rd"/>
+            <feat attr="STATE" val="def"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="CASE" val="gen"/>
+            <feat attr="STATE" val="def"/>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </result>
+  </typechanging>
+  <typechanging name="typechange-3">
+    <arg>
+      <atomcat type="n">
+        <fs inheritsFrom="2">
+          <feat attr="STATE" val="cons"/>
+        </fs>
+      </atomcat>
+    </arg>
+    <result>
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="PERS" val="3rd"/>
+            <feat attr="STATE" val="indef"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="CASE" val="gen"/>
+            <feat attr="STATE" val="indef"/>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </result>
+  </typechanging>
+  <typeraising dir="forward" useDollar="false">
+    <arg>
+      <atomcat type="n">
+        <fs/>
+      </atomcat>
+    </arg>
+    <result>
+      <atomcat type="s">
+        <fs/>
+      </atomcat>
+    </result>
+  </typeraising>
+  <typeraising dir="backward" useDollar="true">
+    <arg>
+      <atomcat type="n">
+        <fs/>
+      </atomcat>
+    </arg>
+    <result>
+      <atomcat type="s">
+        <fs/>
+      </atomcat>
+    </result>
+  </typeraising>
+  <typeraising dir="backward" useDollar="true">
+    <arg>
+      <atomcat type="pp">
+        <fs/>
+      </atomcat>
+    </arg>
+    <result>
+      <atomcat type="s">
+        <fs/>
+      </atomcat>
+    </result>
+  </typeraising>
+  <typeraising dir="backward" useDollar="true">
+    <arg>
+      <complexcat>
+        <atomcat type="pp">
+          <fs/>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="n">
+          <fs/>
+        </atomcat>
+      </complexcat>
+    </arg>
+    <result>
+      <atomcat type="s">
+        <fs/>
+      </atomcat>
+    </result>
+  </typeraising>
+  <composition harmonic="false" dir="forward"/>
+  <composition harmonic="false" dir="backward"/>
+  <substitution harmonic="false" dir="forward"/>
+  <substitution harmonic="false" dir="backward"/>
+</rules>

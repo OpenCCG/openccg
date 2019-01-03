@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<regression name="../../ccg-format-grammars/arabic/arabic.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../testbed.xsd">
+  <item string="rajulun dhahaba" numOfParses="1"/>
+  <item string="ar-rajulu dhahaba" numOfParses="1"/>
+  <item string="rajulu dhahaba" numOfParses="0"/>
+  <item string="rajulun dhahabuu" numOfParses="0"/>
+  <item string="ar-rajulu dhahabuu" numOfParses="0"/>
+  <item string="rajulu dhahabuu" numOfParses="0"/>
+  <item string="ar-rajulu dhahaba" numOfParses="1"/>
+  <item string="ar-rajulu dhahabat" numOfParses="0"/>
+  <item string="al-bintu dhahaba" numOfParses="0"/>
+  <item string="al-bintu dhahabat" numOfParses="1"/>
+  <item string="rajulun hu dhahaba" numOfParses="0"/>
+  <item string="ar-rajulu hu dhahaba" numOfParses="0"/>
+  <item string="rajulu hu dhahaba" numOfParses="1"/>
+  <item string="ar-rajula dhahaba" numOfParses="0"/>
+  <item string="ar-rajuli dhahaba" numOfParses="0"/>
+  <item string="_axuu ar-rajuli dhahaba" numOfParses="1"/>
+  <item string="_axuu ar-rajula dhahaba" numOfParses="0"/>
+  <item string="_axuu ar-rajulu dhahaba" numOfParses="0"/>
+  <item string="_axun ar-rajuli dhahaba" numOfParses="0"/>
+  <item string="al-_axu ar-rajuli dhahaba" numOfParses="0"/>
+  <item string="ar-rajulu ra_aa al-kitaaba" numOfParses="1"/>
+  <item string="ar-rajulu ra_aa al-kitaabi" numOfParses="0"/>
+  <item string="ar-rajulu ra_aa al-kitaabu" numOfParses="0"/>
+  <item string="ar-rajulu _a9Taa al-kitaaba li al-waladi" numOfParses="1"/>
+  <item string="ar-rajulu _a9Taa al-kitaaba li al-waladu" numOfParses="0"/>
+  <item string="ar-rajulu _a9Taa al-kitaaba li al-walada" numOfParses="0"/>
+  <item string="ar-rajulu ra_aa al-kitaaba li al-waladi" numOfParses="0"/>
+  <item string="ar-rajulu _a9Taa li al-waladi al-kitaaba" numOfParses="1"/>
+  <item string="_a9Taa ar-rajulu li al-waladi al-kitaaba" numOfParses="1"/>
+  <item string="ana ra_aytu hu" numOfParses="1"/>
+  <item string="ra_aytu hu ana" numOfParses="1"/>
+  <item string="ra_aytu ana hu" numOfParses="0"/>
+  <item string="hu ra_aytu ana" numOfParses="0"/>
+  <item string="hu ana ra_aytu" numOfParses="0"/>
+  <item string="huwa ra_aa nii" numOfParses="1"/>
+  <item string="huwa ra_aa ii" numOfParses="0"/>
+  <item string="huwa ra_aa ana" numOfParses="0"/>
+  <item string="ar-rajulu _a9Taa haa li al-waladi" numOfParses="1"/>
+  <item string="_a9Taa haa ar-rajulu li al-waladi" numOfParses="1"/>
+  <item string="_a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at hu" numOfParses="3"/>
+  <item string="_a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at haa" numOfParses="0"/>
+  <item string="_a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at" numOfParses="0"/>
+  <item string="_a9Taytu haa li ar-rajuli al-ladhii al-bintu ra_at al-walada" numOfParses="0"/>
+</regression>

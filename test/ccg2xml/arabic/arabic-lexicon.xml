@@ -1,0 +1,879 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ccg-lexicon name="../../ccg-format-grammars/arabic/arabic.ccg" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../lexicon.xsd">
+  <family name="N" pos="N" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="n">
+        <fs id="2">
+          <feat attr="index">
+            <lf>
+              <nomvar name="X"/>
+            </lf>
+          </feat>
+          <feat attr="PERS" val="3rd"/>
+          <feat attr="RESUMPTIVE" val="nonres"/>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <member stem="kitaab"/>
+    <member stem="waqt"/>
+    <member stem="Harf"/>
+    <member stem="dars"/>
+    <member stem="sigaara"/>
+    <member stem="madiina"/>
+    <member stem="rajul"/>
+    <member stem="walad"/>
+    <member stem="Taalib"/>
+    <member stem="bint"/>
+    <member stem="mudarris"/>
+    <member stem="imra_a"/>
+    <member stem="_ax"/>
+    <member stem="_ab"/>
+  </family>
+  <family name="InterrogPro" pos="Pro" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="res"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-2">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash mode="."/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="nonres"/>
+              <feat attr="CASE" val="nom"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-3">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="nonres"/>
+              <feat attr="CASE" val="acc"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <member stem="maa"/>
+    <member stem="man"/>
+  </family>
+  <family name="Pro" pos="Pro" closed="true">
+    <entry name="Entry-1">
+      <atomcat type="n">
+        <fs id="2">
+          <feat attr="index">
+            <lf>
+              <nomvar name="X"/>
+            </lf>
+          </feat>
+          <feat attr="CASE" val="nom"/>
+          <feat attr="STATE" val="def"/>
+          <feat attr="RESUMPTIVE" val="nonres"/>
+        </fs>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <prop name="[*DEFAULT*]"/>
+          </satop>
+        </lf>
+      </atomcat>
+    </entry>
+    <member stem="pro"/>
+  </family>
+  <family name="Rel" pos="Rel" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="res"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-2">
+      <complexcat>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash mode="."/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="nonres"/>
+              <feat attr="CASE" val="nom"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-3">
+      <complexcat>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="nonres"/>
+              <feat attr="CASE" val="acc"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <member stem="al-ladhii"/>
+  </family>
+  <family name="AndConj" pos="Conj" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="n">
+          <fs>
+            <feat attr="NUM" val="pl"/>
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="STATE">
+              <featvar name="STATE"/>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="*"/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="STATE">
+              <featvar name="STATE"/>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="*"/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="STATE">
+              <featvar name="STATE"/>
+            </feat>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-2">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+        <slash dir="\" mode="*"/>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+        <slash dir="/" mode="*"/>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+      </complexcat>
+    </entry>
+    <member stem="wa"/>
+  </family>
+  <family name="Det" indexRel="det" pos="Det" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="STATE" val="def"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="^"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="det">
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="haadhaa"/>
+    <member stem="dhaalik"/>
+  </family>
+  <family name="PossClitic" pos="Cli" indexRel="poss" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="n">
+          <fs inheritsFrom="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="STATE" val="def"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="*"/>
+        <atomcat type="n">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="STATE" val="cons"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="poss">
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <entry name="Entry-2">
+      <complexcat>
+        <atomcat type="n">
+          <fs inheritsFrom="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="STATE" val="def"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="RESUMPTIVE" val="res"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="*"/>
+        <atomcat type="n">
+          <fs id="1">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="STATE" val="cons"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="poss">
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="ii"/>
+    <member stem="ka"/>
+    <member stem="ki"/>
+    <member stem="hu"/>
+    <member stem="haa"/>
+    <member stem="naa"/>
+    <member stem="kum"/>
+    <member stem="kunna"/>
+    <member stem="hum"/>
+    <member stem="hunna"/>
+  </family>
+  <family name="ObjClitic" pos="Cli" indexRel="poss" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="3">
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash/>
+          <dollar name="1"/>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="nonres"/>
+            </fs>
+          </atomcat>
+          <slash mode="."/>
+          <atomcat type="n">
+            <fs id="3">
+              <feat attr="CASE" val="nom"/>
+              <feat attr="RESUMPTIVE" val="nonres"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <entry name="Entry-2">
+      <complexcat>
+        <atomcat type="s">
+          <fs/>
+        </atomcat>
+        <slash/>
+        <dollar name="1"/>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="n">
+          <fs inheritsFrom="2">
+            <feat attr="RESUMPTIVE" val="res"/>
+          </fs>
+        </atomcat>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="3">
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <complexcat>
+          <atomcat type="s">
+            <fs/>
+          </atomcat>
+          <slash/>
+          <dollar name="1"/>
+          <slash dir="/" mode="&gt;"/>
+          <atomcat type="n">
+            <fs id="2">
+              <feat attr="RESUMPTIVE" val="nonres"/>
+            </fs>
+          </atomcat>
+          <slash mode="."/>
+          <atomcat type="n">
+            <fs id="3">
+              <feat attr="CASE" val="nom"/>
+              <feat attr="RESUMPTIVE" val="nonres"/>
+            </fs>
+          </atomcat>
+        </complexcat>
+      </complexcat>
+    </entry>
+    <member stem="nii"/>
+    <member stem="ka"/>
+    <member stem="ki"/>
+    <member stem="hu"/>
+    <member stem="haa"/>
+    <member stem="naa"/>
+    <member stem="kum"/>
+    <member stem="kunna"/>
+    <member stem="hum"/>
+    <member stem="hunna"/>
+  </family>
+  <family name="Adj" indexRel="adj" pos="Adj" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="GEND">
+              <featvar name="GEND"/>
+            </feat>
+            <feat attr="CASE">
+              <featvar name="CASE"/>
+            </feat>
+            <feat attr="STATE">
+              <featvar name="STATE"/>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="\" mode="&lt;"/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="X:sem-obj">
+            <diamond mode="adj">
+              <prop name="[*DEFAULT*]"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+  </family>
+  <family name="Prep-Nom" pos="Prep" indexRel="*NoSem*" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="pp">
+          <fs inheritsFrom="3">
+            <feat attr="lex" val="[*DEFAULT*]"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&lt;"/>
+        <atomcat type="n">
+          <fs id="3">
+            <feat attr="CASE" val="gen"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+      </complexcat>
+    </entry>
+    <member stem="li"/>
+    <member stem="fii"/>
+  </family>
+  <family name="Comp" indexRel="*NoSem*" pos="Comp" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="sbar">
+          <fs inheritsFrom="1">
+            <feat attr="lex" val="[*DEFAULT*]"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="s">
+          <fs id="1"/>
+        </atomcat>
+      </complexcat>
+    </entry>
+    <member stem="anna"/>
+    <member stem="inna"/>
+  </family>
+  <family name="IntransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="GEND">
+              <featvar name="GEND"/>
+            </feat>
+            <feat attr="STATE" val="non-cons"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="naam" pred="sleep"/>
+    <member stem="dhahab" pred="go"/>
+    <member stem="_akal" pred="eat"/>
+  </family>
+  <family name="SayV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="sbar">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Z"/>
+              </lf>
+            </feat>
+            <feat attr="lex" val="inna"/>
+          </fs>
+        </atomcat>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="GEND">
+              <featvar name="GEND"/>
+            </feat>
+            <feat attr="STATE" val="non-cons"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Situation">
+              <nomvar name="Z"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="qaal" pred="say"/>
+  </family>
+  <family name="ThinkV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="sbar">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Z"/>
+              </lf>
+            </feat>
+            <feat attr="lex" val="anna"/>
+          </fs>
+        </atomcat>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="GEND">
+              <featvar name="GEND"/>
+            </feat>
+            <feat attr="STATE" val="non-cons"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Situation">
+              <nomvar name="Z"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="9araf" pred="know"/>
+    <member stem="tafakkar" pred="think"/>
+    <member stem="ta9allam" pred="learn"/>
+  </family>
+  <family name="TransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Y"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="GEND">
+              <featvar name="GEND"/>
+            </feat>
+            <feat attr="STATE" val="non-cons"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="kaan" pred="be"/>
+    <member stem="katab" pred="write"/>
+    <member stem="_akal" pred="eat"/>
+    <member stem="ra_ay" pred="see"/>
+    <member stem="laqii" pred="find"/>
+  </family>
+  <family name="DitransV" pos="V" closed="true">
+    <entry name="Entry-1">
+      <complexcat>
+        <atomcat type="s">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="E"/>
+              </lf>
+            </feat>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&lt;"/>
+        <atomcat type="pp">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Z"/>
+              </lf>
+            </feat>
+            <feat attr="lex" val="li"/>
+          </fs>
+        </atomcat>
+        <slash dir="/" mode="&gt;"/>
+        <atomcat type="n">
+          <fs>
+            <feat attr="index">
+              <lf>
+                <nomvar name="Y"/>
+              </lf>
+            </feat>
+            <feat attr="CASE" val="acc"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+          </fs>
+        </atomcat>
+        <slash mode="."/>
+        <atomcat type="n">
+          <fs id="2">
+            <feat attr="index">
+              <lf>
+                <nomvar name="X"/>
+              </lf>
+            </feat>
+            <feat attr="NUM">
+              <featvar name="NUM"/>
+            </feat>
+            <feat attr="PERS">
+              <featvar name="PERS"/>
+            </feat>
+            <feat attr="GEND">
+              <featvar name="GEND"/>
+            </feat>
+            <feat attr="STATE" val="non-cons"/>
+            <feat attr="RESUMPTIVE" val="nonres"/>
+            <feat attr="CASE" val="nom"/>
+          </fs>
+        </atomcat>
+        <lf>
+          <satop nomvar="E:action">
+            <prop name="[*DEFAULT*]"/>
+            <diamond mode="Actor">
+              <nomvar name="X:animate-being"/>
+            </diamond>
+            <diamond mode="Patient">
+              <nomvar name="Y:sem-obj"/>
+            </diamond>
+            <diamond mode="Recipient">
+              <nomvar name="Z:animate-being"/>
+            </diamond>
+          </satop>
+        </lf>
+      </complexcat>
+    </entry>
+    <member stem="_a9Tay" pred="give"/>
+  </family>
+</ccg-lexicon>

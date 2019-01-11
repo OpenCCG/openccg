@@ -21,14 +21,15 @@ import re
 import optparse
 import copy
 import os
-import cStringIO
+import io
 
 # Local imports
 import lex, yacc
 
-from Tkinter import *
-from tkMessageBox import *
-import tkFont
+from tkinter import *
+from tkinter.messagebox import *
+import tkinter.font as tkFont
+from functools import reduce
 
 ## Get options
 
@@ -193,13 +194,13 @@ def getoptprop(prop, proplist, default=None):
 
 # Replace value of property PROP with VALUE in PROPLIST.
 def putprop(prop, value, proplist):
-    for i in xrange(len(proplist)):
+    for i in range(len(proplist)):
         if proplist[i][0] == prop:
             proplist[i] = (prop, value)
             return
     else:
         proplist += [(prop, value)]
-    
+
 
 # Replace property named PROP with NEW in PROPLIST.  Often this is called with
 # with PROP equal to None; the None occurs when a PROP=VALUE clause is expected
@@ -209,7 +210,7 @@ def putprop(prop, value, proplist):
 # The surrounding code calls property_name_replace() to fill in the proper name.
 
 def property_name_replace(prop, new, proplist):
-    for i in xrange(len(proplist)):
+    for i in range(len(proplist)):
         if proplist[i][0] == prop:
             proplist[i] = (new, proplist[i][1])
 
@@ -227,8 +228,8 @@ def init_errors(errors_to_string):
 
     global stdout_file, stderr_file
     if errors_to_string:
-        stdout_file = cStringIO.StringIO()
-        stderr_file = cStringIO.StringIO()
+        stdout_file = io.StringIO()
+        stderr_file = io.StringIO()
     else:
         stdout_file = sys.stdout
         stderr_file = sys.stderr
@@ -242,7 +243,7 @@ def save_errors(cur):
     cur.stdout_file = stdout_file
     cur.stderr_file = stderr_file
 
-class InternalError(StandardError):
+class InternalError(BaseException):
     pass
 
 def argformat(format, arg):
@@ -259,7 +260,7 @@ def synerr(format, *arg):
 # output at the same time, so the two will stay in sync.
 def maybe_errout(str):
     # Force display of error
-    # FIXME: Maybe we could dump all errors into a single 
+    # FIXME: Maybe we could dump all errors into a single
     # window display and show the messages together
     #showerror('Message', str)
 
@@ -382,12 +383,6 @@ class CSBlock(CSNode):
 def isalnumund(str):
     return str.isalnum() or str in '_+-'
 
-# Prior to Python 2.4, no sorted()
-def my_sorted(lyst):
-    lystcopy = list(lyst)
-    lystcopy.sort()
-    return lystcopy
-
 ########################################################################
 #                               Tokenizing                             #
 ########################################################################
@@ -500,7 +495,7 @@ def t_MAGIC_ID(t):
     r'''(\[\*[^*]+\*\])'''
     t.type = 'MAGIC_ID'
     return t
-#t_MAGIC_WORD.func_doc = '(\[\*(' + '|'.join(magic_names) + ')\*\])'
+#t_MAGIC_WORD.__doc__ = '(\[\*(' + '|'.join(magic_names) + ')\*\])'
 
 t_ignore = " \t\r"
 
@@ -545,7 +540,7 @@ def t_comment(t):
 def t_error(t):
     error(t.lineno, "Illegal character '%s'", t.value[0])
     t.skip(1)
-    
+
 def init_lexer():
     # This is a signal to us to go into "line mode", where we return a
     # newline as a token and treat backslash at the end of a line as a line
@@ -570,20 +565,20 @@ def p_word(p):
     'FILLED IN BELOW'
     p[0] = p[1]
 # fill in the documentation (i.e. the cfg rule)
-p_word.func_doc = 'word : ' + '\n| '.join(word_tokens)
+p_word.__doc__ = 'word : ' + '\n| '.join(word_tokens)
 
 # hack, to deal with a reduce/reduce conflict
 def p_word_except_x(p):
     'FILLED IN BELOW'
     p[0] = p[1]
 # fill in the documentation (i.e. the cfg rule)
-p_word_except_x.func_doc = 'word_except_x : ' + '\n| '.join(word_no_x_tokens)
+p_word_except_x.__doc__ = 'word_except_x : ' + '\n| '.join(word_no_x_tokens)
 
 def p_word_no_numbers(p):
     'FILLED IN BELOW'
     p[0] = p[1]
 # fill in the documentation (i.e. the cfg rule)
-p_word_no_numbers.func_doc = (
+p_word_no_numbers.__doc__ = (
     'word_no_numbers : ' + '\n| '.join(word_no_number_tokens))
 
 %y
@@ -728,15 +723,15 @@ def ifmatch_nocase(regex, string, doif, doelse):
         return doelse
 
 def print_macros():
-    for (key, value) in macro_defs.iteritems():
-        print "Macro: %s(%s): %s" % (key, value.args, value.text)
+    for key, value in macro_defs.items():
+        print("Macro: %s(%s): %s" % (key, value.args, value.text))
 
 # Given some text, expand the macros in it, recursively (i.e. apply
 # any macros, then apply macros to the resulting text, etc.).  After
 # that, combine text that has the . operator applied to it.
 def macroexpand_text(text):
     if super_macro_debug:
-        print "Text before expanding: %s" % arg_to_text(text)
+        print("Text before expanding: %s" % arg_to_text(text))
     # Now recursively expand macros.  The code to actually check for
     # macros is in MacroLexer.
     lexer = MacroLexer(None)
@@ -744,14 +739,14 @@ def macroexpand_text(text):
     newtext = []
     while True:
         tok = lexer.token()
-        #print "Reading token: %s" % tok
+        # print("Reading token: %s" % tok)
         if not tok:
             break
         newtext.append(tok)
     text = newtext
     l = len(text)
     if super_macro_debug:
-        print "Text after expanding: %s" % arg_to_text(text)
+        print("Text after expanding: %s" % arg_to_text(text))
     # Now directly handle instances with the '.' operator, so that
     # the operator can be used to create new macro calls
     x = 1
@@ -790,7 +785,7 @@ def macrosub(macdef, args, lineno):
         # Otherwise, make a copy of the text and substitute the arguments
         # into it.
         text = text[:]
-        args = dict(zip(macdef.args, args))
+        args = dict(list(zip(macdef.args, args)))
         l = len(text)
         x = 0
         while x < l:
@@ -874,7 +869,7 @@ def p_bracemacro_text_entry_other(p):
     'FILLED IN BELOW'
     p[0] = [p.slice[1]]
 # fill in the documentation (i.e. the cfg rule)
-p_bracemacro_text_entry_other.func_doc = (
+p_bracemacro_text_entry_other.__doc__ = (
     'bracemacro_text_entry : ' + '\n| '.join(other_tokens + word_tokens)
     )
 
@@ -900,10 +895,10 @@ linemacro_next_tokens = [x for x in tokens if x != 'NEWLINE']
 
 
 # fill in the documentation (i.e. the cfg rule)
-p_linemacro_begin.func_doc = (
+p_linemacro_begin.__doc__ = (
     'linemacro_begin : ' + '\n| '.join(linemacro_begin_tokens)
     )
-p_linemacro_next.func_doc = (
+p_linemacro_next.__doc__ = (
     'linemacro_next : ' + '\n| '.join(linemacro_next_tokens)
     )
 
@@ -1012,7 +1007,7 @@ def install_feature(feature, lis, lineno):
             synerr("Cycle seen involving feature value %s", node.name)
         for x in node.parents:
             check_cycles(x, list + [node])
-    
+
     # Check for cycles.
     for x in lis:
         check_cycles(x, [])
@@ -1025,7 +1020,7 @@ def install_feature(feature, lis, lineno):
             if check_reachable(x, orignode):
                 return True
         return False
-    
+
     # Clean excess parents.
     for x in lis:
         newpar = []
@@ -1043,10 +1038,10 @@ def install_feature(feature, lis, lineno):
 # Return XML to go in types.xml.
 def make_feature_types_xml():
     xml = []
-    for (x, featvals) in feature_to_values.iteritems():
+    for x, featvals in feature_to_values.items():
         # FIXME! Figure out what's going wrong here.
 #        typename = x
-#        print "fv_names_to_values: %s" % fv_names_to_values
+#        print("fv_names_to_values: %s" % fv_names_to_values)
 #        if x in fv_names_to_values:
 #            typename = fv_names_to_values[x]
 #        xml += [['type', [('name', typename)]]]
@@ -1063,7 +1058,7 @@ def make_feature_types_xml():
 # Return XML to go in morph.xml.
 def make_feature_morph_xml():
     xml = []
-    for x in my_sorted(feature_values):
+    for x in sorted(feature_values):
         featval = feature_values[x]
         if featval.macrotie:
             entry = ['macro', [('name', '@%s' % x)]]
@@ -1271,14 +1266,14 @@ slash : bareslash : $$ = makeslash($1, None, None)
 #############################
 
 # Example:
-# 
+#
 # Source:
-# 
+#
 # s<1>[E] \ np<2>[X nom] / np<3>[Y acc]
 #
 #
 # XML output:
-# 
+#
 # <complexcat>
 #   <atomcat type="s">
 #     <fs id="1">
@@ -1340,7 +1335,7 @@ slash : bareslash : $$ = makeslash($1, None, None)
 #   fs?
 #   lf?
 # }
-    
+
 #   fs(id) {
 #     (feat(attr='index') {
 #        lf { nomvar(name) } }
@@ -1350,8 +1345,8 @@ slash : bareslash : $$ = makeslash($1, None, None)
 
 # slash(dir=('/', '\\', '|'), mode=('.', '*', '^', 'x', 'x<', '<x', '<', '>'),
 #       varmodality, ability=('inert', 'active'))
-      
-# fs(id): 
+
+# fs(id):
 #   ...
 
 %p
@@ -1489,7 +1484,7 @@ def create_tags(text):
             text.tag_config(x, foreground=fg)
         if bg:
             text.tag_config(x, background=bg)
-        
+
 
 # A "draw-into" object, used for incrementally building up some text
 # in various fonts.  Initialized with a parent widget and some initial text.
@@ -1502,18 +1497,18 @@ class draw_into(object):
                         borderwidth=0, relief=FLAT,
                         background='white')
         self.curface = None
-	self.wid.slash_image = []
+        self.wid.slash_image = []
         self.curtext = ''
         create_tags(self.wid)
 
-	# Self.alltext maintains the length of the text printed 
-	# for the current widget
-	self.alltext = 0
+        # Self.alltext maintains the length of the text printed
+        # for the current widget
+        self.alltext = 0
 
-	# FIXME: the tirgger for bigger height of the Text
-	# widget is arbitrarily set to 95. This should be 
-	# driven by width of individual fonts and chars
-	self.expandTrigger = 95
+        # FIXME: the tirgger for bigger height of the Text
+        # widget is arbitrarily set to 95. This should be
+        # driven by width of individual fonts and chars
+        self.expandTrigger = 95
 
     def finish_run(self):
         if self.curtext:
@@ -1522,6 +1517,7 @@ class draw_into(object):
             #Label(self.wid, text=self.curtext,
             #      font=props['font']).pack(side=LEFT)
             self.curtext = ''
+
     def text(self, tex, face='default'):
         if self.curface == face:
             self.curtext += tex
@@ -1530,39 +1526,39 @@ class draw_into(object):
             self.curtext = tex
             self.curface = face
 
-	# Increase recorded length of text
-	self.alltext += len(tex)
+        # Increase recorded length of text
+        self.alltext += len(tex)
 
-	# Increase height if necessary
-	if (self.alltext > self.expandTrigger):
-		heightval = 3* (self.alltext/self.expandTrigger +1)
-	    	self.wid.config(height= heightval)
-
+        # Increase height if necessary
+        if (self.alltext > self.expandTrigger):
+            heightval = 3* (self.alltext/self.expandTrigger +1)
+            self.wid.config(height= heightval)
 
     def finish(self):
         self.finish_run()
         self.wid.config(state=DISABLED)
         return self.wid
+
     def image(self, img):
-	# When there is an image to be embedded
-	self.finish_run()
-	# Access the OPENCCG_HOME environment variable
-	# to determine the correct path for the images
-	openccg_home = os.environ['OPENCCG_HOME']
-	gifdir = openccg_home+"/images/slashes/"
-	image = PhotoImage(file=gifdir+img)
-	# We are creating an instantiated variable here
-	# for the image, because the actual photo object is destroyed once
-	# the execution leaves the __init__ code. Without building it this way, 
-	# the display was showing only a space for the image but not the image itself
-	self.wid.slash_image += [image]
-	self.wid.image_create(INSERT, image=image)
+        # When there is an image to be embedded
+        self.finish_run()
+        # Access the OPENCCG_HOME environment variable
+        # to determine the correct path for the images
+        openccg_home = os.environ['OPENCCG_HOME']
+        gifdir = openccg_home+"/images/slashes/"
+        image = PhotoImage(file=gifdir+img)
+        # We are creating an instantiated variable here
+        # for the image, because the actual photo object is destroyed once
+        # the execution leaves the __init__ code. Without building it this way,
+        # the display was showing only a space for the image but not the image itself
+        self.wid.slash_image += [image]
+        self.wid.image_create(INSERT, image=image)
 
     def onHilite(self):
-    	self.wid.config(bg = '#E9FFE3')
+        self.wid.config(bg = '#E9FFE3')
 
     def offHilite(self):
-    	self.wid.config(bg = 'white')
+        self.wid.config(bg = 'white')
 
 def category_draw_children(into, chils, depth, vars, need_initial_comma=False,
                            sep='', sepface='default'):
@@ -1626,52 +1622,48 @@ def category_draw(into, xml, depth, vars):
         dir = getoptprop('dir', props, '|')
         mode = getoptprop('mode', props)
         ability = getoptprop('ability', props)
-#        into.text('%s' % dir, 'slash')
-#        into.text('%s%s' % (mode or '',
-#                            ability_to_ability_value[ability] or ''),
-#                  'slash mode')
- 	
-	# We create the file name here
-	# By interpreting various parameters
-	# and joiing them together as a string
-	
-	if dir == '\\':
-		slash_string = 'bk'
-	elif dir == '/':
-		slash_string = 'fd'
-	else:
-		slash_string = 'str'
 
-	#slash_mode : X GREATER : $$ = 'x>'
-	#           : LESS X    : $$ = '<x'
-	#           : GREATER | LESS | X | DOT | STAR | CARET
-           
-	modelist = {'x>':'cross_greater',
-		    '<x':'lesser_cross',
-		    '>':'greater',
-		    '<':'lesser',
-		    'x':'cross',
-		    '.':'dot',
-		    '*':'star',
-		    '^':'box'}
-	if mode == None:
-		image_string = slash_string + '.GIF'
-	else:
-		image_string = slash_string+ '_' + modelist[mode] + '.GIF'
-		
-	into.image(image_string)
+        # We create the file name here
+        # By interpreting various parameters
+        # and joiing them together as a string
+
+        if dir == '\\':
+            slash_string = 'bk'
+        elif dir == '/':
+            slash_string = 'fd'
+        else:
+            slash_string = 'str'
+
+        # slash_mode : X GREATER : $$ = 'x>'
+        #            : LESS X    : $$ = '<x'
+        #            : GREATER | LESS | X | DOT | STAR | CARET
+
+        modelist = {'x>':'cross_greater',
+                    '<x':'lesser_cross',
+                    '>':'greater',
+                    '<':'lesser',
+                    'x':'cross',
+                    '.':'dot',
+                    '*':'star',
+                    '^':'box'}
+        if mode == None:
+            image_string = slash_string + '.GIF'
+        else:
+            image_string = slash_string+ '_' + modelist[mode] + '.GIF'
+
+        into.image(image_string)
 
     elif ty == 'dollar':
         name = getoptprop('name', props)
         into.text('$', 'dollar')
         into.text('%s' % name, 'numeric index')
     else:
-	# Have commented the following assert Statement
-	# and the debug statement
-	# Because of validation errors
+    # Have commented the following assert Statement
+    # and the debug statement
+    # Because of validation errors
         #debug('ty??? %s\n' % ty)
         #assert False
-	dummy = 1
+        pass
 
 %y
 
@@ -1709,13 +1701,13 @@ complexcat : complexcat LBRACE cat_set_entry_0+ RBRACE :
 #############################
 
 # Example:
-# 
+#
 # Source:
-# 
+#
 # E:action(* <Actor>X:animate-being <Patient>Y:sem-obj)
-# 
+#
 # XML output:
-# 
+#
 # <lf>
 #   <satop nomvar="E:action">
 #     <prop name="[*DEFAULT*]"/>
@@ -1992,17 +1984,17 @@ class CSFamily(CSBlock):
         self.name = name
         self.props = props
         self.statements = statements
-	self.text = None
-	self.homeButton = None
-	self.btnFrame = None
-	self.menuHolder = None
+        self.text = None
+        self.homeButton = None
+        self.btnFrame = None
+        self.menuHolder = None
 
-	self.childFrame = None
-	self.cfile = None
-	self.cf = None
-	self.vars = None
-	self.canvas = None
-	self.mainFrame = None
+        self.childFrame = None
+        self.cfile = None
+        self.cf = None
+        self.vars = None
+        self.canvas = None
+        self.mainFrame = None
 
     def draw(self, childFrame, cfile, vars, row, canvas, mainFrame):
         # Draw the family name
@@ -2010,19 +2002,19 @@ class CSFamily(CSBlock):
         cf = draw_into(f, width=20)
         cf.text('%s' % self.name, 'family name')
 
-	child_widget=cf.finish()
-	self.menuHolder = child_widget
+        child_widget = cf.finish()
+        self.menuHolder = child_widget
 
         child_widget.pack(fill=BOTH, expand=YES)
 
-	child_widget.bind("<Button-1>", self.editPopup)
+        child_widget.bind("<Button-1>", self.editPopup)
 
-	self.childFrame = childFrame
-	self.cfile = cfile
-	self.cf = cf
-	self.vars = vars
-	self.canvas = canvas
-	self.mainFrame = mainFrame
+        self.childFrame = childFrame
+        self.cfile = cfile
+        self.cf = cf
+        self.vars = vars
+        self.canvas = canvas
+        self.mainFrame = mainFrame
 
 
         f.grid(row=row, column=0, sticky=NSEW)
@@ -2039,130 +2031,130 @@ class CSFamily(CSBlock):
 
     # Define the binding procedure for the right-click for editing an entry
     def editPopup(self, event):
-	popup = Menu(self.menuHolder, tearoff =0)
-	popup.add_command(label=' Edit ', command = lambda: self.editSection(self.childFrame, 
-				self.cfile, 
-				self.cf, 
-				self.vars, 
-				self.canvas, 
-				self.mainFrame))
-	try:
-		popup.tk_popup(event.x_root+40, event.y_root, 0)
-	finally:
-		popup.grab_release()
-	
-	# Now bind the right-click to the saveSection buttons
-	self.menuHolder.bind("<Button-1>", self.savePopup)
+        popup = Menu(self.menuHolder, tearoff =0)
+        popup.add_command(label=' Edit ', command=lambda: self.editSection(self.childFrame,
+                                                                           self.cfile,
+                                                                           self.cf,
+                                                                           self.vars,
+                                                                           self.canvas,
+                                                                           self.mainFrame))
+        try:
+            popup.tk_popup(event.x_root+40, event.y_root, 0)
+        finally:
+            popup.grab_release()
+
+        # Now bind the right-click to the saveSection buttons
+        self.menuHolder.bind("<Button-1>", self.savePopup)
 
     # Define the right click binding for the save entry
     def savePopup(self, event):
-    	popup = Menu(self.menuHolder, tearoff = 0)
-	popup.add_command(label = 'Done', command = lambda: self.saveSection(self.childFrame,
-						self.cfile,
-						self.cf,
-						self.vars,
-						self.canvas,
-						self.mainFrame))
-	popup.add_command(label = 'Home', command = lambda: self.editHome(self.cfile))
+        popup = Menu(self.menuHolder, tearoff = 0)
+        popup.add_command(label='Done', command=lambda: self.saveSection(self.childFrame,
+                                                                         self.cfile,
+                                                                         self.cf,
+                                                                         self.vars,
+                                                                         self.canvas,
+                                                                         self.mainFrame))
+        popup.add_command(label='Home', command=lambda: self.editHome(self.cfile))
 
-	fileData = self.cfile.getAllText()
-	popup.add_command(label = 'Undo All', command = lambda: self.undoEdit(fileData, self.cfile))
+        fileData = self.cfile.getAllText()
+        popup.add_command(label='Undo All', command=lambda: self.undoEdit(fileData, self.cfile))
 
-	try:
-		popup.tk_popup (event.x_root+40, event.y_root, 0)
-	finally:
-		popup.grab_release()
-    
+        try:
+            popup.tk_popup (event.x_root+40, event.y_root, 0)
+        finally:
+            popup.grab_release()
+
     # Edit a section, i.e. a family of the grammar individually rather than the entire grammar
     # Note that this will have very preliminary editing capabilities and the complete grammar
     # editing should be done through the Edit global view
     def editSection(self, childFrame, cfile, hiliteText, vars, canvas, mainFrame):
         editFrame = Frame(mainFrame, bd=1, background='white')
 
-    	self.text = Text(editFrame, padx=5, wrap=None, undo = YES, background='white', height =10)
-	vbar = Scrollbar(editFrame)
-	hbar = Scrollbar(editFrame, orient='horizontal')
+        self.text = Text(editFrame, padx=5, wrap=None, undo=YES, background='white', height=10)
+        vbar = Scrollbar(editFrame)
+        hbar = Scrollbar(editFrame, orient='horizontal')
 
-	self.text.config(yscrollcommand=vbar.set)    # call vbar.set on text move
+        self.text.config(yscrollcommand=vbar.set)    # call vbar.set on text move
         self.text.config(xscrollcommand=hbar.set)
         vbar.config(command=self.text.yview)         # call text.yview on scroll move
         hbar.config(command=self.text.xview)         # or hbar['command']=text.xview
 
-	# Changing the mode of the cfile object here,
-	# so that once the uer clicks done,
-	# the whole object is recompiled and redisplayed
-	cfile.mode= 'Edit'
+        # Changing the mode of the cfile object here,
+        # so that once the uer clicks done,
+        # the whole object is recompiled and redisplayed
+        cfile.mode= 'Edit'
 
-	# Highlight the row being edited
-	hiliteText.onHilite()
+        # Highlight the row being edited
+        hiliteText.onHilite()
 
-	vbar.pack(side=RIGHT, fill=Y)
-	hbar.pack(side=BOTTOM, fill=X)
-	self.text.pack(fill= BOTH, expand= YES)
+        vbar.pack(side=RIGHT, fill=Y)
+        hbar.pack(side=BOTTOM, fill=X)
+        self.text.pack(fill= BOTH, expand= YES)
 
-	# Set a mark at the beginning of the text
-	self.text.mark_set("START", INSERT)
-	self.text.mark_gravity("START", LEFT)
+        # Set a mark at the beginning of the text
+        self.text.mark_set("START", INSERT)
+        self.text.mark_gravity("START", LEFT)
 
-	# Push in the rest of the file's contents
-	fileData = cfile.getAllText()
-	self.text.insert(INSERT, fileData)
+        # Push in the rest of the file's contents
+        fileData = cfile.getAllText()
+        self.text.insert(INSERT, fileData)
 
-	# Move the insert position to the first occurence of the family name
-	# FIXME: this is poor implementation
-	# The positioning of the insert cursor should be happening by parsing the 
-	# CFG production rules, using CSFamily.prod.lineno and endlineno
-	self.text.config(takefocus=True)
-	idx= self.text.search('family '+ self.name, "START")
-	self.text.mark_set(CURRENT, idx)
-	self.text.see(CURRENT)
+        # Move the insert position to the first occurence of the family name
+        # FIXME: this is poor implementation
+        # The positioning of the insert cursor should be happening by parsing the
+        # CFG production rules, using CSFamily.prod.lineno and endlineno
+        self.text.config(takefocus=True)
+        idx = self.text.search('family ' + self.name, "START")
+        self.text.mark_set(CURRENT, idx)
+        self.text.see(CURRENT)
 
-        #editFrame.grid(row=row+1, columnspan =3, sticky = NSEW)
+        # editFrame.grid(row=row+1, columnspan =3, sticky = NSEW)
         editFrame.grid(row=2, columnspan =2, sticky = NSEW)
-	childFrame.update_idletasks()
-	canvas.config(scrollregion=canvas.bbox("all"))
+        childFrame.update_idletasks()
+        canvas.config(scrollregion=canvas.bbox("all"))
 
     # Finished editing
-    #def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame, homeButton, undoButton):
+    # def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame, homeButton, undoButton):
     def saveSection(self, childFrame, cfile, hiliteText, varset, canvas, mainFrame):
-    	# We force the text contents of the cfile object to copy over 
-	# all that is presently in the current text-box
-    	cfile.setAllText(self.text.get(1.0,END))
+        # We force the text contents of the cfile object to copy over
+        # all that is presently in the current text-box
+        cfile.setAllText(self.text.get(1.0,END))
 
-	# Undo the highlight of the row
-	hiliteText.offHilite()
+        # Undo the highlight of the row
+        hiliteText.offHilite()
 
-	# Recompile whatever was edited and redisplay
-	# Note: changes are not saved hereby!!
-	cfile.compile_if_needed()
-	cfile.onLexicon()
+        # Recompile whatever was edited and redisplay
+        # Note: changes are not saved hereby!!
+        cfile.compile_if_needed()
+        cfile.onLexicon()
 
-	# Restore the right-click binding to the original
-	self.menuHolder.bind("<Button-1>", self.editPopup)
+        # Restore the right-click binding to the original
+        self.menuHolder.bind("<Button-1>", self.editPopup)
 
     # Restore view to original place where you wanted to edit
     def editHome(self, cfile):
-	# Move the insert position to the first occurence of the family name
-	# FIXME: this is poor implementation
-	# The positioning of the insert cursor should be happening by parsing the 
-	# CFG production rules, using CSFamily.prod.lineno and endlineno
-	self.text.config(takefocus=True)
-	idx= self.text.search('family '+ self.name, "START")
+        # Move the insert position to the first occurence of the family name
+        # FIXME: this is poor implementation
+        # The positioning of the insert cursor should be happening by parsing the
+        # CFG production rules, using CSFamily.prod.lineno and endlineno
+        self.text.config(takefocus=True)
+        idx = self.text.search('family ' + self.name, "START")
 
-	if not idx:
-		showwarning('Error', 'Original entry for '+self.name+ ' not found!')
-	self.text.mark_set(CURRENT, idx)
-	self.text.see(CURRENT)
+        if not idx:
+           showwarning('Error', 'Original entry for '+self.name+ ' not found!')
+        self.text.mark_set(CURRENT, idx)
+        self.text.see(CURRENT)
 
     # Undo all editing done till now
     def undoEdit(self, fileData, cfile):
-    	askqn = askokcancel('Warning','Undo all changes till now?')
-	if askqn:
-		self.text.delete("START", END)
-		self.text.insert(CURRENT, fileData)
-		self.editHome(cfile)
+        askqn = askokcancel('Warning','Undo all changes till now?')
+        if askqn:
+            self.text.delete("START", END)
+            self.text.insert(CURRENT, fileData)
+            self.editHome(cfile)
 
-    	
+
 
 # CSFamilyEntry is an `entry' statement inside a `family' block.
 #
@@ -2231,7 +2223,7 @@ class CSFamilyMember(CSStatement):
                     'member')
             first = False
 
-	print len (self.items) 
+        print(len(self.items))
         cf.finish().pack(fill=BOTH, expand=YES)
         return f
 
@@ -2296,10 +2288,10 @@ family_block : FAMILY word opt_paren_ext_attr_list LBRACE family_statement_list 
             xml.extend(x.xml())
     # If members have been specified ('member' statements) and there is no
     # 'closed' property, make the family closed.
-    
+
     # if family_members[$2] and not property_specified('closed', xml[1]):
     #    xml[1] += [('closed', 'true')]
-    
+
     # Actually, we *always* need classes closed, due to a bizarreness in
     # OpenCCG.
     if not property_specified('closed', xml[1]):
@@ -2339,7 +2331,7 @@ def init_rules():
         ('xsub', '-') : False,
         ('typeraise', '+') : [(False, True, True)],
         ('typeraise', '-') : [(True, True, True)],
-        'typechange' : [],
+        ('typechange', '') : [],
         }
 
     global rules_to_xml_mapping
@@ -2358,7 +2350,7 @@ def save_rules(cur):
 def make_rules_xml():
     xml = []
     unique = 0
-    for (key, value) in my_sorted(rules.items()):
+    for key, value in sorted(rules.items()):
         if type(key) is tuple and key[0] in rules_to_xml_mapping:
             rx = copy.deepcopy(rules_to_xml_mapping[key[0]])
             rx[1] += [('dir', key[1] == '+' and 'forward' or 'backward')]
@@ -2375,13 +2367,13 @@ def make_rules_xml():
                            + (result != True and
                               [['result', [], result]]
                               or []))
-        elif key == 'typechange':
+        elif key == ('typechange', ''):
             for (arg, result, lf) in value:
                 unique += 1
-        	if lf:
-	            lf = [['lf', []] + lf]
-	        else:
-	            lf = []
+                if lf:
+                    lf = [['lf', []] + lf]
+                else:
+                    lf = []
                 xml.append(['typechanging', [('name', 'typechange-%d' % unique)],
                             ['arg', [], arg],
                             ['result', [], result + lf]])
@@ -2399,7 +2391,7 @@ def rulesreinit():
     rules.clear()
     rules[('typeraise', '+')] = []
     rules[('typeraise', '-')] = []
-    rules['typechange'] = []
+    rules[('typechange', '')] = []
 %y
 
 ruletype : APP | COMP | XCOMP | SUB | XSUB
@@ -2424,7 +2416,7 @@ rule : NO SEMI : rulesreinit()
        rules[('typeraise', '+')] = []; rules[('typeraise', '-')] = []
      : NO TYPERAISE PLUS SEMI : rules[('typeraise', '+')] = []
      : NO TYPERAISE MINUS SEMI : rules[('typeraise', '-')] = []
-     : NO TYPECHANGE SEMI : rules['typechange'] = []
+     : NO TYPECHANGE SEMI : rules[('typechange', '')] = []
      : ruletype PLUSMINUS SEMI : \
        rules[($1, '+')] = True; rules[($1, '-')] = True
      : ruletype PLUS SEMI : rules[($1, '+')] = True
@@ -2434,9 +2426,9 @@ rule : NO SEMI : rulesreinit()
      : TYPERAISE plusminus_spec opt_dollar
        COLON complexcat GOESTO opt_atomcat SEMI: dotyperaise($2, $3, $5, $7)
      : TYPECHANGE COLON complexcat GOESTO complexcat SEMI: \
-       rules['typechange'] += [($3, $5, None)]
+       rules[('typechange', '')] += [($3, $5, None)]
      : TYPECHANGE COLON complexcat GOESTO complexcat COLON hybrid_logic SEMI: \
-       rules['typechange'] += [($3, $5, $7)]
+       rules[('typechange', '')] += [($3, $5, $7)]
 
 rule_list : rule_list rule
           : empty
@@ -2571,7 +2563,7 @@ class MacroLexer(StackLexer):
         if not tok:
             raise SyntaxError("Unexpected EOF")
         return tok
-            
+
     def innertoken(self):
         macrotok = self.simpletoken()
         if not macrotok or no_macro_sub or \
@@ -2625,7 +2617,7 @@ class MacroLexer(StackLexer):
                       macrotok.value)
             else:
                 if super_macro_debug:
-                    print "Processing macro: %s" % macrotok.value
+                    print("Processing macro: %s" % macrotok.value)
                 self.pushstack(macrosub(macrodef, args, self.lineno))
                 return self.innertoken()
 
@@ -2634,7 +2626,7 @@ class MacroLexer(StackLexer):
             def newline(num=1):
                 outout('\n' * num)
                 outout(' ' * 2 * self.indentlevel)
-            
+
             if tok.lineno and self.lineno < tok.lineno:
                 if tok.lineno - self.lineno == 1:
                     newline()
@@ -2648,7 +2640,7 @@ class MacroLexer(StackLexer):
             value = str(tok.value)
             lastval = self.last_token and str(self.last_token.value)
             if value and lastval and ((isalnumund(lastval[0]) and
-                                       isalnumund(value[0]))
+                                      isalnumund(value[0]))
                                       or self.last_token.type
                                       in ('COLON', 'COMMA')):
                 outout(' ')
@@ -2668,7 +2660,7 @@ class MacroLexer(StackLexer):
                tok and tok.type != 'BOGUS_VALUE':
                pretty_output_transformed(tok)
         self.last_token = tok
-        # print "Saw token: %s" % tok
+        # print("Saw token: %s" % tok)
         return tok
 
 #############################
@@ -2685,10 +2677,10 @@ def init_parse_once():
 class parse_results:
     pass
 
-def parse_string(str):
+def parse_string(string):
     retval = parse_results()
-    if str:
-        retval.parse = yacc.parse(str, lexer=MacroLexer(globallexer))
+    if string:
+        retval.parse = yacc.parse(string, lexer=MacroLexer(globallexer))
     else:
         retval.parse = []
     save_global_state(retval)
@@ -2705,13 +2697,13 @@ def draw_parse(parse, cfile, childFrame, vars, canvas, mainFrame):
     row = 0
 
     if parse:
-    	for x in parse:
-        	if hasattr(x, 'draw'):
-            		x.draw(childFrame, cfile, vars, row, canvas, mainFrame)
-            		row += 1
-    	# Make the column containing the lexical entries expand as necessary
-    	childFrame.columnconfigure(1, weight=1)
-    	#frame.grid(column=0)
+        for x in parse:
+            if hasattr(x, 'draw'):
+                    x.draw(childFrame, cfile, vars, row, canvas, mainFrame)
+                    row += 1
+        # Make the column containing the lexical entries expand as necessary
+        childFrame.columnconfigure(1, weight=1)
+        #frame.grid(column=0)
 
 
 
@@ -2760,7 +2752,7 @@ def late_init_graphics():
     if not late_init_graphics_done:
         late_init_draw_once()
         late_init_graphics_done = 1
-    
+
 
 #############################
 #         Main driver       #
@@ -2826,33 +2818,34 @@ def main():
                     output_files.append(x)
     else:
         output_files = [x for x in output_file_map]
-    
+
     # Now actually parse the input arguments
 
     prefix = options.prefix
     lastfile = '-'
     args = global_args or ['-']
-    
+
     for arg in args:
         if arg == '-':
             if not options.quiet:
                 errout("ccg2xml: Processing standard input\n")
             fil = sys.stdin
+            retval = parse_string(fil.read())
         else:
             if not options.quiet:
                 errout("ccg2xml: Processing %s\n" % arg)
-            fil = file(arg)
-            lastfile = arg
-            if prefix == None:
-                (phead, ptail) = os.path.split(arg)
-                (pbase, pext) = os.path.splitext(ptail)
-                prefix = '%s-' % pbase
-        retval = parse_string(fil.read())
-        # print "Retval: %s\n" % retval
-    
+            with open(arg) as fil:
+                lastfile = arg
+                if prefix == None:
+                    (phead, ptail) = os.path.split(arg)
+                    (pbase, pext) = os.path.splitext(ptail)
+                    prefix = '%s-' % pbase
+                retval = parse_string(fil.read())
+        # print("Retval: %s\n" % retval)
+
     if macro_debug:
         print_macros()
-    
+
     # Make output directory if needed, and output files
 
     if error_count > 0:
@@ -2865,7 +2858,7 @@ def main():
                 os.makedirs(options.dir)
         else:
             options.dir = '.'
-        
+
         for x in output_files:
             file_info = output_file_map[x]
             output_xml_file(prefix, lastfile, x, file_info[0],

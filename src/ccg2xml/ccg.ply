@@ -723,7 +723,7 @@ def ifmatch_nocase(regex, string, doif, doelse):
         return doelse
 
 def print_macros():
-    for (key, value) in list(macro_defs.items()):
+    for key, value in macro_defs.items():
         print("Macro: %s(%s): %s" % (key, value.args, value.text))
 
 # Given some text, expand the macros in it, recursively (i.e. apply
@@ -1038,7 +1038,7 @@ def install_feature(feature, lis, lineno):
 # Return XML to go in types.xml.
 def make_feature_types_xml():
     xml = []
-    for (x, featvals) in list(feature_to_values.items()):
+    for x, featvals in feature_to_values.items():
         # FIXME! Figure out what's going wrong here.
 #        typename = x
 #        print("fv_names_to_values: %s" % fv_names_to_values)
@@ -2350,7 +2350,7 @@ def save_rules(cur):
 def make_rules_xml():
     xml = []
     unique = 0
-    for (key, value) in sorted(list(rules.items())):
+    for key, value in sorted(rules.items()):
         if type(key) is tuple and key[0] in rules_to_xml_mapping:
             rx = copy.deepcopy(rules_to_xml_mapping[key[0]])
             rx[1] += [('dir', key[1] == '+' and 'forward' or 'backward')]

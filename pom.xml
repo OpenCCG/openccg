@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+    xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>openccg</groupId>
+  <artifactId>openccg</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+
+  <dependencies>
+
+    <dependency>
+        <groupId>ant-contrib</groupId>
+        <artifactId>ant-contrib</artifactId>
+        <version>1.0b3</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.jdom</groupId>
+        <artifactId>jdom</artifactId>
+        <version>1.1</version>
+    </dependency>
+
+    <dependency>
+        <groupId>net.sf.jgrapht</groupId>
+        <artifactId>jgrapht</artifactId>
+        <version>0.8.3</version>
+    </dependency>
+
+    <dependency>
+        <groupId>jline</groupId>
+        <artifactId>jline</artifactId>
+        <version>1.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.10</version>
+        <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+        <groupId>trove</groupId>
+        <artifactId>trove</artifactId>
+        <version>1.0.2</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>xalan</artifactId>
+        <version>2.7.1</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>xerces</groupId>
+        <artifactId>xercesImpl</artifactId>
+        <version>2.9.0</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>xml-apis</groupId>
+        <artifactId>xml-apis</artifactId>
+        <version>1.0.b2</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>xalan</groupId>
+        <artifactId>serializer</artifactId>
+        <version>2.7.1</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>net.sf.jopt-simple</groupId>
+        <artifactId>jopt-simple</artifactId>
+        <version>3.1</version>
+    </dependency>
+    
+    <dependency>
+        <groupId>net.java.dev.javacc</groupId>
+        <artifactId>javacc</artifactId>
+        <version>4.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>edu.stanford.nlp</groupId>
+        <artifactId>stanford-corenlp</artifactId>
+        <version>3.9.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>edu.stanford.nlp</groupId>
+        <artifactId>stanford-corenlp</artifactId>
+        <version>3.9.2</version>
+        <classifier>models</classifier>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <directory>lib</directory>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <configuration>
+          <outputDirectory>
+            ${project.build.directory}
+          </outputDirectory>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

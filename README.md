@@ -139,6 +139,77 @@ The Eclipse IDE can be used for editing the Java source code, though setup can b
 
 Note that with Eclipse's default settings, the code will compile in your Eclipse workspace, which is separate from your OpenCCG installation (this is a good thing, as Eclipse uses a `bin/` directory for compiled Java classes, whereas OpenCCG uses `bin/` for command-line scripts).  Thus, once you have made a round of changes in Eclipse and are ready to try them out in OpenCCG, go back to the command line in `$OPENCCG_HOME` and invoke `ccg-build` to re-build the `openccg.jar` file. This will make your changes available in OpenCCG's programs, such as `tccg`.
 
+# Running locally with Docker
+
+Alternately, if you would prefer using Docker rather than
+configuring and building everything yourself, that's also possible.
+
+## Installation
+
+* Installing docker for Windows
+
+For instructions on how to install docker for Windows 10, go
+[here](https://docs.docker.com/docker-for-windows/install/),
+or for slightly older Windows computers,
+go [here](https://docs.docker.com/toolbox/overview/).
+
+* Installing docker for MacOS
+
+For instructions on how to install docker for MacOS (at
+least El Capitan 10.11), go
+[here](https://docs.docker.com/docker-for-mac/install/),
+or for slightly older MacOS computers,
+go [here](https://docs.docker.com/toolbox/overview/)
+
+* Installing docker on Linux
+
+For instructions on how to install docker for Ubuntu (at
+least 14.04), go [here](https://docs.docker.com/install/linux/docker-ce/ubuntu/). This link also has options for other
+Linux distributions.
+
+
+to test your installation, just type:
+`docker --version`
+at the terminal/command prompt
+
+A successful install will result in something that looks like:
+`Docker version 17.05.0-ce, build 89658be`
+
+## Running in a container
+
+Once you have docker up and running, the following command will
+help you build from the Dockerfile:
+`docker build -t YOUR_TAG_HERE .`
+(the tag is so it's easy to reference later)
+
+After the container is finished building, you can run it with:
+`docker run -it --rm -t YOUR_TAG_HERE`
+
+When you're finished just type `exit` to leave the container.
+
+## Functionality in the container
+
+The following functions should work immediately once the container is built:
+
+- tccg command line tool
+- visualizing the semantic graphs
+- parsing
+- realization
+
+If you want to use the pre-built statistical models (referenced as `english-models.YYYY-MM-DD.tgz` in `docs/ccgbank-README`), just follow the instructions there and be sure to copy the renamed file (eg, `english-models.tgz`) into the `ccgbank` directory locally, then build the container and `models.sh` will automatically extract it for you.
+
+If you want to use the tagging capabilities listed in
+`docs/taggers-README` utilizing the Maxent toolkit and SRILM,
+uncomment those lines in the `Dockerfile`, and build as normal.
+
+---
+
+The following functions are not currently set up by default inside the container:
+
+- building the English models from the CCGBank
+(the CCGBank is licensed, and so dealing with it hasn't been included in this public docker image)
+
+
 # Bug Reports
 
 Please report bugs at by creating [an issue with a description of the problem](https://github.com/OpenCCG/openccg/issues). 

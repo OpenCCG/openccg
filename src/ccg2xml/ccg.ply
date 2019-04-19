@@ -26,11 +26,7 @@ import cStringIO
 # Local imports
 import lex, yacc
 
-from Tkinter import *
-from tkMessageBox import *
-import tkFont
-
-## Get options
+# Get options
 
 usage = """%prog [OPTIONS] FILE ...
 

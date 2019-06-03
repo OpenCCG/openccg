@@ -5,17 +5,35 @@
       <groupId>opennlp</groupId>
       <artifactId>ccgbank</artifactId>
       <version>1.0</version>
-      <packaging>pom</packaging>
      
       <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
       </properties>
-     
+
       <dependencies>
+        <dependency>
+          <groupId>jdom</groupId>
+          <artifactId>jdom</artifactId>
+          <version>1.0</version>
+        </dependency>
+
+        <dependency>
+          <groupId>org.apache.ant</groupId>
+          <artifactId>ant</artifactId>
+          <version>1.10.6</version>
+        </dependency>
       </dependencies>
+
       <build>
         <sourceDirectory>.</sourceDirectory>
-      </build>
-       
+        <plugins>
+          <plugin>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.8.1</version>
+            <configuration>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>  
     </project>

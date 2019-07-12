@@ -109,7 +109,24 @@ public class Grammar {
     };
     
     // set of boundary tones
-    private static Set<String> boundaryTonesSet = null;    
+    private static Set<String> boundaryTonesSet = null;
+
+    public Grammar(){
+        this.fromXmlTransforms = new URL[0];
+        this.toXmlTransforms = new URL[0];
+    }
+
+    public void setTypes(Types types){
+        this.types = types;
+    }
+
+    public void setLexicon(Lexicon lexicon){
+        this.lexicon = lexicon;
+    }
+
+    public void setRules(RuleGroup rules){
+        this.rules = rules;
+    }
 
     
     /** Loads a grammar from the given filename. */

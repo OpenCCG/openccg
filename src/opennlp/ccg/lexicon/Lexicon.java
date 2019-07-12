@@ -127,19 +127,7 @@ public class Lexicon implements WithGrammar {
         this.grammar = grammar;
     }
     
-    
-    /** Loads the lexicon and morph files. */
-    public void init(URL lexiconUrl, URL morphUrl) throws IOException {
-        
-    	List<Family> lexicon = null;
-        List<MorphItem> morph = null;
-        List<MacroItem> macroModel = null;
-
-        // load category families (lexicon), morph forms and macros
-        lexicon = getLexicon(lexiconUrl);
-        Pair<List<MorphItem>,List<MacroItem>> morphInfo = getMorph(morphUrl);
-        morph = morphInfo.a; macroModel = morphInfo.b;
-
+    public void init(List<Family> lexicon, List<MorphItem> morph, List<MacroItem> macroModel){
         // index words; also index stems to words, as default preds
         // store indexed coarticulation attrs too
         _words = new GroupMap<Word,MorphItem>();
@@ -156,7 +144,7 @@ public class Lexicon implements WithGrammar {
                 Pair<String,String> first = indexingWord.getSurfaceAttrValPairs().next();
                 _indexedCoartAttrs.add(first.a);
                 for (Iterator<Pair<String,String>> it = surfaceWord.getSurfaceAttrValPairs(); it.hasNext(); ) {
-                	Pair<String,String>  p = it.next();
+                    Pair<String,String>  p = it.next();
                     _coartAttrs.add(p.a);
                 }
             }
@@ -170,16 +158,16 @@ public class Lexicon implements WithGrammar {
         // also index rels and coart rels to preds
         _relsToPreds = new GroupMap<String,String>();
         _coartRelsToPreds = new GroupMap<String,String>();
-        // and gather list of attributes used per atomic category type 
+        // and gather list of attributes used per atomic category type
         _catsToAttrs = new GroupMap<String,String>();
         _lfAttrs = new HashSet<String>();
         // and remember family and ent, names, for checking excluded list on morph items
         HashSet<String> familyAndEntryNames = new HashSet<String>();
-        
+
         // index each family
         for (Family family : lexicon) {
 
-        	familyAndEntryNames.add(family.getName());
+            familyAndEntryNames.add(family.getName());
             EntriesItem[] entries = family.getEntries();
             DataItem[] data = family.getData();
 
@@ -193,7 +181,7 @@ public class Lexicon implements WithGrammar {
             for (int j=0; j < entries.length; j++) {
                 // index
                 EntriesItem eItem = entries[j];
-            	_stagToEntries.put(eItem.getSupertag()+family.getPOS(), eItem);
+                _stagToEntries.put(eItem.getSupertag()+family.getPOS(), eItem);
                 if (eItem.getStem().length() > 0) {
                     _stems.put(eItem.getStem()+family.getPOS(), eItem);
                 }
@@ -217,10 +205,10 @@ public class Lexicon implements WithGrammar {
                 if (!dItem.getStem().equals(dItem.getPred())) {
                     Collection<Word> words = (Collection<Word>) _predToWords.get(dItem.getStem());
                     if (words == null) {
-                    	if (!openlex) {
-	                        System.out.print("Warning: couldn't find words for pred '");
-	                        System.out.println(dItem.getPred() + "' with stem '" + dItem.getStem() + "'");
-                    	}
+                        if (!openlex) {
+                            System.out.print("Warning: couldn't find words for pred '");
+                            System.out.println(dItem.getPred() + "' with stem '" + dItem.getStem() + "'");
+                        }
                     }
                     else {
                         for (Iterator<Word> it = words.iterator(); it.hasNext(); ) {
@@ -231,12 +219,12 @@ public class Lexicon implements WithGrammar {
             }
 
             // index rels to preds
-            // nb: this covers relational (eg @x<GenRel>e) and featural (eg @e<tense>past) 
+            // nb: this covers relational (eg @x<GenRel>e) and featural (eg @e<tense>past)
             //     elementary predications
             List<String> indexRels = new ArrayList<String>(3);
             String familyIndexRel = family.getIndexRel();
-            if (familyIndexRel.length() > 0) { 
-                indexRels.add(familyIndexRel); 
+            if (familyIndexRel.length() > 0) {
+                indexRels.add(familyIndexRel);
             }
             for (int j=0; j < entries.length; j++) {
                 EntriesItem eItem = entries[j];
@@ -247,13 +235,13 @@ public class Lexicon implements WithGrammar {
             }
             for (Iterator<String> it = indexRels.iterator(); it.hasNext(); ) {
                 String indexRel = it.next();
-                // nb: not indexing on entries items, b/c some stems are still defaults 
+                // nb: not indexing on entries items, b/c some stems are still defaults
                 for (int j=0; j < data.length; j++) {
                     DataItem dItem = data[j];
                     _relsToPreds.put(indexRel, dItem.getPred());
                 }
             }
-            
+
             // index coart rels (features, really) to preds
             String coartRel = family.getCoartRel();
             if (coartRel.length() > 0) {
@@ -281,31 +269,45 @@ public class Lexicon implements WithGrammar {
         // with morph items, check POS, macro names, excluded list for xref
         for (MorphItem morphItem : morph) {
             Word w = morphItem.getWord();
-            if (!openlex && 
-            	!_stems.containsKey(w.getStem() + w.getPOS()) &&
-                !_posToEntries.containsKey(w.getPOS())) 
+            if (!openlex &&
+                    !_stems.containsKey(w.getStem() + w.getPOS()) &&
+                    !_posToEntries.containsKey(w.getPOS()))
             {
                 System.err.println(
-                    "Warning: no entries for stem '" + w.getStem() + 
-                    "' and POS '" + w.getPOS() + 
-                    "' found for word '" + w + "'"
+                        "Warning: no entries for stem '" + w.getStem() +
+                                "' and POS '" + w.getPOS() +
+                                "' found for word '" + w + "'"
                 );
             }
             String[] macroNames = morphItem.getMacros();
             for (int j=0; j < macroNames.length; j++) {
                 if (!_macroItems.containsKey(macroNames[j])) {
-                    System.err.println("Warning: macro " + macroNames[j] + 
-                        " not found for word '" + morphItem.getWord() + "'");
+                    System.err.println("Warning: macro " + macroNames[j] +
+                            " not found for word '" + morphItem.getWord() + "'");
                 }
             }
             String[] excludedNames = morphItem.getExcluded();
             for (int j=0; j < excludedNames.length; j++) {
                 if (!familyAndEntryNames.contains(excludedNames[j])) {
-                    System.err.println("Warning: excluded family or entry '" + excludedNames[j] + 
-                        "' not found for word '" + morphItem.getWord() + "'");
+                    System.err.println("Warning: excluded family or entry '" + excludedNames[j] +
+                            "' not found for word '" + morphItem.getWord() + "'");
                 }
             }
         }
+    }
+    /** Loads the lexicon and morph files. */
+    public void init(URL lexiconUrl, URL morphUrl) throws IOException {
+        
+    	List<Family> lexicon = null;
+        List<MorphItem> morph = null;
+        List<MacroItem> macroModel = null;
+
+        // load category families (lexicon), morph forms and macros
+        lexicon = getLexicon(lexiconUrl);
+        Pair<List<MorphItem>,List<MacroItem>> morphInfo = getMorph(morphUrl);
+        morph = morphInfo.a; macroModel = morphInfo.b;
+
+        init(lexicon, morph, macroModel);
     }
     
     /** Expands inheritsFrom links to feature equations for those features not explicitly listed. */ 

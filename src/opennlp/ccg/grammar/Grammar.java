@@ -52,13 +52,13 @@ import java.util.*;
 public class Grammar {
 
     /** The lexicon. */
-    public final Lexicon lexicon;
+    public Lexicon lexicon;
     
     /** The rule group. */
-    public final RuleGroup rules;
+    public RuleGroup rules;
 
     /** The type hierarchy. */
-    public final Types types;
+    public Types types;
     
     /** The features to include in supertags. */
     public final Set<String> supertagFeatures = new HashSet<String>();

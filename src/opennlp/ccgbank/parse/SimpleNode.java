@@ -115,6 +115,10 @@ public class SimpleNode implements Node {
         return leftover;
     }
 
+    public int getid(){
+        return id;
+    }
+
 
     public void jjtOpen() {
     }

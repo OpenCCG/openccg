@@ -115,7 +115,7 @@ public class SimpleNode implements Node {
         return leftover;
     }
 
-    public int getid(){
+    public int getId(){
         return id;
     }
 

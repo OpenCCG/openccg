@@ -44,7 +44,7 @@ import java.util.*;
  * @author      Michael White
  * @version     $Revision: 1.32 $, $Date: 2011/06/07 05:12:01 $
  */
-public class RuleGroup implements Serializable {
+public class RuleGroup implements Serializable, WithGrammar {
 
 	private static final long serialVersionUID = -6240266013357142289L;
 
@@ -156,6 +156,11 @@ public class RuleGroup implements Serializable {
     /**
      * Constructs an empty rule group for the given grammar.
      */
+
+    public RuleGroup(){
+        bapp.setRuleGroup(this);
+    }
+
     public RuleGroup(Grammar grammar) {
         this.grammar = grammar;
         bapp.setRuleGroup(this);
@@ -183,6 +188,10 @@ public class RuleGroup implements Serializable {
         	}
         };
         ruleScanner.parse(url);
+    }
+
+    public void setGrammar(Grammar grammar){
+        this.grammar = grammar;
     }
 
     

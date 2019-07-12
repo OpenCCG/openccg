@@ -44,7 +44,7 @@ import gnu.trove.*;
  * @author      Michael White
  * @version     $Revision: 1.78 $, $Date: 2011/10/31 02:01:06 $
  */
-public class Lexicon { 
+public class Lexicon implements WithGrammar {
     
     /** Flag used to indicate a purely syntactic edge, with no associated semantics. */
     public static final String NO_SEM_FLAG = "*NoSem*";
@@ -88,7 +88,7 @@ public class Lexicon {
     private Interner<Object> lookupCache = new Interner<Object>(true);
     
     /** The grammar that this lexicon is part of. */
-    public final Grammar grammar;
+    public Grammar grammar;
     
     /** The tokenizer.  (Defaults to DefaultTokenizer.) */
     public final Tokenizer tokenizer;
@@ -103,6 +103,10 @@ public class Lexicon {
     /*************************************************************
      * Constructor
      *************************************************************/
+    public Lexicon(){
+        this.tokenizer = new DefaultTokenizer();
+    }
+
     public Lexicon(Grammar grammar) {
         this.grammar = grammar;
         this.tokenizer = new DefaultTokenizer();
@@ -118,6 +122,10 @@ public class Lexicon {
     
     /** Sets the supertagger (null if none). */
     public void setSupertagger(SupertaggerAdapter supertagger) { _supertagger = supertagger; }
+
+    public void setGrammar(Grammar grammar){
+        this.grammar = grammar;
+    }
     
     
     /** Loads the lexicon and morph files. */

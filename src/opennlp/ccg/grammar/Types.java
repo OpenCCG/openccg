@@ -37,9 +37,9 @@ import gnu.trove.*;
  * @author  Michael White
  * @version $Revision: 1.13 $, $Date: 2009/12/21 03:27:18 $
  */
-public class Types {
+public class Types implements WithGrammar {
 
-    public final Grammar grammar;
+    public Grammar grammar;
     private final HashMap<String,SimpleType> nameToType = new HashMap<String,SimpleType>();
     private final ArrayList<SimpleType> indexToType = new ArrayList<SimpleType>();
     private int maxTypeIndex = 0;
@@ -47,6 +47,10 @@ public class Types {
     public static final String BOT_TYPE = "bottom";
 	
     /** Constructor for an empty hierarchy (with just the top type). */
+    public Types(){
+        getSimpleType(TOP_TYPE);
+    }
+
     public Types(Grammar grammar) {
         getSimpleType(TOP_TYPE);
         this.grammar = grammar;
@@ -72,6 +76,10 @@ public class Types {
         readTypes(entries);
         // for debugging: print the indexToType list
         //printTypes();
+    }
+
+    public void setGrammar(Grammar grammar){
+        this.grammar = grammar;
     }
     
     /** Returns the simple type with the given name, or a new one if none yet exists. */

@@ -8,7 +8,7 @@
       <packaging>pom</packaging>
 
       <modules>
-          <module>src/opennlp</module>
+          <module>src/</module>
       </modules>
      
       <properties>

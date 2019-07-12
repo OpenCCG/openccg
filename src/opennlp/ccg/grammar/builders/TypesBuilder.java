@@ -7,11 +7,12 @@ public class TypesBuilder {
         return new TypesBuilder();
     }
 
+    private Types types;
     private TypesBuilder(){
-
+        this.types = new Types();
     }
 
     public Types build(){
-        return new Types();
+        return this.types;
     }
 }

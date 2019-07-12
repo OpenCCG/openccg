@@ -34,7 +34,7 @@ import java.util.Set;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
-import opennlp.ccgbank.parse.TokenMgrException;
+import opennlp.ccgbank.parse.TokenMgrError;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;

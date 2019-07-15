@@ -13,8 +13,9 @@ public class RulesBuilder {
         this.rules = new RuleGroup();
     }
 
-    public void addRule(Rule rule){
+    public RulesBuilder addRule(Rule rule){
         this.rules.addRule(rule);
+        return this;
     }
 
     public RuleGroup build(){

@@ -16,16 +16,19 @@ public class LexiconBuilder {
         this.lexicon = new Lexicon();
     }
 
-    public void addFamily(Family family){
+    public LexiconBuilder addFamily(Family family){
         this.familyList.add(family);
+        return this;
     }
 
-    public void addMorph(MorphItem item){
+    public LexiconBuilder addMorph(MorphItem item){
         this.morphList.add(item);
+        return this;
     }
 
-    public void addMacro(MacroItem item){
+    public LexiconBuilder addMacro(MacroItem item){
         this.macroList.add(item);
+        return this;
     }
 
     public Lexicon build(){

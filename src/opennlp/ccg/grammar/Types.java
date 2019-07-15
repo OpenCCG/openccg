@@ -109,7 +109,7 @@ public class Types implements WithGrammar {
 
 
     /** Reads the rules and constructs the nameToType and indexToType maps. */
-    private void readTypes(List<Element> _types) {
+    public void readTypes(List<Element> _types) {
         
         GroupMap<String,String> hierarchy = new GroupMap<String,String>(); // map from types to all subtypes
         GroupMap<String,String> parents = new GroupMap<String,String>(); // map from types to parents

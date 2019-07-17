@@ -18,7 +18,9 @@ public class TypesBuilder {
     }
 
     public TypesBuilder addType(String name){
-        return addType(name, "");
+        Element el = new Element("type");
+        el.setAttribute("name", name);
+        return this;
     }
 
     public TypesBuilder addType(String name, String parents){

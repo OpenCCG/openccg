@@ -112,6 +112,7 @@ public class Grammar {
     private static Set<String> boundaryTonesSet = null;
 
     public Grammar(){
+        theGrammar = this;
         this.fromXmlTransforms = new URL[0];
         this.toXmlTransforms = new URL[0];
     }

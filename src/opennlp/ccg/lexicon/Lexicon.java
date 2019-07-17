@@ -105,6 +105,9 @@ public class Lexicon implements WithGrammar {
      *************************************************************/
     public Lexicon(){
         this.tokenizer = new DefaultTokenizer();
+        Grammar.theGrammar.lexicon = this;
+        loadLicensingFeatures(null);
+        loadRelationSortOrder(null);
     }
 
     public Lexicon(Grammar grammar) {

@@ -16,6 +16,10 @@ public class GrammarBuilder {
         this.grammar = new Grammar();
     }
 
+    public boolean isGlobalGrammarInit(){
+        return this.grammar.theGrammar != null;
+    }
+
     public GrammarBuilder withTypes(Types types){
         this.grammar.setTypes(types);
         types.setGrammar(this.grammar);

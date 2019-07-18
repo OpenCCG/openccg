@@ -20,6 +20,7 @@ public class TypesBuilder {
     public TypesBuilder addType(String name){
         Element el = new Element("type");
         el.setAttribute("name", name);
+        elementList.add(el);
         return this;
     }
 
@@ -27,6 +28,7 @@ public class TypesBuilder {
         Element el = new Element("type");
         el.setAttribute("name", name);
         el.setAttribute("parents", parents);
+        elementList.add(el);
         return this;
     }
 

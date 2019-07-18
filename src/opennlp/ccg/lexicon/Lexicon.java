@@ -1322,4 +1322,8 @@ public class Lexicon implements WithGrammar {
     public GroupMap<Word,MorphItem> getWords() {
 			return _words;
 		}
+
+    public GroupMap<String,FeatureStructure> getMacros(){
+        return _macros;
+    }
 }

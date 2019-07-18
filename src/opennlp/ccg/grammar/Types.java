@@ -48,7 +48,6 @@ public class Types implements WithGrammar {
 	
     /** Constructor for an empty hierarchy (with just the top type). */
     public Types(){
-        getSimpleType(TOP_TYPE);
     }
 
     public Types(Grammar grammar) {
@@ -75,7 +74,7 @@ public class Types implements WithGrammar {
         List<Element> entries = doc.getRootElement().getChildren();
         readTypes(entries);
         // for debugging: print the indexToType list
-        //printTypes();
+        // printTypes();
     }
 
     public void setGrammar(Grammar grammar){

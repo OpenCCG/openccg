@@ -1,0 +1,5 @@
+{
+    "max_grad_norm": [5.0],
+    "dropout_probability": [0.5],
+    "tritrain_weight": [4.0]
+}

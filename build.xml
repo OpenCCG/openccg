@@ -39,6 +39,8 @@
       <pathelement location="${lib.dir}/ant-launcher.jar"/>
       <pathelement location="${lib.dir}/ant.jar"/>
       <pathelement location="${lib.dir}/jdom.jar"/>
+      <pathelement location="${lib.dir}/jdom2.jar"/>
+      <pathelement location="${lib.dir}/commons-lang3-3.0.jar"/>
       <pathelement location="${lib.dir}/trove.jar"/>
       <pathelement location="${lib.dir}/javacc.jar"/>
       <pathelement location="${lib.dir}/jgrapht-jdk1.6.jar"/>

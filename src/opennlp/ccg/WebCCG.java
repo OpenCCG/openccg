@@ -52,10 +52,11 @@ import java.util.*;
  */
 public class WebCCG {
     /** Main method for tccg. */
-    public static void main(String[] args) throws IOException, LexException { 
-	String usage = "java opennlp.ccg.WebCCG " + 
-"[-showall] [-showderivs] [-showsem] [-showfeats] [-visualize FILE] GRAMMARDIR\n" +
+    public static void main(String[] args) throws IOException, LexException {
+	String usage = "java opennlp.ccg.WebCCG " +
+"[-prompt SIGN] [-showall] [-showderivs] [-showsem] [-showfeats] [-visualize FILE] GRAMMARDIR\n" +
 "\n" +
+"-prompt specify a prompt sign (defaults to the empty string).\n" +
 "-showall shows all parses rather than just the first one.\n" +
 "-showderivs shows the derivation history of each parse.\n" +
 "-showsem shows the logical form of each parse.\n" +
@@ -73,6 +74,7 @@ public class WebCCG {
 
 	// args        
 	//String prefsfile = null;
+	String prompt = "";
 	boolean showall = false;
 	boolean showderivs = false;
 	boolean showsem = false;
@@ -80,7 +82,9 @@ public class WebCCG {
 	String visfile = null;
 	int i;
 	for (i = 0; i < args.length; i++) {
-	    if (args[i].equals("-showall"))
+		if (args[i].equals("-prompt"))
+		prompt = args[++i];
+	    else if (args[i].equals("-showall"))
 		showall = true;
 	    else if (args[i].equals("-showderivs"))
 		showderivs = true;
@@ -113,6 +117,8 @@ public class WebCCG {
 
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	while (true) {
+        if ("" != prompt)
+	    System.out.print(prompt + " ");
 	    String input = br.readLine();
 	    if (input == null) break; // EOF
 	    input = input.trim();

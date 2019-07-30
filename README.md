@@ -16,15 +16,15 @@ See CHANGES for a description of the project status. Also see the OpenCCG web si
 
 This `README.md` file contains the configuration and build instructions. Next you'll probably want to look at the tutorial on writing grammars in the human-friendly 'dot ccg' syntax on [the UT Austin OpenCCG wiki](http://www.utcompling.com/wiki/openccg/visccg-tutorial).
 
-After that it may be helpful to look at the "native" grammar specification in "Specifying Grammars for OpenCCG: A Rough Guide" in `docs/grammars-rough-guide.pdf`, as well as the `SAMPLE_GRAMMARS` file for descriptions of the sample grammars that come with the distribution, including ones using the DotCCG syntax.  A (somewhat dated) programmer's guide to using the OpenCCG realizer appears in `docs/realizer-manual.pdf`.
+After that it may be helpful to look at the "native" grammar specification in "Specifying Grammars for OpenCCG: A Rough Guide" in `docs/grammars-rough-guide.pdf`, as well as the [SAMPLE GRAMMARS](SAMPLE_GRAMMARS) file for descriptions of the sample grammars that come with the distribution, including ones using the DotCCG syntax.  A (somewhat dated) programmer's guide to using the OpenCCG realizer appears in `docs/realizer-manual.pdf`.
 
-This release also includes a broad English coverage grammar from the CCGBank and associated statistical models; see `docs/ccgbank-README` for details.
+This release also includes a broad English coverage grammar from the CCGBank and associated statistical models; see [docs/ccgbank-README](docs/ccgbank-README) for details.
 
 
 # Requirements
 
-* Version 1.6 or later of the Java 2 SDK (http://java.sun.com)
-* For ccg2xml and other tools, Python version 2.4 to 2.7 (http://www.python.org)
+* Version 1.6 or later of the Java 2 SDK (https://java.sun.com)
+* For ccg2xml and other tools, Python version 2.4 to 2.7 (https://www.python.org)
 
 
 # Libraries
@@ -94,12 +94,12 @@ If you've managed to configure the system, you should be able to change to the d
 
 Provided tccg starts properly, it loads the grammar files, parses them, and shows the command-line interface (at which point you can type `:h` for help or `:q` to quit).
 
-If you trouble starting up tccg, make sure you have set the environment variables properly, and that the tccg script (located in `openccg/bin`) calls the right shell environment (top-line of the script; to solve the problem, either comment out this line or correct the path).
+If you have trouble starting up tccg, make sure you have set the environment variables properly, and that the tccg script (located in `openccg/bin`) calls the right shell environment (top-line of the script; to solve the problem, either comment out this line or correct the path).
 
 
 # Visualizing semantic graphs
 
-Semantic dependency graphs in testbed files can be visualized with the help of Graphviz's dot tool.  First, download and install [Graphviz](http://www.graphviz.org/).  Then, use tccg to create a testbed files with logical forms in it.  For example, you can try some examples in the worldcup sample grammar and save them to a file using the command ':2tb tb.xml'.  Then make a directory to store the visualized graphs. Finally, run the ccg-draw-graph tool as shown below:
+Semantic dependency graphs in testbed files can be visualized with the help of Graphviz's dot tool.  First, download and install [Graphviz](https://www.graphviz.org/).  Then, use tccg to create a testbed files with logical forms in it.  For example, you can try some examples in the worldcup sample grammar and save them to a file using the command ':2tb tb.xml'.  Then make a directory to store the visualized graphs. Finally, run the ccg-draw-graph tool as shown below:
 
 ```
 > cd grammars/worldcup
@@ -110,7 +110,7 @@ Semantic dependency graphs in testbed files can be visualized with the help of G
 
 You can also show the semantic classes or word indices using the `-c` or `-w` options, respectively.  The graphs can be displayed with any PDF display tool.
 
-Note that the graph visualization requires the logical forms to be stored in an xml node-rel format for graphs, as in the worldcup or routes sample grammars.  See `SAMPLE_GRAMMARS` for more information.
+Note that the graph visualization requires the logical forms to be stored in an xml node-rel format for graphs, as in the worldcup or routes sample grammars.  See [SAMPLE GRAMMARS](SAMPLE_GRAMMARS) for more information.
 
 
 # Creating disjunctive logical forms

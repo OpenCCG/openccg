@@ -31,6 +31,10 @@ public class LexiconBuilder {
         return this;
     }
 
+    public Lexicon ref(){
+        return this.lexicon;
+    }
+
     public Lexicon build(){
         this.lexicon.init(familyList, morphList, macroList);
         return this.lexicon;

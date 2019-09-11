@@ -1,4 +1,4 @@
-package opennlp.ccg.grammar.builders;
+package opennlp.ccg.builders;
 
 import opennlp.ccg.lexicon.*;
 import java.util.*;

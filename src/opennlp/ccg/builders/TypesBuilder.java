@@ -1,4 +1,4 @@
-package opennlp.ccg.grammar.builders;
+package opennlp.ccg.builders;
 
 import opennlp.ccg.grammar.Types;
 import org.jdom.Element;

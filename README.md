@@ -32,6 +32,8 @@ This release also includes a broad English coverage grammar from the CCGBank and
 All of the standard maven usage rules applies, to simply make `jar` you can do `mvn package`, if you're using GNU Make, can do `make package`.
 The result is `openccg.jar` which can be found on `src/target` dir.
 
+Tests can be run via `mvn test`, or `make tests`
+
 # Libraries
 
 If you're working with the latest source version from GitHub, you'll need to download the external libraries from the latest release, as GitHub discourages including binaries in their repos:

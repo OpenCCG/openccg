@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>acceleratedtext</groupId>
 	<artifactId>openccg</artifactId>
-	<version>0.10.3-SNAPSHOT</version>
+	<version>0.10.4-SNAPSHOT</version>
 
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>

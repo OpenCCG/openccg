@@ -1,19 +1,65 @@
-    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-      <modelVersion>4.0.0</modelVersion>
-      <groupId>opennlp</groupId>
-      <artifactId>ccg</artifactId>
-      <version>0.10.0</version>
-      <packaging>pom</packaging>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>acceleratedtext</groupId>
+  <artifactId>openccg</artifactId>
+  <version>0.10.3-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
-      <modules>
-          <module>src/</module>
-      </modules>
-     
-      <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-      </properties>
-      
-    </project>
+  <modules>
+    <module>src/</module>
+  </modules>
+
+  <scm>
+    <url>https://github.com/tokenmill/openccg.git</url>
+    <connection>scm:git:https://github.com/tokenmill/openccg.git</connection>
+    <developerConnection>scm:git:https://github.com/tokenmill/openccg.git</developerConnection>
+    <tag>openccg-0.10.1</tag>
+  </scm>
+
+  <properties>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+  </properties>
+
+  <build>
+    <sourceDirectory>src</sourceDirectory>
+    <resources>
+      <resource>
+        <directory>src</directory>
+      </resource>
+      <resource>
+        <directory>classes</directory>
+      </resource>
+    </resources>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <additionalOptions>
+            <additionalOption>-Xdoclint:none</additionalOption>
+            <excludePackageNames>target.*</excludePackageNames>
+          </additionalOptions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
+  <repositories>
+    <repository>
+      <id>clojars</id>
+      <url>https://repo.clojars.org/</url>
+    </repository>
+  </repositories>
+
+  <distributionManagement>
+    <repository>
+      <id>clojars</id>
+      <url>https://repo.clojars.org</url>
+    </repository>
+  </distributionManagement>
+
+</project>

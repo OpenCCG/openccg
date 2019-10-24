@@ -52,13 +52,13 @@ import java.util.*;
 public class Grammar {
 
     /** The lexicon. */
-    public final Lexicon lexicon;
+    public Lexicon lexicon;
     
     /** The rule group. */
-    public final RuleGroup rules;
+    public RuleGroup rules;
 
     /** The type hierarchy. */
-    public final Types types;
+    public Types types;
     
     /** The features to include in supertags. */
     public final Set<String> supertagFeatures = new HashSet<String>();
@@ -109,7 +109,25 @@ public class Grammar {
     };
     
     // set of boundary tones
-    private static Set<String> boundaryTonesSet = null;    
+    private static Set<String> boundaryTonesSet = null;
+
+    public Grammar(){
+        theGrammar = this;
+        this.fromXmlTransforms = new URL[0];
+        this.toXmlTransforms = new URL[0];
+    }
+
+    public void setTypes(Types types){
+        this.types = types;
+    }
+
+    public void setLexicon(Lexicon lexicon){
+        this.lexicon = lexicon;
+    }
+
+    public void setRules(RuleGroup rules){
+        this.rules = rules;
+    }
 
     
     /** Loads a grammar from the given filename. */

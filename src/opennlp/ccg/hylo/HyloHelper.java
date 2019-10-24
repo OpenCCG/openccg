@@ -660,6 +660,7 @@ public class HyloHelper {
             String rel1 = getRel(lf1);
             String rel2 = getRel(lf2);
             Lexicon theLexicon = Grammar.theGrammar.lexicon;
+            assert theLexicon != null;
             Integer rel1Index = theLexicon.getRelationSortIndex(rel1);
             Integer rel2Index = theLexicon.getRelationSortIndex(rel2);
             int relIndexCompare = rel1Index.compareTo(rel2Index);

@@ -26,6 +26,13 @@ This release also includes a broad English coverage grammar from the CCGBank and
 * Version 1.6 or later of the Java 2 SDK (http://java.sun.com)
 * For ccg2xml and other tools, Python version 2.4 to 2.7 (http://www.python.org)
 
+# Using Maven
+*****NOTE** maven will take care dependency downloading step for you, hence steps bellow can be ignored
+
+All of the standard maven usage rules applies, to simply make `jar` you can do `mvn package`, if you're using GNU Make, can do `make package`.
+The result is `openccg.jar` which can be found on `src/target` dir.
+
+Tests can be run via `mvn test`, or `make tests`
 
 # Libraries
 
